@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.uknit.core.config.Configs;
-import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.util.StringUtils;
 
 @Singleton
@@ -12,8 +11,6 @@ public class Variables {
 
     @Inject
     private Configs configs;
-    @Inject
-    private Types types;
     @Inject
     private StringUtils stringUtils;
 

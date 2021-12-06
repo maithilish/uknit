@@ -1,11 +1,14 @@
 package org.codetab.uknit.core.make.method.visit;
 
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.stage.VarStager;
+import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -36,14 +39,34 @@ public class ExpReplacer {
                 Invoke invoke = o.get();
                 MethodInvocation mi = invoke.getMi();
                 boolean replace = true;
-                /*
-                 * static calls: return Byte.valueOf("100"); replace
-                 * date.compareTo(LocalDate.now()) == 1; don't replace
-                 */
-                if (methods.isStaticCall(mi)
-                        && nodes.is(mi.getParent(), MethodInvocation.class)) {
-                    replace = false;
+
+                // TODO - move this to Replacers
+                if (nodes.is(mi.getParent(), MethodInvocation.class)) {
+                    /*
+                     * static calls: return Byte.valueOf("100"); replace
+                     * date.compareTo(LocalDate.now()) == 1; don't replace
+                     */
+
+                    if (methods.isStaticCall(mi)) {
+                        replace = false;
+                    }
+
+                    /*
+                     * return s2.append(file.getName().toLowerCase());
+                     * toLowerCase on string is real returning real, don't
+                     * replace it.
+                     */
+                    Optional<ExpReturnType> ro = invoke.getExpReturnType();
+                    if (ro.isPresent()) {
+                        boolean returnReal = !ro.get().isMock();
+                        IVar var = invoke.getVar();
+                        boolean varReal = !(nonNull(var) && var.isMock());
+                        if (varReal && returnReal) {
+                            replace = false;
+                        }
+                    }
                 }
+
                 if (replace) {
                     // if when returns inferVar, then replace
                     String name = invoke.getInferVar().get().getName();

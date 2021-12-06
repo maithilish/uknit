@@ -13,13 +13,10 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 
 public class WhenStager {
 
-    @Inject
-    private Nodes nodes;
     @Inject
     private NodeFactory nodeFactory;
     @Inject
@@ -68,6 +65,5 @@ public class WhenStager {
 
         List<String> usedNames = methods.getNames(miWhenCopy);
         when.getNames().addAll(usedNames);
-        // var.setUsed(true);
     }
 }

@@ -27,13 +27,19 @@ public class CallStaticTest {
 
     @Test
     public void testStaticCallReturn() {
+        Date grape = Calendar.getInstance().getTime();
 
         Date actual = callStatic.staticCallReturn();
+
+        assertSame(grape, actual);
     }
 
     @Test
     public void testRealCallReturn() {
+        Date apple = Mockito.mock(Date.class);
 
         Date actual = callStatic.realCallReturn();
+
+        assertSame(apple, actual);
     }
 }

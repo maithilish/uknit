@@ -36,12 +36,14 @@ public class CallStaticTest {
     @Test
     public void testStaticCallReturn() {
 
+        @SuppressWarnings("unused")
         Date actual = callStatic.staticCallReturn();
     }
 
     @Test
     public void testRealCallReturn() {
 
+        @SuppressWarnings("unused")
         Date actual = callStatic.realCallReturn();
     }
 }

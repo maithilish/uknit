@@ -15,6 +15,8 @@ public class UseMarker {
     public void mark(final Heap heap) {
         useMarkers.markVarsUsedInWhens(heap);
         useMarkers.markVarsUsedInReturn(heap);
+
+        // TODO - use verify vars
         List<Expression> exps = useMarkers.getInitializers(heap);
         useMarkers.markExpVars(exps, heap);
     }

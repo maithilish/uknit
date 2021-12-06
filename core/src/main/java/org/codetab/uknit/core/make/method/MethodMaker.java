@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
-import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Variables;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
@@ -83,7 +82,6 @@ public class MethodMaker {
         String clzName = methodMakers
                 .getTestClzName((TypeDeclaration) methodUnderTest.getParent());
         clzDecl = clzMap.getTypeDecl(clzName);
-        Clz clz = clzMap.getClz(clzName); // test clz
 
         String testMethodName =
                 methodMakers.getTestMethodName(methodUnderTest, clzDecl);

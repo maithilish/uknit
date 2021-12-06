@@ -59,7 +59,7 @@ public class Mocks {
         }
         // Real returns Real
         if (!varIsMock && !returnIsMock) {
-            return true;
+            return false;
         }
         return false;
     }

@@ -33,8 +33,5 @@ public class VerifyStager {
         verify.addArgCaptures(anonCaptures);
         // verify.addArgCaptures(lambdaCaptures);
         heap.getVerifies().add(verify);
-
-        String varName = mi.getExpression().toString();
-        // useMarker.mark(varName, mi, method);
     }
 }

@@ -55,7 +55,7 @@ public class Invoke {
     public boolean isWhen() {
         if (expReturnType.isPresent()) {
             if (nonNull(var)) {
-            return var.isMock();
+                return var.isMock();
             } else {
                 return false;
             }

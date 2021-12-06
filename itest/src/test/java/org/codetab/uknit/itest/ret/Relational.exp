@@ -1,0 +1,35 @@
+package org.codetab.uknit.itest.ret;
+
+public class RelationalTest {
+    @InjectMocks
+    private Relational relational;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCheckRelational() {
+
+        boolean actual = relational.checkRelational();
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testCheckRelationalGt() {
+
+        boolean actual = relational.checkRelationalGt();
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testCheckConditional() {
+
+        boolean actual = relational.checkConditional();
+
+        assertTrue(actual);
+    }
+}

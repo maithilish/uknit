@@ -1,0 +1,11 @@
+package org.codetab.uknit.itest.clz;
+
+public class CuTest {
+    @InjectMocks
+    private Cu cu;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+}

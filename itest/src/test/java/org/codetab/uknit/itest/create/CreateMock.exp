@@ -1,0 +1,51 @@
+package org.codetab.uknit.itest.create;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CreateMockTest {
+    @InjectMocks
+    private CreateMock createMock;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCreateListOfMocks() {
+        List<LocalDate> list = new ArrayList<>();
+
+        List<LocalDate> actual = createMock.createListOfMocks();
+
+        assertSame(list, actual);
+    }
+
+    @Test
+    public void testDeclareAndCreateListOfMocks() {
+        List<LocalDate> list = new ArrayList<>();
+
+        List<LocalDate> actual = createMock.declareAndCreateListOfMocks();
+
+        assertSame(list, actual);
+    }
+
+    @Test
+    public void testCreateMockable() {
+        Event event = new Event("foo");
+
+        Event actual = createMock.createMockable();
+
+        assertSame(event, actual);
+    }
+
+    @Test
+    public void testDeclareAndCreateMockable() {
+        Event event = new Event("foo");
+
+        Event actual = createMock.declareAndCreateMockable();
+
+        assertSame(event, actual);
+    }
+}

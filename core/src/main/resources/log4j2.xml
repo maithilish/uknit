@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="logDir">${sys:uknit.log.dir:-logs}</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <ThresholdFilter level="WARN"
+                onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20c{1} %-8level %m%n%ex{10}" />
+        </Console>
+        <File name="LOG_FILE" fileName="${logDir}/uknit.log"
+            append="false">
+            <PatternLayout
+                pattern="%-20c{1} %-8level %m%n%ex" />
+        </File>
+
+        <!-- async appenders -->
+        <Async name="ASYNC">            
+            <AppenderRef ref="LOG_FILE" />
+            <AppenderRef ref="CONSOLE" />
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="ASYNC" />
+        </Root>
+    </Loggers>
+
+</Configuration>

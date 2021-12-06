@@ -1,0 +1,53 @@
+package org.codetab.uknit.itest.clz;
+
+import java.util.Date;
+
+public class PojoTest {
+    @InjectMocks
+    private Pojo pojo;
+
+    @Mock
+    private Date bar;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPojo() {
+        String foo = "Foo";
+        Date bar = Mockito.mock(Date.class);
+
+        Pojo actual = new Pojo(foo, bar);
+    }
+
+    @Test
+    public void testGetBar() {
+
+        Date actual = pojo.getBar();
+
+        assertSame(bar, actual);
+    }
+
+    @Test
+    public void testSetBar() {
+        Date bar = Mockito.mock(Date.class);
+        pojo.setBar(bar);
+    }
+
+    @Test
+    public void testGetFoo() {
+        String foo = "Foo";
+
+        String actual = pojo.getFoo();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testSetFoo() {
+        String foo = "Foo";
+        pojo.setFoo(foo);
+    }
+}

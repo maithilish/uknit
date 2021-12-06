@@ -1,0 +1,20 @@
+package org.codetab.uknit.itest.ret;
+
+public class MultiReturnPathTest {
+    @InjectMocks
+    private MultiReturnPath multiReturnPath;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testTwoReturnPaths() {
+        String grape = "bar";
+
+        String actual = multiReturnPath.twoReturnPaths();
+
+        assertEquals(grape, actual);
+    }
+}

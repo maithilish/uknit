@@ -1,0 +1,39 @@
+package org.codetab.uknit.itest.invoke;
+
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+
+public class CallStaticTest {
+    @InjectMocks
+    private CallStatic callStatic;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCallStatic() {
+        LocalDate date = Mockito.mock(LocalDate.class);
+        int grape = 1;
+
+        when(date.compareTo(LocalDate.now())).thenReturn(grape);
+
+        int actual = callStatic.callStatic(date);
+
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testStaticCallReturn() {
+
+        Date actual = callStatic.staticCallReturn();
+    }
+
+    @Test
+    public void testRealCallReturn() {
+
+        Date actual = callStatic.realCallReturn();
+    }
+}

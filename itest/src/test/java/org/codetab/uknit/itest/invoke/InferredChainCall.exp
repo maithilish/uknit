@@ -1,0 +1,35 @@
+package org.codetab.uknit.itest.invoke;
+
+import java.util.List;
+
+public class InferredChainCallTest {
+    @InjectMocks
+    private InferredChainCall inferredChainCall;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testInfer() {
+        Pets pets = Mockito.mock(Pets.class);
+        Map<String, List<Pet>> apple = new HashMap<>();
+
+        when(pets.getPets()).thenReturn(apple);
+        inferredChainCall.infer(pets);
+    }
+
+    @Test
+    public void testInferAndReturn() {
+        Pets pets = Mockito.mock(Pets.class);
+        Map<String, List<Pet>> apple = new HashMap<>();
+        List<Pet> dogs = new ArrayList<>();
+
+        when(pets.getPets()).thenReturn(apple);
+
+        List<Pet> actual = inferredChainCall.inferAndReturn(pets);
+
+        assertSame(dogs, actual);
+    }
+}

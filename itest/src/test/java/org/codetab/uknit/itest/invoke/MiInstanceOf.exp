@@ -1,0 +1,23 @@
+package org.codetab.uknit.itest.invoke;
+
+import com.google.common.base.Preconditions.checkState;
+
+public class MiInstanceOfTest {
+    @InjectMocks
+    private MiInstanceOf miInstanceOf;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testProcess() {
+        Pets pets = Mockito.mock(Pets.class);
+        Names names = Mockito.mock(Names.class);
+        Dog apple = Mockito.mock(Dog.class);
+
+        when(pets.getPet("foo")).thenReturn(apple);
+        miInstanceOf.process(pets, names);
+    }
+}

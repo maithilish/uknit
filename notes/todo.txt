@@ -1,0 +1,37 @@
+
+add test
+
+	public StringBuilder argArgMethodInvoke(final StringBuilder s1,
+            final File src, final File dest) {
+        StringBuilder sb = s1.append(src.renameTo(dest.getAbsoluteFile()));
+        return sb;
+    }
+
+    // assignments - expCarry test
+    public String createString() {
+        String a = new String("foo");
+        String b = a;
+        String c = b;
+        String d = c;
+        return d;
+    }
+
+	public int discardAssigment() {
+        int[] array = new int[1];
+        array[1] = 10;
+
+        array[0] = array[1];
+        array[0] = 3;
+        int foo = array[0];
+        return foo;
+    }
+        
+matcher
+
+	verify(pets).add(new Dog(apple)); to verify(pets).add(any(Dog.class));
+	
+	see invoke.MiCreateInstanceIT
+	    
+discard previous assignment	    
+
+change assertSame to equals - see CreateMockIT

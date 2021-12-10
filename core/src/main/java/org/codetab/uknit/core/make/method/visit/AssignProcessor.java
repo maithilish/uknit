@@ -36,7 +36,18 @@ public class AssignProcessor {
         if (nodes.is(lExp, SimpleName.class)) {
             String name = nodes.getName(lExp);
             IVar var = heap.findVar(name);
-            heap.findByRightExp(rExp).ifPresent(i -> i.setLeftVar(var));
+            Optional<ExpVar> evo = heap.findByRightExp(rExp);
+            if (evo.isPresent()) {
+                Optional<IVar> lvo = evo.get().getLeftVar();
+                if (lvo.isPresent()) {
+                    IVar inferVar = lvo.get();
+                    inferVar.setName(name);
+                    inferVar.setType(var.getType());
+                    inferVar.setMock(var.isMock());
+                } else {
+                    evo.get().setLeftVar(var);
+                }
+            }
         } else if (nodes.is(lExp, FieldAccess.class)) {
             FieldAccess fa = nodes.as(lExp, FieldAccess.class);
             String name = nodes.getName(fa.getName());

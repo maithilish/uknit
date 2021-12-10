@@ -65,7 +65,7 @@ public class Initializers {
 
 /**
  * Initializer defined in source.
- * @author m
+ * @author Maithilish
  *
  */
 class DefinedInitialzer {
@@ -172,7 +172,7 @@ class DefinedInitialzer {
 
 /**
  * Derive initializer based on config or type.
- * @author m
+ * @author Maithilish
  *
  */
 class DerivedInitialzer {

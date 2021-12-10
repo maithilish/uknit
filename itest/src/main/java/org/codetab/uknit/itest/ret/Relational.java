@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.ret;
 
 /**
  * Relational operators in return statement
- * @author m
+ * @author Maithilish
  *
  */
 public class Relational {

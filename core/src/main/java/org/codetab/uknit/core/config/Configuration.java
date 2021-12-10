@@ -7,7 +7,7 @@ import java.util.Properties;
  * Singleton, loads mocker.properties file and provide access to properties.
  * Default properties are overridden by user defined which is overridden by
  * system to get effective configs.
- * @author m
+ * @author Maithilish
  *
  */
 enum Configuration {

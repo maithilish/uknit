@@ -23,8 +23,18 @@ public class DefaultVar implements IVar {
     }
 
     @Override
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public void setType(final Type type) {
+        this.type = type;
     }
 
     @Override
@@ -66,4 +76,5 @@ public class DefaultVar implements IVar {
     public void setDeepStub(final boolean deepStub) {
         this.deepStub = deepStub;
     }
+
 }

@@ -16,7 +16,7 @@ import com.google.inject.assistedinject.Assisted;
  * ArrayList<>() is mapped to var list.
  * <p>
  * foo = "bar"; the StringLiteral exp is mapped to var foo.
- * @author m
+ * @author Maithilish
  *
  */
 public class ExpVar {
@@ -38,8 +38,16 @@ public class ExpVar {
         return rightExp;
     }
 
+    public void setRightExp(final Expression exp) {
+        this.rightExp = exp;
+    }
+
     public Expression getLeftExp() {
         return leftExp;
+    }
+
+    public void setLeftExp(final Expression exp) {
+        this.leftExp = exp;
     }
 
     public Optional<IVar> getLeftVar() {
@@ -70,5 +78,4 @@ public class ExpVar {
     public String toString() {
         return "ExpCarry [leftExp=" + leftExp + ", rightExp=" + rightExp + "]";
     }
-
 }

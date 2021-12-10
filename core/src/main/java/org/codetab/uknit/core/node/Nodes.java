@@ -23,8 +23,8 @@ public class Nodes {
         return clz.cast(o);
     }
 
-    public String getVariableName(final VariableDeclaration vdf) {
-        return vdf.getName().getFullyQualifiedName();
+    public String getVariableName(final VariableDeclaration vd) {
+        return vd.getName().getFullyQualifiedName();
     }
 
     public boolean isPrimitiveType(final FieldDeclaration fieldDecl) {

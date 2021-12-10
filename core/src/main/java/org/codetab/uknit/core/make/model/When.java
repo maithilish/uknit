@@ -13,12 +13,12 @@ public class When {
     // vars used by when - used to mark used
     private List<String> names;
 
-    private List<String> returnNames;
+    private List<IVar> returnVars;
 
     @Inject
     public When(@Assisted final String methodSignature) {
         this.methodSignature = methodSignature;
-        returnNames = new ArrayList<>();
+        returnVars = new ArrayList<>();
         names = new ArrayList<>();
     }
 
@@ -26,8 +26,8 @@ public class When {
         return names;
     }
 
-    public List<String> getReturnNames() {
-        return returnNames;
+    public List<IVar> getReturnVars() {
+        return returnVars;
     }
 
     public String getMethodSignature() {
@@ -36,7 +36,7 @@ public class When {
 
     @Override
     public String toString() {
-        return "When [mi=" + methodSignature + ", returnNames=" + returnNames
+        return "When [mi=" + methodSignature + ", returnVars=" + returnVars
                 + "]";
     }
 }

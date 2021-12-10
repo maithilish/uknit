@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
  * Holds test class outline such as package, imports, typeDecl and fields.
- * @author m
+ * @author Maithilish
  *
  */
 public class Clz {

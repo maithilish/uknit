@@ -9,11 +9,14 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.body.Initializers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
+import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -25,14 +28,25 @@ public class UseMarkers {
     @Inject
     private Nodes nodes;
     @Inject
+    private Methods methods;
+    @Inject
     private Initializers initializers;
 
     public void markVarsUsedInWhens(final Heap heap) {
         for (When when : heap.getWhens()) {
-            for (String name : when.getReturnNames()) {
-                heap.findVar(name).setUsed(true);
+            for (IVar var : when.getReturnVars()) {
+                var.setUsed(true);
             }
             for (String name : when.getNames()) {
+                heap.findVar(name).setUsed(true);
+            }
+        }
+    }
+
+    public void markVarsUsedInVerify(final Heap heap) {
+        for (Verify verify : heap.getVerifies()) {
+            MethodInvocation mi = verify.getMi();
+            for (String name : methods.getNames(mi)) {
                 heap.findVar(name).setUsed(true);
             }
         }

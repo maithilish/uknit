@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.stage;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
@@ -13,12 +14,13 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.TypeException;
 import org.codetab.uknit.core.make.Variables;
 import org.codetab.uknit.core.make.model.ExpReturnType;
+import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.InferVar;
 import org.codetab.uknit.core.make.model.Invoke;
-import org.codetab.uknit.core.make.model.LocalVar;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Parameter;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
@@ -26,7 +28,7 @@ import org.codetab.uknit.core.node.TypeResolver;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 public class VarStager {
 
@@ -45,10 +47,19 @@ public class VarStager {
     @Inject
     private TypeResolver typeResolver;
 
-    public LocalVar stageLocalVar(final VariableDeclarationFragment vdf,
-            final Type type, final boolean mock, final Heap heap) {
+    public IVar stageParameter(final VariableDeclaration vd, final Type type,
+            final boolean mock, final Heap heap) {
+        String name = nodes.getVariableName(vd);
+        Parameter parameter = modelFactory.createParameter(name, type, mock);
+        heap.getVars().add(parameter);
+        LOG.debug("stage parameter {}", parameter);
+        return parameter;
+    }
 
-        LOG.debug("vdf node: {}", vdf);
+    public IVar stageLocalVar(final VariableDeclaration vd, final Type type,
+            final boolean mock, final Heap heap) {
+
+        LOG.debug("vdf node: {}", vd);
 
         /*
          * if fragment's initializer is new instance then it is real, other
@@ -57,9 +68,9 @@ public class VarStager {
         boolean fragmentIsMock = mock;
         boolean exposed = true;
         Type fragmentType = type;
-        String name = nodes.getVariableName(vdf);
+        String name = nodes.getVariableName(vd);
 
-        Expression initializer = vdf.getInitializer();
+        Expression initializer = vd.getInitializer();
         if (nonNull(initializer)) {
             if (nodes.isClassInstanceCreation(initializer)) {
                 fragmentIsMock = false;
@@ -76,15 +87,27 @@ public class VarStager {
             }
         }
 
-        LocalVar localVar =
-                modelFactory.createLocalVar(name, fragmentType, fragmentIsMock);
-        localVar.setExposed(exposed);
-        heap.getVars().add(localVar);
-
+        IVar localVar = null;
         if (nonNull(initializer)) {
-            heap.findByRightExp(initializer)
-                    .ifPresent(i -> i.setLeftVar(localVar));
+            Optional<ExpVar> evo = heap.findByRightExp(initializer);
+            if (evo.isPresent()) {
+                Optional<IVar> lvo = evo.get().getLeftVar();
+                if (lvo.isPresent()) {
+                    IVar inferVar = lvo.get();
+                    inferVar.setName(name);
+                    inferVar.setType(fragmentType);
+                    inferVar.setMock(fragmentIsMock);
+                    localVar = inferVar;
+                }
+            }
         }
+
+        if (isNull(localVar)) {
+            localVar = modelFactory.createLocalVar(name, fragmentType,
+                    fragmentIsMock);
+            heap.getVars().add(localVar);
+        }
+        localVar.setExposed(exposed);
 
         LOG.debug("stage var {}", localVar);
         return localVar;
@@ -145,4 +168,5 @@ public class VarStager {
         LOG.debug("stage var {}", inferVar);
         return inferVar;
     }
+
 }

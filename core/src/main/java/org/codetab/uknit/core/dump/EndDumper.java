@@ -12,7 +12,7 @@ import com.google.common.base.Strings;
 /**
  * Visits (end visit methods) all nodes and dumps to a file.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class EndDumper extends ASTVisitor {

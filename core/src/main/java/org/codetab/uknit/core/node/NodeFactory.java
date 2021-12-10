@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.codetab.uknit.core.make.model.IVar;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
@@ -144,12 +145,12 @@ public class NodeFactory {
     }
 
     public Statement createWhenStatement(final String methodSignature,
-            final List<String> returnNames, final String whenFormat,
+            final List<IVar> returnVars, final String whenFormat,
             final String returnFormat) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(whenFormat, methodSignature));
-        for (String returnName : returnNames) {
-            sb.append(String.format(returnFormat, returnName));
+        for (IVar returnVar : returnVars) {
+            sb.append(String.format(returnFormat, returnVar.getName()));
         }
         sb.append(";");
         Statement whenStmt = snippetParser.parseStatement(sb.toString());

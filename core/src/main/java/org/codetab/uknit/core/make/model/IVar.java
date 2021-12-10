@@ -4,25 +4,29 @@ import org.eclipse.jdt.core.dom.Type;
 
 public interface IVar {
 
-    public String getName();
+    String getName();
 
-    public Type getType();
+    void setName(String name);
 
-    public boolean isMock();
+    Type getType();
+
+    void setType(Type type);
+
+    boolean isMock();
 
     void setMock(final boolean mock);
 
-    public boolean isUsed();
+    boolean isUsed();
 
     void setUsed(final boolean used);
 
-    public boolean isExposed();
+    boolean isExposed();
 
     void setExposed(final boolean exposed);
 
-    public boolean isDeepStub();
+    boolean isDeepStub();
 
-    public void setDeepStub(final boolean deepStub);
+    void setDeepStub(final boolean deepStub);
 
     public default boolean isField() {
         return false;

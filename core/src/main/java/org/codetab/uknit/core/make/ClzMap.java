@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 /**
  * Maps name of class-under-test to Clz.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class ClzMap extends HashMap<String, Clz> {

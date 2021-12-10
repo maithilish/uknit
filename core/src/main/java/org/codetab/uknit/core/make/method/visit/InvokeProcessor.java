@@ -19,7 +19,6 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.InferVar;
 import org.codetab.uknit.core.make.model.Invoke;
-import org.codetab.uknit.core.make.model.LocalVar;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
@@ -29,7 +28,7 @@ import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 public class InvokeProcessor {
 
@@ -87,10 +86,9 @@ public class InvokeProcessor {
     }
 
     public void stageLocalVarWhen(
-            final Map<LocalVar, VariableDeclarationFragment> fragments,
-            final Heap heap) {
-        for (LocalVar localVar : fragments.keySet()) {
-            VariableDeclarationFragment vdf = fragments.get(localVar);
+            final Map<IVar, VariableDeclaration> fragments, final Heap heap) {
+        for (IVar localVar : fragments.keySet()) {
+            VariableDeclaration vdf = fragments.get(localVar);
             Expression exp = vdf.getInitializer();
             if (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
                 MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
@@ -123,13 +121,6 @@ public class InvokeProcessor {
         exps.addAll(methods.getArguments(mi));
         expReplacer.replaceExpWithInfer(mi, exps, heap);
     }
-
-    // public boolean requireProcess(final MethodInvocation mi) {
-    // if (methods.isStaticCall(mi)) {
-    // return true;
-    // }
-    // return true;
-    // }
 
     /**
      * Change infer var type to instance type, the expReturnType still points to

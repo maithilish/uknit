@@ -9,7 +9,6 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Variables;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.stage.CallStager;
-import org.codetab.uknit.core.make.method.stage.ParameterStager;
 import org.codetab.uknit.core.make.method.visit.UseMarker;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
@@ -34,8 +33,6 @@ public class MethodMaker {
     private DInjector di;
     @Inject
     private MethodMakers methodMakers;
-    @Inject
-    private ParameterStager parameterStager;
     @Inject
     private CallStager callStager;
     @Inject
@@ -93,10 +90,8 @@ public class MethodMaker {
         heap = di.instance(Heap.class);
         visitor.setHeap(heap);
 
-        // add method under test call and parameters
+        // add method under test call
         callStager.stageCall(methodUnderTest, heap);
-        parameterStager.stageParameters(methods.getParameters(methodUnderTest),
-                heap);
 
         // to set deep stub, set fields
         heap.getVars().addAll(clzMap.getFields(clzName));

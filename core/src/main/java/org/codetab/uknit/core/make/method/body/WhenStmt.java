@@ -26,7 +26,7 @@ public class WhenStmt {
         for (When when : heap.getWhens()) {
             Statement stmt =
                     nodeFactory.createWhenStatement(when.getMethodSignature(),
-                            when.getReturnNames(), whenFormat, returnFormat);
+                            when.getReturnVars(), whenFormat, returnFormat);
             stmts.add(stmt);
         }
         return stmts;

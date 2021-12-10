@@ -1,0 +1,20 @@
+package org.codetab.uknit.itest.flow;
+
+import java.util.Map;
+
+public class InferredForEachTest {
+    @InjectMocks
+    private InferredForEach inferredForEach;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testProcess() {
+        Map<String, Pet> pets = new HashMap<>();
+        String key = "Foo";
+        inferredForEach.process(pets);
+    }
+}

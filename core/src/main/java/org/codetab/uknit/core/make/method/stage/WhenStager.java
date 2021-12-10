@@ -61,7 +61,7 @@ public class WhenStager {
             when = modelFactory.createWhen(miWhenCopy.toString());
             heap.getWhens().add(when);
         }
-        when.getReturnNames().add(var.getName());
+        when.getReturnVars().add(var);
 
         List<String> usedNames = methods.getNames(miWhenCopy);
         when.getNames().addAll(usedNames);

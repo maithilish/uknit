@@ -15,7 +15,6 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -36,8 +35,6 @@ public class MethodMaker {
     private CallStager callStager;
     @Inject
     private BodyMaker bodyMaker;
-    @Inject
-    private Nodes nodes;
     @Inject
     private Methods methods;
     @Inject

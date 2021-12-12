@@ -125,9 +125,11 @@ public class SourceVisitor extends ASTVisitor {
         }
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
-        if (methodMaker.stageMethod(node)) {
-            methodMaker.addMethod();
+
+        if (methodMaker.isStageable(node) && methodMaker.stageMethod(node)) {
+            methodMaker.generateTestMethod();
         }
+
         return true;
     }
 }

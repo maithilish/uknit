@@ -1,0 +1,16 @@
+package org.codetab.uknit.itest.nest;
+
+public class HelloWorldAnonymousClassTest {
+    @InjectMocks
+    private HelloWorldAnonymousClass helloWorldAnonymousClass;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testSayHello() {
+        helloWorldAnonymousClass.sayHello();
+    }
+}

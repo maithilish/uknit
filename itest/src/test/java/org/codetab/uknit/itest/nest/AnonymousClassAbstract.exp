@@ -1,0 +1,21 @@
+package org.codetab.uknit.itest.nest;
+
+public class AnonymousClassAbstractTest {
+    @InjectMocks
+    private AnonymousClassAbstract anonymousClassAbstract;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAdd() {
+        Calc calc = Mockito.mock(Calc.class);
+        anonymousClassAbstract.add(calc);
+
+        ArgumentCaptor<Addable<Integer>> argcA = ArgumentCaptor.forClass(Addable.class);
+
+        verify(calc).op(1, 2, argcA.capture());
+    }
+}

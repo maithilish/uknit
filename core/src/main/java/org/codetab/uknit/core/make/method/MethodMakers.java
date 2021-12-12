@@ -9,9 +9,12 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.util.StringUtils;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -33,6 +36,8 @@ public class MethodMakers {
     private Methods methods;
     @Inject
     private Types types;
+    @Inject
+    private Nodes nodes;
     @Inject
     private NodeFactory nodeFactory;
     @Inject
@@ -146,5 +151,32 @@ public class MethodMakers {
             }
         }
         return ignore;
+    }
+
+    public boolean isLocalClassMethod(final MethodDeclaration node) {
+        ASTNode parent = node.getParent();
+        while (parent != null) {
+            if (nodes.is(parent, MethodDeclaration.class)) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+
+    public boolean isInnerClassMethod(final MethodDeclaration node) {
+        int nestCount = 0;
+        ASTNode parent = node.getParent();
+        while (parent != null) {
+            if (nodes.is(parent, TypeDeclaration.class)) {
+                nestCount++;
+            }
+            parent = parent.getParent();
+        }
+        return nestCount > 1;
+    }
+
+    public boolean isAnonymousClassMethod(final MethodDeclaration node) {
+        return nodes.is(node.getParent(), AnonymousClassDeclaration.class);
     }
 }

@@ -1,0 +1,21 @@
+package org.codetab.uknit.itest.nest;
+
+public class AnonymousClassParameterizedTest {
+    @InjectMocks
+    private AnonymousClassParameterized anonymousClassParameterized;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAdd() {
+        Calc2 calc = Mockito.mock(Calc2.class);
+        anonymousClassParameterized.add(calc);
+
+        ArgumentCaptor<IAddable<Integer>> argcA = ArgumentCaptor.forClass(IAddable.class);
+
+        verify(calc).op(1, 2, argcA.capture());
+    }
+}

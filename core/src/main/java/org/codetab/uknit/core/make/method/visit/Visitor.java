@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
@@ -238,6 +239,11 @@ public class Visitor extends ASTVisitor {
     @Override
     public boolean visit(final AnonymousClassDeclaration node) {
         return false; // don't visit child nodes
+    }
+
+    @Override
+    public boolean visit(final TypeDeclaration node) {
+        return false; // for now don't process local class inside a method
     }
 
     public void setHeap(final Heap heap) {

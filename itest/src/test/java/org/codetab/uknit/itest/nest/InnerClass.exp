@@ -1,0 +1,16 @@
+package org.codetab.uknit.itest.nest;
+
+public class InnerClassTest {
+    @InjectMocks
+    private InnerClass innerClass;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPrintEven() {
+        innerClass.printEven();
+    }
+}

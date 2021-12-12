@@ -17,7 +17,6 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
@@ -58,51 +57,38 @@ public class MethodMaker {
 
     private TypeDeclaration clzDecl;
 
-    public boolean stageMethod(final MethodDeclaration node) {
-        MethodDeclaration methodUnderTest = node;
+    public boolean stageMethod(final MethodDeclaration method) {
 
         LOG.debug("==== method under test: {} ====",
-                methods.getMethodName(methodUnderTest));
+                methods.getMethodName(method));
 
         variables.resetIndexes();
 
-        if (nodes.is(methodUnderTest.getParent(),
-                AnonymousClassDeclaration.class)) {
-            LOG.debug("method belongs to an anonymous class, ignore");
-            return false;
-        }
-        if (methodMakers.ignoreMethod(node)) {
-            LOG.debug("method {} ignored", node.getName());
-            return false;
-        }
-
         String clzName = methodMakers
-                .getTestClzName((TypeDeclaration) methodUnderTest.getParent());
+                .getTestClzName((TypeDeclaration) method.getParent());
         clzDecl = clzMap.getTypeDecl(clzName);
 
-        String testMethodName =
-                methodMakers.getTestMethodName(methodUnderTest, clzDecl);
+        String testMethodName = methodMakers.getTestMethodName(method, clzDecl);
 
-        methodDecl = methodMakers.constructTestMethod(methodUnderTest,
-                testMethodName);
+        methodDecl = methodMakers.constructTestMethod(method, testMethodName);
 
         Visitor visitor = di.instance(Visitor.class);
         heap = di.instance(Heap.class);
         visitor.setHeap(heap);
 
         // add method under test call
-        callStager.stageCall(methodUnderTest, heap);
+        callStager.stageCall(method, heap);
 
         // to set deep stub, set fields
         heap.getVars().addAll(clzMap.getFields(clzName));
 
-        methodUnderTest.accept(visitor);
+        method.accept(visitor);
 
         useMarker.mark(heap);
         return true;
     }
 
-    public void addMethod() {
+    public void generateTestMethod() {
         // generate parameters, infer and local vars
         bodyMaker.generateVarStmts(methodDecl, heap);
         bodyMaker.generateReturnVarStmt(methodDecl, heap);
@@ -140,5 +126,33 @@ public class MethodMaker {
 
     public void setClzMap(final ClzMap clzMap) {
         this.clzMap = clzMap;
+    }
+
+    /**
+     * Anonymous class method, Inner class method, Local class method,
+     * constructor and main methods are not stageable.
+     * @param node
+     * @return
+     */
+    public boolean isStageable(final MethodDeclaration node) {
+        boolean stage = true;
+        if (methodMakers.isAnonymousClassMethod(node)) {
+            LOG.debug("method belongs to an anonymous class, ignore");
+            stage = false;
+        }
+        if (methodMakers.isLocalClassMethod(node)) {
+            LOG.debug("method belongs to an anonymous class, ignore");
+            stage = false;
+        }
+        if (methodMakers.isInnerClassMethod(node)) {
+            LOG.debug("method belongs to an anonymous class, ignore");
+            stage = false;
+        }
+        // constructor or main methods
+        if (methodMakers.ignoreMethod(node)) {
+            LOG.debug("method {} ignored", node.getName());
+            stage = false;
+        }
+        return stage;
     }
 }

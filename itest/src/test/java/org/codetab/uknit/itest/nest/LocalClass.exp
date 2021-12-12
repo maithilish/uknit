@@ -1,0 +1,18 @@
+package org.codetab.uknit.itest.nest;
+
+public class LocalClassTest {
+    @InjectMocks
+    private LocalClass localClass;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testValidatePhoneNumber() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+    }
+}

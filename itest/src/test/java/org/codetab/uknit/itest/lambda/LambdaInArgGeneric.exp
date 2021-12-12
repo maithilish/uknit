@@ -1,0 +1,32 @@
+package org.codetab.uknit.itest.lambda;
+
+public class LambdaInArgGenericTest {
+    @InjectMocks
+    private LambdaInArgGeneric lambdaInArgGeneric;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCalculate() {
+        CalcB calcB = Mockito.mock(CalcB.class);
+        int divValue = 1;
+        Integer kiwi = Integer.valueOf(1);
+
+        when(calcB.op(8, 4, any(OperationB.class))).thenReturn(divValue);
+        when(calcB.op(6, 3, any(OperationB.class))).thenReturn(kiwi);
+
+        Integer actual = lambdaInArgGeneric.calculate(calcB);
+
+        assertEquals(kiwi, actual);
+
+        ArgumentCaptor<OperationB<Integer>> argcA = ArgumentCaptor.forClass(OperationB.class);
+        ArgumentCaptor<OperationB<Integer>> argcB = ArgumentCaptor.forClass(OperationB.class);
+        ArgumentCaptor<OperationB<Integer>> argcC = ArgumentCaptor.forClass(OperationB.class);
+        verify(calcB).op(1, 2, argcA.capture());
+        verify(calcB).op(8, 4, argcB.capture());
+        verify(calcB).op(6, 3, argcC.capture());
+    }
+}

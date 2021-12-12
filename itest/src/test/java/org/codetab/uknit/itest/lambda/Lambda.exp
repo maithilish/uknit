@@ -1,0 +1,50 @@
+package org.codetab.uknit.itest.lambda;
+
+import java.io.FileFilter;
+import java.util.function.BiFunction;
+
+public class LambdaTest {
+    @InjectMocks
+    private Lambda lambda;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testReturnLambdaVar() {
+
+        FileFilter actual = lambda.returnLambdaVar();
+    }
+
+    @Test
+    public void testReturnLambda() {
+
+        FileFilter actual = lambda.returnLambda();
+    }
+
+    @Test
+    public void testReturnLambdaVarParentheses() {
+
+        BiFunction actual = lambda.returnLambdaVarParentheses();
+    }
+
+    @Test
+    public void testReturnLambdaParentheses() {
+
+        BiFunction actual = lambda.returnLambdaParentheses();
+    }
+
+    @Test
+    public void testReturnLambdaVarTyped() {
+
+        BiFunction<Integer, Integer, Integer> actual = lambda.returnLambdaVarTyped();
+    }
+
+    @Test
+    public void testReturnLambdaTyped() {
+
+        BiFunction<Integer, Integer, Integer> actual = lambda.returnLambdaTyped();
+    }
+}

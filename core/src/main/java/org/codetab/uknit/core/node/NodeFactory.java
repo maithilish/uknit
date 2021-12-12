@@ -179,15 +179,15 @@ public class NodeFactory {
         return (Statement) ASTNode.copySubtree(ast, verifyStmt);
     }
 
-    // public Statement createCaptureStatement(final String varName,
-    // final String parameterizedType, final String type,
-    // final String format) {
-    // String capture =
-    // String.format(format, parameterizedType, varName, type);
-    // Statement captureStmt = snippetParser.parseStatement(capture);
-    // return (Statement) ASTNode.copySubtree(ast, captureStmt);
-    // }
-    //
+    public Statement createCaptureStatement(final String varName,
+            final String parameterizedType, final String type,
+            final String format) {
+        String capture =
+                String.format(format, parameterizedType, varName, type);
+        Statement captureStmt = snippetParser.parseStatement(capture);
+        return (Statement) ASTNode.copySubtree(ast, captureStmt);
+    }
+
     /**
      * Create Test Method call which returns void.
      * @param invokeOn

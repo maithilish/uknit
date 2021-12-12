@@ -37,7 +37,7 @@ public class VarStmt {
             } else if (var instanceof InferVar && var.isUsed()) {
                 createStmt = true;
             } else if (var instanceof LocalVar && var.isUsed()
-                    && var.isExposed()) {
+                    && !var.isHidden()) {
                 createStmt = true;
             }
             if (createStmt) {

@@ -66,7 +66,7 @@ public class VarStager {
          * fragments may still be mock
          */
         boolean fragmentIsMock = mock;
-        boolean exposed = true;
+        boolean hidden = false;
         Type fragmentType = type;
         String name = nodes.getVariableName(vd);
 
@@ -77,7 +77,7 @@ public class VarStager {
             }
             if (nodes.isAnonOrLambda(initializer)) {
                 fragmentIsMock = false;
-                exposed = false;
+                hidden = true;
             }
             if (nodes.is(initializer, MethodInvocation.class)) {
                 if (methods.isStaticCall(
@@ -107,7 +107,7 @@ public class VarStager {
                     fragmentIsMock);
             heap.getVars().add(localVar);
         }
-        localVar.setExposed(exposed);
+        localVar.setHidden(hidden);
 
         LOG.debug("stage var {}", localVar);
         return localVar;

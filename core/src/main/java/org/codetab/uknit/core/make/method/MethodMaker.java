@@ -109,7 +109,7 @@ public class MethodMaker {
         bodyMaker.generateWhenStmts(methodDecl, heap);
         bodyMaker.generateCallStmt(methodDecl, heap);
         bodyMaker.generateAssertStmt(methodDecl, heap);
-        // bodyMaker.generateArgCaptureStmts(methodDecl, method);
+        bodyMaker.generateArgCaptureStmts(methodDecl, heap);
         bodyMaker.generateVerifyStmts(methodDecl, heap);
 
         methodMakers.addMethod(clzDecl, methodDecl);

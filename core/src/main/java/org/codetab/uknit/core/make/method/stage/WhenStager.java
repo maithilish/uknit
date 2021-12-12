@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.visit.AnonymousProcessor;
+import org.codetab.uknit.core.make.method.visit.LambdaProcessor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -23,6 +24,8 @@ public class WhenStager {
     private ModelFactory modelFactory;
     @Inject
     private AnonymousProcessor anonymousProcessor;
+    @Inject
+    private LambdaProcessor lambdaProcessor;
     @Inject
     private VerifyStager verifyStager;
     @Inject
@@ -45,13 +48,12 @@ public class WhenStager {
         if (anonReplaced) {
             verifyStager.stageVerify(miVerifyCopy, resolvableMi, heap);
         }
-        // TODO - Fix this
-        // boolean lambdaReplaced =
-        // lambdaProcessor.replaceLambdaArgs(miWhenCopy,
-        // resolvableMi, heap);
-        // if (lambdaReplaced) {
-        // verifyStager.stageVerify(miVerifyCopy, resolvableMi, heap);
-        // }
+
+        boolean lambdaReplaced = lambdaProcessor.replaceLambdaArgs(miWhenCopy,
+                resolvableMi, heap);
+        if (lambdaReplaced) {
+            verifyStager.stageVerify(miVerifyCopy, resolvableMi, heap);
+        }
 
         Optional<When> w = heap.findWhen(miWhenCopy.toString());
         When when = null;

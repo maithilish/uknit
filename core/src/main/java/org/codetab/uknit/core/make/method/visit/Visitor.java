@@ -101,8 +101,10 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final ReturnStatement node) {
         returnProcessor.replaceExpression(node, heap);
-        Optional<IVar> returnVar = returnProcessor.getExpectedVar(node, heap);
-        heap.setExpectedVar(returnVar);
+        Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
+        if (expectedVar.isPresent() && !expectedVar.get().isHidden()) {
+            heap.setExpectedVar(expectedVar);
+        }
     }
 
     @Override

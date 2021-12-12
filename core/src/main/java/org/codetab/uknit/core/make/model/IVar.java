@@ -20,9 +20,9 @@ public interface IVar {
 
     void setUsed(final boolean used);
 
-    boolean isExposed();
+    boolean isHidden();
 
-    void setExposed(final boolean exposed);
+    void setHidden(final boolean hidden);
 
     boolean isDeepStub();
 

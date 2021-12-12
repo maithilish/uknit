@@ -52,6 +52,11 @@ public class ReturnProcessor {
                  * heap
                  */
                 IVar var = heap.findVar(name);
+
+                if (nodes.isAnonOrLambda(exp)) {
+                    var.setHidden(true);
+                }
+
                 // if (types.isBoolean(var.getType())) {
                 // var.setUsed(false);
                 // } else {
@@ -60,6 +65,8 @@ public class ReturnProcessor {
                 // }
                 expectedVar = modelFactory.createReturnVar(var.getName(),
                         var.getType(), var.isMock());
+
+                expectedVar.setHidden(var.isHidden());
             } catch (IllegalStateException e) {
                 /*
                  * field var is not created for real types, but getter may

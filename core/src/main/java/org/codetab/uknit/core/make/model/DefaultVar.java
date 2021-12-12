@@ -8,12 +8,12 @@ public class DefaultVar implements IVar {
     protected Type type;
     protected boolean mock;
     protected boolean used;
-    protected boolean exposed;
+    protected boolean hidden;
     protected boolean deepStub;
 
     public DefaultVar() {
         this.used = true;
-        this.exposed = true;
+        this.hidden = false;
         this.deepStub = false;
     }
 
@@ -58,13 +58,13 @@ public class DefaultVar implements IVar {
     }
 
     @Override
-    public boolean isExposed() {
-        return exposed;
+    public boolean isHidden() {
+        return hidden;
     }
 
     @Override
-    public void setExposed(final boolean exposed) {
-        this.exposed = exposed;
+    public void setHidden(final boolean hidden) {
+        this.hidden = hidden;
     }
 
     @Override

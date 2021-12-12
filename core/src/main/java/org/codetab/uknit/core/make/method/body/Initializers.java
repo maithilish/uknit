@@ -9,9 +9,11 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.Variables;
+import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
@@ -19,12 +21,15 @@ import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
@@ -37,15 +42,20 @@ public class Initializers {
     @Inject
     private DefinedInitialzer definedInitialzer;
     @Inject
+    private EnumInitializer enumInitializer;
+    @Inject
     private DerivedInitialzer derivedInitialzer;
 
     public String getInitializer(final IVar var, final Heap heap) {
         String initializer = null;
         Optional<Expression> iniExp =
                 definedInitialzer.getInitializer(var, heap);
+        Optional<String> enumIni = enumInitializer.getInitializer(var, heap);
 
         if (iniExp.isPresent() && definedInitialzer.isAllowed(iniExp.get())) {
             initializer = iniExp.get().toString();
+        } else if (enumIni.isPresent()) {
+            initializer = enumIni.get();
         } else {
             initializer = derivedInitialzer.deriveInitializer(var, heap);
         }
@@ -78,7 +88,7 @@ class DefinedInitialzer {
             TypeLiteral.class, CharacterLiteral.class, NullLiteral.class,
             ClassInstanceCreation.class, ArrayCreation.class,
             PrefixExpression.class, PostfixExpression.class,
-            InfixExpression.class};
+            InfixExpression.class, QualifiedName.class};
 
     public boolean isAllowed(final Expression exp) {
         for (Class<?> clz : allowed) {
@@ -114,6 +124,7 @@ class DefinedInitialzer {
         Expression initializerExp = null;
         String varName = var.getName();
         Expression rExp = null;
+
         while (true) {
             final String name = varName;
             final Expression exp = rExp;
@@ -214,5 +225,35 @@ class DerivedInitialzer {
             }
         }
         return initializer;
+    }
+}
+
+class EnumInitializer {
+
+    public Optional<String> getInitializer(final IVar var, final Heap heap) {
+        Optional<Invoke> invo = heap.findInvokeByInferVar(var);
+        ITypeBinding typeBind = null;
+        if (invo.isPresent()) {
+            Invoke invoke = invo.get();
+            Optional<ExpReturnType> exrto = invoke.getExpReturnType();
+            if (exrto.isPresent()) {
+                typeBind = exrto.get().getTypeBinding();
+            }
+        } else {
+            typeBind = var.getType().resolveBinding();
+        }
+        if (nonNull(typeBind) && typeBind.isEnum()) {
+            String packg = typeBind.getPackage().getName();
+            String qName = typeBind.getQualifiedName();
+            IVariableBinding[] fields = typeBind.getDeclaredFields();
+            if (fields.length > 1 && fields[0].getName().contains("$VALUES")) {
+                String firstEnumConstant = fields[1].getName();
+                String enumName =
+                        qName.replace(String.join(".", packg, ""), "");
+                return Optional
+                        .of(String.join(".", enumName, firstEnumConstant));
+            }
+        }
+        return Optional.empty();
     }
 }

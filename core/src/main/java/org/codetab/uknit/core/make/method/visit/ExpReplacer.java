@@ -34,8 +34,8 @@ public class ExpReplacer {
     public void replaceExpWithInfer(final ASTNode node,
             final List<Expression> exps, final Heap heap) {
         for (Expression exp : exps) {
-            Optional<Invoke> o = heap.getInvoke(exp);
-            if (o.isPresent() && o.get().getInferVar().isPresent()) {
+            Optional<Invoke> o = heap.findInvoke(exp);
+            if (o.isPresent() && o.get().getReturnVar().isPresent()) {
                 Invoke invoke = o.get();
                 MethodInvocation mi = invoke.getMi();
                 boolean replace = true;
@@ -59,7 +59,7 @@ public class ExpReplacer {
                     Optional<ExpReturnType> ro = invoke.getExpReturnType();
                     if (ro.isPresent()) {
                         boolean returnReal = !ro.get().isMock();
-                        IVar var = invoke.getVar();
+                        IVar var = invoke.getCallVar();
                         boolean varReal = !(nonNull(var) && var.isMock());
                         if (varReal && returnReal) {
                             replace = false;
@@ -69,7 +69,7 @@ public class ExpReplacer {
 
                 if (replace) {
                     // if when returns inferVar, then replace
-                    String name = invoke.getInferVar().get().getName();
+                    String name = invoke.getReturnVar().get().getName();
                     replacers.replaceExpWithVar(node, invoke.getMi(), name);
                 }
             }

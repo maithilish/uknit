@@ -83,13 +83,19 @@ public class Heap {
                 .findAny();
     }
 
-    public Optional<Invoke> getInvoke(final Expression exp) {
+    public Optional<Invoke> findInvoke(final Expression exp) {
         return invokes.stream().filter(n -> n.getMi().equals(exp)).findFirst();
     }
 
-    public Optional<Invoke> getInvoke(final IVar var) {
+    public Optional<Invoke> findInvoke(final IVar var) {
         return invokes.stream().filter(n -> {
-            Optional<InferVar> v = n.getInferVar();
+            return n.getCallVar().getName().equals(var.getName());
+        }).findFirst();
+    }
+
+    public Optional<Invoke> findInvokeByInferVar(final IVar var) {
+        return invokes.stream().filter(n -> {
+            Optional<IVar> v = n.getReturnVar();
             if (v.isPresent()) {
                 return v.get().getName().equals(var.getName());
             } else {

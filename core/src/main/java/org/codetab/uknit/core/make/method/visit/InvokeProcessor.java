@@ -17,7 +17,6 @@ import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.InferVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.Methods;
@@ -65,10 +64,9 @@ public class InvokeProcessor {
         return modelFactory.createInvoke(var, expReturnType, mi);
     }
 
-    public Optional<InferVar> stageInferVar(final Invoke invoke,
-            final Heap heap) {
-        Optional<InferVar> inferVar = varStager.stageInferVar(invoke, heap);
-        invoke.setInferVar(inferVar);
+    public Optional<IVar> stageInferVar(final Invoke invoke, final Heap heap) {
+        Optional<IVar> inferVar = varStager.stageInferVar(invoke, heap);
+        invoke.setReturnVar(inferVar);
 
         if (inferVar.isPresent()) {
             ExpVar varExp = varExpStager.stage(null, invoke.getMi(), heap);
@@ -79,7 +77,7 @@ public class InvokeProcessor {
     }
 
     public void stageInferVarWhen(final Invoke invoke, final Heap heap) {
-        Optional<InferVar> inferVar = invoke.getInferVar();
+        Optional<IVar> inferVar = invoke.getReturnVar();
         if (inferVar.isPresent()) {
             whenStager.stageWhen(invoke, inferVar.get(), heap);
         }
@@ -92,7 +90,7 @@ public class InvokeProcessor {
             Expression exp = vdf.getInitializer();
             if (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
                 MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
-                Optional<Invoke> invoke = heap.getInvoke(mi);
+                Optional<Invoke> invoke = heap.findInvoke(mi);
                 if (invoke.isPresent() && invoke.get().isWhen()) {
                     whenStager.stageWhen(invoke.get(), localVar, heap);
                 }
@@ -103,11 +101,12 @@ public class InvokeProcessor {
     public void stageVerify(final Expression exp, final Heap heap) {
         if (nodes.is(exp, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
-            Optional<Invoke> o = heap.getInvoke(mi);
+            Optional<Invoke> o = heap.findInvoke(mi);
             if (o.isPresent()) {
                 Invoke invoke = o.get();
                 // method invoked on mock
-                if (nonNull(invoke.getVar()) && invoke.getVar().isMock()) {
+                if (nonNull(invoke.getCallVar())
+                        && invoke.getCallVar().isMock()) {
                     MethodInvocation resolvableMi = mi;
                     verifyStager.stageVerify(mi, resolvableMi, heap);
                 }
@@ -131,9 +130,9 @@ public class InvokeProcessor {
      */
     public void changeToInstanceofType(final InstanceofExpression ioe,
             final MethodInvocation mi, final Heap heap) {
-        heap.getInvoke(mi).ifPresent(invoke -> {
+        heap.findInvoke(mi).ifPresent(invoke -> {
             Type type = ioe.getRightOperand();
-            invoke.getInferVar().ifPresent(i -> i.setType(type));
+            invoke.getReturnVar().ifPresent(i -> i.setType(type));
         });
     }
 }

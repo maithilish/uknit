@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.TypeNameException;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 
 public class Mocks {
@@ -35,6 +36,10 @@ public class Mocks {
             String key = String.join(".", "uknit.createInstance", typeName);
             String instanceType = configs.getConfig(key);
             if (nonNull(instanceType)) {
+                return false;
+            }
+            ITypeBinding typeBind = type.resolveBinding();
+            if (nonNull(typeBind) && typeBind.isEnum()) {
                 return false;
             }
         } catch (TypeNameException e) {

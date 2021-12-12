@@ -113,18 +113,17 @@ public class VarStager {
         return localVar;
     }
 
-    public Optional<InferVar> stageInferVar(final Invoke invoke,
-            final Heap heap) {
+    public Optional<IVar> stageInferVar(final Invoke invoke, final Heap heap) {
         LOG.debug("mi node: {}", invoke.getMi());
         Optional<ExpReturnType> expReturnType = invoke.getExpReturnType();
         InferVar inferVar = null;
         if (expReturnType.isPresent()) {
             Type type = expReturnType.get().getType();
-            boolean isReturnMock = mocks.isMockable(type);
+            boolean isReturnMock = expReturnType.get().isMock();
             boolean isVarMock = false;
-            IVar var = invoke.getVar();
+            IVar var = invoke.getCallVar();
             if (nonNull(var)) {
-                isVarMock = invoke.getVar().isMock();
+                isVarMock = invoke.getCallVar().isMock();
             }
             // TODO - remove this after more tests
             if (mocks.isInferVarStageable(isVarMock, isReturnMock)) {

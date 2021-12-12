@@ -64,11 +64,13 @@ public class VarProcessor {
             if (nonNull(initializerExp)) {
                 // TODO - remove this
                 boolean stageVarExp = true;
-                Optional<Invoke> o = heap.getInvoke(initializerExp);
+                Optional<Invoke> o = heap.findInvoke(initializerExp);
                 // TODO - improve the below
                 if (o.isPresent()) {
                     Invoke invoke = o.get();
-                    if (nonNull(invoke.getVar()) && invoke.getVar().isMock()) {
+                    invoke.setReturnVar(Optional.of(localVar));
+                    if (nonNull(invoke.getCallVar())
+                            && invoke.getCallVar().isMock()) {
                         stageVarExp = false;
                     }
                     Optional<ExpReturnType> e = invoke.getExpReturnType();

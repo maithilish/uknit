@@ -125,6 +125,7 @@ public class Types {
 
         // simple type, unqualified name
         String qualName = typeBinding.getName();
+        String qualName1 = typeBinding.getQualifiedName();
         if ("".equals(qualName)) {
             throw new IllegalArgumentException("No name for type binding.");
         }

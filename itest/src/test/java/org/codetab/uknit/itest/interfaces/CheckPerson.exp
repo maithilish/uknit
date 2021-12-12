@@ -1,0 +1,26 @@
+package org.codetab.uknit.itest.interfaces;
+
+public class CheckPersonTest {
+    @InjectMocks
+    private CheckPerson checkPerson;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCheck() {
+        Person p = Mockito.mock(Person.class);
+        Sex apple = Person.Sex.FEMALE;
+        int orange = 1;
+        int banana = 1;
+
+        when(p.getGender()).thenReturn(apple);
+        when(p.getAge()).thenReturn(orange).thenReturn(banana);
+
+        boolean actual = checkPerson.check(p);
+
+        assertTrue(actual);
+    }
+}

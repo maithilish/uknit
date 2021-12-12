@@ -21,19 +21,19 @@ public class Invoke {
 
     private MethodInvocation mi;
     // var on which method invoked
-    private IVar var;
+    private IVar callVar;
     // method return type
     private Optional<ExpReturnType> expReturnType;
-    private Optional<InferVar> inferVar;
+    private Optional<IVar> returnVar;
 
     @Inject
-    public Invoke(@Assisted @Nullable final IVar var,
+    public Invoke(@Assisted @Nullable final IVar callVar,
             @Assisted final Optional<ExpReturnType> expReturnType,
             @Assisted final MethodInvocation mi) {
-        this.var = var;
+        this.callVar = callVar;
         this.expReturnType = expReturnType;
         this.mi = mi;
-        this.inferVar = Optional.empty();
+        this.returnVar = Optional.empty();
     }
 
     public boolean isInfer() {
@@ -54,8 +54,8 @@ public class Invoke {
 
     public boolean isWhen() {
         if (expReturnType.isPresent()) {
-            if (nonNull(var)) {
-                return var.isMock();
+            if (nonNull(callVar)) {
+                return callVar.isMock();
             } else {
                 return false;
             }
@@ -64,8 +64,8 @@ public class Invoke {
         }
     }
 
-    public IVar getVar() {
-        return var;
+    public IVar getCallVar() {
+        return callVar;
     }
 
     public Optional<ExpReturnType> getExpReturnType() {
@@ -76,12 +76,12 @@ public class Invoke {
         return mi;
     }
 
-    public Optional<InferVar> getInferVar() {
-        return inferVar;
+    public Optional<IVar> getReturnVar() {
+        return returnVar;
     }
 
-    public void setInferVar(final Optional<InferVar> inferVar) {
-        this.inferVar = inferVar;
+    public void setReturnVar(final Optional<IVar> returnVar) {
+        this.returnVar = returnVar;
     }
 
     @Override

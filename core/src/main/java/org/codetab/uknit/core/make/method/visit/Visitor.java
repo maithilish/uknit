@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -224,6 +225,11 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final TypeLiteral node) {
+        varProcessor.stageInferVarForLiteralReturn(node, heap);
+    }
+
+    @Override
+    public void endVisit(final QualifiedName node) {
         varProcessor.stageInferVarForLiteralReturn(node, heap);
     }
 

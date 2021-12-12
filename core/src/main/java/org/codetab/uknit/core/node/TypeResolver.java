@@ -25,6 +25,9 @@ public class TypeResolver {
                     Optional.of(types.getType(typeBinding, mi.getAST()));
             if (type.isPresent()) {
                 boolean mock = mocks.isMockable(type.get());
+                if (typeBinding.isEnum()) {
+                    mock = false;
+                }
                 methodReturnType =
                         new ExpReturnType(type.get(), mock, typeBinding);
             }

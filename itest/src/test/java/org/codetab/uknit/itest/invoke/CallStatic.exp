@@ -36,10 +36,7 @@ public class CallStaticTest {
 
     @Test
     public void testRealCallReturn() {
-        Date apple = Mockito.mock(Date.class);
 
         Date actual = callStatic.realCallReturn();
-
-        assertSame(apple, actual);
     }
 }

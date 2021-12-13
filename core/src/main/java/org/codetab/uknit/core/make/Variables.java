@@ -25,6 +25,7 @@ public class Variables {
 
     private int capIndex;
     private String[] captureVars;
+    private static final int RANDOM_STR_LEN = 8;
 
     public void setup() {
         msIndex = 0;
@@ -53,7 +54,7 @@ public class Variables {
         if (ivIndex < inferredVars.length) {
             return inferredVars[ivIndex++];
         } else {
-            return stringUtils.generateString(8);
+            return stringUtils.generateString(RANDOM_STR_LEN);
         }
     }
 
@@ -61,7 +62,7 @@ public class Variables {
         if (capIndex < captureVars.length) {
             return captureVars[capIndex++];
         } else {
-            return stringUtils.generateString(8);
+            return stringUtils.generateString(RANDOM_STR_LEN);
         }
     }
 
@@ -69,7 +70,7 @@ public class Variables {
         if (msIndex < metaSyntantics.length) {
             return metaSyntantics[msIndex++];
         } else {
-            return stringUtils.generateString(8);
+            return stringUtils.generateString(RANDOM_STR_LEN);
         }
     }
 }

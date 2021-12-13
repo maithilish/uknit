@@ -19,10 +19,10 @@ public class ForEachIfTest {
         List<YmlNode> itemList = new ArrayList<>();
         int i = 0;
         YmlNode item = Mockito.mock(YmlNode.class);
-        Object kiwi = Mockito.mock(Object.class);
+        Object orange = Mockito.mock(Object.class);
 
         when(items.findValues("item")).thenReturn(itemList);
-        when(item.findValue("order")).thenReturn(kiwi);
+        when(item.findValue("order")).thenReturn(orange);
         forEachIf.addOrderIfAbsent(itemsList);
 
         verify(item).put("order", i);

@@ -48,22 +48,32 @@ public class Mocks {
         return true;
     }
 
+    /**
+     * Whether to stage infer var.
+     * @param varIsMock
+     *            - var whose method is invoked.
+     * @param returnIsMock
+     *            - object returned by method.
+     * @return
+     */
     public boolean isInferVarStageable(final boolean varIsMock,
             final boolean returnIsMock) {
+        boolean varIsReal = !varIsMock;
+        boolean returnIsReal = !returnIsMock;
         // Mock returns Mock
         if (varIsMock && returnIsMock) {
             return true;
         }
         // Mock returns Real
-        if (varIsMock && !returnIsMock) {
+        if (varIsMock && returnIsReal) {
             return true;
         }
         // Real returns Mock
-        if (!varIsMock && returnIsMock) {
-            return true;
+        if (varIsReal && returnIsMock) {
+            return false;
         }
         // Real returns Real
-        if (!varIsMock && !returnIsMock) {
+        if (varIsReal && returnIsReal) {
             return false;
         }
         return false;

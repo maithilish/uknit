@@ -3,15 +3,15 @@ package org.codetab.uknit.itest.nest;
 public class HelloWorldAnonymousClass {
 
     interface HelloWorld {
-        public void greet();
+        void greet();
 
-        public void greetSomeone(String someone);
+        void greetSomeone(String someone);
     }
 
     public void sayHello() {
 
         class EnglishGreeting implements HelloWorld {
-            String name = "world";
+            private String name = "world";
 
             @Override
             public void greet() {
@@ -28,7 +28,7 @@ public class HelloWorldAnonymousClass {
         HelloWorld englishGreeting = new EnglishGreeting();
 
         HelloWorld frenchGreeting = new HelloWorld() {
-            String name = "tout le monde";
+            private String name = "tout le monde";
 
             @Override
             public void greet() {
@@ -43,7 +43,7 @@ public class HelloWorldAnonymousClass {
         };
 
         HelloWorld spanishGreeting = new HelloWorld() {
-            String name = "mundo";
+            private String name = "mundo";
 
             @Override
             public void greet() {

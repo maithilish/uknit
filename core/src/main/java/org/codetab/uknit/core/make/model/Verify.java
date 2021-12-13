@@ -1,7 +1,5 @@
 package org.codetab.uknit.core.make.model;
 
-import static java.util.Objects.isNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +22,7 @@ public class Verify {
     @Inject
     public Verify(@Assisted final MethodInvocation mi) {
         this.mi = mi;
+        argCaptures = new ArrayList<>();
     }
 
     public MethodInvocation getMi() {
@@ -32,13 +31,6 @@ public class Verify {
 
     public List<ArgCapture> getArgCaptures() {
         return argCaptures;
-    }
-
-    public void addArgCaptures(final List<ArgCapture> argCaptures) {
-        if (isNull(this.argCaptures)) {
-            this.argCaptures = new ArrayList<>();
-        }
-        this.argCaptures.addAll(argCaptures);
     }
 
     @Override

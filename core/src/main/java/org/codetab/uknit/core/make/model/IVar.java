@@ -14,37 +14,37 @@ public interface IVar {
 
     boolean isMock();
 
-    void setMock(final boolean mock);
+    void setMock(boolean mock);
 
     boolean isUsed();
 
-    void setUsed(final boolean used);
+    void setUsed(boolean used);
 
     boolean isHidden();
 
-    void setHidden(final boolean hidden);
+    void setHidden(boolean hidden);
 
     boolean isDeepStub();
 
-    void setDeepStub(final boolean deepStub);
+    void setDeepStub(boolean deepStub);
 
-    public default boolean isField() {
+    default boolean isField() {
         return false;
     }
 
-    public default boolean isParameter() {
+    default boolean isParameter() {
         return false;
     }
 
-    public default boolean isLocalVar() {
+    default boolean isLocalVar() {
         return false;
     }
 
-    public default boolean isInferVar() {
+    default boolean isInferVar() {
         return false;
     }
 
-    public default boolean isReturnVar() {
+    default boolean isReturnVar() {
         return false;
     }
 }

@@ -27,7 +27,9 @@ public class PojoTest {
     @Test
     public void testPojo() {
         String foo = "foo";
+        // CHECKSTYLE:OFF
         Date bar = Mockito.mock(Date.class);
+        // CHECKSTYLE:ON
 
         @SuppressWarnings("unused")
         Pojo actual = new Pojo(foo, bar);
@@ -43,7 +45,9 @@ public class PojoTest {
 
     @Test
     public void testSetBar() {
+        // CHECKSTYLE:OFF
         Date bar = Mockito.mock(Date.class);
+        // CHECKSTYLE:ON
         pojo.setBar(bar);
     }
 

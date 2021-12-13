@@ -6,9 +6,9 @@ public class Person {
         MALE, FEMALE
     }
 
-    String name;
-    int age;
-    Sex gender;
+    private String name;
+    private int age;
+    private Sex gender;
 
     public String getName() {
         return name;

@@ -101,7 +101,7 @@ public class MethodMaker {
     public void addBeforeMethod(final TypeDeclaration node) {
         TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
         String clzName = methodMakers.getTestClzName(clzUnderTest);
-        TypeDeclaration clzDecl = clzMap.getTypeDecl(clzName);
+        TypeDeclaration testClzDecl = clzMap.getTypeDecl(clzName);
 
         MethodDeclaration md = nodeFactory.createMethodDecl("setUp");
         Annotation annotation =
@@ -118,7 +118,7 @@ public class MethodMaker {
         Statement statement = nodeFactory
                 .createMethodStatement("MockitoAnnotations.openMocks(this);");
         methodMakers.addStatement(md, statement);
-        methodMakers.addMethod(clzDecl, md);
+        methodMakers.addMethod(testClzDecl, md);
     }
 
     public void setClzMap(final ClzMap clzMap) {

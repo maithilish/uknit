@@ -19,7 +19,7 @@ public class Uknit {
     private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    DInjector di;
+    private DInjector di;
 
     public static void main(final String[] args)
             throws URISyntaxException, IOException {

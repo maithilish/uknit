@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.util;
 
+import static java.util.Objects.nonNull;
+
 import java.util.Random;
 
 public class StringUtils {
@@ -42,7 +44,10 @@ public class StringUtils {
     }
 
     public static String capitalize(final String str) {
-        int strLen = (str == null ? 0 : str.length());
+        int strLen = 0;
+        if (nonNull(str)) {
+            strLen = str.length();
+        }
         if (strLen == 0) {
             return str;
         }

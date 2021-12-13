@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.nest;
 
 public class InnerClass {
 
-    private final static int SIZE = 15;
+    private static final int SIZE = 15;
     private int[] arrayOfInts = new int[SIZE];
 
     public InnerClass() {

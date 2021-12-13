@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- disable all check for dumpers and itest java files -->
+    <suppress files="Dumper.java" checks="[a-zA-Z0-9]*" />
+
+    <suppress files=".*src/main/java/.*/itest/.*.java"
+        checks="MagicNumber" />
+
+    <!-- disable modules for specific files  -->
+    <suppress files="messages.properties"
+        checks="RegexpSingleline" />
+    <suppress files=".*Test.java" checks="MagicNumber" />
+    <suppress files=".*TestIT.java" checks="MagicNumber" />
+    <suppress files=".*IT.java" checks="MagicNumber" />
+
+
+    <suppress files=".*Test.java" checks="JavadocMethod" />
+    <suppress files=".*TestIT.java" checks="JavadocMethod" />
+    <suppress files=".*Test.java" checks="JavadocVariable" />
+    <suppress files=".*TestIT.java" checks="JavadocVariable" />
+    <suppress files=".*Test.java" checks="JavadocPackage" />
+    <suppress files=".*TestIT.java" checks="JavadocPackage" />
+
+
+</suppressions>

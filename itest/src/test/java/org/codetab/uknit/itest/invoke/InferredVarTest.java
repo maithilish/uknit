@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.invoke;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -21,7 +22,7 @@ public class InferredVarTest {
     }
 
     @Test
-    public void testAppend() {
+    public void testChainedCall() {
         StringBuilder s1 = Mockito.mock(StringBuilder.class);
         StringBuilder s2 = Mockito.mock(StringBuilder.class);
         File file = Mockito.mock(File.class);
@@ -33,8 +34,22 @@ public class InferredVarTest {
         when(s2.append(apple.toLowerCase())).thenReturn(grape);
         when(s1.append(grape)).thenReturn(orange);
 
-        StringBuilder actual = inferredVar.append(s1, s2, file);
+        StringBuilder actual = inferredVar.chainedCall(s1, s2, file);
 
         assertSame(orange, actual);
+    }
+
+    @Test
+    public void testMultiInvokeArgs() {
+        Person person = Mockito.mock(Person.class);
+        Address address = Mockito.mock(Address.class);
+        String apple = "Foo";
+        String grape = "Bar";
+
+        when(person.getName()).thenReturn(apple);
+        when(person.getCity()).thenReturn(grape);
+        inferredVar.multiInvokeArgs(person, address);
+
+        verify(address).setAddress(apple, grape);
     }
 }

@@ -119,10 +119,18 @@ public class Types {
             for (ITypeBinding typeArg : typeBinding.getTypeArguments()) {
                 newTypeArgs.add(getType(typeArg, ast));
             }
-
             return type;
         }
-
+        // in Predicate<? super String> - ? super String is wildcard
+        if (typeBinding.isWildcardType()) {
+            WildcardType wildcardType = ast.newWildcardType();
+            ITypeBinding bound = typeBinding.getBound();
+            if (bound != null) {
+                wildcardType.setBound(getType(bound, ast),
+                        typeBinding.isUpperbound());
+            }
+            return wildcardType;
+        }
         // simple type, unqualified name
         String qualName = typeBinding.getName();
         if ("".equals(qualName)) {

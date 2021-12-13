@@ -26,15 +26,13 @@ public class ForEachIfTest {
     public void testAddOrderIfAbsent() {
         List<YmlNode> itemsList = new ArrayList<>();
         YmlNode items = Mockito.mock(YmlNode.class);
-        itemsList.add(items);
         List<YmlNode> itemList = new ArrayList<>();
-        YmlNode item = Mockito.mock(YmlNode.class);
-        itemList.add(item);
-        Object kiwi = Mockito.mock(Object.class);
         int i = 0;
+        YmlNode item = Mockito.mock(YmlNode.class);
+        Object orange = Mockito.mock(Object.class);
 
         when(items.findValues("item")).thenReturn(itemList);
-        when(item.findValue("order")).thenReturn(kiwi);
+        when(item.findValue("order")).thenReturn(orange);
         forEachIf.addOrderIfAbsent(itemsList);
 
         verify(item, never()).put("order", i);

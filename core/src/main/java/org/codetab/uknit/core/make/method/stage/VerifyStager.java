@@ -29,8 +29,8 @@ public class VerifyStager {
                 .replaceLambdaArgsWithCaptures(mi, resolvableMi, heap);
 
         Verify verify = modelFactory.createVerify(mi);
-        verify.addArgCaptures(anonCaptures);
-        verify.addArgCaptures(lambdaCaptures);
+        verify.getArgCaptures().addAll(anonCaptures);
+        verify.getArgCaptures().addAll(lambdaCaptures);
         heap.getVerifies().add(verify);
     }
 }

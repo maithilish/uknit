@@ -8,10 +8,12 @@ import java.nio.charset.Charset;
 
 public class IOUtils {
 
+    private static final int EOF = -1;
+    private static final int BUF_SIZE = 4096;
+
     public char[] toCharArray(final String fileName, final Charset charset)
             throws IOException {
-        final int EOF = -1;
-        char[] buffer = new char[4096];
+        char[] buffer = new char[BUF_SIZE];
         CharArrayWriter writer = new CharArrayWriter();
         try (InputStreamReader reader =
                 new InputStreamReader(new FileInputStream(fileName), charset)) {

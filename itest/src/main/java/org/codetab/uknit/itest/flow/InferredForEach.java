@@ -7,6 +7,7 @@ public class InferredForEach {
     @SuppressWarnings("unused")
     public void process(final Map<String, Pet> pets) {
         for (String key : pets.keySet()) {
+            String dummy = key;
         }
     }
 

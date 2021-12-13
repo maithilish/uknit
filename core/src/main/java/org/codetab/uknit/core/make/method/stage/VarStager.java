@@ -119,21 +119,32 @@ public class VarStager {
         InferVar inferVar = null;
         if (expReturnType.isPresent()) {
             Type type = expReturnType.get().getType();
+
             boolean isReturnMock = expReturnType.get().isMock();
             boolean isVarMock = false;
-            IVar var = invoke.getCallVar();
-            if (nonNull(var)) {
+            if (nonNull(invoke.getCallVar())) {
                 isVarMock = invoke.getCallVar().isMock();
             }
-            // TODO - remove this after more tests
+
+            boolean stageable = false;
             if (mocks.isInferVarStageable(isVarMock, isReturnMock)) {
+                stageable = true;
+            } else if (methods.isStaticCall(invoke.getMi())) {
+                /*
+                 * Byte.valueOf("100")
+                 */
+                stageable = true;
+            }
+
+            if (stageable) {
+                String name = variables.getInferVarName();
+                inferVar =
+                        modelFactory.createInferVar(name, type, isReturnMock);
+                heap.getVars().add(inferVar);
+                LOG.debug("stage var {}", inferVar);
             } else {
                 LOG.debug("inferVar is not stagable {}", invoke.getMi());
             }
-            String name = variables.getInferVarName();
-            inferVar = modelFactory.createInferVar(name, type, isReturnMock);
-            heap.getVars().add(inferVar);
-            LOG.debug("stage var {}", inferVar);
 
             return Optional.ofNullable(inferVar);
         } else {

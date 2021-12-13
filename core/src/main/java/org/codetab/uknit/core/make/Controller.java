@@ -25,16 +25,16 @@ public class Controller {
     @Inject
     private ClzNodeFactory clzNodeFactory;
 
-    private CompilationUnit testCu;
-    private CompilationUnit srcCu;
+    private CompilationUnit testCompilationUnit;
+    private CompilationUnit srcCompilationUnit;
 
     public void setup() {
         char[] src = new String("").toCharArray(); // blank cu
-        testCu = cuFactory.createCompilationUnit(src);
+        testCompilationUnit = cuFactory.createCompilationUnit(src);
 
-        clzMaker.setCompilationUnit(testCu);
-        nodeFactory.setAst(testCu.getAST());
-        clzNodeFactory.setAst(testCu.getAST());
+        clzMaker.setCu(testCompilationUnit);
+        nodeFactory.setAst(testCompilationUnit.getAST());
+        clzNodeFactory.setAst(testCompilationUnit.getAST());
 
         variables.setup();
     }
@@ -44,14 +44,14 @@ public class Controller {
     }
 
     public CompilationUnit getTestCompilationUnit() {
-        return testCu;
+        return testCompilationUnit;
     }
 
     public CompilationUnit getSrcCompilationUnit() {
-        return srcCu;
+        return srcCompilationUnit;
     }
 
     public void setSrcCompilationUnit(final CompilationUnit srcCu) {
-        this.srcCu = srcCu;
+        this.srcCompilationUnit = srcCu;
     }
 }

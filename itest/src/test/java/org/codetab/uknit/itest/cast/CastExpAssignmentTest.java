@@ -33,7 +33,9 @@ public class CastExpAssignmentTest {
     @Test
     public void testAssignToField() {
         Pets pets = Mockito.mock(Pets.class);
+        // CHECKSTYLE:OFF
         Dog fDog = Mockito.mock(Dog.class);
+        // CHECKSTYLE:ON
 
         when(pets.getPet("foo")).thenReturn(fDog);
         castExpAssignment.assignToField(pets);

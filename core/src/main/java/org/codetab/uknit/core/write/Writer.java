@@ -83,45 +83,40 @@ public class Writer {
         String br = System.lineSeparator();
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
-            if (Pattern.matches("^import.*", line) && importBlock == false) {
+            if (Pattern.matches("^import.*", line) && !importBlock) {
                 sb.append(br);
                 importBlock = true;
             } else if (Pattern.matches(".*\\sclass .*\\s\\{", line)) {
                 sb.append(br);
                 mockBlock = false;
                 beforeMethod = false;
-            } else if (Pattern.matches(".*@Mock.*", line)
-                    && mockBlock == false) {
+            } else if (Pattern.matches(".*@Mock.*", line) && !mockBlock) {
                 sb.append(br);
                 mockBlock = true;
-            } else if (Pattern.matches(".*@Before.*", line)
-                    && beforeMethod == false) {
+            } else if (Pattern.matches(".*@Before.*", line) && !beforeMethod) {
                 sb.append(br);
                 beforeMethod = true;
-            } else if (Pattern.matches(".*@Test.*", line)
-                    && testMethod == false) {
+            } else if (Pattern.matches(".*@Test.*", line) && !testMethod) {
                 sb.append(br);
                 whenBlock = false;
                 callBlock = false;
                 verifyBlock = false;
-            } else if (Pattern.matches(".*when\\(.*", line)
-                    && whenBlock == false) {
+            } else if (Pattern.matches(".*when\\(.*", line) && !whenBlock) {
                 sb.append(br);
                 whenBlock = true;
             } else if (Pattern.matches(".*actual\\s=\\s.*", line)
-                    && callBlock == false) {
+                    && !callBlock) {
                 sb.append(br);
                 callBlock = true;
             } else if (Pattern.matches(".*ArgumentCaptor<.*>.*", line)
-                    && argCaptureBlock == false) {
+                    && !argCaptureBlock) {
                 sb.append(br);
                 argCaptureBlock = true;
-            } else if (Pattern.matches(".*verify\\(.*", line)
-                    && verifyBlock == false) {
+            } else if (Pattern.matches(".*verify\\(.*", line) && !verifyBlock) {
                 sb.append(br);
                 verifyBlock = true;
             } else if (Pattern.matches(".*assert.*\\(.*", line)
-                    && verifyBlock == false) {
+                    && !verifyBlock) {
                 sb.append(br);
                 verifyBlock = true;
             }

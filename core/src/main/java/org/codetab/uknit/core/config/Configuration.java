@@ -24,7 +24,7 @@ enum Configuration {
 
     private Properties knowTypes;
 
-    private Configuration() {
+    Configuration() {
         try {
             defaults = new Properties();
             defaults.load(Configuration.class.getClassLoader()

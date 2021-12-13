@@ -84,7 +84,7 @@ class DefinedInitialzer {
     @Inject
     private Methods methods;
 
-    Class<?> allowed[] = {NumberLiteral.class, StringLiteral.class,
+    private Class<?>[] allowed = {NumberLiteral.class, StringLiteral.class,
             TypeLiteral.class, CharacterLiteral.class, NullLiteral.class,
             ClassInstanceCreation.class, ArrayCreation.class,
             PrefixExpression.class, PostfixExpression.class,

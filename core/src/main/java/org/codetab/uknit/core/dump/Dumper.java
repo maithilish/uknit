@@ -48,8 +48,8 @@ public class Dumper extends ASTVisitor {
 
     private void dump(final int type, final String name, final String text)
             throws IOException {
-
-        String header = String.format("%s%n", Strings.repeat("-", 60));
+        final int dashLength = 60;
+        String header = String.format("%s%n", Strings.repeat("-", dashLength));
 
         String fmt;
         switch (type) {

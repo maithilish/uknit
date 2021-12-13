@@ -148,7 +148,7 @@ public class ClzMaker {
         return clzMap;
     }
 
-    public void setCompilationUnit(final CompilationUnit cu) {
+    public void setCu(final CompilationUnit cu) {
         this.cu = cu;
     }
 }

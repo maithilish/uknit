@@ -2,6 +2,8 @@ package org.codetab.uknit.itest.lambda;
 
 import java.io.FileFilter;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 
 public class LambdaTest {
     @InjectMocks
@@ -46,5 +48,25 @@ public class LambdaTest {
     public void testReturnLambdaTyped() {
 
         BiFunction<Integer, Integer, Integer> actual = lambda.returnLambdaTyped();
+    }
+
+    @Test
+    public void testMultiStatementLambda() {
+
+        Runnable actual = lambda.multiStatementLambda();
+    }
+
+    @Test
+    public void testExplicitParameterLambda() {
+
+        BinaryOperator<Long> actual = lambda.explicitParameterLambda();
+    }
+
+    @Test
+    public void testCallLamdba() {
+
+        boolean actual = lambda.callLamdba();
+
+        assertTrue(actual);
     }
 }

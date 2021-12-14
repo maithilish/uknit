@@ -18,6 +18,7 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
@@ -87,8 +88,9 @@ class DefinedInitialzer {
     private Class<?>[] allowed = {NumberLiteral.class, StringLiteral.class,
             TypeLiteral.class, CharacterLiteral.class, NullLiteral.class,
             ClassInstanceCreation.class, ArrayCreation.class,
-            PrefixExpression.class, PostfixExpression.class,
-            InfixExpression.class, QualifiedName.class};
+            ArrayInitializer.class, PrefixExpression.class,
+            PostfixExpression.class, InfixExpression.class,
+            QualifiedName.class};
 
     public boolean isAllowed(final Expression exp) {
         for (Class<?> clz : allowed) {
@@ -204,6 +206,11 @@ class DerivedInitialzer {
         if (isNull(initializer) && type.isArrayType()) {
             initializer =
                     configs.getConfig("uknit.createInstance.arrayType", "{}");
+        }
+
+        // default createInstance config is set as mock by user
+        if (nonNull(initializer) && initializer.equalsIgnoreCase("mock")) {
+            initializer = null;
         }
 
         // initialize to mock

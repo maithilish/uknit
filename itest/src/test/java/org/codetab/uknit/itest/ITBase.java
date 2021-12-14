@@ -76,6 +76,10 @@ public class ITBase {
         configs.setProperty(key, value);
     }
 
+    protected String getConfig(final String key) {
+        return configs.getConfig(key);
+    }
+
     protected void generateTestClass() throws IOException {
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);

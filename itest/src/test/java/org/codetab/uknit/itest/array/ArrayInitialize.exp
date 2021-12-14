@@ -1,0 +1,20 @@
+package org.codetab.uknit.itest.array;
+
+public class ArrayInitializeTest {
+    @InjectMocks
+    private ArrayInitialize arrayInitialize;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testInitializeStrings() {
+        String[] array = {"hello", "world"};
+
+        String[] actual = arrayInitialize.initializeStrings();
+
+        assertArrayEquals(array, actual);
+    }
+}

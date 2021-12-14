@@ -1,0 +1,33 @@
+package org.codetab.uknit.itest.stream;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class RealStreamTest {
+    @InjectMocks
+    private RealStream realStream;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testStreamCount() {
+        long count = 1L;
+
+        long actual = realStream.streamCount();
+
+        assertEquals(count, actual);
+    }
+
+    @Test
+    public void testStreamCountList() {
+        List<String> strings = new ArrayList<>();
+        long count = 1L;
+
+        long actual = realStream.streamCount(strings);
+
+        assertEquals(count, actual);
+    }
+}

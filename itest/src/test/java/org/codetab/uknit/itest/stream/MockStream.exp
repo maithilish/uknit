@@ -1,0 +1,50 @@
+package org.codetab.uknit.itest.stream;
+
+import java.util.List;
+
+public class MockStreamTest {
+    @InjectMocks
+    private MockStream mockStream;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testStreamCount() {
+        List<String> strings = null;
+        Stream<String> apple = Mockito.mock(Stream.class);
+        Stream<String> grape = Mockito.mock(Stream.class);
+        long count = 1L;
+
+        when(strings.stream()).thenReturn(apple);
+        when(apple.filter(any(Predicate.class))).thenReturn(grape);
+        when(grape.count()).thenReturn(count);
+
+        long actual = mockStream.streamCount();
+
+        assertEquals(count, actual);
+
+        ArgumentCaptor<Predicate<? super String>> argcA = ArgumentCaptor.forClass(Predicate.class);
+        verify(apple).filter(argcA.capture());
+    }
+
+    @Test
+    public void testStreamCountList() {
+        List<String> strings = Mockito.mock(List.class);
+        Stream<String> apple = Mockito.mock(Stream.class);
+        Stream<String> grape = Mockito.mock(Stream.class);
+        long count = 1L;
+
+        when(strings.stream()).thenReturn(apple);
+        when(apple.filter(any(Predicate.class))).thenReturn(grape);
+        when(grape.count()).thenReturn(count);
+
+        long actual = mockStream.streamCount(strings);
+
+        assertEquals(count, actual);
+        ArgumentCaptor<Predicate<? super String>> argcA = ArgumentCaptor.forClass(Predicate.class);
+        verify(apple).filter(argcA.capture());
+    }
+}

@@ -35,6 +35,10 @@ public class Mocks {
             }
             String key = String.join(".", "uknit.createInstance", typeName);
             String instanceType = configs.getConfig(key);
+            if (nonNull(instanceType)
+                    && instanceType.equalsIgnoreCase("mock")) {
+                return true;
+            }
             if (nonNull(instanceType)) {
                 return false;
             }

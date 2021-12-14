@@ -2,6 +2,8 @@ package org.codetab.uknit.itest.lambda;
 
 import java.io.FileFilter;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 
 public class Lambda {
 
@@ -33,5 +35,24 @@ public class Lambda {
 
     public BiFunction<Integer, Integer, Integer> returnLambdaTyped() {
         return (a, b) -> a - b;
+    }
+
+    public Runnable multiStatementLambda() {
+        Runnable multiStatement = () -> {
+            System.out.print("Hello");
+            System.out.println(" World");
+        };
+        return multiStatement;
+    }
+
+    public BinaryOperator<Long> explicitParameterLambda() {
+        BinaryOperator<Long> addExplicit =
+                (final Long x, final Long y) -> x + y;
+        return addExplicit;
+    }
+
+    public boolean callLamdba() {
+        Predicate<Integer> atLeast5 = x -> x > 5;
+        return atLeast5.test(6);
     }
 }

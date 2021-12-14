@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.generic;
+package org.codetab.uknit.itest.stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
-public class InferGenericMapIT extends ITBase {
+public class RealStreamIT extends ITBase {
 
     @Test
     public void test() throws IOException {
@@ -26,4 +26,5 @@ public class InferGenericMapIT extends ITBase {
 
         assertThat(contentOf(actualFile)).isEqualTo(contentOf(expectedFile));
     }
+
 }

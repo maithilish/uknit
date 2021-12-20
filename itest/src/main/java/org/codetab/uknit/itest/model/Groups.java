@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.array;
+package org.codetab.uknit.itest.model;
 
 import java.util.ArrayList;
 

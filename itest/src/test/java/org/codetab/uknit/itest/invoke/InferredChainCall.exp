@@ -1,6 +1,8 @@
 package org.codetab.uknit.itest.invoke;
 
 import java.util.List;
+import org.codetab.uknit.itest.model.Pet;
+import org.codetab.uknit.itest.model.Pets;
 
 public class InferredChainCallTest {
     @InjectMocks
@@ -30,6 +32,6 @@ public class InferredChainCallTest {
 
         List<Pet> actual = inferredChainCall.inferAndReturn(pets);
 
-        assertSame(dogs, actual);
+        assertEquals(dogs, actual);
     }
 }

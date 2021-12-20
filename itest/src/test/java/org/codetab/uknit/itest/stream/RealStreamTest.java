@@ -1,19 +1,24 @@
 package org.codetab.uknit.itest.stream;
 
-import java.util.stream.Collectors.maxBy;
-import java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.codetab.uknit.itest.model.Album;
 import org.codetab.uknit.itest.model.Artist;
 import org.codetab.uknit.itest.model.Track;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 
 public class RealStreamTest {
     @InjectMocks
@@ -36,7 +41,7 @@ public class RealStreamTest {
     @Test
     public void testStreamCountList() {
         List<String> strings = new ArrayList<>();
-        long count = 1L;
+        long count = 0L;
 
         long actual = realStream.streamCount(strings);
 
@@ -45,7 +50,8 @@ public class RealStreamTest {
 
     @Test
     public void testStreamCollect() {
-        List<String> collected = Stream.of("a", "b", "c").collect(Collectors.toList());
+        List<String> collected =
+                Stream.of("a", "b", "c").collect(Collectors.toList());
 
         List<String> actual = realStream.streamCollect();
 
@@ -54,7 +60,8 @@ public class RealStreamTest {
 
     @Test
     public void testStreamMapCollect() {
-        List<String> collected = Stream.of("a", "b", "hello").map(string -> string.toUpperCase()).collect(toList());
+        List<String> collected = Stream.of("a", "b", "hello")
+                .map(string -> string.toUpperCase()).collect(toList());
 
         List<String> actual = realStream.streamMapCollect();
 
@@ -63,8 +70,9 @@ public class RealStreamTest {
 
     @Test
     public void testStreamFlatMapCollect() {
-        List<Integer> together = Stream.of(Arrays.asList(1, 2), Arrays.asList(3, 4))
-                .flatMap(numbers -> numbers.stream()).collect(toList());
+        List<Integer> together =
+                Stream.of(Arrays.asList(1, 2), Arrays.asList(3, 4))
+                        .flatMap(numbers -> numbers.stream()).collect(toList());
 
         List<Integer> actual = realStream.streamFlatMapCollect();
 
@@ -73,11 +81,11 @@ public class RealStreamTest {
 
     @Test
     public void testCompare() {
-        Track shortestTrack = STEPIN;
+        Track shortestTrack = new Track("Violets for Your Furs", 378);
 
         Track actual = realStream.compare();
 
-        assertEquals(shortestTrack, actual);
+        assertEquals(shortestTrack.getLength(), actual.getLength());
     }
 
     @Test
@@ -92,8 +100,11 @@ public class RealStreamTest {
 
     @Test
     public void testBiggestGroup() {
-        Stream<Artist> artists = Stream.of(STEPIN);
+        Artist artist = new Artist("foo", "bar");
+        Stream<Artist> artists = Stream.of(artist);
+        Optional<Artist> expected = Optional.of(artist);
 
         Optional<Artist> actual = realStream.biggestGroup(artists);
+        assertEquals(expected, actual);
     }
 }

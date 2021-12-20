@@ -2,6 +2,8 @@ package org.codetab.uknit.itest.cast;
 
 import static org.mockito.Mockito.when;
 
+import org.codetab.uknit.itest.model.Dog;
+import org.codetab.uknit.itest.model.Pets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

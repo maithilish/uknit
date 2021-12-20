@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 
+import org.codetab.uknit.itest.model.Address;
+import org.codetab.uknit.itest.model.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

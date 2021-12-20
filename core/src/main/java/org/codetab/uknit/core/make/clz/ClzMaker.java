@@ -107,12 +107,17 @@ public class ClzMaker {
             Type type = clzUnderTestField.getType();
             Modifier modifier =
                     nodeFactory.createModifier(ModifierKeyword.PRIVATE_KEYWORD);
+
+            // new fieldDecl for clzDecl (test class)
             FieldDeclaration fieldDecl =
                     clzNodeFactory.createFieldDecl(type, fieldName);
             clzMakers.addModifier(fieldDecl, modifier);
-            clzMakers.addFieldDecl(clzDecl, fieldDecl);
+            // if not hidden, add field to clzDecl tree (test class)
+            if (!clzUnderTestField.isHidden()) {
+                clzMakers.addFieldDecl(clzDecl, fieldDecl);
+            }
 
-            Field field = fields.createFields(fieldDecl);
+            Field field = fields.createField(fieldDecl);
             clzMap.addField(clzName, field);
         });
     }

@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.interfaces;
+package org.codetab.uknit.itest.model;
 
 public class Person {
 
@@ -9,6 +9,7 @@ public class Person {
     private String name;
     private int age;
     private Sex gender;
+    private String city;
 
     public String getName() {
         return name;
@@ -22,4 +23,7 @@ public class Person {
         return gender;
     }
 
+    public String getCity() {
+        return city;
+    }
 }

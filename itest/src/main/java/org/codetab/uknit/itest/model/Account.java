@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.enums;
+package org.codetab.uknit.itest.model;
 
 public class Account {
 

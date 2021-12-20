@@ -82,6 +82,9 @@ public class MethodMaker {
         method.accept(visitor);
 
         useMarker.mark(heap);
+
+        variables.checkVarConsistency(heap.getVars());
+
         return true;
     }
 

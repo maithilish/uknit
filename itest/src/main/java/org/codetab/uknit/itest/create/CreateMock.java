@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codetab.uknit.itest.model.Event;
+
 public class CreateMock {
 
     public List<LocalDate> createListOfMocks() {

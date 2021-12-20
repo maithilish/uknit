@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
@@ -18,7 +19,8 @@ public class TypeResolver {
     private Mocks mocks;
 
     public Optional<ExpReturnType> getExpReturnType(final MethodInvocation mi) {
-        ITypeBinding typeBinding = mi.resolveMethodBinding().getReturnType();
+        IMethodBinding methodBinding = mi.resolveMethodBinding();
+        ITypeBinding typeBinding = methodBinding.getReturnType();
         ExpReturnType methodReturnType = null;
         try {
             Optional<Type> type =

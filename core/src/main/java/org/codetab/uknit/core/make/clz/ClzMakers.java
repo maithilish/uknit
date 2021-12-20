@@ -75,9 +75,9 @@ public class ClzMakers {
         List<FieldDeclaration> fieldDecls = Lists.newArrayList(clz.getFields());
 
         // remove unmockable types
-        fields.removeStaticFields(fieldDecls);
-        fields.removePrimitiveFields(fieldDecls);
-        fields.removeUnmodifiableFields(fieldDecls);
+        // fields.removeStaticFields(fieldDecls);
+        // fields.removePrimitiveFields(fieldDecls);
+        // fields.removeUnmodifiableFields(fieldDecls);
 
         // expand multi fields declaration
         fields.expandFieldFragments(fieldDecls);

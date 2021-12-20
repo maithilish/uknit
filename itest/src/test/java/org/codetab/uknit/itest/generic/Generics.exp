@@ -3,6 +3,8 @@ package org.codetab.uknit.itest.generic;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.codetab.uknit.itest.model.Contacts;
+import org.codetab.uknit.itest.model.ContactsData;
 
 public class GenericsTest {
     @InjectMocks

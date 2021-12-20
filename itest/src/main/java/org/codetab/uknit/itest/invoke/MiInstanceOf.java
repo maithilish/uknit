@@ -2,6 +2,10 @@ package org.codetab.uknit.itest.invoke;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import org.codetab.uknit.itest.model.Dog;
+import org.codetab.uknit.itest.model.Names;
+import org.codetab.uknit.itest.model.Pets;
+
 public class MiInstanceOf {
 
     // method invocation in instance of

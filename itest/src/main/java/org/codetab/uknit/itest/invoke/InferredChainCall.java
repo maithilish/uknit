@@ -2,6 +2,9 @@ package org.codetab.uknit.itest.invoke;
 
 import java.util.List;
 
+import org.codetab.uknit.itest.model.Pet;
+import org.codetab.uknit.itest.model.Pets;
+
 public class InferredChainCall {
 
     // infer var in chain call

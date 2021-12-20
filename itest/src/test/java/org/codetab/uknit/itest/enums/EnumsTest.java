@@ -1,9 +1,10 @@
 package org.codetab.uknit.itest.enums;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.codetab.uknit.itest.enums.Account.Type;
+import org.codetab.uknit.itest.model.Account;
+import org.codetab.uknit.itest.model.Account.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +27,7 @@ public class EnumsTest {
 
         Type actual = enums.qualifiedName(a);
 
-        assertSame(apple, actual);
+        assertEquals(apple, actual);
     }
 
     @Test
@@ -36,7 +37,7 @@ public class EnumsTest {
 
         Type actual = enums.assignment(a);
 
-        assertSame(t, actual);
+        assertEquals(t, actual);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class EnumsTest {
 
         Type actual = enums.mi(a);
 
-        assertSame(apple, actual);
+        assertEquals(apple, actual);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class EnumsTest {
 
         Type actual = enums.assignmentMi(a);
 
-        assertSame(t, actual);
+        assertEquals(t, actual);
     }
 
     @Test
@@ -69,6 +70,6 @@ public class EnumsTest {
 
         Type actual = enums.parameter(type);
 
-        assertSame(type, actual);
+        assertEquals(type, actual);
     }
 }

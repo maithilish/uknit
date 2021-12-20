@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.generic;
+package org.codetab.uknit.itest.model;
 
 import java.util.List;
 import java.util.Map;

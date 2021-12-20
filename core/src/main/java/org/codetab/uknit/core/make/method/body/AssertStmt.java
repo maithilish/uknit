@@ -28,14 +28,15 @@ public class AssertStmt {
         Optional<IVar> expected = heap.getExpectedVar();
         if (expected.isPresent()) {
             Type retType = heap.getCall().getReturnType();
-            String key = asserts.getAssertKey(retType);
+            String key = asserts.getAssertKey(retType, expected.get().isMock());
             String fmt = asserts.getAssertFormat(key, expected.get().getName());
             stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
         } else {
             // expected is not present then may be boolean
             Type retType = heap.getCall().getReturnType();
+            boolean mock = true;
             if (nonNull(retType) && types.isBoolean(retType)) {
-                String key = asserts.getAssertKey(retType);
+                String key = asserts.getAssertKey(retType, mock);
                 String fmt = asserts.getAssertFormat(key, "");
                 stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
             }

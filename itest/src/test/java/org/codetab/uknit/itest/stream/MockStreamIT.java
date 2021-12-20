@@ -16,13 +16,20 @@ public class MockStreamIT extends ITBase {
 
         configure();
 
-        String key = "uknit.createInstance.List";
-        String defaultConfig = getConfig(key);
-        addConfig(key, "mock"); // mock the list
+        String listKey = "uknit.createInstance.List";
+        String listConfig = getConfig(listKey);
+        addConfig(listKey, "mock"); // mock the list
 
-        generateTestClass();
+        String streamKey = "uknit.createInstance.Stream";
+        String streamConfig = getConfig(streamKey);
+        addConfig(streamKey, "mock"); // mock the stream
 
-        addConfig(key, defaultConfig);
+        try {
+            generateTestClass();
+        } finally {
+            addConfig(listKey, listConfig);
+            addConfig(streamKey, streamConfig);
+        }
 
         File actualFile = getActualFile();
         File expectedFile = getExpectedFile();

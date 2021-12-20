@@ -215,20 +215,25 @@ class DerivedInitialzer {
 
         // initialize to mock
         if (isNull(initializer)) {
-            // mock initialiser
-            String initializerForMock;
-            if (deep) {
-                initializerForMock =
-                        configs.getConfig("uknit.createInstance.mockDeep");
-            } else {
-                initializerForMock =
-                        configs.getConfig("uknit.createInstance.mock");
-            }
+            if (var.isMock()) {
+                // mock initialiser
+                String initializerForMock;
+                if (deep) {
+                    initializerForMock =
+                            configs.getConfig("uknit.createInstance.mockDeep");
+                } else {
+                    initializerForMock =
+                            configs.getConfig("uknit.createInstance.mock");
+                }
 
-            if (initializerForMock.equals("null")) {
-                initializer = null;
+                if (initializerForMock.equals("null")) {
+                    initializer = null;
+                } else {
+                    initializer =
+                            initializerForMock.replace("${type}", typeName);
+                }
             } else {
-                initializer = initializerForMock.replace("${type}", typeName);
+                initializer = "STEPIN";
             }
         }
         return initializer;

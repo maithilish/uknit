@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codetab.uknit.itest.model.Contacts;
+import org.codetab.uknit.itest.model.ContactsData;
+
 public class Generics {
 
     private Contacts contacts;

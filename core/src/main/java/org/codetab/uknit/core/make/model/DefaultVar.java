@@ -7,6 +7,7 @@ public class DefaultVar implements IVar {
     protected String name;
     protected Type type;
     protected boolean mock;
+    protected boolean created;
     protected boolean used;
     protected boolean hidden;
     protected boolean deepStub;
@@ -15,6 +16,7 @@ public class DefaultVar implements IVar {
         this.used = true;
         this.hidden = false;
         this.deepStub = false;
+        this.created = false;
     }
 
     @Override
@@ -45,6 +47,16 @@ public class DefaultVar implements IVar {
     @Override
     public void setMock(final boolean mock) {
         this.mock = mock;
+    }
+
+    @Override
+    public boolean isCreated() {
+        return created;
+    }
+
+    @Override
+    public void setCreated(final boolean created) {
+        this.created = created;
     }
 
     @Override

@@ -93,6 +93,16 @@ public class Heap {
         }).findFirst();
     }
 
+    public Optional<ExpReturnType> findExpReturnType(final Expression exp) {
+        Optional<Invoke> invoke =
+                invokes.stream().filter(n -> n.getMi().equals(exp)).findFirst();
+        if (invoke.isPresent()) {
+            return invoke.get().getExpReturnType();
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public Optional<Invoke> findInvokeByInferVar(final IVar var) {
         return invokes.stream().filter(n -> {
             Optional<IVar> v = n.getReturnVar();
@@ -141,49 +151,25 @@ public class Heap {
                 vars.stream().filter(v -> v.getName().equals(varName))
                         .collect(Collectors.toList());
 
-        long rvCount =
-                matchedNameVars.stream().filter(IVar::isReturnVar).count();
-        long lvCount =
-                matchedNameVars.stream().filter(IVar::isLocalVar).count();
-        long ivCount =
-                matchedNameVars.stream().filter(IVar::isInferVar).count();
-        long pCount =
-                matchedNameVars.stream().filter(IVar::isParameter).count();
-        long fCount = matchedNameVars.stream().filter(IVar::isField).count();
+        // search precedence return, local, parameter and field
+        Optional<IVar> var =
+                matchedNameVars.stream().filter(IVar::isReturnVar).findAny();
+        var = var.or(() -> matchedNameVars.stream().filter(IVar::isLocalVar)
+                .findAny());
+        var = var.or(() -> matchedNameVars.stream().filter(IVar::isLocalVar)
+                .findAny());
+        var = var.or(() -> matchedNameVars.stream().filter(IVar::isInferVar)
+                .findAny());
+        var = var.or(() -> matchedNameVars.stream().filter(IVar::isParameter)
+                .findAny());
+        var = var.or(
+                () -> matchedNameVars.stream().filter(IVar::isField).findAny());
 
-        if (rvCount > 1 || lvCount > 1 || ivCount > 1 || pCount > 1
-                || fCount > 1) {
-            String message =
-                    spaceit("multiple var declaration found for", varName);
+        if (var.isPresent()) {
+            return var.get();
+        } else {
+            String message = spaceit("var declaration not found for", varName);
             throw new IllegalStateException(message);
         }
-        // search precedence return, local, parameter and field
-        if (rvCount == 1) {
-            return matchedNameVars.stream().filter(IVar::isReturnVar).findAny()
-                    .get();
-        }
-
-        if (lvCount == 1) {
-            return matchedNameVars.stream().filter(IVar::isLocalVar).findAny()
-                    .get();
-        }
-
-        if (ivCount == 1) {
-            return matchedNameVars.stream().filter(IVar::isInferVar).findAny()
-                    .get();
-        }
-
-        if (pCount == 1) {
-            return matchedNameVars.stream().filter(IVar::isParameter).findAny()
-                    .get();
-        }
-
-        if (fCount == 1) {
-            return matchedNameVars.stream().filter(IVar::isField).findAny()
-                    .get();
-        }
-
-        String message = spaceit("var declaration not found for", varName);
-        throw new IllegalStateException(message);
     }
 }

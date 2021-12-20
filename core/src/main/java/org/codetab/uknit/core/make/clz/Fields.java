@@ -45,19 +45,48 @@ public class Fields {
             String name = nodes.getVariableName(vdf);
             Type type = fieldDecl.getType();
             boolean mock = mocks.isMockable(type);
+
+            boolean hide = false;
+            if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
+                hide = true;
+            }
+            if (nodes.isPrimitiveType(fieldDecl)) {
+                hide = true;
+            }
+            String typeName = types.getTypeName(fieldDecl.getType());
+            if (types.isUnmodifiable(typeName)) {
+                hide = true;
+            }
+
             Field field = modelFactory.createField(name, type, mock, fieldDecl);
+            field.setHidden(hide);
             fields.add(field);
         }
         return fields;
     }
 
-    public Field createFields(final FieldDeclaration fieldDecl) {
+    public Field createField(final FieldDeclaration fieldDecl) {
         VariableDeclarationFragment vdf =
                 (VariableDeclarationFragment) fieldDecl.fragments().get(0);
         String name = nodes.getVariableName(vdf);
         Type type = fieldDecl.getType();
         boolean mock = mocks.isMockable(type);
-        return modelFactory.createField(name, type, mock, fieldDecl);
+
+        boolean hide = false;
+        if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
+            hide = true;
+        }
+        if (nodes.isPrimitiveType(fieldDecl)) {
+            hide = true;
+        }
+        String typeName = types.getTypeName(fieldDecl.getType());
+        if (types.isUnmodifiable(typeName)) {
+            hide = true;
+        }
+
+        Field field = modelFactory.createField(name, type, mock, fieldDecl);
+        field.setHidden(hide);
+        return field;
     }
 
     /**

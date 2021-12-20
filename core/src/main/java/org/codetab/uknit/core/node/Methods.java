@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -87,13 +88,13 @@ public class Methods {
             return (mi.resolveMethodBinding().getModifiers()
                     & Modifier.STATIC) > 0;
         }
-        boolean isStatic = true;
-        // if any part of chain call is not static then isStatic is false
+        boolean isStatic = false;
+        // if any part of chain call is static then isStatic is true
         while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
             MethodInvocation miExp = nodes.as(exp, MethodInvocation.class);
             if ((miExp.resolveMethodBinding().getModifiers()
-                    & Modifier.STATIC) <= 0) {
-                isStatic = false;
+                    & Modifier.STATIC) > 0) {
+                isStatic = true;
             }
             exp = miExp.getExpression();
         }
@@ -102,6 +103,23 @@ public class Methods {
 
     public boolean isStaticCall(final MethodDeclaration methodDecl) {
         return (methodDecl.getModifiers() & Modifier.STATIC) > 0;
+    }
+
+    /**
+     * Get var name of method invocation. If chained call, get top name.
+     * @param mi
+     * @return
+     */
+    public Optional<String> getVarName(final MethodInvocation mi) {
+        String varName = null;
+        Expression exp = mi.getExpression();
+        while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
+            exp = nodes.as(exp, MethodInvocation.class).getExpression();
+        }
+        if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
+            varName = nodes.getName(exp);
+        }
+        return Optional.ofNullable(varName);
     }
 
     /**

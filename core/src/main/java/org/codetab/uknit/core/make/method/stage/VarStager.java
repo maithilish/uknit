@@ -67,22 +67,51 @@ public class VarStager {
          */
         boolean fragmentIsMock = mock;
         boolean hidden = false;
+        boolean created = false;
         Type fragmentType = type;
         String name = nodes.getVariableName(vd);
 
         Expression initializer = vd.getInitializer();
         if (nonNull(initializer)) {
-            if (nodes.isClassInstanceCreation(initializer)) {
+            if (nodes.isCreation(initializer)) {
                 fragmentIsMock = false;
+                created = true;
             }
             if (nodes.isAnonOrLambda(initializer)) {
                 fragmentIsMock = false;
                 hidden = true;
+                created = true;
             }
             if (nodes.is(initializer, MethodInvocation.class)) {
-                if (methods.isStaticCall(
-                        nodes.as(initializer, MethodInvocation.class))) {
+                MethodInvocation mi =
+                        nodes.as(initializer, MethodInvocation.class);
+                if (methods.isStaticCall(mi)) {
                     fragmentIsMock = false;
+                    created = true;
+                } else {
+                    /*
+                     * foo.stream().get(); if obj returned by get() is real then
+                     * fragment is real
+                     */
+                    Optional<ExpReturnType> expReturnType =
+                            heap.findExpReturnType(mi);
+                    if (expReturnType.isPresent()
+                            && !expReturnType.get().isMock()) {
+                        fragmentIsMock = false;
+                    }
+                    /*
+                     * Track track = tracks.stream().min(...).get(); tracks may
+                     * parameter or local var initialized with creation. If
+                     * former, then track is mock else it is real.
+                     */
+                    Optional<String> topName = methods.getVarName(mi);
+                    if (topName.isPresent()) {
+                        IVar methodVar = heap.findVar(topName.get());
+                        if (methodVar.isCreated()) {
+                            fragmentIsMock = false;
+                            created = true;
+                        }
+                    }
                 }
             }
         }
@@ -97,6 +126,7 @@ public class VarStager {
                     inferVar.setName(name);
                     inferVar.setType(fragmentType);
                     inferVar.setMock(fragmentIsMock);
+                    inferVar.setCreated(false);
                     localVar = inferVar;
                 }
             }
@@ -108,6 +138,7 @@ public class VarStager {
             heap.getVars().add(localVar);
         }
         localVar.setHidden(hidden);
+        localVar.setCreated(created);
 
         LOG.debug("stage var {}", localVar);
         return localVar;

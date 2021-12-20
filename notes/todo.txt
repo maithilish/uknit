@@ -32,6 +32,6 @@ matcher
 	
 	see invoke.MiCreateInstanceIT
 	    
-discard previous assignment	    
+discard previous assignment
 
-change assertSame to equals - see CreateMockIT
+don't generate test for abstract classes

@@ -3,6 +3,7 @@ package org.codetab.uknit.itest.create;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.codetab.uknit.itest.model.Event;
 
 public class CreateMockTest {
     @InjectMocks
@@ -19,7 +20,7 @@ public class CreateMockTest {
 
         List<LocalDate> actual = createMock.createListOfMocks();
 
-        assertSame(list, actual);
+        assertEquals(list, actual);
     }
 
     @Test
@@ -28,7 +29,7 @@ public class CreateMockTest {
 
         List<LocalDate> actual = createMock.declareAndCreateListOfMocks();
 
-        assertSame(list, actual);
+        assertEquals(list, actual);
     }
 
     @Test
@@ -37,7 +38,7 @@ public class CreateMockTest {
 
         Event actual = createMock.createMockable();
 
-        assertSame(event, actual);
+        assertEquals(event, actual);
     }
 
     @Test
@@ -46,6 +47,6 @@ public class CreateMockTest {
 
         Event actual = createMock.declareAndCreateMockable();
 
-        assertSame(event, actual);
+        assertEquals(event, actual);
     }
 }

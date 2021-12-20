@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.create;
+package org.codetab.uknit.itest.model;
 
 public class Event {
 

@@ -45,7 +45,7 @@ public class CreateRealTest {
 
         List<String> actual = createReal.createListOfReal();
 
-        assertSame(list, actual);
+        assertEquals(list, actual);
     }
 
     @Test
@@ -72,6 +72,6 @@ public class CreateRealTest {
 
         List<String> actual = createReal.declareAndCreateListOfReal();
 
-        assertSame(list, actual);
+        assertEquals(list, actual);
     }
 }

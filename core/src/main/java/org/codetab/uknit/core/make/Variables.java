@@ -1,9 +1,15 @@
 package org.codetab.uknit.core.make;
 
+import static org.codetab.uknit.core.util.StringUtils.spaceit;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.util.StringUtils;
 
 @Singleton
@@ -71,6 +77,32 @@ public class Variables {
             return metaSyntantics[msIndex++];
         } else {
             return stringUtils.generateString(RANDOM_STR_LEN);
+        }
+    }
+
+    public void checkVarConsistency(final List<IVar> vars) {
+        for (IVar var : vars) {
+            String name = var.getName();
+            List<IVar> matchedNameVars =
+                    vars.stream().filter(v -> v.getName().equals(name))
+                            .collect(Collectors.toList());
+            long rvCount =
+                    matchedNameVars.stream().filter(IVar::isReturnVar).count();
+            long lvCount =
+                    matchedNameVars.stream().filter(IVar::isLocalVar).count();
+            long ivCount =
+                    matchedNameVars.stream().filter(IVar::isInferVar).count();
+            long pCount =
+                    matchedNameVars.stream().filter(IVar::isParameter).count();
+            long fCount =
+                    matchedNameVars.stream().filter(IVar::isField).count();
+
+            if (rvCount > 1 || lvCount > 1 || ivCount > 1 || pCount > 1
+                    || fCount > 1) {
+                String message =
+                        spaceit("multiple var declaration found for", name);
+                throw new IllegalStateException(message);
+            }
         }
     }
 }

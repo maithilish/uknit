@@ -19,7 +19,6 @@ public class CreateReal {
         return new String("foo");
     }
 
-    // TODO - assertEquals instead of same
     public List<String> createListOfReal() {
         List<String> list = new ArrayList<>();
         return list;
@@ -42,5 +41,4 @@ public class CreateReal {
         list = new ArrayList<>();
         return list;
     }
-
 }

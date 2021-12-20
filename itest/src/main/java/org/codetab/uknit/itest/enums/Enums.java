@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.enums;
 
-import org.codetab.uknit.itest.enums.Account.Type;
+import org.codetab.uknit.itest.model.Account;
+import org.codetab.uknit.itest.model.Account.Type;
 
 public class Enums {
 

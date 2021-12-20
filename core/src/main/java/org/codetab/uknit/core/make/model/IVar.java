@@ -16,6 +16,10 @@ public interface IVar {
 
     void setMock(boolean mock);
 
+    boolean isCreated();
+
+    void setCreated(boolean created);
+
     boolean isUsed();
 
     void setUsed(boolean used);

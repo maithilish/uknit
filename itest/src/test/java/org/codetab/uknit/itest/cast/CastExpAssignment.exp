@@ -1,5 +1,8 @@
 package org.codetab.uknit.itest.cast;
 
+import org.codetab.uknit.itest.model.Dog;
+import org.codetab.uknit.itest.model.Pets;
+
 public class CastExpAssignmentTest {
     @InjectMocks
     private CastExpAssignment castExpAssignment;

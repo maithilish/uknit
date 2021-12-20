@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.invoke;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codetab.uknit.itest.model.Pet;
+import org.codetab.uknit.itest.model.Pets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,6 +45,6 @@ public class InferredChainCallTest {
 
         List<Pet> actual = inferredChainCall.inferAndReturn(pets);
 
-        assertSame(dogs, actual);
+        assertEquals(dogs, actual);
     }
 }

@@ -3,7 +3,8 @@ package org.codetab.uknit.itest.interfaces;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.codetab.uknit.itest.interfaces.Person.Sex;
+import org.codetab.uknit.itest.model.Person;
+import org.codetab.uknit.itest.model.Person.Sex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

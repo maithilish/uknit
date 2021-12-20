@@ -2,6 +2,9 @@ package org.codetab.uknit.itest.invoke;
 
 import java.io.File;
 
+import org.codetab.uknit.itest.model.Address;
+import org.codetab.uknit.itest.model.Person;
+
 public class InferredVar {
 
     public StringBuilder chainedCall(final StringBuilder s1,

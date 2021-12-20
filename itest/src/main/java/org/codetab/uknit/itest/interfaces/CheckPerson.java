@@ -1,5 +1,7 @@
 package org.codetab.uknit.itest.interfaces;
 
+import org.codetab.uknit.itest.model.Person;
+
 public class CheckPerson implements ICheckPerson {
 
     // STEPIN - infix exact comparison is not considered

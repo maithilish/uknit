@@ -18,9 +18,11 @@ public class PojoIT extends ITBase {
 
         addConfig("uknit.ignore.method.constructor", "false");
 
-        generateTestClass();
-
-        addConfig("uknit.ignore.method.constructor", "true");
+        try {
+            generateTestClass();
+        } finally {
+            addConfig("uknit.ignore.method.constructor", "true");
+        }
 
         File actualFile = getActualFile();
         File expectedFile = getExpectedFile();

@@ -36,6 +36,9 @@ public class AssignProcessor {
         if (nodes.is(lExp, SimpleName.class)) {
             String name = nodes.getName(lExp);
             IVar var = heap.findVar(name);
+            if (nodes.isCreation(rExp)) {
+                var.setMock(false);
+            }
             Optional<ExpVar> evo = heap.findByRightExp(rExp);
             if (evo.isPresent()) {
                 Optional<IVar> lvo = evo.get().getLeftVar();

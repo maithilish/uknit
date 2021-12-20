@@ -15,7 +15,7 @@ public class Asserts {
     @Inject
     private Types types;
 
-    public String getAssertKey(final Type type) {
+    public String getAssertKey(final Type type, final boolean mock) {
         checkNotNull(type);
 
         if (type.isArrayType()) {
@@ -45,6 +45,9 @@ public class Asserts {
 
         // String, Integer etc.,
         if (types.isUnmodifiable(typeName)) {
+            return "equals";
+        }
+        if (!mock) {
             return "equals";
         }
         return "same";

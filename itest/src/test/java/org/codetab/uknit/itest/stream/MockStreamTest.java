@@ -1,16 +1,28 @@
 package org.codetab.uknit.itest.stream;
 
-import java.util.stream.Collectors.toList;
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.codetab.uknit.itest.model.Album;
 import org.codetab.uknit.itest.model.Track;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class MockStreamTest {
     @InjectMocks
@@ -23,13 +35,14 @@ public class MockStreamTest {
 
     @Test
     public void testStreamCount() {
-        long count = 1L;
+        long count = 0L;
 
         long actual = mockStream.streamCount();
 
         assertEquals(count, actual);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testStreamCountList() {
         List<String> strings = Mockito.mock(List.class);
@@ -45,13 +58,15 @@ public class MockStreamTest {
 
         assertEquals(count, actual);
 
-        ArgumentCaptor<Predicate<? super String>> argcA = ArgumentCaptor.forClass(Predicate.class);
+        ArgumentCaptor<Predicate<? super String>> argcA =
+                ArgumentCaptor.forClass(Predicate.class);
         verify(apple).filter(argcA.capture());
     }
 
     @Test
     public void testStreamCollect() {
-        List<String> collected = Stream.of("a", "b", "c").collect(Collectors.toList());
+        List<String> collected =
+                Stream.of("a", "b", "c").collect(Collectors.toList());
 
         List<String> actual = mockStream.streamCollect();
 
@@ -60,7 +75,8 @@ public class MockStreamTest {
 
     @Test
     public void testStreamMapCollect() {
-        List<String> collected = Stream.of("a", "b", "hello").map(string -> string.toUpperCase()).collect(toList());
+        List<String> collected = Stream.of("a", "b", "hello")
+                .map(string -> string.toUpperCase()).collect(toList());
 
         List<String> actual = mockStream.streamMapCollect();
 
@@ -69,8 +85,9 @@ public class MockStreamTest {
 
     @Test
     public void testStreamFlatMapCollect() {
-        List<Integer> together = Stream.of(Arrays.asList(1, 2), Arrays.asList(3, 4))
-                .flatMap(numbers -> numbers.stream()).collect(toList());
+        List<Integer> together =
+                Stream.of(Arrays.asList(1, 2), Arrays.asList(3, 4))
+                        .flatMap(numbers -> numbers.stream()).collect(toList());
 
         List<Integer> actual = mockStream.streamFlatMapCollect();
 
@@ -79,13 +96,14 @@ public class MockStreamTest {
 
     @Test
     public void testCompare() {
-        Track shortestTrack = STEPIN;
+        Track shortestTrack = new Track("Violets for Your Furs", 378);
 
         Track actual = mockStream.compare();
 
-        assertEquals(shortestTrack, actual);
+        assertEquals(shortestTrack.getLength(), actual.getLength());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testFindLongTracks() {
         List<Album> albums = Mockito.mock(List.class);
@@ -97,7 +115,8 @@ public class MockStreamTest {
         Set<String> actual = mockStream.findLongTracks(albums);
 
         assertEquals(trackNames, actual);
-        ArgumentCaptor<Consumer<? super Album>> argcA = ArgumentCaptor.forClass(Consumer.class);
+        ArgumentCaptor<Consumer<? super Album>> argcA =
+                ArgumentCaptor.forClass(Consumer.class);
         verify(apple).forEach(argcA.capture());
     }
 }

@@ -2,6 +2,8 @@ package org.codetab.uknit.itest.array;
 
 import java.util.List;
 
+import org.codetab.uknit.itest.model.Groups;
+
 public class CreateInfer {
 
     public String[] create(final Groups<String> groups) {

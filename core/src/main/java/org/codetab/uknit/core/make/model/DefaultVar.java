@@ -1,11 +1,14 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.Optional;
+
 import org.eclipse.jdt.core.dom.Type;
 
 public class DefaultVar implements IVar {
 
     protected String name;
     protected Type type;
+    protected String value;
     protected boolean mock;
     protected boolean created;
     protected boolean used;
@@ -89,4 +92,13 @@ public class DefaultVar implements IVar {
         this.deepStub = deepStub;
     }
 
+    @Override
+    public Optional<String> getValue() {
+        return Optional.ofNullable(value);
+    }
+
+    @Override
+    public void setValue(final String value) {
+        this.value = value;
+    }
 }

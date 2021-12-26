@@ -65,6 +65,11 @@ public class Visitor extends ASTVisitor {
 
     private Heap heap;
 
+    /*
+     * whether internal method call visitor
+     */
+    private boolean internalMethod = false;
+
     @Override
     public void endVisit(final VariableDeclarationStatement node) {
         Type type = node.getType();
@@ -92,7 +97,9 @@ public class Visitor extends ASTVisitor {
         heap.getInvokes().add(invoke);
 
         if (invoke.isInfer()) {
-            invokeProcessor.stageInferVar(invoke, heap);
+            if (invoke.getReturnVar().isEmpty()) {
+                invokeProcessor.stageInferVar(invoke, heap);
+            }
             if (invoke.isWhen()) {
                 invokeProcessor.stageInferVarWhen(invoke, heap);
             }
@@ -197,7 +204,12 @@ public class Visitor extends ASTVisitor {
         // svd may be parameter or local var
         ASTNode parent = node.getParent();
         if (nodes.is(parent, MethodDeclaration.class)) {
-            varProcessor.stageParameters(type, vdList, heap);
+            if (internalMethod) {
+                // stage internal method parameters as local vars
+                varProcessor.stageLocalVars(type, vdList, heap);
+            } else {
+                varProcessor.stageParameters(type, vdList, heap);
+            }
         } else {
             Map<IVar, VariableDeclaration> fragments =
                     varProcessor.stageLocalVars(type, vdList, heap);
@@ -248,5 +260,9 @@ public class Visitor extends ASTVisitor {
 
     public void setHeap(final Heap heap) {
         this.heap = heap;
+    }
+
+    public void setInternalMethod(final boolean internalMethod) {
+        this.internalMethod = internalMethod;
     }
 }

@@ -136,7 +136,8 @@ public class MethodMakers {
         return methodDecl;
     }
 
-    public boolean ignoreMethod(final MethodDeclaration node) {
+    public boolean ignoreMethod(final MethodDeclaration node,
+            final boolean ignorePrivate) {
         boolean ignore = false;
         if (methods.isMain(node)) {
             ignore = configs.getConfig("uknit.ignore.method.main", true);
@@ -148,6 +149,12 @@ public class MethodMakers {
             ignore = configs.getConfig("uknit.ignore.method.constructor", true);
             if (ignore) {
                 LOG.debug("method {} is constructor, ignored", node.getName());
+            }
+        }
+        if (ignorePrivate && methods.isPrivate(node)) {
+            ignore = configs.getConfig("uknit.ignore.method.private", true);
+            if (ignore) {
+                LOG.debug("method {} is private, ignored", node.getName());
             }
         }
         return ignore;

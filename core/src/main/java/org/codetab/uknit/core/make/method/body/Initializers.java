@@ -55,6 +55,9 @@ public class Initializers {
 
         if (iniExp.isPresent() && definedInitialzer.isAllowed(iniExp.get())) {
             initializer = iniExp.get().toString();
+        } else if (var.getValue().isPresent()) {
+            // if internal call, then use value is set in var
+            initializer = var.getValue().get();
         } else if (enumIni.isPresent()) {
             initializer = enumIni.get();
         } else {

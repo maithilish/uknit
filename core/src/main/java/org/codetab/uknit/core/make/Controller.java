@@ -1,5 +1,8 @@
 package org.codetab.uknit.core.make;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -28,6 +31,12 @@ public class Controller {
     private CompilationUnit testCompilationUnit;
     private CompilationUnit srcCompilationUnit;
 
+    /*
+     * cache of super class cu. Key is QName - packgeName + clzName
+     * org.codetab.uknit.itest.extend.Base
+     */
+    private Map<String, CompilationUnit> cuCache;
+
     public void setup() {
         char[] src = new String("").toCharArray(); // blank cu
         testCompilationUnit = cuFactory.createCompilationUnit(src);
@@ -37,6 +46,7 @@ public class Controller {
         clzNodeFactory.setAst(testCompilationUnit.getAST());
 
         variables.setup();
+        cuCache = new HashMap<>();
     }
 
     public ClzMaker getClzMaker() {
@@ -53,5 +63,9 @@ public class Controller {
 
     public void setSrcCompilationUnit(final CompilationUnit srcCu) {
         this.srcCompilationUnit = srcCu;
+    }
+
+    public Map<String, CompilationUnit> getCuCache() {
+        return cuCache;
     }
 }

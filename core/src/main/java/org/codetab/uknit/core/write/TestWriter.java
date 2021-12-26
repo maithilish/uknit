@@ -42,7 +42,7 @@ public class TestWriter {
             }
             writer.display(code);
         } else {
-            String workspace = configs.getConfig("uknit.workspace");
+            String sourceBase = configs.getConfig("uknit.source.base");
 
             @SuppressWarnings("unchecked")
             List<AbstractTypeDeclaration> definedTypes =
@@ -57,7 +57,7 @@ public class TestWriter {
                 for (AbstractTypeDeclaration type : definedTypes) {
                     types.add(type);
                     String testClzName = classes.getClzName(type);
-                    String testFileName = ioUtils.getClassFilePath(workspace,
+                    String testFileName = ioUtils.getClassFilePath(sourceBase,
                             destDir, testClzName);
                     try {
                         String code = writer.format(cu);

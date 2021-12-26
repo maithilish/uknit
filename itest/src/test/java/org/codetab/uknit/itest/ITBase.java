@@ -15,29 +15,28 @@ public class ITBase {
 
     private Configs configs;
 
-    protected String getTestCaseDir() {
-        return this.getClass().getPackage().getName().replace(".", "/");
+    protected String getTestCasePkg() {
+        return this.getClass().getPackage().getName();
     }
 
-    protected String getClassName() {
+    protected String getClzName() {
         return this.getClass().getSimpleName().replace("IT", "");
     }
 
     protected void configure() {
-        String testCaseDir = getTestCaseDir();
-        String className = getClassName();
-        configure(testCaseDir, className);
+        String testCasePkg = getTestCasePkg();
+        String className = getClzName();
+        configure(testCasePkg, className);
     }
 
-    protected void configure(final String testCaseDir, final String className) {
-        String testClassName = className.concat("Test");
-        String srcFile = className.concat(".java");
-        String expFile = className.concat(".exp");
-        configure(testCaseDir, srcFile, testClassName, expFile);
+    protected void configure(final String testCasePkg, final String clzName) {
+        String testClzName = clzName.concat("Test");
+        String expFile = clzName.concat(".exp");
+        configure(testCasePkg, clzName, testClzName, expFile);
     }
 
-    protected void configure(final String testCaseDir, final String srcFile,
-            final String testClassName, final String expFile) {
+    protected void configure(final String testCasePkg, final String srcFile,
+            final String testClzName, final String expFile) {
         /*
          * Configs uses enum Configuration for configs and it is singleton and
          * both new Configs() and DI instance share the same instance.
@@ -45,20 +44,23 @@ public class ITBase {
         configs = new Configs();
 
         // workspace
-        configs.setProperty("uknit.workspace", System.getProperty("user.dir"));
+        configs.setProperty("uknit.source.base",
+                System.getProperty("user.dir"));
 
         // src
-        configs.setProperty("uknit.dir", "src/main/java/" + testCaseDir);
-        configs.setProperty("uknit.testDir", "src/test/java/" + testCaseDir);
+        configs.setProperty("uknit.source.dir", "src/main/java");
+        configs.setProperty("uknit.source.package", testCasePkg);
+        configs.setProperty("uknit.testDir",
+                "src/test/java/" + testCasePkg.replace(".", "/"));
 
-        configs.setProperty("uknit.file", srcFile);
+        configs.setProperty("uknit.source.clz", srcFile);
 
         configs.setProperty("uknit.expectedFile", expFile);
 
         // destination
         configs.setProperty("uknit.dest", "target/itest");
 
-        configs.setProperty("uknit.testClassName", testClassName);
+        configs.setProperty("uknit.testClassName", testClzName);
     }
 
     /**
@@ -88,7 +90,7 @@ public class ITBase {
     }
 
     protected File getExpectedFile() {
-        String ws = configs.getConfig("uknit.workspace");
+        String ws = configs.getConfig("uknit.source.base");
         String srcDir = configs.getConfig("uknit.testDir");
 
         String expectedFile = configs.getConfig("uknit.expectedFile");
@@ -100,7 +102,7 @@ public class ITBase {
     }
 
     protected File getActualFile() {
-        String ws = configs.getConfig("uknit.workspace");
+        String ws = configs.getConfig("uknit.source.base");
         String destDir = configs.getConfig("uknit.dest");
         String testClassName = configs.getConfig("uknit.testClassName");
 

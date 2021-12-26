@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.visit;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
@@ -49,6 +50,8 @@ public class InvokeProcessor {
     private ExpReplacer expReplacer;
     @Inject
     private VarExpStager varExpStager;
+    @Inject
+    private InternalCallProcessor internalCallProcessor;
 
     public Invoke process(final MethodInvocation mi, final Heap heap) {
         Expression exp = mi.getExpression();
@@ -61,7 +64,17 @@ public class InvokeProcessor {
             }
         }
         Optional<ExpReturnType> expReturnType = resolver.getExpReturnType(mi);
-        return modelFactory.createInvoke(var, expReturnType, mi);
+        Invoke invoke = modelFactory.createInvoke(var, expReturnType, mi);
+
+        if (isNull(exp)) {
+            // mi may be static or internal call
+            if (!methods.isStaticCall(mi)) {
+                Optional<IVar> retVar = internalCallProcessor.process(mi, heap);
+                invoke.setReturnVar(retVar);
+            }
+        }
+
+        return invoke;
     }
 
     public Optional<IVar> stageInferVar(final Invoke invoke, final Heap heap) {

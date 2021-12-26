@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.clz;
 
+import static java.util.Objects.isNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +16,13 @@ import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
@@ -40,6 +45,8 @@ public class ClzMaker {
     private NodeFactory nodeFactory;
     @Inject
     private Classes classes;
+    @Inject
+    private Types types;
 
     // test class cu
     private CompilationUnit cu;
@@ -94,7 +101,7 @@ public class ClzMaker {
         clzMakers.addFieldDecl(clzDecl, fieldDecl);
     }
 
-    public void addField(final TypeDeclaration node) {
+    public void addFields(final TypeDeclaration node) {
         TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
         String clzName = classes.getTestClzName(clzUnderTest);
         TypeDeclaration clzDecl = clzMap.getTypeDecl(clzName);
@@ -120,6 +127,41 @@ public class ClzMaker {
             Field field = fields.createField(fieldDecl);
             clzMap.addField(clzName, field);
         });
+    }
+
+    public void addSuperClassFields(final TypeDeclaration node) {
+        TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
+        String clzName = classes.getTestClzName(clzUnderTest);
+        TypeDeclaration clzDecl = clzMap.getTypeDecl(clzName);
+        Fields fields = di.instance(Fields.class);
+
+        ITypeBinding superTypeBind = node.resolveBinding().getSuperclass();
+        if (isNull(superTypeBind)) {
+            return;
+        }
+        if (superTypeBind.getQualifiedName().equals("java.lang.Object")) {
+            return;
+        }
+        IVariableBinding[] fieldBinds = superTypeBind.getDeclaredFields();
+        for (IVariableBinding fieldBind : fieldBinds) {
+            String fieldName = fieldBind.getName();
+            Type type = types.getType(fieldBind.getType(), node.getAST());
+            Modifier modifier =
+                    nodeFactory.createModifier(ModifierKeyword.PRIVATE_KEYWORD);
+
+            // new fieldDecl for clzDecl (test class)
+            FieldDeclaration fieldDecl =
+                    clzNodeFactory.createFieldDecl(type, fieldName);
+            clzMakers.addModifier(fieldDecl, modifier);
+
+            Field field = fields.createField(fieldDecl);
+            clzMap.addField(clzName, field);
+
+            // if not hidden, add field to clzDecl tree (test class)
+            if (!field.isHidden()) {
+                clzMakers.addFieldDecl(clzDecl, fieldDecl);
+            }
+        }
     }
 
     public void annotateFields(final Configs configs) {

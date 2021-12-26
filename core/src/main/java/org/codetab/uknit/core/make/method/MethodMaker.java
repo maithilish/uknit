@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -48,13 +50,15 @@ public class MethodMaker {
 
     private ClzMap clzMap;
 
-    private Heap heap;
-
     private MethodDeclaration methodDecl;
 
     private TypeDeclaration clzDecl;
 
-    public boolean stageMethod(final MethodDeclaration method) {
+    public boolean stageMethod(final MethodDeclaration method,
+            final Heap heap) {
+
+        checkNotNull(method);
+        checkNotNull(heap);
 
         LOG.debug("==== method under test: {} ====",
                 methods.getMethodName(method));
@@ -70,8 +74,8 @@ public class MethodMaker {
         methodDecl = methodMakers.constructTestMethod(method, testMethodName);
 
         Visitor visitor = di.instance(Visitor.class);
-        heap = di.instance(Heap.class);
         visitor.setHeap(heap);
+        visitor.setInternalMethod(false);
 
         // add method under test call
         callStager.stageCall(method, heap);
@@ -83,12 +87,33 @@ public class MethodMaker {
 
         useMarker.mark(heap);
 
-        variables.checkVarConsistency(heap.getVars());
+        // TODO - enable this after multi try exception fix
+        // variables.checkVarConsistency(heap.getVars());
 
         return true;
     }
 
-    public void generateTestMethod() {
+    public boolean processMethod(final MethodDeclaration method,
+            final boolean internalMethod, final Heap heap) {
+
+        checkNotNull(method);
+        checkNotNull(heap);
+
+        LOG.debug("= process method: {} =", methods.getMethodName(method));
+
+        Visitor visitor = di.instance(Visitor.class);
+        visitor.setHeap(heap);
+        visitor.setInternalMethod(internalMethod);
+
+        method.accept(visitor);
+
+        // TODO - enable this after multi try exception fix
+        // variables.checkVarConsistency(heap.getVars());
+
+        return true;
+    }
+
+    public void generateTestMethod(final Heap heap) {
         // generate parameters, infer and local vars
         bodyMaker.generateVarStmts(methodDecl, heap);
         bodyMaker.generateReturnVarStmt(methodDecl, heap);
@@ -130,29 +155,35 @@ public class MethodMaker {
 
     /**
      * Anonymous class method, Inner class method, Local class method,
-     * constructor and main methods are not stageable.
+     * constructor, main and (optionally) private methods are not stageable.
      * @param node
      * @return
      */
-    public boolean isStageable(final MethodDeclaration node) {
+    public boolean isStageable(final MethodDeclaration node,
+            final boolean ignorePrivate) {
         boolean stage = true;
         if (methodMakers.isAnonymousClassMethod(node)) {
-            LOG.debug("method belongs to an anonymous class, ignore");
+            LOG.debug("{} anonymous class method, ignore", node.getName());
             stage = false;
         }
         if (methodMakers.isLocalClassMethod(node)) {
-            LOG.debug("method belongs to an anonymous class, ignore");
+            LOG.debug("{} local class method, ignore", node.getName());
             stage = false;
         }
         if (methodMakers.isInnerClassMethod(node)) {
-            LOG.debug("method belongs to an anonymous class, ignore");
+            LOG.debug("{} inner class method, ignore", node.getName());
             stage = false;
         }
-        // constructor or main methods
-        if (methodMakers.ignoreMethod(node)) {
+        // constructor, main or private methods
+        if (methodMakers.ignoreMethod(node, ignorePrivate)) {
             LOG.debug("method {} ignored", node.getName());
             stage = false;
         }
         return stage;
+    }
+
+    public boolean isStageable(final MethodDeclaration node) {
+        boolean ignorePrivate = true;
+        return isStageable(node, ignorePrivate);
     }
 }

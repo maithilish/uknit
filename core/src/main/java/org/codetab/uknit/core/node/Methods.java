@@ -105,6 +105,10 @@ public class Methods {
         return (methodDecl.getModifiers() & Modifier.STATIC) > 0;
     }
 
+    public boolean isPrivate(final MethodDeclaration methodDecl) {
+        return (methodDecl.getModifiers() & Modifier.PRIVATE) > 0;
+    }
+
     /**
      * Get var name of method invocation. If chained call, get top name.
      * @param mi
@@ -153,5 +157,4 @@ public class Methods {
         }
         return names;
     }
-
 }

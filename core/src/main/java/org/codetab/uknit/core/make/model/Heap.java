@@ -123,11 +123,11 @@ public class Heap {
                 .findFirst();
     }
 
-    public Optional<ExpVar> findByLeftVar(final IVar var) {
+    public Optional<ExpVar> findByLeftVar(final String name) {
         return expVars.stream().filter(n -> {
             Optional<IVar> leftVar = n.getLeftVar();
             if (leftVar.isPresent()) {
-                return leftVar.get().getName().equals(var.getName());
+                return leftVar.get().getName().equals(name);
             } else {
                 return false;
             }

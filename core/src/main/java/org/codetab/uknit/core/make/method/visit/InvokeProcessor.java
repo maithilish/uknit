@@ -117,11 +117,13 @@ public class InvokeProcessor {
             Optional<Invoke> o = heap.findInvoke(mi);
             if (o.isPresent()) {
                 Invoke invoke = o.get();
-                // method invoked on mock
-                if (nonNull(invoke.getCallVar())
-                        && invoke.getCallVar().isMock()) {
-                    MethodInvocation resolvableMi = mi;
-                    verifyStager.stageVerify(mi, resolvableMi, heap);
+                // method invoked on mock or hidden var
+                IVar callVar = invoke.getCallVar();
+                if (nonNull(callVar)) {
+                    if (callVar.isMock() && !callVar.isHidden()) {
+                        MethodInvocation resolvableMi = mi;
+                        verifyStager.stageVerify(mi, resolvableMi, heap);
+                    }
                 }
             }
         }

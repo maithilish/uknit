@@ -40,4 +40,8 @@ public interface ModelFactory {
     Verify createVerify(MethodInvocation mi);
 
     ArgCapture createArgCapture(String name, Type type);
+
+    Cu createCuMap(@Assisted("pkg") String pkg,
+            @Assisted("clzName") String clzName,
+            @Assisted("srcPath") String srcPath);
 }

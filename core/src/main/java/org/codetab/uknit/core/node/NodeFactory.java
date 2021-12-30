@@ -47,6 +47,12 @@ public class NodeFactory {
         return ast.newModifier(modifierKeyword);
     }
 
+    public List<Modifier> createModifiers(final int flags) {
+        @SuppressWarnings("unchecked")
+        List<Modifier> modifiers = ast.newModifiers(flags);
+        return modifiers;
+    }
+
     public MarkerAnnotation createMarkerAnnotation(final String type) {
         MarkerAnnotation annotation = ast.newMarkerAnnotation();
         annotation.setTypeName(ast.newName(type));

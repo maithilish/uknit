@@ -15,12 +15,16 @@ import org.codetab.uknit.core.node.Modifiers;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
-import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-public class Fields {
+public class FieldMakers {
 
     @Inject
     private ModelFactory modelFactory;
@@ -46,17 +50,7 @@ public class Fields {
             Type type = fieldDecl.getType();
             boolean mock = mocks.isMockable(type);
 
-            boolean hide = false;
-            if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
-                hide = true;
-            }
-            if (nodes.isPrimitiveType(fieldDecl)) {
-                hide = true;
-            }
-            String typeName = types.getTypeName(fieldDecl.getType());
-            if (types.isUnmodifiable(typeName)) {
-                hide = true;
-            }
+            boolean hide = hide(fieldDecl);
 
             Field field = modelFactory.createField(name, type, mock, fieldDecl);
             field.setHidden(hide);
@@ -72,73 +66,11 @@ public class Fields {
         Type type = fieldDecl.getType();
         boolean mock = mocks.isMockable(type);
 
-        boolean hide = false;
-        if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
-            hide = true;
-        }
-        if (nodes.isPrimitiveType(fieldDecl)) {
-            hide = true;
-        }
-        String typeName = types.getTypeName(fieldDecl.getType());
-        if (types.isUnmodifiable(typeName)) {
-            hide = true;
-        }
+        boolean hide = hide(fieldDecl);
 
         Field field = modelFactory.createField(name, type, mock, fieldDecl);
         field.setHidden(hide);
         return field;
-    }
-
-    /**
-     * Static fields are not mocked.
-     * @param fieldDecls
-     */
-    public void removeStaticFields(final List<FieldDeclaration> fieldDecls) {
-        fieldDecls.removeIf(fieldDecl -> {
-            return modifiers.isStatic(modifiers.getModifiers(fieldDecl));
-        });
-    }
-
-    /**
-     * Primitives are unmockable.
-     * @param fieldDecls
-     */
-    public void removePrimitiveFields(final List<FieldDeclaration> fieldDecls) {
-        fieldDecls.removeIf(fieldDecl -> {
-            return nodes.isPrimitiveType(fieldDecl);
-        });
-    }
-
-    /**
-     * Remove unmockable types such as String.
-     * @param fieldDecls
-     */
-    public void removeUnmodifiableFields(
-            final List<FieldDeclaration> fieldDecls) {
-        fieldDecls.removeIf(fieldDecl -> {
-            String typeName = types.getTypeName(fieldDecl.getType());
-            return types.isUnmodifiable(typeName);
-        });
-    }
-
-    /**
-     * Remove fields that are instantiated.
-     * @param fieldDecls
-     */
-    public void removeInstantiatedFields(
-            final List<FieldDeclaration> fieldDecls) {
-        List<FieldDeclaration> removeFieldDecls = new ArrayList<>();
-        for (FieldDeclaration fieldDecl : fieldDecls) {
-            @SuppressWarnings("unchecked")
-            List<VariableDeclarationFragment> fragments = fieldDecl.fragments();
-            for (VariableDeclarationFragment vd : fragments) {
-                Expression ie = vd.getInitializer();
-                if (nonNull(ie)) {
-                    removeFieldDecls.add(fieldDecl);
-                }
-            }
-        }
-        fieldDecls.removeIf(f -> removeFieldDecls.contains(f));
     }
 
     /**
@@ -166,5 +98,77 @@ public class Fields {
         }
         fieldDecls.removeIf(f -> removeFieldDecls.contains(f));
         fieldDecls.addAll(newFieldDecls);
+    }
+
+    public boolean hide(final FieldDeclaration fieldDecl) {
+        if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
+            return true;
+        }
+        if (nodes.isPrimitiveType(fieldDecl)) {
+            return true;
+        }
+        String typeName = types.getTypeName(fieldDecl.getType());
+        if (types.isUnmodifiable(typeName)) {
+            return true;
+        }
+        @SuppressWarnings("unchecked")
+        List<VariableDeclarationFragment> fragments = fieldDecl.fragments();
+        for (VariableDeclarationFragment vd : fragments) {
+            if (nonNull(vd.getInitializer())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addModifier(final FieldDeclaration fieldDecl,
+            final Modifier modifier) {
+        @SuppressWarnings("unchecked")
+        List<Modifier> fieldModifiers = fieldDecl.modifiers();
+        fieldModifiers.add(modifier);
+    }
+
+    public void addModifiers(final FieldDeclaration fieldDecl,
+            final List<Modifier> modifierList) {
+        @SuppressWarnings("unchecked")
+        List<Modifier> fieldModifiers = fieldDecl.modifiers();
+        fieldModifiers.addAll(modifierList);
+    }
+
+    public void addAnnotation(final FieldDeclaration fieldDecl,
+            final Annotation annotation) {
+        @SuppressWarnings("unchecked")
+        List<IExtendedModifier> fieldModifiers = fieldDecl.modifiers();
+        fieldModifiers.add(0, annotation);
+    }
+
+    public List<VariableDeclarationFragment> getFragments(
+            final FieldDeclaration field) {
+        @SuppressWarnings("unchecked")
+        List<VariableDeclarationFragment> fragments = field.fragments();
+        return fragments;
+    }
+
+    public void addFieldDecl(final TypeDeclaration clzDecl,
+            final FieldDeclaration fieldDecl) {
+        @SuppressWarnings("unchecked")
+        List<BodyDeclaration> body = clzDecl.bodyDeclarations();
+        body.add(fieldDecl);
+    }
+
+    public boolean fieldNotExists(final String fieldName,
+            final List<BodyDeclaration> body) {
+        for (BodyDeclaration bd : body) {
+            if (nodes.is(bd, FieldDeclaration.class)) {
+                List<VariableDeclarationFragment> fragments =
+                        getFragments(nodes.as(bd, FieldDeclaration.class));
+                for (VariableDeclarationFragment vdf : fragments) {
+                    if (nodes.getName(vdf.getName()).equals(fieldName)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

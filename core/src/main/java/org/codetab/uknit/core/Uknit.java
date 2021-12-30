@@ -37,7 +37,10 @@ public class Uknit {
             ctl.setup();
 
             SourceParser sourceParser = di.instance(SourceParser.class);
-            sourceParser.parseAndProcess();
+
+            sourceParser.parseClass();
+            sourceParser.parseSuperClasses();
+            sourceParser.process();
 
             TestWriter testWriter = di.instance(TestWriter.class);
             testWriter.write(ctl);

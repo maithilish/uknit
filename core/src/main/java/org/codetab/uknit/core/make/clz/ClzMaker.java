@@ -1,10 +1,9 @@
 package org.codetab.uknit.core.make.clz;
 
-import static java.util.Objects.isNull;
-
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -12,23 +11,18 @@ import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
+import org.codetab.uknit.core.make.model.Cu;
 import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.node.Types;
+import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class ClzMaker {
@@ -46,7 +40,9 @@ public class ClzMaker {
     @Inject
     private Classes classes;
     @Inject
-    private Types types;
+    private FieldMaker fieldMaker;
+    @Inject
+    private Nodes nodes;
 
     // test class cu
     private CompilationUnit cu;
@@ -82,112 +78,76 @@ public class ClzMaker {
     /**
      * Add self field (InjectMocks)
      */
-    public void addSelfField(final TypeDeclaration node) {
-        TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
-        String clzUnderTestName = classes.getClzName(clzUnderTest);
-        String clzName = classes.getTestClzName(clzUnderTest);
-        TypeDeclaration clzDecl = clzMap.getTypeDecl(clzName);
+    public void addSelfField(final TypeDeclaration srcClz) {
+        String srcClzName = classes.getClzName(srcClz);
+        String testClzName = classes.getTestClzName(srcClz);
+        TypeDeclaration testClz = clzMap.getTypeDecl(testClzName);
 
-        String fieldName = classes.getClzAsFieldName(clzUnderTest);
-        Modifier modifier =
-                nodeFactory.createModifier(ModifierKeyword.PRIVATE_KEYWORD);
-        Annotation annotation =
-                nodeFactory.createMarkerAnnotation("InjectMocks");
+        String fieldName = classes.getClzAsFieldName(srcClz);
 
-        FieldDeclaration fieldDecl =
-                clzNodeFactory.createFieldDecl(clzUnderTestName, fieldName);
-        clzMakers.addAnnotation(fieldDecl, annotation);
-        clzMakers.addModifier(fieldDecl, modifier);
-        clzMakers.addFieldDecl(clzDecl, fieldDecl);
+        fieldMaker.addSelfField(srcClzName, testClz, fieldName);
     }
 
-    public void addFields(final TypeDeclaration node) {
-        TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
-        String clzName = classes.getTestClzName(clzUnderTest);
-        TypeDeclaration clzDecl = clzMap.getTypeDecl(clzName);
+    public void addFields(final TypeDeclaration srcClz) {
+        String testClzName = classes.getTestClzName(srcClz);
+        TypeDeclaration testClz = clzMap.getTypeDecl(testClzName);
 
-        Fields fields = di.instance(Fields.class);
-        List<Field> fieldList = clzMakers.getFields(clzUnderTest, fields);
-        // create new fieldDecl and add to test class
-        fieldList.forEach(clzUnderTestField -> {
-            String fieldName = clzUnderTestField.getName();
-            Type type = clzUnderTestField.getType();
-            Modifier modifier =
-                    nodeFactory.createModifier(ModifierKeyword.PRIVATE_KEYWORD);
-
-            // new fieldDecl for clzDecl (test class)
-            FieldDeclaration fieldDecl =
-                    clzNodeFactory.createFieldDecl(type, fieldName);
-            clzMakers.addModifier(fieldDecl, modifier);
-            // if not hidden, add field to clzDecl tree (test class)
-            if (!clzUnderTestField.isHidden()) {
-                clzMakers.addFieldDecl(clzDecl, fieldDecl);
-            }
-
-            Field field = fields.createField(fieldDecl);
-            clzMap.addField(clzName, field);
-        });
+        List<Field> srcFields = fieldMaker.getSrcFields(srcClz);
+        List<Field> testFields = fieldMaker.addFieldDeclsToTestClz(srcFields,
+                srcClz, testClzName, testClz);
+        fieldMaker.addFieldsToClzMap(testFields, testClzName, clzMap);
     }
 
-    public void addSuperClassFields(final TypeDeclaration node) {
-        TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
-        String clzName = classes.getTestClzName(clzUnderTest);
-        TypeDeclaration clzDecl = clzMap.getTypeDecl(clzName);
-        Fields fields = di.instance(Fields.class);
+    public void addSuperFields(final TypeDeclaration srcClz,
+            final List<AbstractTypeDeclaration> superTypes) {
 
-        ITypeBinding superTypeBind = node.resolveBinding().getSuperclass();
-        if (isNull(superTypeBind)) {
-            return;
-        }
-        if (superTypeBind.getQualifiedName().equals("java.lang.Object")) {
-            return;
-        }
-        IVariableBinding[] fieldBinds = superTypeBind.getDeclaredFields();
-        for (IVariableBinding fieldBind : fieldBinds) {
-            String fieldName = fieldBind.getName();
-            Type type = types.getType(fieldBind.getType(), node.getAST());
-            Modifier modifier =
-                    nodeFactory.createModifier(ModifierKeyword.PRIVATE_KEYWORD);
+        String testClzName = classes.getTestClzName(srcClz);
+        TypeDeclaration testClz = clzMap.getTypeDecl(testClzName);
 
-            // new fieldDecl for clzDecl (test class)
-            FieldDeclaration fieldDecl =
-                    clzNodeFactory.createFieldDecl(type, fieldName);
-            clzMakers.addModifier(fieldDecl, modifier);
-
-            Field field = fields.createField(fieldDecl);
-            clzMap.addField(clzName, field);
-
-            // if not hidden, add field to clzDecl tree (test class)
-            if (!field.isHidden()) {
-                clzMakers.addFieldDecl(clzDecl, fieldDecl);
+        for (AbstractTypeDeclaration asuperType : superTypes) {
+            if (nodes.is(asuperType, TypeDeclaration.class)) {
+                TypeDeclaration superType =
+                        nodes.as(asuperType, TypeDeclaration.class);
+                List<Field> srcFields = fieldMaker.getSrcFields(superType);
+                List<Field> testFields = fieldMaker.addFieldDeclsToTestClz(
+                        srcFields, srcClz, testClzName, testClz);
+                fieldMaker.addFieldsToClzMap(testFields, testClzName, clzMap);
             }
         }
+    }
+
+    public List<AbstractTypeDeclaration> getSuperTypeDeclarations(
+            final List<Entry<String, String>> superClassNames,
+            final List<Cu> cuList) {
+        List<AbstractTypeDeclaration> superTypeDecls = new ArrayList<>();
+        for (Entry<String, String> entry : superClassNames) {
+            String pkg = entry.getKey();
+            String clz = entry.getValue();
+            Optional<Cu> ocu =
+                    cuList.stream().filter(c -> c.getPkg().equals(pkg)
+                            && c.getClzNames().contains(clz)).findAny();
+            if (ocu.isPresent()) {
+                CompilationUnit scu = ocu.get().getCu();
+                @SuppressWarnings("unchecked")
+                List<AbstractTypeDeclaration> stypes = scu.types();
+                Optional<AbstractTypeDeclaration> sType =
+                        stypes.stream().filter(t -> t.getName()
+                                .getFullyQualifiedName().equals(clz)).findAny();
+                if (sType.isPresent()) {
+                    superTypeDecls.add(sType.get());
+                }
+            }
+        }
+        return superTypeDecls;
     }
 
     public void annotateFields(final Configs configs) {
-
         String[] deepStubAnnotation =
                 configs.getConfig("uknit.annotation.chainCall").split("=");
-
         for (String clzName : clzMap.keySet()) {
             Clz clz = clzMap.get(clzName);
-            List<Field> fields = clz.getFields();
-            for (Field field : fields) {
-                FieldDeclaration fieldDecl = field.getFieldDecl();
-                Annotation annotation = null;
-                if (field.isDeepStub()) {
-                    Map<SimpleName, Name> map = new HashMap<>();
-                    SimpleName key = (SimpleName) nodeFactory
-                            .createName(deepStubAnnotation[0]);
-                    Name value = nodeFactory.createName(deepStubAnnotation[1]);
-                    map.put(key, value);
-                    annotation =
-                            nodeFactory.createNormalAnnotation("Mock", map);
-                } else {
-                    annotation = nodeFactory.createMarkerAnnotation("Mock");
-                }
-                clzMakers.addAnnotation(fieldDecl, annotation);
-            }
+            List<Field> fieldList = clz.getFields();
+            fieldMaker.annotateFields(fieldList, deepStubAnnotation);
         }
     }
 
@@ -198,4 +158,5 @@ public class ClzMaker {
     public void setCu(final CompilationUnit cu) {
         this.cu = cu;
     }
+
 }

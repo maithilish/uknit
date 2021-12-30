@@ -1,6 +1,10 @@
 package org.codetab.uknit.core.parse;
 
+import static java.util.Objects.nonNull;
+
 import java.io.IOException;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -17,6 +21,7 @@ import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.model.Heap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -110,7 +115,16 @@ public class SourceVisitor extends ASTVisitor {
         clzMaker.addClass(node);
         clzMaker.addSelfField(node);
         clzMaker.addFields(node);
-        clzMaker.addSuperClassFields(node);
+
+        List<Entry<String, String>> superClassNames =
+                ctl.getSuperClassMap().get(node);
+        if (nonNull(superClassNames)) {
+            List<AbstractTypeDeclaration> superTypes =
+                    clzMaker.getSuperTypeDeclarations(superClassNames,
+                            ctl.getCuCache());
+            clzMaker.addSuperFields(node, superTypes);
+        }
+
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
         methodMaker.addBeforeMethod(node);

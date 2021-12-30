@@ -1,15 +1,19 @@
 package org.codetab.uknit.core.make;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.uknit.core.make.clz.ClzMaker;
+import org.codetab.uknit.core.make.model.Cu;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.node.NodeFactory;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 @Singleton
@@ -32,10 +36,11 @@ public class Controller {
     private CompilationUnit srcCompilationUnit;
 
     /*
-     * cache of super class cu. Key is QName - packgeName + clzName
-     * org.codetab.uknit.itest.extend.Base
+     * cache of class and super class cus.
      */
-    private Map<String, CompilationUnit> cuCache;
+    private List<Cu> cuCache;
+
+    private Map<AbstractTypeDeclaration, List<Entry<String, String>>> superClassMap;
 
     public void setup() {
         char[] src = new String("").toCharArray(); // blank cu
@@ -46,7 +51,7 @@ public class Controller {
         clzNodeFactory.setAst(testCompilationUnit.getAST());
 
         variables.setup();
-        cuCache = new HashMap<>();
+        cuCache = new ArrayList<>();
     }
 
     public ClzMaker getClzMaker() {
@@ -65,7 +70,17 @@ public class Controller {
         this.srcCompilationUnit = srcCu;
     }
 
-    public Map<String, CompilationUnit> getCuCache() {
+    public List<Cu> getCuCache() {
         return cuCache;
     }
+
+    public void setSuperClassMap(
+            final Map<AbstractTypeDeclaration, List<Entry<String, String>>> map) {
+        this.superClassMap = map;
+    }
+
+    public Map<AbstractTypeDeclaration, List<Entry<String, String>>> getSuperClassMap() {
+        return superClassMap;
+    }
+
 }

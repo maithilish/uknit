@@ -1,26 +1,27 @@
 package org.codetab.uknit.core.parse;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.Objects.isNull;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
+import org.codetab.uknit.core.make.model.Cu;
+import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.util.IOUtils;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class SourceParser {
-
-    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -29,11 +30,15 @@ public class SourceParser {
     @Inject
     private SourceVisitor sourceVisitor;
     @Inject
+    private SuperParser superParser;
+    @Inject
+    private ModelFactory modelFactory;
+    @Inject
     private IOUtils ioUtils;
     @Inject
     private Controller ctl;
 
-    public boolean parseAndProcess() {
+    public boolean parseClass() {
         try {
             String srcBase = configs.getConfig("uknit.source.base");
             String srcDir = configs.getConfig("uknit.source.dir");
@@ -57,13 +62,18 @@ public class SourceParser {
             CompilationUnit srcCu =
                     cuFactory.createCompilationUnit(src, unitName);
             ctl.setSrcCompilationUnit(srcCu);
-            String key = String.join(".", srcPkg, srcClz);
-            ctl.getCuCache().put(key, srcCu);
 
-            sourceVisitor.preProcess();
-            srcCu.accept(sourceVisitor);
-            sourceVisitor.postProcess();
-
+            List<Cu> cuCache = ctl.getCuCache();
+            Optional<Cu> cu = cuCache.stream()
+                    .filter(h -> h.getSourcePath().equals(srcPath)).findFirst();
+            if (cu.isPresent()) {
+                cu.get().getClzNames().add(srcClz);
+                cu.get().setCu(srcCu);
+            } else {
+                Cu c = modelFactory.createCuMap(srcPkg, srcClz, srcPath);
+                c.setCu(srcCu);
+                cuCache.add(c);
+            }
         } catch (Exception e) {
             sourceVisitor.closeDumpers();
             throw e;
@@ -71,13 +81,37 @@ public class SourceParser {
         return true;
     }
 
+    public void parseSuperClasses() {
+        Map<AbstractTypeDeclaration, List<Entry<String, String>>> map =
+                superParser.getSuperClassNames();
+        ctl.setSuperClassMap(map);
+        for (AbstractTypeDeclaration typeDecl : map.keySet()) {
+            superParser.findSources(map.get(typeDecl));
+            superParser.parse(ctl.getCuCache());
+        }
+    }
+
+    public boolean process() {
+        try {
+            sourceVisitor.preProcess();
+
+            CompilationUnit srcCu = ctl.getSrcCompilationUnit();
+            srcCu.accept(sourceVisitor);
+
+            sourceVisitor.postProcess();
+            return true;
+        } catch (Exception e) {
+            sourceVisitor.closeDumpers();
+            throw e;
+        }
+    }
+
     /**
-     * Fetch cu from cache, if not found then parse new cu and cache it. Source
-     * file may not be available for super classes of external packages, then
-     * optional empty is returned. Used to parse super class.
+     * Fetch {@link CompilationUnit} from cache or if not found, then return
+     * empty.
      * @param clzPkg
      * @param clzName
-     * @return cu optional
+     * @return {@link CompilationUnit} - optional
      */
     public Optional<CompilationUnit> fetchCu(final String clzPkg,
             final String clzName) {
@@ -85,36 +119,13 @@ public class SourceParser {
         checkNotNull(clzPkg);
         checkNotNull(clzName);
 
-        String key = String.join(".", clzPkg, clzName);
-        CompilationUnit srcCu = ctl.getCuCache().get(key);
-        if (isNull(srcCu)) {
-            try {
-                String srcBase = configs.getConfig("uknit.source.base");
-                String srcDir = configs.getConfig("uknit.source.dir");
-                String srcPkg = clzPkg;
-                String srcName = clzName + ".java";
-                String srcFile = String.join("/", srcBase, srcDir,
-                        srcPkg.replace(".", "/"), srcName);
-
-                String unitName = String.join("/", srcDir,
-                        srcPkg.replace(".", "/"), clzName);
-
-                char[] src;
-                try {
-                    src = ioUtils.toCharArray(srcFile,
-                            Charset.defaultCharset());
-                    srcCu = cuFactory.createCompilationUnit(src, unitName);
-                    ctl.getCuCache().put(key, srcCu);
-                    return Optional.of(srcCu);
-                } catch (IOException e) {
-                    LOG.debug("unable to find src file for {} {} {}", clzPkg,
-                            clzName, e);
-                }
-            } catch (Exception e) {
-                LOG.debug("unable to parse src for {} {} {}", clzPkg, clzName,
-                        e);
-            }
+        Optional<Cu> cu =
+                ctl.getCuCache().stream().filter(c -> c.getPkg().equals(clzPkg)
+                        && c.getClzNames().contains(clzName)).findAny();
+        if (cu.isPresent()) {
+            return Optional.of(cu.get().getCu());
+        } else {
+            return Optional.empty();
         }
-        return Optional.ofNullable(srcCu);
     }
 }

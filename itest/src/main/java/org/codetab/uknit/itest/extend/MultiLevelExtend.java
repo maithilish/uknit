@@ -2,10 +2,11 @@ package org.codetab.uknit.itest.extend;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.codetab.uknit.itest.model.MultiLevelMiddle;
 import org.codetab.uknit.itest.model.Person;
 import org.codetab.uknit.itest.model.QFactory;
 
-public class CallExtended extends Middle {
+public class MultiLevelExtend extends MultiLevelMiddle {
 
     public Person process() throws InterruptedException {
         Person person = getQueue().take();

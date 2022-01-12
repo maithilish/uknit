@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.ArgCapture;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
@@ -34,6 +35,8 @@ public class LambdaProcessor {
     private Nodes nodes;
     @Inject
     private ModelFactory modelFactory;
+    @Inject
+    private Resolver resolver;
 
     public List<ArgCapture> replaceLambdaArgsWithCaptures(
             final MethodInvocation mi, final MethodInvocation resolveableMi,
@@ -49,8 +52,9 @@ public class LambdaProcessor {
             if (nodes.is(resolvableArg, LambdaExpression.class)) {
                 LambdaExpression lambdaExp =
                         nodes.as(resolvableArg, LambdaExpression.class);
-                Type type = types.getType(lambdaExp.resolveTypeBinding(),
-                        lambdaExp.getAST());
+                Type type =
+                        types.getType(resolver.resolveTypeBinding(lambdaExp),
+                                lambdaExp.getAST());
                 String typeName = types.getTypeName(type);
                 boolean captureArg = configs
                         .getConfig("uknit.anonymous.class.capture", true);
@@ -88,8 +92,9 @@ public class LambdaProcessor {
             if (nodes.is(resolvableArg, LambdaExpression.class)) {
                 LambdaExpression lambdaExp =
                         nodes.as(resolvableArg, LambdaExpression.class);
-                Type type = types.getType(lambdaExp.resolveTypeBinding(),
-                        lambdaExp.getAST());
+                Type type =
+                        types.getType(resolver.resolveTypeBinding(lambdaExp),
+                                lambdaExp.getAST());
                 String typeName = types.getTypeName(type);
                 String fmt = configs
                         .getConfig("uknit.anonymous.class.substitute", "");

@@ -15,11 +15,8 @@ public class SourceFinder {
     @Inject
     private IOUtils ioUtils;
 
-    public String find(final String srcBase, final String srcDir,
-            final String clzPkg, final String clzName) {
-        String searchDir =
-                String.join("/", srcBase, srcDir, clzPkg.replace(".", "/"));
-        String regex = "class " + clzName;
+    public String find(final String searchDir, final String clzName) {
+        String regex = "class " + clzName + " ";
         List<File> srcFiles = ioUtils.searchSource(searchDir, "java", regex);
         if (srcFiles.size() == 0) {
             String message = spaceit("unable to find source file for", clzName,
@@ -27,7 +24,7 @@ public class SourceFinder {
             throw new CriticalException(message);
         }
         if (srcFiles.size() > 1) {
-            String message = spaceit("multiple found source file for", clzName,
+            String message = spaceit("found multiple source file for", clzName,
                     "in", searchDir);
             throw new CriticalException(message);
         }

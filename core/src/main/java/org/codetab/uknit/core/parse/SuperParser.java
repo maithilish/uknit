@@ -22,6 +22,7 @@ import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.model.Cu;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.CuFactory;
+import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.util.IOUtils;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -43,6 +44,8 @@ public class SuperParser {
     private IOUtils ioUtils;
     @Inject
     private Controller ctl;
+    @Inject
+    private Resolver resolver;
 
     /**
      * Get list of super class names.
@@ -63,7 +66,8 @@ public class SuperParser {
 
         for (AbstractTypeDeclaration typeDecl : typeDecls) {
             List<Entry<String, String>> superClassNames = new ArrayList<>();
-            ITypeBinding typeBind = typeDecl.resolveBinding().getSuperclass();
+            ITypeBinding typeBind =
+                    resolver.resolveBinding(typeDecl).getSuperclass();
             while (nonNull(typeBind) && !typeBind.equals(objTypeBind)) {
                 String clzName = typeBind.getName();
                 String clzPkg = typeBind.getPackage().getName();
@@ -91,16 +95,20 @@ public class SuperParser {
             boolean known =
                     cuCache.stream().anyMatch(h -> h.isKnown(clzPkg, clzName));
             if (!known) {
-                String srcPath =
-                        sourceFinder.find(srcBase, srcDir, clzPkg, clzName);
-                Optional<Cu> cu = cuCache.stream()
-                        .filter(h -> h.getSourcePath().equals(srcPath))
-                        .findFirst();
-                if (cu.isPresent()) {
-                    cu.get().getClzNames().add(clzName);
-                } else {
-                    cuCache.add(
-                            modelFactory.createCuMap(clzPkg, clzName, srcPath));
+                String searchDir = String.join("/", srcBase, srcDir,
+                        clzPkg.replace(".", "/"));
+                // source may not be available for external libraries
+                if (ioUtils.dirExists(searchDir)) {
+                    String srcPath = sourceFinder.find(searchDir, clzName);
+                    Optional<Cu> cu = cuCache.stream()
+                            .filter(h -> h.getSourcePath().equals(srcPath))
+                            .findFirst();
+                    if (cu.isPresent()) {
+                        cu.get().getClzNames().add(clzName);
+                    } else {
+                        cuCache.add(modelFactory.createCuMap(clzPkg, clzName,
+                                srcPath));
+                    }
                 }
             }
         }

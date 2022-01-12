@@ -14,6 +14,8 @@ public class Mocks {
     @Inject
     private Types types;
     @Inject
+    private Resolver resolver;
+    @Inject
     private Configs configs;
 
     /**
@@ -42,7 +44,7 @@ public class Mocks {
             if (nonNull(instanceType)) {
                 return false;
             }
-            ITypeBinding typeBind = type.resolveBinding();
+            ITypeBinding typeBind = resolver.resolveBinding(type);
             if (nonNull(typeBind) && typeBind.isEnum()) {
                 return false;
             }

@@ -31,7 +31,7 @@ public class CuFactory {
         parser.setUnitName(unitName);
 
         parser.setResolveBindings(true);
-        parser.setBindingsRecovery(true);
+        parser.setBindingsRecovery(false);
 
         parser.setSource(src);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -41,4 +41,5 @@ public class CuFactory {
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         return cu;
     }
+
 }

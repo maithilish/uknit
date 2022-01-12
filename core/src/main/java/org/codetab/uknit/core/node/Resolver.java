@@ -5,13 +5,16 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.ExpReturnType;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 
-public class TypeResolver {
+public class Resolver {
 
     @Inject
     private Types types;
@@ -45,5 +48,25 @@ public class TypeResolver {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public ITypeBinding resolveTypeBinding(final ArrayAccess arrayAccess) {
+        return arrayAccess.resolveTypeBinding();
+    }
+
+    public ITypeBinding resolveTypeBinding(final LambdaExpression lambdaExp) {
+        return lambdaExp.resolveTypeBinding();
+    }
+
+    public IMethodBinding resolveMethodBinding(final MethodInvocation mi) {
+        return mi.resolveMethodBinding();
+    }
+
+    public ITypeBinding resolveBinding(final Type type) {
+        return type.resolveBinding();
+    }
+
+    public ITypeBinding resolveBinding(final AbstractTypeDeclaration typeDecl) {
+        return typeDecl.resolveBinding();
     }
 }

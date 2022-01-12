@@ -1,15 +1,14 @@
 package org.codetab.uknit.core.util;
 
+import java.io.BufferedReader;
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class IOUtils {
 
@@ -38,20 +37,30 @@ public class IOUtils {
     public List<File> searchSource(final String dirName, final String ext,
             final String regex) {
         File dir = new File(dirName);
-        String suffix = "." + ext;
         List<File> fileList = new ArrayList<>();
+
+        String suffix = "." + ext;
         File[] files = dir.listFiles((d, name) -> name.endsWith(suffix));
         for (File file : files) {
             if (file.isFile()) {
-                try (Scanner scanner = new Scanner(file)) {
-                    if (scanner.findWithinHorizon(regex, 0) != null) {
-                        fileList.add(file);
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(file)))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        if (line.contains(regex)) {
+                            fileList.add(file);
+                            break;
+                        }
                     }
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
         return fileList;
+    }
+
+    public boolean dirExists(final String dir) {
+        return new File(dir).exists();
     }
 }

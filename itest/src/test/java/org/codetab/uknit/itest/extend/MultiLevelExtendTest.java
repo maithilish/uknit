@@ -15,9 +15,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CallExtendedTest {
+public class MultiLevelExtendTest {
     @InjectMocks
-    private CallExtended callExtended;
+    private MultiLevelExtend multiLevelExtend;
 
     @Mock
     private BlockingQueue<Person> queue;
@@ -33,7 +33,7 @@ public class CallExtendedTest {
 
         when(queue.take()).thenReturn(person);
 
-        Person actual = callExtended.process();
+        Person actual = multiLevelExtend.process();
 
         assertSame(person, actual);
     }
@@ -49,7 +49,7 @@ public class CallExtendedTest {
         when(qFactory.getQ(size)).thenReturn(q);
         when(q.take()).thenReturn(person);
 
-        Person actual = callExtended.processSameName(qFactory);
+        Person actual = multiLevelExtend.processSameName(qFactory);
 
         assertSame(person, actual);
         verify(q).clear();
@@ -67,7 +67,7 @@ public class CallExtendedTest {
         when(queueFactory.getQ(size)).thenReturn(q);
         when(q.take()).thenReturn(person);
 
-        Person actual = callExtended.processDiffName(qFactory);
+        Person actual = multiLevelExtend.processDiffName(qFactory);
 
         assertSame(person, actual);
         verify(q).clear();

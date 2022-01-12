@@ -16,6 +16,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
@@ -245,6 +246,9 @@ class DerivedInitialzer {
 
 class EnumInitializer {
 
+    @Inject
+    private Resolver resolver;
+
     public Optional<String> getInitializer(final IVar var, final Heap heap) {
         Optional<Invoke> invo = heap.findInvokeByInferVar(var);
         ITypeBinding typeBind = null;
@@ -255,7 +259,7 @@ class EnumInitializer {
                 typeBind = exrto.get().getTypeBinding();
             }
         } else {
-            typeBind = var.getType().resolveBinding();
+            typeBind = resolver.resolveBinding(var.getType());
         }
         if (nonNull(typeBind) && typeBind.isEnum()) {
             String packg = typeBind.getPackage().getName();

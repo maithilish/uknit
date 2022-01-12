@@ -1,0 +1,19 @@
+package org.codetab.uknit.itest.extend;
+
+import org.codetab.uknit.itest.model.Vehicle;
+
+public class CallSuperMethodTest {
+    @InjectMocks
+    private CallSuperMethod callSuperMethod;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testSetLicensePlate() {
+        String license = "Foo";
+        callSuperMethod.setLicensePlate(license);
+    }
+}

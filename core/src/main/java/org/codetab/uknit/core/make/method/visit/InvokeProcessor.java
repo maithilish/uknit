@@ -22,7 +22,7 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
-import org.codetab.uknit.core.node.TypeResolver;
+import org.codetab.uknit.core.node.Resolver;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -37,7 +37,7 @@ public class InvokeProcessor {
     @Inject
     private Methods methods;
     @Inject
-    private TypeResolver resolver;
+    private Resolver resolver;
     @Inject
     private VarStager varStager;
     @Inject

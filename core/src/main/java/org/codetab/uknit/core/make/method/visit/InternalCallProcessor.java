@@ -13,6 +13,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.parse.SourceParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -33,9 +34,11 @@ public class InternalCallProcessor {
     private Methods methods;
     @Inject
     private DInjector di;
+    @Inject
+    private Resolver resolver;
 
     public Optional<IVar> process(final MethodInvocation mi, final Heap heap) {
-        IMethodBinding methodBind = mi.resolveMethodBinding();
+        IMethodBinding methodBind = resolver.resolveMethodBinding(mi);
         ITypeBinding declClz = methodBind.getDeclaringClass();
         String clzName = declClz.getName();
         String clzPkg = declClz.getPackage().getName();

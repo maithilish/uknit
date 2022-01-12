@@ -13,6 +13,7 @@ import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.stage.CallStager;
 import org.codetab.uknit.core.make.method.visit.UseMarker;
 import org.codetab.uknit.core.make.method.visit.Visitor;
+import org.codetab.uknit.core.make.model.Call;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
@@ -93,6 +94,13 @@ public class MethodMaker {
         return true;
     }
 
+    /**
+     * Process internal method without staging it, collects the aspects in heap.
+     * @param method
+     * @param internalMethod
+     * @param heap
+     * @return
+     */
     public boolean processMethod(final MethodDeclaration method,
             final boolean internalMethod, final Heap heap) {
 
@@ -105,7 +113,13 @@ public class MethodMaker {
         visitor.setHeap(heap);
         visitor.setInternalMethod(internalMethod);
 
+        Call topLevelCall = heap.getCall();
+
+        callStager.stageCall(method, heap); // stage call for this method
+
         method.accept(visitor);
+
+        heap.setCall(topLevelCall); // revert back the earlier call
 
         // TODO - enable this after multi try exception fix
         // variables.checkVarConsistency(heap.getVars());

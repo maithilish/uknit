@@ -24,7 +24,7 @@ import org.codetab.uknit.core.make.model.Parameter;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
-import org.codetab.uknit.core.node.TypeResolver;
+import org.codetab.uknit.core.node.Resolver;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
@@ -45,7 +45,7 @@ public class VarStager {
     @Inject
     private ModelFactory modelFactory;
     @Inject
-    private TypeResolver typeResolver;
+    private Resolver resolver;
 
     public IVar stageParameter(final VariableDeclaration vd, final Type type,
             final boolean mock, final Heap heap) {
@@ -186,7 +186,7 @@ public class VarStager {
     }
 
     public InferVar stageInferVar(final Expression exp, final Heap heap) {
-        Optional<Type> o = typeResolver.getVarClass(exp);
+        Optional<Type> o = resolver.getVarClass(exp);
         if (o.isPresent()) {
             Type type = o.get();
             boolean mock = mocks.isMockable(type);

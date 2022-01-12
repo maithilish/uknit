@@ -1,0 +1,27 @@
+package org.codetab.uknit.itest.variable;
+
+import java.util.concurrent.BlockingQueue;
+
+public class NullThenAssignTest {
+    @InjectMocks
+    private NullThenAssign nullThenAssign;
+
+    @Mock
+    private BlockingQueue<PrintPayload> q;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testRun() throws Exception {
+        PrintPayload printPayload = Mockito.mock(PrintPayload.class);
+        String path = "Foo";
+
+        when(q.take()).thenReturn(printPayload);
+        when(printPayload.getId()).thenReturn(path);
+
+        String actual = nullThenAssign.run();
+    }
+}

@@ -1,0 +1,31 @@
+package org.codetab.uknit.itest.extend;
+
+import org.codetab.uknit.itest.model.Vehicle;
+
+public class HideSuperFieldTest {
+    @InjectMocks
+    private HideSuperField hideSuperField;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testSetLicensePlate() {
+        String license = "Foo";
+        hideSuperField.setLicensePlate(license);
+    }
+
+    @Test
+    public void testGetLicensePlate() {
+
+        String actual = hideSuperField.getLicensePlate();
+    }
+
+    @Test
+    public void testUpdateLicensePlate() {
+        String license = "Foo";
+        hideSuperField.updateLicensePlate(license);
+    }
+}

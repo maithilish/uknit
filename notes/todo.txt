@@ -31,7 +31,26 @@ matcher
 	verify(pets).add(new Dog(apple)); to verify(pets).add(any(Dog.class));
 	
 	see invoke.MiCreateInstanceIT
+	
+Real returns real
 	    
+    public String notOk() {
+        String path = "foo";
+        return path.toLowerCase();
+    }
+    	    
+StringLiteral passed to private method is initialized to foo
+
+	see FileAppender init() method - String filePath = getPluginField("file");
+
+
 discard previous assignment
 
 don't generate test for abstract classes
+
+junit 4 and 5 profiles
+
+Fix errors by comparing with corrected tests in scoopi 
+
+	plugin/converter/DateFormatter
+	plugin/converter/DateRoller

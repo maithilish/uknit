@@ -17,3 +17,7 @@ The setter local var may hide the field as uKnit doesn't check field name for du
     public void setBar(final Date bar) {
         this.bar = bar;
     }  
+    
+## Stepins
+
+Assertions on contents of objects or collections.

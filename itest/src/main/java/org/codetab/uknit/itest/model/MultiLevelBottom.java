@@ -1,11 +1,8 @@
-package org.codetab.uknit.itest.extend;
+package org.codetab.uknit.itest.model;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.codetab.uknit.itest.model.Person;
-import org.codetab.uknit.itest.model.QFactory;
-
-public class Base {
+public class MultiLevelBottom {
 
     private BlockingQueue<Person> queue;
 

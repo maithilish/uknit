@@ -22,9 +22,10 @@ public class Methods {
 
     @Inject
     private Nodes nodes;
-
     @Inject
     private SnippetParser snippetParser;
+    @Inject
+    private Resolver resolver;
 
     public String getMethodName(final MethodDeclaration method) {
         return method.getName().getFullyQualifiedName();
@@ -85,14 +86,14 @@ public class Methods {
         Expression exp = mi.getExpression();
         // method of this object
         if (isNull(exp) || nodes.is(exp, SimpleName.class)) {
-            return (mi.resolveMethodBinding().getModifiers()
+            return (resolver.resolveMethodBinding(mi).getModifiers()
                     & Modifier.STATIC) > 0;
         }
         boolean isStatic = false;
         // if any part of chain call is static then isStatic is true
         while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
             MethodInvocation miExp = nodes.as(exp, MethodInvocation.class);
-            if ((miExp.resolveMethodBinding().getModifiers()
+            if ((resolver.resolveMethodBinding(miExp).getModifiers()
                     & Modifier.STATIC) > 0) {
                 isStatic = true;
             }

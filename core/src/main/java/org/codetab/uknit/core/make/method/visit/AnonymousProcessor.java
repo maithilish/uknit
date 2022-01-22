@@ -49,13 +49,15 @@ public class AnonymousProcessor {
      * uknit.anonymous.class.capture is true then create ArgCapture and
      * substitute arg with capture var name, if false then replace arg with
      * argument matchers, any() without creating captures.
-     * @param mi
+     * <p>
+     * don't pass source mi instead pass copy of mi
+     * @param miCopy
      * @param heap
      * @return list of captures or empty list
      */
-    public List<ArgCapture> replaceAnonymousArgsWithCaptures(
-            final MethodInvocation mi, final Heap heap) {
-        List<Expression> args = methods.getArguments(mi);
+    public List<ArgCapture> patchAnonymousArgsWithCaptures(
+            final MethodInvocation miCopy, final Heap heap) {
+        List<Expression> args = methods.getArguments(miCopy);
         List<ArgCapture> argCaptures = new ArrayList<>();
         for (Expression arg : args) {
             if (nodes.is(arg, ClassInstanceCreation.class)) {
@@ -82,7 +84,7 @@ public class AnonymousProcessor {
                         initializer = String.format(fmt, typeName);
                     }
                     if (nonNull(initializer)) {
-                        methods.replaceArg(mi, arg, initializer);
+                        methods.replaceArg(miCopy, arg, initializer);
                     }
                 }
             }
@@ -92,14 +94,16 @@ public class AnonymousProcessor {
 
     /**
      * Replace anonymous class without arg capture normally with arg matchers.
-     * @param mi
+     * <p>
+     * don't pass source mi instead pass copy of mi
+     * @param miCopy
      * @param heap
      * @return true if substituted
      */
-    public boolean replaceAnonymousArgs(final MethodInvocation mi,
+    public boolean patchAnonymousArgs(final MethodInvocation miCopy,
             final Heap heap) {
         boolean replaced = false;
-        List<Expression> args = methods.getArguments(mi);
+        List<Expression> args = methods.getArguments(miCopy);
         for (Expression arg : args) {
             if (nodes.is(arg, ClassInstanceCreation.class)) {
                 ClassInstanceCreation cic =
@@ -111,7 +115,7 @@ public class AnonymousProcessor {
                             .getConfig("uknit.anonymous.class.substitute", "");
                     String initializer = String.format(fmt, typeName);
                     if (nonNull(initializer)) {
-                        methods.replaceArg(mi, arg, initializer);
+                        methods.replaceArg(miCopy, arg, initializer);
                         replaced = true;
                     }
                 }

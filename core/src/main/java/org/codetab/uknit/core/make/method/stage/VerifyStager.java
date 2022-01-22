@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.visit.AnonymousProcessor;
 import org.codetab.uknit.core.make.method.visit.LambdaProcessor;
+import org.codetab.uknit.core.make.method.visit.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Verify;
@@ -20,15 +21,19 @@ public class VerifyStager {
     private AnonymousProcessor anonymousProcessor;
     @Inject
     private LambdaProcessor lambdaProcessor;
+    @Inject
+    private Patcher patcher;
 
-    public void stageVerify(final MethodInvocation mi,
-            final MethodInvocation resolvableMi, final Heap heap) {
-        List<ArgCapture> anonCaptures =
-                anonymousProcessor.replaceAnonymousArgsWithCaptures(mi, heap);
+    public void stageVerify(final MethodInvocation mi, final Heap heap) {
+
+        MethodInvocation patchedMi = patcher.copyAndPatch(mi, heap);
+
+        List<ArgCapture> anonCaptures = anonymousProcessor
+                .patchAnonymousArgsWithCaptures(patchedMi, heap);
         List<ArgCapture> lambdaCaptures = lambdaProcessor
-                .replaceLambdaArgsWithCaptures(mi, resolvableMi, heap);
+                .patchLambdaArgsWithCaptures(patchedMi, mi, heap);
 
-        Verify verify = modelFactory.createVerify(mi);
+        Verify verify = modelFactory.createVerify(patchedMi);
         verify.getArgCaptures().addAll(anonCaptures);
         verify.getArgCaptures().addAll(lambdaCaptures);
         heap.getVerifies().add(verify);

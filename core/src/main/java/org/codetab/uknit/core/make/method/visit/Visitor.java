@@ -91,7 +91,8 @@ public class Visitor extends ASTVisitor {
      */
     @Override
     public void endVisit(final MethodInvocation node) {
-        invokeProcessor.replaceExpressions(node, heap);
+
+        invokeProcessor.stagePatches(node, heap);
 
         Invoke invoke = invokeProcessor.process(node, heap);
         heap.getInvokes().add(invoke);
@@ -108,7 +109,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ReturnStatement node) {
-        returnProcessor.replaceExpression(node, heap);
+        returnProcessor.stagePatches(node, heap);
         Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
         if (expectedVar.isPresent() && !expectedVar.get().isHidden()) {
             heap.setExpectedVar(expectedVar);
@@ -132,13 +133,13 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ClassInstanceCreation node) {
-        createProcessor.replaceExpressions(node, heap);
+        createProcessor.stagePatches(node, heap);
         createProcessor.process(node, heap);
     }
 
     @Override
     public void endVisit(final ArrayCreation node) {
-        createProcessor.replaceExpressions(node, heap);
+        createProcessor.stagePatches(node, heap);
         createProcessor.process(node, heap);
     }
 

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 
 public class Heap {
@@ -31,6 +32,8 @@ public class Heap {
      */
     @Inject
     private List<ExpVar> expVars;
+    @Inject
+    private List<Patch> patchs;
 
     private Call call; // test method call
 
@@ -51,6 +54,10 @@ public class Heap {
 
     public List<Invoke> getInvokes() {
         return invokes;
+    }
+
+    public List<Patch> getPatches() {
+        return patchs;
     }
 
     public Call getCall() {
@@ -171,5 +178,27 @@ public class Heap {
             String message = spaceit("var declaration not found for", varName);
             throw new IllegalStateException(message);
         }
+    }
+
+    /**
+     * Get list of patches for a node.
+     * @param node
+     * @return
+     */
+    public List<Patch> findPatches(final ASTNode node) {
+        return patchs.stream().filter(r -> r.getNode().equals(node))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get patch for a node and expression.
+     * @param node
+     * @param exp
+     * @return
+     */
+    public Optional<Patch> findPatch(final ASTNode node, final Expression exp) {
+        return patchs.stream()
+                .filter(r -> r.getNode().equals(node) && r.getExp().equals(exp))
+                .findAny();
     }
 }

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -20,18 +21,18 @@ import com.google.common.collect.Lists;
 public class ReturnProcessor {
 
     @Inject
-    private ExpReplacer expReplacer;
+    private Patcher patcher;
     @Inject
     private Nodes nodes;
     @Inject
     private ModelFactory modelFactory;
 
-    public void replaceExpression(final ReturnStatement rs, final Heap heap) {
+    public void stagePatches(final ReturnStatement rs, final Heap heap) {
         Expression exp = rs.getExpression();
         if (nonNull(exp)) {
             List<Expression> exps = Lists.newArrayList(exp);
-            expReplacer.replaceExpWithInfer(rs, exps, heap);
-            expReplacer.replaceExpWithInitializer(rs, exps, heap);
+            patcher.stageInferPatch(rs, exps, heap);
+            patcher.stageInitializerPatch(rs, exps, heap);
         }
     }
 
@@ -39,9 +40,19 @@ public class ReturnProcessor {
             final Heap heap) {
         Expression exp = rs.getExpression();
         IVar expectedVar = null;
-        if (nodes.is(exp, SimpleName.class)) {
-            String name = nodes.getName(exp);
 
+        String name = null;
+        Optional<Patch> patch = heap.getPatches().stream()
+                .filter(r -> r.getNode().equals(rs)).findFirst();
+        if (patch.isPresent()) {
+            name = patch.get().getName();
+        }
+
+        if (nodes.is(exp, SimpleName.class)) {
+            name = nodes.getName(exp);
+        }
+
+        if (nonNull(name)) {
             // one of the localVar acts as returnVar so don't add again to heap
             IVar var = heap.findVar(name);
 

@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.model;
 import java.util.Optional;
 
 import org.codetab.uknit.core.node.ArgCapture;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -44,4 +45,6 @@ public interface ModelFactory {
     Cu createCuMap(@Assisted("pkg") String pkg,
             @Assisted("clzName") String clzName,
             @Assisted("srcPath") String srcPath);
+
+    Patch createPatch(ASTNode node, Expression exp, String name, int argIndex);
 }

@@ -17,7 +17,7 @@ public class CreateProcessor {
     @Inject
     private VarExpStager varExpStager;
     @Inject
-    private ExpReplacer expReplacer;
+    private Patcher patcher;
     @Inject
     private Nodes nodes;
 
@@ -32,20 +32,15 @@ public class CreateProcessor {
         varExpStager.stage(null, ac, heap);
     }
 
-    public void replaceExpressions(final ClassInstanceCreation cic,
-            final Heap heap) {
-        List<Expression> exps = new ArrayList<>();
+    public void stagePatches(final ClassInstanceCreation cic, final Heap heap) {
         @SuppressWarnings("unchecked")
-        List<Expression> args = cic.arguments();
-        exps.addAll(args);
-        expReplacer.replaceExpWithInfer(cic, exps, heap);
+        List<Expression> exps = new ArrayList<>(cic.arguments());
+        patcher.stageInferPatch(cic, exps, heap);
     }
 
-    public void replaceExpressions(final ArrayCreation ac, final Heap heap) {
-        List<Expression> exps = new ArrayList<>();
+    public void stagePatches(final ArrayCreation ac, final Heap heap) {
         @SuppressWarnings("unchecked")
-        List<Expression> args = ac.dimensions();
-        exps.addAll(args);
-        expReplacer.replaceExpWithInfer(ac, exps, heap);
+        List<Expression> exps = new ArrayList<>(ac.dimensions());
+        patcher.stageInferPatch(ac, exps, heap);
     }
 }

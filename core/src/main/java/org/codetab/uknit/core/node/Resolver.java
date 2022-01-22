@@ -33,6 +33,7 @@ public class Resolver {
                 if (typeBinding.isEnum()) {
                     mock = false;
                 }
+                // TODO - move to model factory
                 methodReturnType =
                         new ExpReturnType(type.get(), mock, typeBinding);
             }

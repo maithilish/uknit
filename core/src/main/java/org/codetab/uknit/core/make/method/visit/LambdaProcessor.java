@@ -38,13 +38,22 @@ public class LambdaProcessor {
     @Inject
     private Resolver resolver;
 
-    public List<ArgCapture> replaceLambdaArgsWithCaptures(
-            final MethodInvocation mi, final MethodInvocation resolveableMi,
+    /**
+     *
+     * <p>
+     * don't pass source mi instead pass copy of mi.
+     * @param miCopy
+     * @param resolveableMi
+     * @param heap
+     * @return
+     */
+    public List<ArgCapture> patchLambdaArgsWithCaptures(
+            final MethodInvocation miCopy, final MethodInvocation resolveableMi,
             final Heap heap) {
 
         List<ArgCapture> argCaptures = new ArrayList<>();
 
-        List<Expression> args = methods.getArguments(mi);
+        List<Expression> args = methods.getArguments(miCopy);
         List<Expression> resolvableArgs = methods.getArguments(resolveableMi);
 
         for (int i = 0; i < resolvableArgs.size(); i++) {
@@ -75,17 +84,25 @@ public class LambdaProcessor {
                 }
                 if (nonNull(initializer)) {
                     // replace in mi (the copy) and in resolvableMi
-                    methods.replaceArg(mi, args.get(i), initializer);
+                    methods.replaceArg(miCopy, args.get(i), initializer);
                 }
             }
         }
         return argCaptures;
     }
 
-    public boolean replaceLambdaArgs(final MethodInvocation mi,
+    /**
+     * <p>
+     * don't pass source mi instead pass copy of mi.
+     * @param miCopy
+     * @param resolveableMi
+     * @param heap
+     * @return
+     */
+    public boolean patchLambdaArgs(final MethodInvocation miCopy,
             final MethodInvocation resolveableMi, final Heap heap) {
-        boolean replaced = false;
-        List<Expression> args = methods.getArguments(mi);
+        boolean patched = false;
+        List<Expression> args = methods.getArguments(miCopy);
         List<Expression> resolvableArgs = methods.getArguments(resolveableMi);
         for (int i = 0; i < resolvableArgs.size(); i++) {
             Expression resolvableArg = resolvableArgs.get(i);
@@ -101,11 +118,11 @@ public class LambdaProcessor {
                 String initializer = String.format(fmt, typeName);
                 if (nonNull(initializer)) {
                     // replace in mi (the copy) and in resolvableMi
-                    methods.replaceArg(mi, args.get(i), initializer);
-                    replaced = true;
+                    methods.replaceArg(miCopy, args.get(i), initializer);
+                    patched = true;
                 }
             }
         }
-        return replaced;
+        return patched;
     }
 }

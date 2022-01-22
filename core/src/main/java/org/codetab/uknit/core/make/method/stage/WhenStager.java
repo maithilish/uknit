@@ -7,19 +7,17 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.visit.AnonymousProcessor;
 import org.codetab.uknit.core.make.method.visit.LambdaProcessor;
+import org.codetab.uknit.core.make.method.visit.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
-import org.codetab.uknit.core.node.NodeFactory;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 
 public class WhenStager {
 
-    @Inject
-    private NodeFactory nodeFactory;
     @Inject
     private ModelFactory modelFactory;
     @Inject
@@ -30,6 +28,8 @@ public class WhenStager {
     private VerifyStager verifyStager;
     @Inject
     private Methods methods;
+    @Inject
+    private Patcher patcher;
 
     public void stageWhen(final Invoke invoke, final IVar var,
             final Heap heap) {
@@ -40,32 +40,31 @@ public class WhenStager {
          * doesn't resolve bindings!
          */
         MethodInvocation mi = invoke.getMi();
-        MethodInvocation resolvableMi = mi;
-        MethodInvocation miWhenCopy = nodeFactory.copyNode(mi);
-        MethodInvocation miVerifyCopy = nodeFactory.copyNode(mi);
+        MethodInvocation patchedMi = patcher.copyAndPatch(mi, heap);
+
         boolean anonReplaced =
-                anonymousProcessor.replaceAnonymousArgs(miWhenCopy, heap);
+                anonymousProcessor.patchAnonymousArgs(patchedMi, heap);
         if (anonReplaced) {
-            verifyStager.stageVerify(miVerifyCopy, resolvableMi, heap);
+            verifyStager.stageVerify(mi, heap);
         }
 
-        boolean lambdaReplaced = lambdaProcessor.replaceLambdaArgs(miWhenCopy,
-                resolvableMi, heap);
+        boolean lambdaReplaced =
+                lambdaProcessor.patchLambdaArgs(patchedMi, mi, heap);
         if (lambdaReplaced) {
-            verifyStager.stageVerify(miVerifyCopy, resolvableMi, heap);
+            verifyStager.stageVerify(mi, heap);
         }
 
-        Optional<When> w = heap.findWhen(miWhenCopy.toString());
+        Optional<When> w = heap.findWhen(patchedMi.toString());
         When when = null;
         if (w.isPresent()) {
             when = w.get();
         } else {
-            when = modelFactory.createWhen(miWhenCopy.toString());
+            when = modelFactory.createWhen(patchedMi.toString());
             heap.getWhens().add(when);
         }
         when.getReturnVars().add(var);
 
-        List<String> usedNames = methods.getNames(miWhenCopy);
+        List<String> usedNames = methods.getNames(patchedMi);
         when.getNames().addAll(usedNames);
     }
 }

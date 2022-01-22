@@ -47,26 +47,27 @@ public class InvokeProcessor {
     @Inject
     private ModelFactory modelFactory;
     @Inject
-    private ExpReplacer expReplacer;
+    private Patcher patcher;
     @Inject
     private VarExpStager varExpStager;
     @Inject
     private InternalCallProcessor internalCallProcessor;
 
     public Invoke process(final MethodInvocation mi, final Heap heap) {
-        Expression exp = mi.getExpression();
+        MethodInvocation patchedMi = patcher.copyAndPatch(mi, heap);
+        Expression patchedExp = patchedMi.getExpression();
         // TODO make var in Invoke optional
         IVar var = null;
-        if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
+        if (nonNull(patchedExp) && nodes.is(patchedExp, SimpleName.class)) {
             try {
-                var = heap.findVar(nodes.getName(exp));
+                var = heap.findVar(nodes.getName(patchedExp));
             } catch (IllegalStateException e) {
             }
         }
         Optional<ExpReturnType> expReturnType = resolver.getExpReturnType(mi);
         Invoke invoke = modelFactory.createInvoke(var, expReturnType, mi);
 
-        if (isNull(exp)) {
+        if (isNull(patchedExp)) {
             // mi may be static or internal call
             if (!methods.isStaticCall(mi)) {
                 Optional<IVar> retVar = internalCallProcessor.process(mi, heap);
@@ -121,19 +122,18 @@ public class InvokeProcessor {
                 IVar callVar = invoke.getCallVar();
                 if (nonNull(callVar)) {
                     if (callVar.isMock() && !callVar.isHidden()) {
-                        MethodInvocation resolvableMi = mi;
-                        verifyStager.stageVerify(mi, resolvableMi, heap);
+                        verifyStager.stageVerify(mi, heap);
                     }
                 }
             }
         }
     }
 
-    public void replaceExpressions(final MethodInvocation mi, final Heap heap) {
+    public void stagePatches(final MethodInvocation mi, final Heap heap) {
         List<Expression> exps = new ArrayList<>();
         exps.add(mi.getExpression());
         exps.addAll(methods.getArguments(mi));
-        expReplacer.replaceExpWithInfer(mi, exps, heap);
+        patcher.stageInferPatch(mi, exps, heap);
     }
 
     /**

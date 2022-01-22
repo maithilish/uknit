@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.Variables;
+import org.codetab.uknit.core.make.method.visit.Patcher;
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
@@ -47,6 +48,8 @@ public class Initializers {
     private EnumInitializer enumInitializer;
     @Inject
     private DerivedInitialzer derivedInitialzer;
+    @Inject
+    private Patcher patcher;
 
     public String getInitializer(final IVar var, final Heap heap) {
         String initializer = null;
@@ -55,7 +58,8 @@ public class Initializers {
         Optional<String> enumIni = enumInitializer.getInitializer(var, heap);
 
         if (iniExp.isPresent() && definedInitialzer.isAllowed(iniExp.get())) {
-            initializer = iniExp.get().toString();
+            Expression exp = patcher.copyAndPatch(iniExp.get(), heap);
+            initializer = exp.toString();
         } else if (var.getValue().isPresent()) {
             // if internal call, then use value is set in var
             initializer = var.getValue().get();

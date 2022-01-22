@@ -7,6 +7,7 @@ import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
 
@@ -35,7 +36,12 @@ public class UknitModule extends AbstractModule {
     }
 
     @Provides
-    public List<ExpVar> newVarExp() {
+    public List<ExpVar> newExpVar() {
+        return new ArrayList<>();
+    }
+
+    @Provides
+    public List<Patch> newPatches() {
         return new ArrayList<>();
     }
 

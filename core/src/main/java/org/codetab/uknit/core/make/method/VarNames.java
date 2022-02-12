@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make;
+package org.codetab.uknit.core.make.method;
 
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
@@ -13,7 +13,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.util.StringUtils;
 
 @Singleton
-public class Variables {
+public class VarNames {
 
     @Inject
     private Configs configs;
@@ -32,6 +32,8 @@ public class Variables {
     private int capIndex;
     private String[] captureVars;
     private static final int RANDOM_STR_LEN = 8;
+
+    private int renameIndex;
 
     public void setup() {
         msIndex = 0;
@@ -54,6 +56,7 @@ public class Variables {
         ivIndex = 0;
         msIndex = 0;
         capIndex = 0;
+        renameIndex = 1;
     }
 
     public String getInferVarName() {
@@ -104,5 +107,10 @@ public class Variables {
                 throw new IllegalStateException(message);
             }
         }
+    }
+
+    public String renameVar(final String name) {
+        renameIndex++;
+        return name + renameIndex;
     }
 }

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.TypeException;
-import org.codetab.uknit.core.make.Variables;
+import org.codetab.uknit.core.make.method.VarNames;
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
@@ -26,6 +26,7 @@ import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -41,7 +42,7 @@ public class VarStager {
     @Inject
     private Methods methods;
     @Inject
-    private Variables variables;
+    private VarNames varNames;
     @Inject
     private ModelFactory modelFactory;
     @Inject
@@ -57,7 +58,7 @@ public class VarStager {
     }
 
     public IVar stageLocalVar(final VariableDeclaration vd, final Type type,
-            final boolean mock, final Heap heap) {
+            final boolean mock, final boolean internalMethod, final Heap heap) {
 
         LOG.debug("vdf node: {}", vd);
 
@@ -88,6 +89,11 @@ public class VarStager {
                 if (methods.isStaticCall(mi)) {
                     fragmentIsMock = false;
                     created = true;
+
+                    // type is mock but static call - stage var but hide it
+                    if (mock) {
+                        hidden = true;
+                    }
                 } else {
                     /*
                      * foo.stream().get(); if obj returned by get() is real then
@@ -133,6 +139,18 @@ public class VarStager {
         }
 
         if (isNull(localVar)) {
+            /*
+             * multiple calls to same internal method (IM) results in duplicate
+             * vars, rename such vars. Parameters of IM are staged as local var
+             * and when variableDecl's parent is methodDecl then it is
+             * parameter. Don't rename parameters.
+             */
+            if (internalMethod && heap.findLocalVar(name).isPresent()) {
+                if (!nodes.is(vd.getParent(), MethodDeclaration.class)) {
+                    name = varNames.renameVar(name);
+                }
+            }
+
             localVar = modelFactory.createLocalVar(name, fragmentType,
                     fragmentIsMock);
             heap.getVars().add(localVar);
@@ -168,7 +186,7 @@ public class VarStager {
             }
 
             if (stageable) {
-                String name = variables.getInferVarName();
+                String name = varNames.getInferVarName();
                 inferVar =
                         modelFactory.createInferVar(name, type, isReturnMock);
                 heap.getVars().add(inferVar);
@@ -190,7 +208,7 @@ public class VarStager {
         if (o.isPresent()) {
             Type type = o.get();
             boolean mock = mocks.isMockable(type);
-            String name = variables.getInferVarName();
+            String name = varNames.getInferVarName();
             InferVar inferVar = modelFactory.createInferVar(name, type, mock);
             heap.getVars().add(inferVar);
             LOG.debug("stage var {}", inferVar);
@@ -203,7 +221,7 @@ public class VarStager {
 
     public InferVar stageInferVar(final Type type, final boolean mock,
             final Heap heap) {
-        String name = variables.getInferVarName();
+        String name = varNames.getInferVarName();
         InferVar inferVar = modelFactory.createInferVar(name, type, mock);
         heap.getVars().add(inferVar);
         LOG.debug("stage var {}", inferVar);

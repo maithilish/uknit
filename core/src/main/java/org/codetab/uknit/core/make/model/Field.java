@@ -10,15 +10,18 @@ import com.google.inject.assistedinject.Assisted;
 public class Field extends DefaultVar {
 
     private final FieldDeclaration fieldDecl;
+    private final FieldDeclaration srcFieldDecl;
 
     @Inject
     public Field(@Assisted final String name, @Assisted final Type type,
             @Assisted final boolean mock,
-            @Assisted final FieldDeclaration fieldDecl) {
+            @Assisted("fieldDecl") final FieldDeclaration fieldDecl,
+            @Assisted("srcFieldDecl") final FieldDeclaration srcFieldDecl) {
         super();
         this.name = name;
         this.type = type;
         this.fieldDecl = fieldDecl;
+        this.srcFieldDecl = srcFieldDecl;
         this.mock = mock;
     }
 
@@ -29,6 +32,10 @@ public class Field extends DefaultVar {
 
     public FieldDeclaration getFieldDecl() {
         return fieldDecl;
+    }
+
+    public FieldDeclaration getSrcFieldDecl() {
+        return srcFieldDecl;
     }
 
     @Override

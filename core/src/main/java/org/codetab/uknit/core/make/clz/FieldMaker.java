@@ -67,7 +67,8 @@ public class FieldMaker {
                     body.add(fieldDecl);
                 }
 
-                Field testField = fieldMakers.createField(fieldDecl);
+                Field testField = fieldMakers.createField(fieldDecl,
+                        srcField.getFieldDecl());
                 testField.setHidden(srcField.isHidden());
                 testFields.add(testField);
             }

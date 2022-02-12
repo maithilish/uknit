@@ -52,14 +52,16 @@ public class FieldMakers {
 
             boolean hide = hide(fieldDecl);
 
-            Field field = modelFactory.createField(name, type, mock, fieldDecl);
+            Field field = modelFactory.createField(name, type, mock, fieldDecl,
+                    fieldDecl);
             field.setHidden(hide);
             fields.add(field);
         }
         return fields;
     }
 
-    public Field createField(final FieldDeclaration fieldDecl) {
+    public Field createField(final FieldDeclaration fieldDecl,
+            final FieldDeclaration srcFieldDecl) {
         VariableDeclarationFragment vdf =
                 (VariableDeclarationFragment) fieldDecl.fragments().get(0);
         String name = nodes.getVariableName(vdf);
@@ -68,7 +70,8 @@ public class FieldMakers {
 
         boolean hide = hide(fieldDecl);
 
-        Field field = modelFactory.createField(name, type, mock, fieldDecl);
+        Field field = modelFactory.createField(name, type, mock, fieldDecl,
+                srcFieldDecl);
         field.setHidden(hide);
         return field;
     }

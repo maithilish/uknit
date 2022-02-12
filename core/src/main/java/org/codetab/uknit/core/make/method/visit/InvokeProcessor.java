@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.method.visit;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -149,5 +150,19 @@ public class InvokeProcessor {
             Type type = ioe.getRightOperand();
             invoke.getReturnVar().ifPresent(i -> i.setType(type));
         });
+    }
+
+    /**
+     * either of: final/private/equals()/hashCode() methods or methods cannot be
+     * stubbed/verified or methods declared on non-public parent classes is not
+     * supported.
+     * <p>
+     * yet to fully implement.
+     * @return
+     */
+    public boolean nonStubable(final Invoke invoke) {
+        int modifier =
+                resolver.resolveMethodBinding(invoke.getMi()).getModifiers();
+        return resolver.hasModifier(modifier, Modifier.FINAL);
     }
 }

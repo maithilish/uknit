@@ -8,7 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
-import org.codetab.uknit.core.make.Variables;
+import org.codetab.uknit.core.make.method.VarNames;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.ArgCapture;
@@ -28,7 +28,7 @@ public class LambdaProcessor {
     @Inject
     private Configs configs;
     @Inject
-    private Variables variables;
+    private VarNames varNames;
     @Inject
     private Methods methods;
     @Inject
@@ -69,7 +69,7 @@ public class LambdaProcessor {
                         .getConfig("uknit.anonymous.class.capture", true);
                 String initializer;
                 if (captureArg) {
-                    String captureVar = variables.getCaptureVarName();
+                    String captureVar = varNames.getCaptureVarName();
                     String fmt = configs.getConfig(
                             "uknit.anonymous.class.capture.format",
                             "%s.capture()");

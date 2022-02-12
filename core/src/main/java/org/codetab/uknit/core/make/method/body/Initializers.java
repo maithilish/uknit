@@ -8,7 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
-import org.codetab.uknit.core.make.Variables;
+import org.codetab.uknit.core.make.method.VarNames;
 import org.codetab.uknit.core.make.method.visit.Patcher;
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
@@ -41,7 +41,7 @@ import org.eclipse.jdt.core.dom.TypeLiteral;
 public class Initializers {
 
     @Inject
-    private Variables variables;
+    private VarNames varNames;
     @Inject
     private DefinedInitialzer definedInitialzer;
     @Inject
@@ -71,7 +71,7 @@ public class Initializers {
 
         if (nonNull(initializer) && initializer.contains("${metasyntatic}")) {
             initializer = initializer.replace("${metasyntatic}",
-                    variables.getMetaSyntantics());
+                    varNames.getMetaSyntantics());
         }
         return initializer;
     }
@@ -201,6 +201,8 @@ class DerivedInitialzer {
     private Configs configs;
     @Inject
     private Types types;
+    @Inject
+    private Resolver resolver;
 
     public String deriveInitializer(final IVar var, final Heap heap) {
         Type type = var.getType();
@@ -219,6 +221,10 @@ class DerivedInitialzer {
         // default createInstance config is set as mock by user
         if (nonNull(initializer) && initializer.equalsIgnoreCase("mock")) {
             initializer = null;
+        }
+
+        if (resolver.isTypeVariable(type)) {
+            initializer = "STEPIN";
         }
 
         // initialize to mock

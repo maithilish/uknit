@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.visit;
 
+import static java.util.Objects.nonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Variables;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -58,6 +61,8 @@ public class Visitor extends ASTVisitor {
     @Inject
     private LiteralProcessor literalProcessor;
     @Inject
+    private Variables variables;
+    @Inject
     private Nodes nodes;
 
     @Inject
@@ -76,7 +81,7 @@ public class Visitor extends ASTVisitor {
         List<VariableDeclaration> vdList =
                 varProcessor.getVariableDeclarations(node);
         Map<IVar, VariableDeclaration> varMap =
-                varProcessor.stageLocalVars(type, vdList, heap);
+                varProcessor.stageLocalVars(type, vdList, internalMethod, heap);
         invokeProcessor.stageLocalVarWhen(varMap, heap);
     }
 
@@ -96,6 +101,15 @@ public class Visitor extends ASTVisitor {
 
         Invoke invoke = invokeProcessor.process(node, heap);
         heap.getInvokes().add(invoke);
+
+        IVar var = invoke.getCallVar();
+        if (nonNull(var) && variables.isStatic(var)) {
+            return;
+        }
+
+        if (invokeProcessor.nonStubable(invoke)) {
+            return;
+        }
 
         if (invoke.isInfer()) {
             if (invoke.getReturnVar().isEmpty()) {
@@ -174,7 +188,7 @@ public class Visitor extends ASTVisitor {
         List<VariableDeclaration> vdList =
                 varProcessor.getVariableDeclarations(node);
         Map<IVar, VariableDeclaration> varMap =
-                varProcessor.stageLocalVars(type, vdList, heap);
+                varProcessor.stageLocalVars(type, vdList, internalMethod, heap);
         invokeProcessor.stageLocalVarWhen(varMap, heap);
     }
 
@@ -207,13 +221,13 @@ public class Visitor extends ASTVisitor {
         if (nodes.is(parent, MethodDeclaration.class)) {
             if (internalMethod) {
                 // stage internal method parameters as local vars
-                varProcessor.stageLocalVars(type, vdList, heap);
+                varProcessor.stageLocalVars(type, vdList, internalMethod, heap);
             } else {
                 varProcessor.stageParameters(type, vdList, heap);
             }
         } else {
-            Map<IVar, VariableDeclaration> fragments =
-                    varProcessor.stageLocalVars(type, vdList, heap);
+            Map<IVar, VariableDeclaration> fragments = varProcessor
+                    .stageLocalVars(type, vdList, internalMethod, heap);
             invokeProcessor.stageLocalVarWhen(fragments, heap);
         }
     }

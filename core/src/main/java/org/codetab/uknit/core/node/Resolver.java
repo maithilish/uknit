@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.node;
 
+import static java.util.Objects.isNull;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -69,5 +71,23 @@ public class Resolver {
 
     public ITypeBinding resolveBinding(final AbstractTypeDeclaration typeDecl) {
         return typeDecl.resolveBinding();
+    }
+
+    public boolean hasModifier(final int modifier, final int bitmask) {
+        return (modifier & bitmask) > 0;
+    }
+
+    /**
+     * Whether type is type variable such as <T>
+     * @param type
+     * @return
+     */
+    public boolean isTypeVariable(final Type type) {
+        ITypeBinding typeBind = type.resolveBinding();
+        if (isNull(typeBind)) {
+            return false;
+        } else {
+            return typeBind.isTypeVariable();
+        }
     }
 }

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.uknit.core.make.clz.ClzMaker;
+import org.codetab.uknit.core.make.method.VarNames;
 import org.codetab.uknit.core.make.model.Cu;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.CuFactory;
@@ -25,7 +26,7 @@ public class Controller {
     private CuFactory cuFactory;
 
     @Inject
-    private Variables variables;
+    private VarNames varNames;
 
     @Inject
     private NodeFactory nodeFactory;
@@ -50,7 +51,7 @@ public class Controller {
         nodeFactory.setAst(testCompilationUnit.getAST());
         clzNodeFactory.setAst(testCompilationUnit.getAST());
 
-        variables.setup();
+        varNames.setup();
         cuCache = new ArrayList<>();
     }
 

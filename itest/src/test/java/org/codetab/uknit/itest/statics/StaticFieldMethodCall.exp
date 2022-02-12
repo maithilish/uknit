@@ -1,0 +1,37 @@
+package org.codetab.uknit.itest.statics;
+
+import org.codetab.uknit.itest.statics.MetricRegistry.name;
+
+public class StaticFieldMethodCallTest {
+    @InjectMocks
+    private StaticFieldMethodCall staticFieldMethodCall;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetTimer() {
+        Object clz = Mockito.mock(Object.class);
+        String names = "Foo";
+
+        Timer actual = staticFieldMethodCall.getTimer(clz, names);
+    }
+
+    @Test
+    public void testGetMeter() {
+        Object clz = Mockito.mock(Object.class);
+        String names = "Foo";
+
+        Meter actual = staticFieldMethodCall.getMeter(clz, names);
+    }
+
+    @Test
+    public void testRegisterGuage() {
+        T value = STEPIN;
+        Object clz = Mockito.mock(Object.class);
+        String names = "Foo";
+        staticFieldMethodCall.registerGuage(value, clz, names);
+    }
+}

@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.ClzMap;
-import org.codetab.uknit.core.make.Variables;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.stage.CallStager;
 import org.codetab.uknit.core.make.method.visit.UseMarker;
@@ -45,7 +44,7 @@ public class MethodMaker {
     @Inject
     private Classes classes;
     @Inject
-    private Variables variables;
+    private VarNames varNames;
     @Inject
     private UseMarker useMarker;
 
@@ -64,7 +63,7 @@ public class MethodMaker {
         LOG.debug("==== method under test: {} ====",
                 methods.getMethodName(method));
 
-        variables.resetIndexes();
+        varNames.resetIndexes();
 
         String clzName = methodMakers
                 .getTestClzName((TypeDeclaration) method.getParent());

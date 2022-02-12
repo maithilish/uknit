@@ -31,9 +31,9 @@ public class Types {
     private Set<String> unmodifiableTypes;
 
     public Types() {
-        unmodifiableTypes = new HashSet<String>(
-                Arrays.asList("Class", "Boolean", "Byte", "Short", "Character",
-                        "Integer", "Long", "Float", "Double", "String"));
+        unmodifiableTypes = new HashSet<String>(Arrays.asList("Class",
+                "Boolean", "Byte", "Short", "Character", "Integer", "Long",
+                "Float", "Double", "String", "Runtime"));
     }
 
     public boolean isUnmodifiable(final String typeName) {

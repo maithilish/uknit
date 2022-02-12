@@ -13,6 +13,14 @@ public class AlphaIT extends ITBase {
 
         configure();
 
+        // String listKey = "uknit.createInstance.List";
+        // String listConfig = getConfig(listKey);
+        // addConfig(listKey, "mock"); // mock the list
+        //
+        // String streamKey = "uknit.createInstance.Stream";
+        // String streamConfig = getConfig(streamKey);
+        // addConfig(streamKey, "mock"); // mock the stream
+
         generateTestClass();
 
         File actualFile = getActualFile();

@@ -180,6 +180,12 @@ public class Heap {
         }
     }
 
+    public Optional<IVar> findLocalVar(final String varName) {
+        return vars.stream()
+                .filter(v -> v.getName().equals(varName) && v.isLocalVar())
+                .findAny();
+    }
+
     /**
      * Get list of patches for a node.
      * @param node

@@ -56,6 +56,19 @@ public class ReturnProcessor {
             // one of the localVar acts as returnVar so don't add again to heap
             IVar var = heap.findVar(name);
 
+            /*
+             * If var is created by static call, it is staged but hidden in
+             * VarStager.stageLocalVar(). When such vars are returned they are
+             * shown if creation exp is not anon or lambda.
+             */
+            if (var.isCreated()) {
+                heap.findByLeftVar(var.getName()).ifPresent(e -> {
+                    if (!nodes.isAnonOrLambda(e.getRightExp())) {
+                        var.setHidden(false);
+                    }
+                });
+            }
+
             if (nodes.isAnonOrLambda(exp)) {
                 var.setHidden(true);
             }

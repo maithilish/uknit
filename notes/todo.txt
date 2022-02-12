@@ -25,6 +25,8 @@ add test
         int foo = array[0];
         return foo;
     }
+    
+var args ...    
         
 matcher
 

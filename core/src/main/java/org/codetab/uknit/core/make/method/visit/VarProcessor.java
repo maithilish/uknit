@@ -52,12 +52,14 @@ public class VarProcessor {
     }
 
     public Map<IVar, VariableDeclaration> stageLocalVars(final Type type,
-            final List<VariableDeclaration> vdList, final Heap heap) {
+            final List<VariableDeclaration> vdList,
+            final boolean internalMethod, final Heap heap) {
         Map<IVar, VariableDeclaration> varMap = new HashMap<>();
         boolean mock = mocks.isMockable(type);
 
         for (VariableDeclaration vd : vdList) {
-            IVar localVar = varStager.stageLocalVar(vd, type, mock, heap);
+            IVar localVar = varStager.stageLocalVar(vd, type, mock,
+                    internalMethod, heap);
             varMap.put(localVar, vd);
 
             Expression initializerExp = vd.getInitializer();

@@ -1,0 +1,24 @@
+package org.codetab.uknit.itest.invoke;
+
+import java.util.Map;
+
+public class RealArgTest {
+    @InjectMocks
+    private RealArg realArg;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testConsumer() {
+        String id = "Foo";
+        Map<String, byte[]> map = new HashMap<>();
+        Some some = Some.builder().consume(real).build();
+
+        Some actual = realArg.consumer(id, map);
+
+        assertEquals(some, actual);
+    }
+}

@@ -1,10 +1,11 @@
 package org.codetab.uknit.core.config;
 
+import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
 /**
- * Singleton, loads mocker.properties file and provide access to properties.
+ * Singleton, loads uknit properties file and provide access to properties.
  * Default properties are overridden by user defined which is overridden by
  * system to get effective configs.
  * @author Maithilish
@@ -49,10 +50,30 @@ enum Configuration {
             }
             props.putAll(system);
 
+            // load test framework properties
+            Properties testFrameworkProps = loadTestFrameworkProperties(props
+                    .getProperty("uknit.profile.test.framework", "junit5"));
+            props.putAll(testFrameworkProps);
+
         } catch (Exception e) {
             System.out.println("properties file not found, " + e);
             System.exit(0);
         }
+    }
+
+    /**
+     * Load test framework properties - junit4 or junit5
+     * @param property
+     * @return
+     * @throws IOException
+     */
+    private Properties loadTestFrameworkProperties(final String testFramework)
+            throws IOException {
+        Properties testFrameworkProps = new Properties();
+        testFrameworkProps
+                .load(Configuration.class.getClassLoader().getResourceAsStream(
+                        String.join(".", testFramework, "properties")));
+        return testFrameworkProps;
     }
 
     public String getProperty(final String key) {

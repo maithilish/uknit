@@ -37,6 +37,12 @@ public class ITBase {
 
     protected void configure(final String testCasePkg, final String srcFile,
             final String testClzName, final String expFile) {
+
+        /*
+         * ITests uses JUnit5, override user config it to JUnit5 before creating
+         * configs instance.
+         */
+        System.setProperty("uknit.profile.test.framework", "junit5");
         /*
          * Configs uses enum Configuration for configs and it is singleton and
          * both new Configs() and DI instance share the same instance.

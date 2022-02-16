@@ -139,14 +139,15 @@ public class MethodMaker {
         methodMakers.addMethod(clzDecl, methodDecl);
     }
 
-    public void addBeforeMethod(final TypeDeclaration node) {
+    public void addBeforeMethod(final TypeDeclaration node,
+            final String beforeAnnotation) {
         TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
         String clzName = methodMakers.getTestClzName(clzUnderTest);
         TypeDeclaration testClzDecl = clzMap.getTypeDecl(clzName);
 
         MethodDeclaration md = nodeFactory.createMethodDecl("setUp");
         Annotation annotation =
-                nodeFactory.createMarkerAnnotation("BeforeEach");
+                nodeFactory.createMarkerAnnotation(beforeAnnotation);
         methodMakers.addAnnotation(md, annotation);
 
         Modifier modifier =

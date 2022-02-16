@@ -127,7 +127,10 @@ public class SourceVisitor extends ASTVisitor {
 
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
-        methodMaker.addBeforeMethod(node);
+
+        String beforeAnnotation =
+                configs.getConfig("uknit.test.annotation.before", "BeforeEach");
+        methodMaker.addBeforeMethod(node, beforeAnnotation);
         return true;
     }
 

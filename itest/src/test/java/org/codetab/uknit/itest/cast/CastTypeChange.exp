@@ -1,0 +1,35 @@
+package org.codetab.uknit.itest.cast;
+
+public class CastTypeChangeTest {
+    @InjectMocks
+    private CastTypeChange castTypeChange;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetCount() {
+        long count = 1L;
+
+        long actual = castTypeChange.getCount();
+
+        assertEquals(count, actual);
+    }
+
+    @Test
+    public void testSetCount() {
+        long count = 1L;
+        castTypeChange.setCount(count);
+    }
+
+    @Test
+    public void testAggregate() {
+        CastTypeChange other = Mockito.mock(CastTypeChange.class);
+        long count = 1L;
+
+        when(((CastTypeChange) other).getCount()).thenReturn(count);
+        castTypeChange.aggregate(other);
+    }
+}

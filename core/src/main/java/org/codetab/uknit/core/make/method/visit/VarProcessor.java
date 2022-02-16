@@ -23,6 +23,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
@@ -129,6 +130,13 @@ public class VarProcessor {
         Expression exp = node.getExpression();
         Type type = node.getType();
         boolean mock = mocks.isMockable(type);
+
+        if (nodes.is(exp, SimpleName.class)) {
+            String name = nodes.getName(exp);
+            IVar var = heap.findVar(name);
+            var.setType(type);
+            var.setMock(mock);
+        }
 
         Optional<ExpVar> expVar = heap.findByRightExp(exp);
         expVar.ifPresent(ve -> {

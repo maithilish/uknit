@@ -45,7 +45,40 @@ StringLiteral passed to private method is initialized to foo
 
 	see FileAppender init() method - String filePath = getPluginField("file");
 
+Field creation in constructor - mock should not be injected 
 
+    see org.codetab.scoopi.metrics.serialize.GaugeTest, creates mock for value and
+    formatter
+    
+	public class Gauge implements Metric {
+    
+    private Map<String, Object> value;  
+    private DateTimeFormatter formatter;
+
+    public Gauge() {
+        formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern("H:m:s"))                
+                .toFormatter();
+    }
+
+Pojo fields - mock should not be injected for gauges  
+ 
+  public class Metrics {
+    
+    private Map<String, Gauge> gauges;
+
+    public Map<String, Gauge> getGauges() {
+        return gauges;
+    }
+
+    public void setGauges(final Map<String, Gauge> gauges) {
+        this.gauges = gauges;
+    }
+    
+Public fields Pojo 
+
+	try to improve test for org.codetab.scoopi.metrics.serialize.Meter and Timer
+    
 discard previous assignment
 
 don't generate test for abstract classes
@@ -56,3 +89,15 @@ Fix errors by comparing with corrected tests in scoopi
 
 	plugin/converter/DateFormatter
 	plugin/converter/DateRoller
+	metrics/SystemStat	
+	
+Try to Improve
+		
+	metrics/serialize/Serializer - Builder pattern
+	metrics/server/MetricsServlet - Nested class test
+	metrics/server/MetricsServlet - used static fields
+	
+Fix error generating test
+
+	metrics/server/MetricsServletListener - refers nested class in another class
+

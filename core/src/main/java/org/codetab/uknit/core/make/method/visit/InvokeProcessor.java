@@ -21,13 +21,13 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
@@ -50,6 +50,8 @@ public class InvokeProcessor {
     @Inject
     private Patcher patcher;
     @Inject
+    private Expressions expressions;
+    @Inject
     private VarExpStager varExpStager;
     @Inject
     private InternalCallProcessor internalCallProcessor;
@@ -59,9 +61,9 @@ public class InvokeProcessor {
         Expression patchedExp = patchedMi.getExpression();
         // TODO make var in Invoke optional
         IVar var = null;
-        if (nonNull(patchedExp) && nodes.is(patchedExp, SimpleName.class)) {
+        if (nonNull(patchedExp)) {
             try {
-                var = heap.findVar(nodes.getName(patchedExp));
+                var = heap.findVar(expressions.getName(patchedExp));
             } catch (IllegalStateException e) {
             }
         }

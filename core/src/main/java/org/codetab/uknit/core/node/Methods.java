@@ -14,8 +14,11 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class Methods {
@@ -110,6 +113,12 @@ public class Methods {
         return (methodDecl.getModifiers() & Modifier.PRIVATE) > 0;
     }
 
+    public List<Statement> getStatements(final MethodDeclaration methodDecl) {
+        @SuppressWarnings("unchecked")
+        List<Statement> stmts = methodDecl.getBody().statements();
+        return stmts;
+    }
+
     /**
      * Get var name of method invocation. If chained call, get top name.
      * @param mi
@@ -157,5 +166,15 @@ public class Methods {
             }
         }
         return names;
+    }
+
+    public boolean returnsVoid(final MethodDeclaration methodDecl) {
+        Type returnType = methodDecl.getReturnType2();
+        if (isNull(returnType)) {
+            return false; // constructor
+        }
+        return returnType.isPrimitiveType()
+                && nodes.as(returnType, PrimitiveType.class)
+                        .getPrimitiveTypeCode().equals(PrimitiveType.VOID);
     }
 }

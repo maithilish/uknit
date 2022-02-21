@@ -29,7 +29,30 @@ public class InferVar extends DefaultVar {
                 + "]";
     }
 
+    @Override
     public void setType(final Type type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

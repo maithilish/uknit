@@ -40,6 +40,8 @@ public class Heap {
     // var returned by the method, used to generate assert statement
     private Optional<IVar> expectedVar = Optional.empty();
 
+    private String selfFieldName; // class under test
+
     public List<IVar> getVars() {
         return vars;
     }
@@ -74,6 +76,18 @@ public class Heap {
 
     public void setExpectedVar(final Optional<IVar> expectedVar) {
         this.expectedVar = expectedVar;
+    }
+
+    /**
+     * Name of class under test or system under test (SUT)
+     * @return name
+     */
+    public String getSelfFieldName() {
+        return selfFieldName;
+    }
+
+    public void setSelfFieldName(final String selfFieldName) {
+        this.selfFieldName = selfFieldName;
     }
 
     public List<IVar> getVars(final Predicate<IVar> filter) {
@@ -183,6 +197,12 @@ public class Heap {
     public Optional<IVar> findLocalVar(final String varName) {
         return vars.stream()
                 .filter(v -> v.getName().equals(varName) && v.isLocalVar())
+                .findAny();
+    }
+
+    public Optional<IVar> findField(final String varName) {
+        return vars.stream()
+                .filter(v -> v.getName().equals(varName) && v.isField())
                 .findAny();
     }
 

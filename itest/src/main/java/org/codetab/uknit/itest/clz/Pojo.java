@@ -20,7 +20,6 @@ public class Pojo {
         this.bar = bar;
     }
 
-    // STEPIN - String foo is not mock and not injected, but Date bar is mock
     public String getFoo() {
         return foo;
     }

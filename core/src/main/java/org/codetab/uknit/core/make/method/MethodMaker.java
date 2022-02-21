@@ -6,9 +6,12 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.di.DInjector;
+import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
+import org.codetab.uknit.core.make.method.detect.GetterSetter;
 import org.codetab.uknit.core.make.method.stage.CallStager;
 import org.codetab.uknit.core.make.method.visit.UseMarker;
 import org.codetab.uknit.core.make.method.visit.Visitor;
@@ -32,6 +35,8 @@ public class MethodMaker {
     @Inject
     private DInjector di;
     @Inject
+    private Configs configs;
+    @Inject
     private MethodMakers methodMakers;
     @Inject
     private CallStager callStager;
@@ -47,6 +52,8 @@ public class MethodMaker {
     private VarNames varNames;
     @Inject
     private UseMarker useMarker;
+    @Inject
+    private GetterSetter getterSetter;
 
     private ClzMap clzMap;
 
@@ -65,13 +72,19 @@ public class MethodMaker {
 
         varNames.resetIndexes();
 
-        String clzName = methodMakers
+        String testClzName = methodMakers
                 .getTestClzName((TypeDeclaration) method.getParent());
-        clzDecl = clzMap.getTypeDecl(clzName);
+        clzDecl = clzMap.getTypeDecl(testClzName);
+        Clz clz = clzMap.getClz(testClzName);
 
         String testMethodName = methodMakers.getTestMethodName(method, clzDecl);
 
         methodDecl = methodMakers.constructTestMethod(method, testMethodName);
+
+        if (configs.getConfig("uknit.detect.getterSetter", true)) {
+            getterSetter.detect(clz, method, methodDecl,
+                    clzMap.getFields(testClzName));
+        }
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(heap);
@@ -81,7 +94,7 @@ public class MethodMaker {
         callStager.stageCall(method, heap);
 
         // to set deep stub, set fields
-        heap.getVars().addAll(clzMap.getFields(clzName));
+        heap.getVars().addAll(clzMap.getFields(testClzName));
 
         method.accept(visitor);
 

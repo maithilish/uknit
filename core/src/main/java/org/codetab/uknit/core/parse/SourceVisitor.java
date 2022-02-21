@@ -18,6 +18,7 @@ import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
 import org.codetab.uknit.core.make.method.MethodMaker;
+import org.codetab.uknit.core.make.method.detect.GetterSetter;
 import org.codetab.uknit.core.make.model.Heap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -42,6 +43,8 @@ public class SourceVisitor extends ASTVisitor {
     private Dumper methodDumper;
     @Inject
     private EndDumper methodEndDumper;
+    @Inject
+    private GetterSetter getterSetter;
 
     private ClzMaker clzMaker;
 
@@ -66,10 +69,16 @@ public class SourceVisitor extends ASTVisitor {
         } catch (IOException e) {
             throw new CriticalException(e);
         }
+
+        getterSetter.reset();
     }
 
     public void postProcess() {
         clzMaker.annotateFields(configs);
+
+        if (configs.getConfig("uknit.detect.getterSetter", true)) {
+            getterSetter.postProcess();
+        }
 
         try {
             methodDumper.close();
@@ -146,7 +155,10 @@ public class SourceVisitor extends ASTVisitor {
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
 
         if (methodMaker.isStageable(node)) {
+
             Heap heap = di.instance(Heap.class);
+            heap.setSelfFieldName(clzMaker.getSelfFieldName()); // SUT
+
             if (methodMaker.stageMethod(node, heap)) {
                 methodMaker.generateTestMethod(heap);
             }

@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.cast;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,9 +23,9 @@ public class CastTypeChangeTest {
         long count = 1L;
         castTypeChange.setCount(count);
 
-        long actual = castTypeChange.getCount();
+        Object actual = castTypeChange.getCount();
 
-        assertEquals(count, actual);
+        assertSame(count, actual);
     }
 
     @Test

@@ -147,7 +147,9 @@ class DefinedInitialzer {
                 Optional<IVar> lvo = e.getLeftVar();
                 if (nonNull(name) && lvo.isPresent()
                         && lvo.get().getName().equals(name)) {
-                    match = true;
+                    if (lvo.get().equals(var)) {
+                        match = true;
+                    }
                 }
 
                 /*

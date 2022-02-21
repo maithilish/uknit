@@ -34,11 +34,16 @@ public class PojoTest {
     public void testSetBar() {
         Date bar = Mockito.mock(Date.class);
         pojo.setBar(bar);
+
+        Object actual = pojo.getBar();
+
+        assertSame(bar, actual);
     }
 
     @Test
     public void testGetFoo() {
         String foo = "Foo";
+        pojo.setFoo(foo);
 
         String actual = pojo.getFoo();
 
@@ -49,5 +54,9 @@ public class PojoTest {
     public void testSetFoo() {
         String foo = "Foo";
         pojo.setFoo(foo);
+
+        Object actual = pojo.getFoo();
+
+        assertSame(foo, actual);
     }
 }

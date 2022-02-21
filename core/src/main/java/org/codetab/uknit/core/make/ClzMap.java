@@ -18,7 +18,7 @@ public class ClzMap extends HashMap<String, Clz> {
 
     public TypeDeclaration getTypeDecl(final String clzName) {
         Clz clz = get(clzName);
-        return clz.getTypeDecl();
+        return clz.getTestTypeDecl();
     }
 
     public List<Field> getFields(final String clzName) {

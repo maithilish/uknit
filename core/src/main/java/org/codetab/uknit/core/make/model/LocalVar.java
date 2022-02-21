@@ -28,4 +28,26 @@ public class LocalVar extends DefaultVar {
         return "LocalVar [name=" + name + ", type=" + type + ", mock=" + mock
                 + "]";
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

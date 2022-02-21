@@ -11,6 +11,8 @@ public class AlphaIT extends ITBase {
     @Test
     public void test() throws IOException {
 
+        System.setProperty("uknit.configs.loadUserDefined", "true");
+
         configure();
 
         // String listKey = "uknit.createInstance.List";

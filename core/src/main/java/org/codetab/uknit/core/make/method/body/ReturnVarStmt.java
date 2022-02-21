@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.ReturnVar;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -26,8 +27,8 @@ public class ReturnVarStmt {
         Optional<IVar> returnVar = heap.getReturnVar();
         Statement stmt = null;
         if (returnVar.isPresent()) {
-            IVar var = returnVar.get();
-            if (var.isUsed() && !var.isHidden()) {
+            ReturnVar var = (ReturnVar) returnVar.get();
+            if (var.isUsed() && !var.isHidden() && !var.isSelfField()) {
                 String initializer = initializers.getInitializer(var, heap);
                 Type type = var.getType();
                 String typeLiteral;

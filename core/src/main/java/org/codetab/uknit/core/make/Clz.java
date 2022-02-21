@@ -9,24 +9,26 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
- * Holds test class outline such as package, imports, typeDecl and fields.
+ * Holds class under test and test class outline such as package, imports,
+ * typeDecl and fields.
  * @author Maithilish
  *
  */
 public class Clz {
 
-    private String name;
-    private TypeDeclaration typeDecl;
+    private String testClzName;
+    private TypeDeclaration typeDecl; // class under test - SUT
+    private TypeDeclaration testTypeDecl; // test class
     private PackageDeclaration packageDecl;
     private List<ImportDeclaration> imports;
     private List<Field> fields = new ArrayList<>();
 
-    public String getName() {
-        return name;
+    public String getTestClzName() {
+        return testClzName;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setTestClzName(final String name) {
+        this.testClzName = name;
     }
 
     public TypeDeclaration getTypeDecl() {
@@ -35,6 +37,14 @@ public class Clz {
 
     public void setTypeDecl(final TypeDeclaration typeDecl) {
         this.typeDecl = typeDecl;
+    }
+
+    public TypeDeclaration getTestTypeDecl() {
+        return testTypeDecl;
+    }
+
+    public void setTestTypeDecl(final TypeDeclaration testTypeDecl) {
+        this.testTypeDecl = testTypeDecl;
     }
 
     public PackageDeclaration getPackageDecl() {
@@ -59,6 +69,6 @@ public class Clz {
 
     @Override
     public String toString() {
-        return "Clz [name=" + name + "]";
+        return "Clz [name=" + testClzName + "]";
     }
 }

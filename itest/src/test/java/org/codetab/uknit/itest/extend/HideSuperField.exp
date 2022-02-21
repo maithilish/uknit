@@ -15,6 +15,10 @@ public class HideSuperFieldTest {
     public void testSetLicensePlate() {
         String license = "Foo";
         hideSuperField.setLicensePlate(license);
+
+        Object actual = hideSuperField.getLicensePlate();
+
+        assertSame(licensePlate, actual);
     }
 
     @Test

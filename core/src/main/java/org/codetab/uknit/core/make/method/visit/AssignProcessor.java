@@ -71,8 +71,11 @@ public class AssignProcessor {
         } else if (nodes.is(lExp, FieldAccess.class)) {
             FieldAccess fa = nodes.as(lExp, FieldAccess.class);
             String name = nodes.getName(fa.getName());
-            IVar var = heap.findVar(name);
-            heap.findByRightExp(rExp).ifPresent(i -> i.setLeftVar(var));
+            Optional<IVar> field = heap.findField(name);
+            if (field.isPresent()) {
+                heap.findByRightExp(rExp)
+                        .ifPresent(i -> i.setLeftVar(field.get()));
+            }
         } else if (nodes.is(lExp, ArrayAccess.class)) {
             // TODO - fix this
             ArrayAccess aa = nodes.as(lExp, ArrayAccess.class);

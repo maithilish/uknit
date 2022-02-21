@@ -34,10 +34,16 @@ enum Configuration {
             props = new Properties();
             props.putAll(defaults);
 
-            user = new Properties();
-            user.load(Configuration.class.getClassLoader()
-                    .getResourceAsStream("uknit.properties"));
-            props.putAll(user);
+            // used by itest to ignore user defined properties
+            boolean loadUserDefined = Boolean.valueOf(System
+                    .getProperty("uknit.configs.loadUserDefined", "true"));
+
+            if (loadUserDefined) {
+                user = new Properties();
+                user.load(Configuration.class.getClassLoader()
+                        .getResourceAsStream("uknit.properties"));
+                props.putAll(user);
+            }
 
             system = new Properties();
             for (Entry<Object, Object> entry : System.getProperties()

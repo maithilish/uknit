@@ -12,6 +12,7 @@ public class CastTypeChangeTest {
     @Test
     public void testGetCount() {
         long count = 1L;
+        castTypeChange.setCount(count);
 
         long actual = castTypeChange.getCount();
 
@@ -22,6 +23,10 @@ public class CastTypeChangeTest {
     public void testSetCount() {
         long count = 1L;
         castTypeChange.setCount(count);
+
+        Object actual = castTypeChange.getCount();
+
+        assertSame(count, actual);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.jdt.core.dom.Type;
@@ -100,5 +101,33 @@ public class DefaultVar implements IVar {
     @Override
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        DefaultVar other = (DefaultVar) obj;
+        return Objects.equals(name, other.name)
+                && Objects.equals(type, other.type)
+                && Objects.equals(value, other.value)
+                && Objects.equals(mock, other.mock)
+                && Objects.equals(created, other.created)
+                && Objects.equals(used, other.used)
+                && Objects.equals(hidden, other.hidden)
+                && Objects.equals(deepStub, other.deepStub);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type, value, mock, created, used, hidden,
+                deepStub);
     }
 }

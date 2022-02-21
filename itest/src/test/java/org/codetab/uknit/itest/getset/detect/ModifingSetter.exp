@@ -1,0 +1,57 @@
+package org.codetab.uknit.itest.getset.detect;
+
+import java.util.Date;
+
+public class ModifingSetterTest {
+    @InjectMocks
+    private ModifingSetter modifingSetter;
+
+    @Mock
+    private Date birthday;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetName() {
+        String name = "Foo";
+        modifingSetter.setName(name);
+
+        String actual = modifingSetter.getName();
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testSetName() {
+        String name = "Foo";
+        String name = "Bar";
+
+        String actual = modifingSetter.setName(name);
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testGetBirthday() {
+
+        Date actual = modifingSetter.getBirthday();
+
+        assertSame(birthday, actual);
+    }
+
+    @Test
+    public void testSetBirthday() {
+        Date birthday = Mockito.mock(Date.class);
+        long apple = 1L;
+
+        when(birthday.getTime()).thenReturn(apple);
+
+        long actual = modifingSetter.setBirthday(birthday);
+
+        assertEquals(apple, actual);
+        verify(birthday).setTime(100);
+    }
+}

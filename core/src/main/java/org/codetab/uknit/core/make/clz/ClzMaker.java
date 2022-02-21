@@ -47,6 +47,8 @@ public class ClzMaker {
     // test class cu
     private CompilationUnit cu;
 
+    private String selfFieldName;
+
     public void addPackage(final ASTNode packageDecl) {
         cu.setPackage(clzNodeFactory.createPackageDecl(packageDecl));
     }
@@ -56,19 +58,24 @@ public class ClzMaker {
         clzMakers.addImport(cu, decl);
     }
 
-    public void addClass(final TypeDeclaration node) {
-        TypeDeclaration typeDecl = clzNodeFactory.createTypeDecl(node);
-        clzMakers.addType(cu, typeDecl);
+    /**
+     * Create test class and add it to clzMap.
+     * @param typeDecl
+     */
+    public void addClass(final TypeDeclaration typeDecl) {
+        TypeDeclaration testTypeDecl = clzNodeFactory.createTypeDecl(typeDecl);
+        clzMakers.addType(cu, testTypeDecl);
 
         Modifier modifier =
                 nodeFactory.createModifier(ModifierKeyword.PUBLIC_KEYWORD);
-        clzMakers.addModifier(typeDecl, modifier);
+        clzMakers.addModifier(testTypeDecl, modifier);
 
         Clz clz = di.instance(Clz.class);
 
-        String clzName = typeDecl.getName().getFullyQualifiedName();
-        clz.setName(clzName);
+        String clzName = testTypeDecl.getName().getFullyQualifiedName();
+        clz.setTestClzName(clzName);
         clz.setTypeDecl(typeDecl);
+        clz.setTestTypeDecl(testTypeDecl);
         clz.setPackageDecl(cu.getPackage());
         clz.setImports(clzMakers.getImports(cu));
 
@@ -76,7 +83,8 @@ public class ClzMaker {
     }
 
     /**
-     * Add self field (InjectMocks)
+     * Add self field (InjectMocks) - class under test
+     * @return
      */
     public void addSelfField(final TypeDeclaration srcClz) {
         String srcClzName = classes.getClzName(srcClz);
@@ -86,6 +94,7 @@ public class ClzMaker {
         String fieldName = classes.getClzAsFieldName(srcClz);
 
         fieldMaker.addSelfField(srcClzName, testClz, fieldName);
+        selfFieldName = fieldName;
     }
 
     public void addFields(final TypeDeclaration srcClz) {
@@ -159,4 +168,7 @@ public class ClzMaker {
         this.cu = cu;
     }
 
+    public String getSelfFieldName() {
+        return selfFieldName;
+    }
 }

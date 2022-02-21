@@ -39,13 +39,16 @@ public class ITBase {
             final String testClzName, final String expFile) {
 
         /*
-         * ITests uses JUnit5, override user config it to JUnit5 before creating
-         * configs instance.
+         * itest against default configs, ignore user defined. If not set by the
+         * itest (subclass) then set now before creating Configs instance.
          */
-        System.setProperty("uknit.profile.test.framework", "junit5");
+        if (isNull(System.getProperty("uknit.configs.loadUserDefined"))) {
+            System.setProperty("uknit.configs.loadUserDefined", "false");
+        }
+
         /*
-         * Configs uses enum Configuration for configs and it is singleton and
-         * both new Configs() and DI instance share the same instance.
+         * Configs uses enum Configuration for configs and it is singleton. Both
+         * new Configs() or DI instance share the same instance of it.
          */
         configs = new Configs();
 

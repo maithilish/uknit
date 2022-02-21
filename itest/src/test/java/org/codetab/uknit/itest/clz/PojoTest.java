@@ -26,13 +26,13 @@ public class PojoTest {
 
     @Test
     public void testPojo() {
-        String foo = "foo";
-        // CHECKSTYLE:OFF
-        Date bar = Mockito.mock(Date.class);
-        // CHECKSTYLE:ON
+        String foo = "Foo";
+        Date lbar = Mockito.mock(Date.class);
 
-        @SuppressWarnings("unused")
-        Pojo actual = new Pojo(foo, bar);
+        Pojo actual = new Pojo(foo, lbar);
+
+        assertSame(foo, actual.getFoo());
+        assertSame(lbar, actual.getBar());
     }
 
     @Test
@@ -45,15 +45,18 @@ public class PojoTest {
 
     @Test
     public void testSetBar() {
-        // CHECKSTYLE:OFF
-        Date bar = Mockito.mock(Date.class);
-        // CHECKSTYLE:ON
-        pojo.setBar(bar);
+        Date lbar = Mockito.mock(Date.class);
+        pojo.setBar(lbar);
+
+        Object actual = pojo.getBar();
+
+        assertSame(lbar, actual);
     }
 
     @Test
     public void testGetFoo() {
-        String foo = null;
+        String foo = "Foo";
+        pojo.setFoo(foo);
 
         String actual = pojo.getFoo();
 
@@ -62,7 +65,11 @@ public class PojoTest {
 
     @Test
     public void testSetFoo() {
-        String foo = "foo";
+        String foo = "Foo";
         pojo.setFoo(foo);
+
+        Object actual = pojo.getFoo();
+
+        assertSame(foo, actual);
     }
 }

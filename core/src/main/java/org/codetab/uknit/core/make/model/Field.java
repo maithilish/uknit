@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -42,5 +44,29 @@ public class Field extends DefaultVar {
     public String toString() {
         return "Field [name=" + name + ", type=" + type + ", mock=" + mock
                 + "]";
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        Field other = (Field) obj;
+        return Objects.equals(fieldDecl, other.fieldDecl)
+                && Objects.equals(srcFieldDecl, other.srcFieldDecl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), fieldDecl, srcFieldDecl);
     }
 }

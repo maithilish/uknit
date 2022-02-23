@@ -39,6 +39,7 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeLiteral;
@@ -119,6 +120,13 @@ public class Visitor extends ASTVisitor {
                 invokeProcessor.stageInferVarWhen(invoke, heap);
             }
         }
+    }
+
+    @Override
+    public void endVisit(final SuperMethodInvocation node) {
+        invokeProcessor.stagePatches(node, heap);
+        Optional<IVar> retVar = invokeProcessor.process(node, heap);
+        invokeProcessor.stageSuperPatch(node, retVar, heap);
     }
 
     @Override

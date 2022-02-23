@@ -18,13 +18,17 @@ public class HideSuperFieldTest {
 
         Object actual = hideSuperField.getLicensePlate();
 
-        assertSame(licensePlate, actual);
+        assertSame(license, actual);
     }
 
     @Test
     public void testGetLicensePlate() {
+        String licensePlate = "Foo";
+        hideSuperField.setLicensePlate(licensePlate);
 
         String actual = hideSuperField.getLicensePlate();
+
+        assertEquals(licensePlate, actual);
     }
 
     @Test

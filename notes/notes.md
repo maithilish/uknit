@@ -3,6 +3,12 @@
 The varExp is found via cast exp and its left var is modified to cast type. However, 
 if expression is Mi, the ExpReturnType in its invoker is not modified.   
 
+## MethodInvocation
+
+for	date.toString().charAt(0), mi.getExpression() returns date.toString() and mi.getName() returns the method name: charAt.
+
+for	date.toString(), date and toString.
+	
 ## Hidden Var
 
 By default, vars are not hidden. It is used while generating the statements.

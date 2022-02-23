@@ -12,6 +12,7 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -69,21 +70,53 @@ public class GetterSetters {
         return setter;
     }
 
+    /**
+     * Get name of var passed to setter.
+     * @param methodDecl
+     * @param removeStr
+     * @return
+     */
     public String getVarName(final MethodDeclaration methodDecl,
             final String removeStr) {
-        String name = nodes.getName(methodDecl.getName());
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,
-                name.replace(removeStr, ""));
+        List<SingleVariableDeclaration> parameters =
+                methods.getParameters(methodDecl);
+        /*
+         * get var name from setter method parameter else from method name
+         */
+        if (parameters.size() == 1) {
+            return nodes.getName(parameters.get(0).getName());
+        } else {
+            String name = nodes.getName(methodDecl.getName());
+            return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,
+                    name.replace(removeStr, ""));
+        }
     }
 
+    /**
+     * Get name of the object on which getter or setter is invoked.
+     * @param typeDecl
+     * @return
+     */
     public String getObjName(final TypeDeclaration typeDecl) {
         String name = nodes.getName(typeDecl.getName());
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
     }
 
-    public String getMethodName(final String prefix, final String name) {
-        return prefix + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
-
+    /**
+     * For setter return getter name or vice versa.
+     *
+     * @param methodDecl
+     * @return
+     */
+    public String getOppositeMethodName(final MethodDeclaration methodDecl) {
+        String methodName = nodes.getName(methodDecl.getName());
+        String flipName = methodName;
+        if (methodName.startsWith("get")) {
+            flipName = methodName.replace("get", "set");
+        } else if (methodName.startsWith("set")) {
+            flipName = methodName.replace("set", "get");
+        }
+        return flipName;
     }
 
     /**

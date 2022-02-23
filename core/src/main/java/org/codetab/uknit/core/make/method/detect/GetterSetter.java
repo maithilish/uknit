@@ -96,9 +96,8 @@ public class GetterSetter {
                             getterSetters.getObjName(clz.getTypeDecl());
                     String varName =
                             getterSetters.getVarName(testGetter, "testGet");
-                    String methodName =
-                            getterSetters.getMethodName("set", varName);
-
+                    String methodName = getterSetters
+                            .getOppositeMethodName(getterHolder.methodDecl);
                     // use visitor to insert setter call next to var declaration
                     getterVisitor.init(testGetter, objName, varName,
                             methodName);
@@ -116,10 +115,10 @@ public class GetterSetter {
                 if (getterSetters.returnsVoid(setterHolder.methodDecl)) {
                     String objName =
                             getterSetters.getObjName(clz.getTypeDecl());
-                    String varName =
-                            getterSetters.getVarName(testSetter, "testSet");
-                    String methodName =
-                            getterSetters.getMethodName("get", varName);
+                    String varName = getterSetters
+                            .getVarName(setterHolder.methodDecl, "set");
+                    String methodName = getterSetters
+                            .getOppositeMethodName(setterHolder.methodDecl);
                     if (getterSetters.isGetterDefined(methodName,
                             clz.getTypeDecl())) {
                         /*

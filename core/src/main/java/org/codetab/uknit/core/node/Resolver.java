@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 
 public class Resolver {
@@ -22,6 +23,8 @@ public class Resolver {
     private Types types;
     @Inject
     private Mocks mocks;
+    @Inject
+    private Nodes nodes;
 
     public Optional<ExpReturnType> getExpReturnType(final MethodInvocation mi) {
         IMethodBinding methodBinding = mi.resolveMethodBinding();
@@ -53,16 +56,23 @@ public class Resolver {
         }
     }
 
+    public IMethodBinding resolveMethodBinding(final Expression exp) {
+        if (nodes.is(exp, MethodInvocation.class)) {
+            return nodes.as(exp, MethodInvocation.class).resolveMethodBinding();
+        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
+            return nodes.as(exp, SuperMethodInvocation.class)
+                    .resolveMethodBinding();
+        } else {
+            throw nodes.unexpectedException(exp);
+        }
+    }
+
     public ITypeBinding resolveTypeBinding(final ArrayAccess arrayAccess) {
         return arrayAccess.resolveTypeBinding();
     }
 
     public ITypeBinding resolveTypeBinding(final LambdaExpression lambdaExp) {
         return lambdaExp.resolveTypeBinding();
-    }
-
-    public IMethodBinding resolveMethodBinding(final MethodInvocation mi) {
-        return mi.resolveMethodBinding();
     }
 
     public ITypeBinding resolveBinding(final Type type) {

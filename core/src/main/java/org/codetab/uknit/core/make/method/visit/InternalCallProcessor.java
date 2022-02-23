@@ -13,14 +13,12 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
-import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.parse.SourceParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
@@ -34,15 +32,22 @@ public class InternalCallProcessor {
     private Methods methods;
     @Inject
     private DInjector di;
-    @Inject
-    private Resolver resolver;
 
-    public Optional<IVar> process(final MethodInvocation mi, final Heap heap) {
-        IMethodBinding methodBind = resolver.resolveMethodBinding(mi);
-        ITypeBinding declClz = methodBind.getDeclaringClass();
+    /**
+     * Process internal call.
+     * @param methodBinding
+     *            of the internal method invocation
+     * @param arguments
+     *            of internal method invocation
+     * @param heap
+     * @return
+     */
+    public Optional<IVar> process(final IMethodBinding methodBinding,
+            final List<Expression> arguments, final Heap heap) {
+        ITypeBinding declClz = methodBinding.getDeclaringClass();
         String clzName = declClz.getName();
         String clzPkg = declClz.getPackage().getName();
-        String key = methodBind.getKey();
+        String key = methodBinding.getKey();
 
         // get invoked internal method declaration from the cu or super cu
         Optional<CompilationUnit> cu = sourceParser.fetchCu(clzPkg, clzName);
@@ -64,7 +69,7 @@ public class InternalCallProcessor {
                 methodMaker.processMethod(methodDecl, internalMethod, heap);
 
                 // blend calling args and internal method's parameters
-                argParamBlender.setArguments(methods.getArguments(mi));
+                argParamBlender.setArguments(arguments);
                 argParamBlender
                         .setParameters(methods.getParameters(methodDecl));
                 argParamBlender.fix(heap);

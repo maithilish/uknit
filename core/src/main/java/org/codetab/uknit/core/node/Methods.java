@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -144,6 +145,16 @@ public class Methods {
     @SuppressWarnings("unchecked")
     public List<Expression> getArguments(final MethodInvocation mi) {
         return mi.arguments();
+    }
+
+    /**
+     * Get argument list of {@link SuperMethodInvocation}
+     * @param superMi
+     * @return list
+     */
+    @SuppressWarnings("unchecked")
+    public List<Expression> getArguments(final SuperMethodInvocation smi) {
+        return smi.arguments();
     }
 
     /**

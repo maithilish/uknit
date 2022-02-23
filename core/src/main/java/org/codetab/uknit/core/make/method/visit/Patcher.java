@@ -16,6 +16,7 @@ import org.codetab.uknit.core.make.model.Patch;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 /**
  * Patch expression with corresponding infer var.
@@ -50,6 +51,26 @@ public class Patcher {
                 }
             }
         }
+    }
+
+    /**
+     * Stage patch for super method invocation (smi). Patch patches the smi exp
+     * in parent with return var name. Arg is not applicable as we replace
+     * entire smi exp with var name.
+     * <p>
+     * Example: return super.foo(bar); if super call returns var named orange
+     * then the return statement becomes return orange;, after patch in
+     * ReturnStatement visit.
+     * @param node
+     * @param retVar
+     * @param heap
+     */
+    public void stageSuperPatch(final SuperMethodInvocation node,
+            final IVar retVar, final Heap heap) {
+        int argIndex = -1;
+        Patch patch = modelFactory.createPatch(node.getParent(), node,
+                retVar.getName(), argIndex);
+        heap.getPatches().add(patch);
     }
 
     /**

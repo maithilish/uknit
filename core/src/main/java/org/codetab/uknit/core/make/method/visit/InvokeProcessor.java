@@ -26,8 +26,10 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
@@ -73,12 +75,30 @@ public class InvokeProcessor {
         if (isNull(patchedExp)) {
             // mi may be static or internal call
             if (!methods.isStaticCall(mi)) {
-                Optional<IVar> retVar = internalCallProcessor.process(mi, heap);
+                IMethodBinding methodBinding =
+                        resolver.resolveMethodBinding(mi);
+                List<Expression> arguments = methods.getArguments(mi);
+                Optional<IVar> retVar = internalCallProcessor
+                        .process(methodBinding, arguments, heap);
                 invoke.setReturnVar(retVar);
             }
         }
-
         return invoke;
+    }
+
+    /**
+     * Process super method invocation.
+     * @param smi
+     * @param heap
+     * @return IVar returnVar
+     */
+    public Optional<IVar> process(final SuperMethodInvocation smi,
+            final Heap heap) {
+        IMethodBinding methodBinding = resolver.resolveMethodBinding(smi);
+        List<Expression> arguments = methods.getArguments(smi);
+        Optional<IVar> retVar =
+                internalCallProcessor.process(methodBinding, arguments, heap);
+        return retVar;
     }
 
     public Optional<IVar> stageInferVar(final Invoke invoke, final Heap heap) {
@@ -132,11 +152,44 @@ public class InvokeProcessor {
         }
     }
 
-    public void stagePatches(final MethodInvocation mi, final Heap heap) {
+    /**
+     * Stage patches for method (exp and args) and super method invocation (only
+     * args).
+     * @param exp
+     * @param heap
+     */
+    public void stagePatches(final Expression exp, final Heap heap) {
         List<Expression> exps = new ArrayList<>();
-        exps.add(mi.getExpression());
-        exps.addAll(methods.getArguments(mi));
-        patcher.stageInferPatch(mi, exps, heap);
+
+        if (nodes.is(exp, MethodInvocation.class)) {
+            MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
+            exps.add(mi.getExpression());
+            exps.addAll(methods.getArguments(mi));
+        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
+            SuperMethodInvocation smi =
+                    nodes.as(exp, SuperMethodInvocation.class);
+            exps.addAll(methods.getArguments(smi));
+        } else {
+            throw new IllegalArgumentException(
+                    "expression is not MethodInvocation or SuperMethodInvocation");
+        }
+
+        patcher.stageInferPatch(exp, exps, heap);
+    }
+
+    /**
+     * Stage patch to replace entire super method invocation with return var.
+     * <p>
+     * Example: return super.foo(bar); to return orange;
+     * @param node
+     * @param retVar
+     * @param heap
+     */
+    public void stageSuperPatch(final SuperMethodInvocation node,
+            final Optional<IVar> retVar, final Heap heap) {
+        if (retVar.isPresent()) {
+            patcher.stageSuperPatch(node, retVar.get(), heap);
+        }
     }
 
     /**

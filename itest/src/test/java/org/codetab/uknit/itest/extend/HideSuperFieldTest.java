@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.extend;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,14 +21,20 @@ public class HideSuperFieldTest {
     public void testSetLicensePlate() {
         String license = "Foo";
         hideSuperField.setLicensePlate(license);
+
+        Object actual = hideSuperField.getLicensePlate();
+
+        assertSame(license, actual);
     }
 
     @Test
     public void testGetLicensePlate() {
-        String license = "Foo";
-        hideSuperField.setLicensePlate(license);
+        String licensePlate = "Foo";
+        hideSuperField.setLicensePlate(licensePlate);
+
         String actual = hideSuperField.getLicensePlate();
-        assertEquals(license, actual);
+
+        assertEquals(licensePlate, actual);
     }
 
     @Test

@@ -1,3 +1,9 @@
+## JDK Version
+
+Eclipse 4.17 (2020-09) onwards mandates JDK version 11 or newer. Stand alone Eclipse JDT core is also compiled with 11. If tried with JDK 8 then class file has wrong version 55.0, should be 52.0 is thrown.
+
+The eclipse.jdt version should be 3.26.0 or newer.
+
 ## Cast Change type
 
 The varExp is found via cast exp and its left var is modified to cast type. However, 

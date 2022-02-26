@@ -85,7 +85,7 @@ public class VarProcessor {
                 if (stageVarExp) {
                     Optional<ExpVar> expVar =
                             heap.findByRightExp(initializerExp);
-                    if (expVar.isEmpty()) {
+                    if (!expVar.isPresent()) {
                         expVar = Optional.of(varExpStager.stage(vd.getName(),
                                 initializerExp, heap));
                     }
@@ -99,7 +99,7 @@ public class VarProcessor {
     public void stageInferVar(final Expression node, final Heap heap) {
         InferVar inferVar = varStager.stageInferVar(node, heap);
         Optional<ExpVar> expVar = heap.findByRightExp(node);
-        if (expVar.isEmpty()) {
+        if (!expVar.isPresent()) {
             expVar = Optional.of(varExpStager.stage(null, node, heap));
         }
         expVar.get().setLeftVar(inferVar);
@@ -119,7 +119,7 @@ public class VarProcessor {
             boolean mock = mocks.isMockable(type);
             InferVar inferVar = varStager.stageInferVar(type, mock, heap);
             Optional<ExpVar> expVar = heap.findByRightExp(node);
-            if (expVar.isEmpty()) {
+            if (!expVar.isPresent()) {
                 expVar = Optional.of(varExpStager.stage(null, node, heap));
             }
             expVar.get().setLeftVar(inferVar);

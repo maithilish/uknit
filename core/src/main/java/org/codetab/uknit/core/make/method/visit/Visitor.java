@@ -113,7 +113,13 @@ public class Visitor extends ASTVisitor {
         }
 
         if (invoke.isInfer()) {
-            if (invoke.getReturnVar().isEmpty()) {
+            if (invoke.getReturnVar().isPresent()) {
+                /*
+                 * for internal call arg in internal call (see internal itest),
+                 * stage expVar
+                 */
+                invokeProcessor.stageExpVar(invoke, heap);
+            } else {
                 invokeProcessor.stageInferVar(invoke, heap);
             }
             if (invoke.isWhen()) {

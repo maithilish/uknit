@@ -153,6 +153,26 @@ public class InvokeProcessor {
     }
 
     /**
+     * Invokes such as internal call arg in internal call escapes both the
+     * stageInfer() and stageWhen(). For such invokes, stage expVar.
+     * <p>
+     * Example: itest/internal/CallInternalWithInternalArg. The call to
+     * internalB(date), creates infer var apple and maps it for its statement
+     * date.toInstant(). Additionally, map time.instant returned by
+     * internalB(date) to apple so that the instant1 in down the line
+     * instant1.getNano() is resolved to apple.
+     * @param invoke
+     * @param heap
+     */
+    public void stageExpVar(final Invoke invoke, final Heap heap) {
+        MethodInvocation mi = invoke.getMi();
+        if (heap.findByRightExp(mi).isEmpty()) {
+            ExpVar varExp = varExpStager.stage(null, mi, heap);
+            invoke.getReturnVar().ifPresent(v -> varExp.setLeftVar(v));
+        }
+    }
+
+    /**
      * Stage patches for method (exp and args) and super method invocation (only
      * args).
      * @param exp
@@ -220,4 +240,5 @@ public class InvokeProcessor {
                 resolver.resolveMethodBinding(invoke.getMi()).getModifiers();
         return resolver.hasModifier(modifier, Modifier.FINAL);
     }
+
 }

@@ -19,7 +19,7 @@ public class SnippetParser {
     private CompilerOptions compilerOptions;
 
     public SnippetParser() {
-        parser = ASTParser.newParser(AST.JLS16);
+        parser = ASTParser.newParser(AST.getJLSLatest());
     }
 
     public Statement parseStatement(final String snippet) {

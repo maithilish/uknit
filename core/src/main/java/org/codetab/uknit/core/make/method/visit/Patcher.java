@@ -55,8 +55,7 @@ public class Patcher {
 
     /**
      * Stage patch for super method invocation (smi). Patch patches the smi exp
-     * in parent with return var name. Arg is not applicable as we replace
-     * entire smi exp with var name.
+     * in parent with return var name.
      * <p>
      * Example: return super.foo(bar); if super call returns var named orange
      * then the return statement becomes return orange;, after patch in
@@ -67,9 +66,10 @@ public class Patcher {
      */
     public void stageSuperPatch(final SuperMethodInvocation node,
             final IVar retVar, final Heap heap) {
-        int argIndex = -1;
-        Patch patch = modelFactory.createPatch(node.getParent(), node,
-                retVar.getName(), argIndex);
+        ASTNode parent = node.getParent();
+        int argIndex = patchers.getArgIndex(parent, node);
+        Patch patch = modelFactory.createPatch(parent, node, retVar.getName(),
+                argIndex);
         heap.getPatches().add(patch);
     }
 
@@ -89,7 +89,7 @@ public class Patcher {
                  * ex: return new String(); the var is null so stage a new one
                  */
 
-                if (expVar.getLeftVar().isEmpty()) {
+                if (!expVar.getLeftVar().isPresent()) {
                     InferVar inferVar =
                             varStager.stageInferVar(expVar.getRightExp(), heap);
                     expVar.setLeftVar(inferVar);

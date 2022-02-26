@@ -42,6 +42,8 @@ public class Heap {
 
     private String selfFieldName; // class under test
 
+    private Heap parent;
+
     public List<IVar> getVars() {
         return vars;
     }
@@ -98,6 +100,15 @@ public class Heap {
         return vars.stream().filter(IVar::isReturnVar).findFirst();
     }
 
+    public Heap getParent() {
+        return parent;
+    }
+
+    public void setParent(final Heap parent) {
+        this.parent = parent;
+    }
+
+    // finders
     public Optional<When> findWhen(final String callSignature) {
         return whens.stream()
                 .filter(w -> w.getMethodSignature().equals(callSignature))
@@ -155,6 +166,16 @@ public class Heap {
         }).findFirst();
     }
 
+    public Optional<IVar> findLeftVarByRightExp(final Expression exp) {
+        Optional<IVar> leftVar = Optional.empty();
+        Optional<ExpVar> expVar = expVars.stream()
+                .filter(n -> n.getRightExp().equals(exp)).findFirst();
+        if (expVar.isPresent()) {
+            leftVar = expVar.get().getLeftVar();
+        }
+        return leftVar;
+    }
+
     /**
      * Search and return named var from list. Search precedence return var,
      * local vars, parameters and fields.
@@ -175,17 +196,22 @@ public class Heap {
         // search precedence return, local, parameter and field
         Optional<IVar> var =
                 matchedNameVars.stream().filter(IVar::isReturnVar).findAny();
-        var = var.or(() -> matchedNameVars.stream().filter(IVar::isLocalVar)
-                .findAny());
-        var = var.or(() -> matchedNameVars.stream().filter(IVar::isLocalVar)
-                .findAny());
-        var = var.or(() -> matchedNameVars.stream().filter(IVar::isInferVar)
-                .findAny());
-        var = var.or(() -> matchedNameVars.stream().filter(IVar::isParameter)
-                .findAny());
-        var = var.or(
-                () -> matchedNameVars.stream().filter(IVar::isField).findAny());
-
+        if (var.isPresent()) {
+            return var.get();
+        }
+        var = matchedNameVars.stream().filter(IVar::isLocalVar).findAny();
+        if (var.isPresent()) {
+            return var.get();
+        }
+        var = matchedNameVars.stream().filter(IVar::isInferVar).findAny();
+        if (var.isPresent()) {
+            return var.get();
+        }
+        var = matchedNameVars.stream().filter(IVar::isParameter).findAny();
+        if (var.isPresent()) {
+            return var.get();
+        }
+        var = matchedNameVars.stream().filter(IVar::isField).findAny();
         if (var.isPresent()) {
             return var.get();
         } else {
@@ -204,6 +230,33 @@ public class Heap {
         return vars.stream()
                 .filter(v -> v.getName().equals(varName) && v.isField())
                 .findAny();
+    }
+
+    /**
+     * Initialize this heap from other.
+     * @param other
+     */
+    public void initialize(final Heap other) {
+        vars.addAll(other.getVars());
+        selfFieldName = other.getSelfFieldName();
+    }
+
+    /**
+     * Merge other heap contents to this.
+     * @param other
+     */
+    public void merge(final Heap other) {
+        // add vars that are not in list
+        List<IVar> oVars = other.getVars();
+        for (IVar oVar : oVars) {
+            if (!vars.contains(oVar)) {
+                vars.add(oVar);
+            }
+        }
+
+        whens.addAll(other.getWhens());
+        verifies.addAll(other.getVerifies());
+        expectedVar = other.getExpectedVar();
     }
 
     /**

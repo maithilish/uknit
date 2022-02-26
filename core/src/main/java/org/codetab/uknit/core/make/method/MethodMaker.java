@@ -15,7 +15,6 @@ import org.codetab.uknit.core.make.method.detect.GetterSetter;
 import org.codetab.uknit.core.make.method.stage.CallStager;
 import org.codetab.uknit.core.make.method.visit.UseMarker;
 import org.codetab.uknit.core.make.method.visit.Visitor;
-import org.codetab.uknit.core.make.model.Call;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
@@ -107,7 +106,8 @@ public class MethodMaker {
     }
 
     /**
-     * Process internal method without staging it, collects the aspects in heap.
+     * Process internal method without staging it, collects the aspects in new
+     * heap. Merge the new heap's content with the main heap after the visit.
      * @param method
      * @param internalMethod
      * @param heap
@@ -121,17 +121,20 @@ public class MethodMaker {
 
         LOG.debug("= process method: {} =", methods.getMethodName(method));
 
+        Heap internalHeap = di.instance(Heap.class);
+        internalHeap.initialize(heap);
+        internalHeap.setParent(heap);
+
         Visitor visitor = di.instance(Visitor.class);
-        visitor.setHeap(heap);
+        visitor.setHeap(internalHeap);
         visitor.setInternalMethod(internalMethod);
 
-        Call topLevelCall = heap.getCall();
-
-        callStager.stageCall(method, heap); // stage call for this method
+        // stage call for this method
+        callStager.stageCall(method, internalHeap);
 
         method.accept(visitor);
 
-        heap.setCall(topLevelCall); // revert back the earlier call
+        heap.merge(internalHeap);
 
         // TODO - enable this after multi try exception fix
         // variables.checkVarConsistency(heap.getVars());

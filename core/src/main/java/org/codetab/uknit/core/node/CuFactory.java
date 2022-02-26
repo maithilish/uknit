@@ -12,7 +12,7 @@ public class CuFactory {
     private CompilerOptions compilerOptions;
 
     public CompilationUnit createCompilationUnit(final char[] src) {
-        ASTParser parser = ASTParser.newParser(AST.JLS16);
+        ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
         parser.setSource(src);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setCompilerOptions(compilerOptions.getOptions());
@@ -24,7 +24,7 @@ public class CuFactory {
     public CompilationUnit createCompilationUnit(final char[] src,
             final String unitName) {
 
-        ASTParser parser = ASTParser.newParser(AST.JLS16);
+        ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 
         String[] cps = System.getProperty("java.class.path").split(":");
         parser.setEnvironment(cps, null, null, true);

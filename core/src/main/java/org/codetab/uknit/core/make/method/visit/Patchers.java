@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 public class Patchers {
 
@@ -97,6 +98,17 @@ public class Patchers {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
             @SuppressWarnings("unchecked")
             List<Expression> args = mi.arguments();
+            if (args.contains(exp)) {
+                return args.indexOf(exp);
+            } else {
+                return -1;
+            }
+        }
+        if (nodes.is(node, SuperMethodInvocation.class)) {
+            SuperMethodInvocation smi =
+                    nodes.as(node, SuperMethodInvocation.class);
+            @SuppressWarnings("unchecked")
+            List<Expression> args = smi.arguments();
             if (args.contains(exp)) {
                 return args.indexOf(exp);
             } else {

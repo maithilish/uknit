@@ -1,12 +1,15 @@
 package org.codetab.uknit.core.make.method.visit;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.nonNull;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.model.Heap;
@@ -19,8 +22,10 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 public class InternalCallProcessor {
 
@@ -94,6 +99,8 @@ public class InternalCallProcessor {
  */
 class ArgParamBlender {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     @Inject
     private Nodes nodes;
 
@@ -106,8 +113,24 @@ class ArgParamBlender {
 
         for (int i = 0; i < arguments.size(); i++) {
             Expression arg = arguments.get(i);
+
+            String argName = null;
             if (nodes.is(arg, SimpleName.class)) {
-                String argName = nodes.getName(nodes.as(arg, SimpleName.class));
+                argName = nodes.getName(arg);
+            } else if (nodes.is(arg, MethodInvocation.class)
+                    || nodes.is(arg, SuperMethodInvocation.class)) {
+                Optional<IVar> var = heap.findLeftVarByRightExp(arg);
+                if (var.isPresent()) {
+                    argName = var.get().getName();
+                }
+            } else if (nodes.isCreation(arg)) {
+                LOG.debug("arg {} is creation node, ignore",
+                        arg.getClass().getSimpleName());
+            } else {
+                throw nodes.unexpectedException(arg);
+            }
+
+            if (nonNull(argName)) {
                 String paramName = nodes.getName(parameters.get(i).getName());
                 IVar paramVar = heap.findVar(paramName);
                 if (argName.equals(paramName)) {

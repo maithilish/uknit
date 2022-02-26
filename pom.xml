@@ -15,10 +15,11 @@
     </modules>
 
     <properties>
+        <!-- eclipse jdt requires 11 or newer-->
         <java-release>11</java-release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <eclipse.jdt.version>3.27.0</eclipse.jdt.version>
+        <eclipse.jdt.version>3.28.0</eclipse.jdt.version>
 
         <guice.version>5.0.1</guice.version>
         <guava.version>30.1.1-jre</guava.version>

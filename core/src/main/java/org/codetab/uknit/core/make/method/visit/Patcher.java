@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.visit;
 
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +15,11 @@ import org.codetab.uknit.core.make.model.InferVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Patch;
+import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 /**
@@ -31,6 +35,8 @@ public class Patcher {
     private ModelFactory modelFactory;
     @Inject
     private Patchers patchers;
+    @Inject
+    private Nodes nodes;
 
     public void stageInferPatch(final ASTNode node, final List<Expression> exps,
             final Heap heap) {
@@ -48,6 +54,23 @@ public class Patcher {
                     Patch patch = modelFactory.createPatch(node, invoke.getMi(),
                             name, argIndex);
                     heap.getPatches().add(patch);
+                }
+            }
+            /*
+             * IMC - if calling arg name is different from parameter name then
+             * stage patch. Ex: if calling arg is inferVar apple and parameter
+             * is fruit, then fruit.pie() becomes apple.pie().
+             */
+            if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
+                String paramName = nodes.getName(exp);
+                if (heap.useArgVar(paramName)) {
+                    String argName = heap.getArgName(paramName);
+                    if (!argName.equals(paramName)) {
+                        int argIndex = patchers.getArgIndex(node, exp);
+                        Patch patch = modelFactory.createPatch(node, exp,
+                                argName, argIndex);
+                        heap.getPatches().add(patch);
+                    }
                 }
             }
         }

@@ -1,8 +1,10 @@
 package org.codetab.uknit.core.make.model;
 
+import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -42,7 +44,10 @@ public class Heap {
 
     private String selfFieldName; // class under test
 
-    private Heap parent;
+    /*
+     * internal method call - map param to calling arg.
+     */
+    private Map<String, String> paramArgMap;
 
     public List<IVar> getVars() {
         return vars;
@@ -100,12 +105,12 @@ public class Heap {
         return vars.stream().filter(IVar::isReturnVar).findFirst();
     }
 
-    public Heap getParent() {
-        return parent;
+    public Map<String, String> getParamArgMap() {
+        return paramArgMap;
     }
 
-    public void setParent(final Heap parent) {
-        this.parent = parent;
+    public void setParamArgMap(final Map<String, String> paramArgMap) {
+        this.paramArgMap = paramArgMap;
     }
 
     // finders
@@ -237,7 +242,7 @@ public class Heap {
      * @param other
      */
     public void initialize(final Heap other) {
-        vars.addAll(other.getVars());
+        vars.addAll(other.vars);
         selfFieldName = other.getSelfFieldName();
     }
 
@@ -279,5 +284,28 @@ public class Heap {
         return patchs.stream()
                 .filter(r -> r.getNode().equals(node) && r.getExp().equals(exp))
                 .findAny();
+    }
+
+    /**
+     * When IMC parameter is mapped to calling arg, then use arg instead of
+     * parameter.
+     * @param paramName
+     * @return argName
+     */
+    public boolean useArgVar(final String paramName) {
+        return nonNull(paramArgMap) && paramArgMap.containsKey(paramName);
+    }
+
+    /**
+     * Get calling arg name for a IMC parameter.
+     * @param paramName
+     * @return argName
+     */
+    public String getArgName(final String paramName) {
+        if (nonNull(paramArgMap)) {
+            return paramArgMap.get(paramName);
+        } else {
+            return null;
+        }
     }
 }

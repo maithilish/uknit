@@ -31,12 +31,10 @@ public class SuperVsInternalCallTest {
 
     @Test
     public void testGetSuperFooBar() {
-        StringBuilder xbar = Mockito.mock(StringBuilder.class);
-        superVsInternalCall.setBar(xbar); // STEPIN
 
         StringBuilder actual = superVsInternalCall.getSuperFooBar();
 
-        assertSame(xbar, actual);
+        assertSame(bar, actual);
     }
 
     @Test

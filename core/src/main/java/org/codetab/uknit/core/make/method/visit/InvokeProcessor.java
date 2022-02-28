@@ -173,6 +173,18 @@ public class InvokeProcessor {
     }
 
     /**
+     * Stage expVar for SuperMethodInvocation.
+     * @param node
+     * @param retVar
+     * @param heap
+     */
+    public void stageExpVar(final SuperMethodInvocation node, final IVar retVar,
+            final Heap heap) {
+        ExpVar varExp = varExpStager.stage(null, node, heap);
+        varExp.setLeftVar(retVar);
+    }
+
+    /**
      * Stage patches for method (exp and args) and super method invocation (only
      * args).
      * @param exp
@@ -240,5 +252,4 @@ public class InvokeProcessor {
                 resolver.resolveMethodBinding(invoke.getMi()).getModifiers();
         return resolver.hasModifier(modifier, Modifier.FINAL);
     }
-
 }

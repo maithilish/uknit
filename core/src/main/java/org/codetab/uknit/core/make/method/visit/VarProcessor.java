@@ -59,6 +59,15 @@ public class VarProcessor {
         boolean mock = mocks.isMockable(type);
 
         for (VariableDeclaration vd : vdList) {
+            /*
+             * IMC parameters are local vars but not staged as explained in
+             * InternalCallProcessor.process().
+             */
+            String name = nodes.getVariableName(vd);
+            if (heap.useArgVar(name)) {
+                continue;
+            }
+
             IVar localVar = varStager.stageLocalVar(vd, type, mock,
                     internalMethod, heap);
             varMap.put(localVar, vd);

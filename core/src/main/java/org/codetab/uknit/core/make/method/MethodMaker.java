@@ -2,6 +2,8 @@ package org.codetab.uknit.core.make.method;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -106,15 +108,20 @@ public class MethodMaker {
     }
 
     /**
-     * Process internal method without staging it, collects the aspects in new
-     * heap. Merge the new heap's content with the main heap after the visit.
+     * Process internal method without staging it. Use separate Visitor and
+     * newly initialized Heap to collect the IMC items. On completion, heap
+     * contents are merged with the main heap.
+     * <p>
+     * The InternalCallProcessor.process() explains the use of paramArgMap.
      * @param method
+     * @param paramArgMap
      * @param internalMethod
      * @param heap
      * @return
      */
     public boolean processMethod(final MethodDeclaration method,
-            final boolean internalMethod, final Heap heap) {
+            final Map<String, String> paramArgMap, final boolean internalMethod,
+            final Heap heap) {
 
         checkNotNull(method);
         checkNotNull(heap);
@@ -123,7 +130,7 @@ public class MethodMaker {
 
         Heap internalHeap = di.instance(Heap.class);
         internalHeap.initialize(heap);
-        internalHeap.setParent(heap);
+        internalHeap.setParamArgMap(paramArgMap);
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(internalHeap);

@@ -60,9 +60,6 @@ public class Initializers {
         if (iniExp.isPresent() && definedInitialzer.isAllowed(iniExp.get())) {
             Expression exp = patcher.copyAndPatch(iniExp.get(), heap);
             initializer = exp.toString();
-        } else if (var.getValue().isPresent()) {
-            // if internal call, then use value is set in var
-            initializer = var.getValue().get();
         } else if (enumIni.isPresent()) {
             initializer = enumIni.get();
         } else {

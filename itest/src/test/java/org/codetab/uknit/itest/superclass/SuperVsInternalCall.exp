@@ -22,7 +22,6 @@ public class SuperVsInternalCallTest {
 
     @Test
     public void testGetSuperFooBar() {
-        StringBuilder bar = Mockito.mock(StringBuilder.class);
 
         StringBuilder actual = superVsInternalCall.getSuperFooBar();
 

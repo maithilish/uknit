@@ -1,7 +1,5 @@
 package org.codetab.uknit.core.make.model;
 
-import java.util.Optional;
-
 import org.eclipse.jdt.core.dom.Type;
 
 public interface IVar {
@@ -33,10 +31,6 @@ public interface IVar {
     boolean isDeepStub();
 
     void setDeepStub(boolean deepStub);
-
-    Optional<String> getValue();
-
-    void setValue(String value);
 
     default boolean isField() {
         return false;

@@ -58,13 +58,12 @@ public class CallInternalTest {
     @Test
     public void testProcessDiffName() throws Exception {
         QFactory qFactory = Mockito.mock(QFactory.class);
-        QFactory queueFactory = qFactory;
         int size = 10;
         @SuppressWarnings("unchecked")
         BlockingQueue<Person> q = Mockito.mock(BlockingQueue.class);
         Person person = Mockito.mock(Person.class);
 
-        when(queueFactory.getQ(size)).thenReturn(q);
+        when(qFactory.getQ(size)).thenReturn(q);
         when(q.take()).thenReturn(person);
 
         Person actual = callInternal.processDiffName(qFactory);

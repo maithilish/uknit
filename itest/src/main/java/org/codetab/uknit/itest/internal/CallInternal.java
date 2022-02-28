@@ -14,6 +14,7 @@ public class CallInternal {
         return person;
     }
 
+    // STEPIN - size is set 1 instead of 10
     public Person processSameName(final QFactory qFactory)
             throws InterruptedException {
         BlockingQueue<Person> q = getQueueArgParamSameName(qFactory, 10);

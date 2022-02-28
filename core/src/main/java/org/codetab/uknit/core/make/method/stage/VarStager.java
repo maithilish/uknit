@@ -110,9 +110,14 @@ public class VarStager {
                      * parameter or local var initialized with creation. If
                      * former, then track is mock else it is real.
                      */
-                    Optional<String> topName = methods.getVarName(mi);
-                    if (topName.isPresent()) {
-                        IVar methodVar = heap.findVar(topName.get());
+                    Optional<String> oTopName = methods.getVarName(mi);
+                    if (oTopName.isPresent()) {
+                        String topName = oTopName.get();
+                        // if IMC, use arg var in place of IMC parameter
+                        if (heap.useArgVar(topName)) {
+                            topName = heap.getArgName(topName);
+                        }
+                        IVar methodVar = heap.findVar(topName);
                         if (methodVar.isCreated()) {
                             fragmentIsMock = false;
                             created = true;
@@ -210,6 +215,9 @@ public class VarStager {
             boolean mock = mocks.isMockable(type);
             String name = varNames.getInferVarName();
             InferVar inferVar = modelFactory.createInferVar(name, type, mock);
+            if (nodes.isCreation(exp)) {
+                inferVar.setCreated(true);
+            }
             heap.getVars().add(inferVar);
             LOG.debug("stage var {}", inferVar);
             return inferVar;

@@ -3,16 +3,26 @@ package org.codetab.uknit.core.node;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.nonNull;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 public class Expressions {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Nodes nodes;
@@ -55,5 +65,25 @@ public class Expressions {
             }
         }
         return name;
+    }
+
+    public Optional<String> mapExpToName(final Expression arg,
+            final Heap heap) {
+        String argName = null;
+        if (nodes.is(arg, SimpleName.class)) {
+            argName = nodes.getName(arg);
+        } else if (nodes.is(arg, MethodInvocation.class)
+                || nodes.is(arg, SuperMethodInvocation.class)) {
+            Optional<IVar> var = heap.findLeftVarByRightExp(arg);
+            if (var.isPresent()) {
+                argName = var.get().getName();
+            }
+        } else if (nodes.isCreation(arg)) {
+            LOG.debug("arg {} is creation node, ignore",
+                    arg.getClass().getSimpleName());
+        } else {
+            throw nodes.unexpectedException(arg);
+        }
+        return Optional.ofNullable(argName);
     }
 }

@@ -4,6 +4,13 @@ Eclipse 4.17 (2020-09) onwards mandates JDK version 11 or newer. Stand alone Ecl
 
 The eclipse.jdt version should be 3.26.0 or newer.
 
+## Abbreviations
+
+IMC 	- internal method call.
+MI 		- method invocation.
+SMI 	- super method invocation.
+
+
 ## Cast Change type
 
 The varExp is found via cast exp and its left var is modified to cast type. However, 
@@ -64,3 +71,8 @@ We can strictly inject mocks only for the @Inject fields, but then for stop() te
 
 This is also happens with POJO fields.
 
+## IMC Arg Param
+
+When call arg and internal method parameter are named same then second local var is created which acts as parameter inside the internal call. Deduplicate such vars. When names are different then in VarProcessor.stageLocalVars() local var parameter is not staged instead arg is used as var.
+
+if names are same use the arg as param in IM else stage patch.

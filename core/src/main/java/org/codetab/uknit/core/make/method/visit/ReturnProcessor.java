@@ -54,21 +54,24 @@ public class ReturnProcessor {
                 .filter(r -> r.getNode().equals(rs)).findFirst();
         if (patch.isPresent()) {
             var = heap.findVar(patch.get().getName());
-        }
+            if (nodes.isCreation(patch.get().getExp())) {
+                var.setCreated(true);
+            }
+        } else {
 
-        if (nodes.is(exp, SimpleName.class)) {
-            var = heap.findVar(nodes.getName(exp));
-        }
+            if (nodes.is(exp, SimpleName.class)) {
+                var = heap.findVar(nodes.getName(exp));
+            }
 
-        if (nodes.is(exp, FieldAccess.class)) {
-            String name =
-                    nodes.getName(nodes.as(exp, FieldAccess.class).getName());
-            Optional<IVar> field = heap.findField(name);
-            if (field.isPresent()) {
-                var = field.get();
+            if (nodes.is(exp, FieldAccess.class)) {
+                String name = nodes
+                        .getName(nodes.as(exp, FieldAccess.class).getName());
+                Optional<IVar> field = heap.findField(name);
+                if (field.isPresent()) {
+                    var = field.get();
+                }
             }
         }
-
         if (nonNull(var)) {
             // one of the localVar acts as returnVar so don't add again to heap
 
@@ -101,6 +104,7 @@ public class ReturnProcessor {
             }
 
             expectedVar.setHidden(var.isHidden());
+            expectedVar.setCreated(var.isCreated());
         }
 
         // statement - return this;

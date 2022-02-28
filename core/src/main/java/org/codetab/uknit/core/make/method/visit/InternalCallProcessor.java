@@ -1,19 +1,19 @@
 package org.codetab.uknit.core.make.method.visit;
 
 import static com.google.common.base.Preconditions.checkState;
-import static java.util.Objects.nonNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.parse.SourceParser;
@@ -22,24 +22,31 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 public class InternalCallProcessor {
 
     @Inject
     private SourceParser sourceParser;
     @Inject
-    private ArgParamBlender argParamBlender;
+    private ParamArgMapper paramArgMapper;
     @Inject
     private Methods methods;
     @Inject
     private DInjector di;
 
     /**
-     * Process internal call.
+     * Process the internal method in a new method maker, without staging the
+     * method itself. MethodMaker.processMethod() passes new Heap to visitor.
+     * Assume internal method's statements are as if the statements of calling
+     * method.
+     * <p>
+     * The map paramArgMap maps IMC parameters to calling args and passed to
+     * method maker. If arg name is same as parameter then arg var is used in
+     * IMC. When name are not same, then patch is staged so that all occurrences
+     * of parameters in IMC statements are patched to arg name. IMC parameters
+     * are ignored in VarProcesoor.stageLocalVars() and they are not staged as
+     * we use arg var in IMC.
      * @param methodBinding
      *            of the internal method invocation
      * @param arguments
@@ -62,22 +69,22 @@ public class InternalCallProcessor {
 
             /*
              * process the internal method in a new method maker, without
-             * staging the method itself. Existing heap is passed to new maker
-             * so that the internals of the method are staged in it. Assume
-             * internal method's statements are as if the statements of calling
-             * method.
+             * staging the method itself. MethodMaker.processMethod() passes new
+             * Heap to visitor. Assume internal method's statements are as if
+             * the statements of calling method.
              */
             MethodMaker methodMaker = di.instance(MethodMaker.class);
             boolean ignorePrivate = false; // internal methods may be private
             if (methodMaker.isStageable(methodDecl, ignorePrivate)) {
                 boolean internalMethod = true;
-                methodMaker.processMethod(methodDecl, internalMethod, heap);
 
-                // blend calling args and internal method's parameters
-                argParamBlender.setArguments(arguments);
-                argParamBlender
-                        .setParameters(methods.getParameters(methodDecl));
-                argParamBlender.fix(heap);
+                paramArgMapper.setArguments(arguments);
+                paramArgMapper.setParameters(methods.getParameters(methodDecl));
+                Map<String, String> paramArgMap =
+                        paramArgMapper.getParamArgMap(heap);
+
+                methodMaker.processMethod(methodDecl, paramArgMap,
+                        internalMethod, heap);
 
                 // now heap holds internal method's return var
                 Optional<IVar> expectedVar = heap.getExpectedVar();
@@ -93,57 +100,42 @@ public class InternalCallProcessor {
 }
 
 /**
- * Coalesce call args and internal method parameters.
+ * Map IMC parameter to calling args.
  * @author Maithilish
  *
  */
-class ArgParamBlender {
-
-    private static final Logger LOG = LogManager.getLogger();
+class ParamArgMapper {
 
     @Inject
     private Nodes nodes;
+    @Inject
+    private Expressions expressions;
 
     private List<Expression> arguments;
     private List<SingleVariableDeclaration> parameters;
 
-    public void fix(final Heap heap) {
+    /**
+     * Map IMC parameter name to calling arg name.
+     * @param heap
+     * @return param to arg map
+     */
+    public Map<String, String> getParamArgMap(final Heap heap) {
         checkState(arguments.size() == parameters.size(),
                 "arg parameter list size mismatch");
+
+        Map<String, String> paramArgMap = new HashMap<>();
 
         for (int i = 0; i < arguments.size(); i++) {
             Expression arg = arguments.get(i);
 
-            String argName = null;
-            if (nodes.is(arg, SimpleName.class)) {
-                argName = nodes.getName(arg);
-            } else if (nodes.is(arg, MethodInvocation.class)
-                    || nodes.is(arg, SuperMethodInvocation.class)) {
-                Optional<IVar> var = heap.findLeftVarByRightExp(arg);
-                if (var.isPresent()) {
-                    argName = var.get().getName();
-                }
-            } else if (nodes.isCreation(arg)) {
-                LOG.debug("arg {} is creation node, ignore",
-                        arg.getClass().getSimpleName());
-            } else {
-                throw nodes.unexpectedException(arg);
-            }
+            Optional<String> argName = expressions.mapExpToName(arg, heap);
+            String paramName = nodes.getName(parameters.get(i).getName());
 
-            if (nonNull(argName)) {
-                String paramName = nodes.getName(parameters.get(i).getName());
-                IVar paramVar = heap.findVar(paramName);
-                if (argName.equals(paramName)) {
-                    List<IVar> vars = heap.getVars();
-                    int index = vars.lastIndexOf(paramVar);
-                    // deduplicate
-                    vars.remove(index);
-                } else {
-                    // assign arg to param
-                    paramVar.setValue(argName);
-                }
+            if (argName.isPresent()) {
+                paramArgMap.put(paramName, argName.get());
             }
         }
+        return paramArgMap;
     }
 
     public void setArguments(final List<Expression> arguments) {

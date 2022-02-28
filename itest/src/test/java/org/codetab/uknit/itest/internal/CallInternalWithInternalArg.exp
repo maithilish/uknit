@@ -18,11 +18,10 @@ public class CallInternalWithInternalArgTest {
     public void testCallA() {
         Date date = Mockito.mock(Date.class);
         Instant apple = Mockito.mock(Instant.class);
-        Instant instant1 = apple;
         int grape = 1;
 
         when(date.toInstant()).thenReturn(apple);
-        when(instant1.getNano()).thenReturn(grape);
+        when(apple.getNano()).thenReturn(grape);
 
         int actual = callInternalWithInternalArg.callA(date);
 
@@ -30,19 +29,64 @@ public class CallInternalWithInternalArgTest {
     }
 
     @Test
-    public void testCallX() throws Exception {
+    public void testCallB() throws Exception {
         DateFormat dateFormat = Mockito.mock(DateFormat.class);
         String dateStr1 = "Foo";
         Date date2 = Mockito.mock(Date.class);
         Date apple = Mockito.mock(Date.class);
-        Date date1 = apple;
         boolean grape = true;
 
         when(dateFormat.parse(dateStr1)).thenReturn(apple);
-        when(date1.after(date2)).thenReturn(grape);
+        when(apple.after(date2)).thenReturn(grape);
 
-        boolean actual = callInternalWithInternalArg.callX(dateFormat, dateStr1, date2);
+        boolean actual = callInternalWithInternalArg.callB(dateFormat, dateStr1, date2);
 
         assertTrue(actual);
+    }
+
+    @Test
+    public void testMockDiffNameC() {
+        Instant instant = Mockito.mock(Instant.class);
+        Instant apple = Mockito.mock(Instant.class);
+        Instant grape = Mockito.mock(Instant.class);
+        Instant orange = Mockito.mock(Instant.class);
+
+        when(instant.minusMillis(1)).thenReturn(apple);
+        when(apple.minusMillis(2)).thenReturn(grape);
+        when(grape.minusMillis(3)).thenReturn(orange);
+
+        Instant actual = callInternalWithInternalArg.mockDiffNameC(instant);
+
+        assertSame(orange, actual);
+    }
+
+    @Test
+    public void testMockSameNameD() {
+        Instant instant = Mockito.mock(Instant.class);
+        Instant apple = Mockito.mock(Instant.class);
+        Instant grape = Mockito.mock(Instant.class);
+        Instant orange = Mockito.mock(Instant.class);
+
+        when(instant.minusMillis(4)).thenReturn(apple);
+        when(apple.minusMillis(5)).thenReturn(grape);
+        when(grape.minusMillis(6)).thenReturn(orange);
+
+        Instant actual = callInternalWithInternalArg.mockSameNameD(instant);
+
+        assertSame(orange, actual);
+    }
+
+    @Test
+    public void testRealDiffNameE() {
+        String str = "Foo";
+
+        String actual = callInternalWithInternalArg.realDiffNameE(str);
+    }
+
+    @Test
+    public void testRealSameNameF() {
+        String str = "Foo";
+
+        String actual = callInternalWithInternalArg.realSameNameF(str);
     }
 }

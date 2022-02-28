@@ -33,6 +33,12 @@ public class WhenStager {
 
     public void stageWhen(final Invoke invoke, final IVar var,
             final Heap heap) {
+
+        // don't stage when if call var is real - not mock or by creation node.
+        IVar callVar = invoke.getCallVar();
+        if (callVar.isCreated() || !callVar.isMock()) {
+            return;
+        }
         /*
          * As when replaces anon and lambda with arg matchers and verify
          * replaces it with captures, we need two copies of mi. Source mi is
@@ -54,12 +60,13 @@ public class WhenStager {
             verifyStager.stageVerify(mi, heap);
         }
 
-        Optional<When> w = heap.findWhen(patchedMi.toString());
+        String methodSignature = patchedMi.toString();
+        Optional<When> w = heap.findWhen(methodSignature);
         When when = null;
         if (w.isPresent()) {
             when = w.get();
         } else {
-            when = modelFactory.createWhen(patchedMi.toString());
+            when = modelFactory.createWhen(methodSignature);
             heap.getWhens().add(when);
         }
         when.getReturnVars().add(var);

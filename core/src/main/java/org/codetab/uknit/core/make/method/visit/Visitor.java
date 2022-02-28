@@ -132,6 +132,9 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final SuperMethodInvocation node) {
         invokeProcessor.stagePatches(node, heap);
         Optional<IVar> retVar = invokeProcessor.process(node, heap);
+        if (retVar.isPresent()) {
+            invokeProcessor.stageExpVar(node, retVar.get(), heap);
+        }
         invokeProcessor.stageSuperPatch(node, retVar, heap);
     }
 

@@ -90,18 +90,21 @@ public class CallInternalWithInternalArgTest {
     @Test
     public void testRealDiffNameE() {
         String str = "Foo";
-        String expected = "FooE3E2E1";
+        String orange = "FooE3E2E1";
 
         String actual = callInternalWithInternalArg.realDiffNameE(str);
-        assertEquals(expected, actual);
+
+        assertEquals(orange, actual);
     }
 
     @Test
     public void testRealSameNameF() {
         String str = "Foo";
-        String expected = "FooF3F2F1";
+        String orange = "FooF3F2F1";
 
         String actual = callInternalWithInternalArg.realSameNameF(str);
-        assertEquals(expected, actual);
+
+        assertEquals(orange, actual);
     }
+
 }

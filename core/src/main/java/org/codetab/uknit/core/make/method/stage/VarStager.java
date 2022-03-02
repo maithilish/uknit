@@ -127,6 +127,11 @@ public class VarStager {
             }
         }
 
+        /*
+         * ex: Date date = createDate(); For mi initializer the infer var is
+         * already created, find the infer var use that as local var by updating
+         * name etc.
+         */
         IVar localVar = null;
         if (nonNull(initializer)) {
             Optional<ExpVar> evo = heap.findByRightExp(initializer);
@@ -137,7 +142,7 @@ public class VarStager {
                     inferVar.setName(name);
                     inferVar.setType(fragmentType);
                     inferVar.setMock(fragmentIsMock);
-                    inferVar.setCreated(false);
+                    // retain created and hidden value
                     localVar = inferVar;
                 }
             }
@@ -160,8 +165,12 @@ public class VarStager {
                     fragmentIsMock);
             heap.getVars().add(localVar);
         }
-        localVar.setHidden(hidden);
-        localVar.setCreated(created);
+
+        // if not infer var
+        if (localVar.isLocalVar()) {
+            localVar.setHidden(hidden);
+            localVar.setCreated(created);
+        }
 
         LOG.debug("stage var {}", localVar);
         return localVar;
@@ -190,14 +199,18 @@ public class VarStager {
                 stageable = true;
             }
 
-            if (stageable) {
-                String name = varNames.getInferVarName();
-                inferVar =
-                        modelFactory.createInferVar(name, type, isReturnMock);
-                heap.getVars().add(inferVar);
-                LOG.debug("stage var {}", inferVar);
-            } else {
-                LOG.debug("inferVar is not stagable {}", invoke.getMi());
+            /*
+             * Stage all infer vars. If not stageable then mark them as real,
+             * created and hidden.
+             */
+            String name = varNames.getInferVarName();
+            inferVar = modelFactory.createInferVar(name, type, isReturnMock);
+            heap.getVars().add(inferVar);
+
+            if (!stageable) {
+                inferVar.setMock(false);
+                inferVar.setCreated(true);
+                inferVar.setHidden(true);
             }
 
             return Optional.ofNullable(inferVar);

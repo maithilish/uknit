@@ -56,20 +56,8 @@ public class UseMarkers {
         Optional<IVar> expectedVar = heap.getExpectedVar();
         expectedVar.ifPresent(v -> {
             if (!types.isBoolean(v.getType())) {
-                // v.setUsed(true);
                 IVar localVar = heap.findVar(v.getName());
                 localVar.setUsed(true);
-
-                // boolean returnTypeMock = false;
-                // Optional<Invoke> invoke = heap.getInvoke(localVar);
-                // if (invoke.isPresent()
-                // && invoke.get().getExpReturnType().isPresent()) {
-                // returnTypeMock =
-                // invoke.get().getExpReturnType().get().isMock();
-                // }
-                // if (!localVar.isMock() && returnTypeMock) {
-                // localVar.setUsed(false);
-                // }
             }
         });
     }

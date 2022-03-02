@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class Patchers {
 
@@ -91,7 +92,8 @@ public class Patchers {
         checkNotNull(node);
         checkNotNull(exp);
 
-        if (nodes.is(node, ReturnStatement.class)) {
+        if (nodes.is(node, ReturnStatement.class)
+                || nodes.is(node, VariableDeclarationFragment.class)) {
             return -1;
         }
         if (nodes.is(node, MethodInvocation.class)) {

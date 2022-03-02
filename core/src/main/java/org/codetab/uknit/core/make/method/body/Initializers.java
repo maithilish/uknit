@@ -229,21 +229,26 @@ class DerivedInitialzer {
         // initialize to mock
         if (isNull(initializer)) {
             if (var.isMock()) {
-                // mock initialiser
-                String initializerForMock;
-                if (deep) {
-                    initializerForMock =
-                            configs.getConfig("uknit.createInstance.mockDeep");
+                // mock but created is effectively real, can't test as mock
+                if (var.isCreated()) {
+                    initializer = "STEPIN";
                 } else {
-                    initializerForMock =
-                            configs.getConfig("uknit.createInstance.mock");
-                }
+                    // mock initialiser
+                    String initializerForMock;
+                    if (deep) {
+                        initializerForMock = configs
+                                .getConfig("uknit.createInstance.mockDeep");
+                    } else {
+                        initializerForMock =
+                                configs.getConfig("uknit.createInstance.mock");
+                    }
 
-                if (initializerForMock.equals("null")) {
-                    initializer = null;
-                } else {
-                    initializer =
-                            initializerForMock.replace("${type}", typeName);
+                    if (initializerForMock.equals("null")) {
+                        initializer = null;
+                    } else {
+                        initializer =
+                                initializerForMock.replace("${type}", typeName);
+                    }
                 }
             } else {
                 initializer = "STEPIN";

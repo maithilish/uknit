@@ -93,7 +93,10 @@ public class RealStreamTest {
     @Test
     public void testBiggestGroup() {
         Stream<Artist> artists = Stream.of(STEPIN);
+        Optional<Artist> mango = Optional.empty();
 
         Optional<Artist> actual = realStream.biggestGroup(artists);
+
+        assertEquals(mango, actual);
     }
 }

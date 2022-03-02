@@ -79,14 +79,20 @@ public class CallInternalWithInternalArgTest {
     @Test
     public void testRealDiffNameE() {
         String str = "Foo";
+        String orange = "Bar";
 
         String actual = callInternalWithInternalArg.realDiffNameE(str);
+
+        assertEquals(orange, actual);
     }
 
     @Test
     public void testRealSameNameF() {
         String str = "Foo";
+        String orange = "Bar";
 
         String actual = callInternalWithInternalArg.realSameNameF(str);
+
+        assertEquals(orange, actual);
     }
 }

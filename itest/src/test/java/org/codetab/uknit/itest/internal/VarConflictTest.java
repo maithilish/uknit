@@ -32,13 +32,13 @@ public class VarConflictTest {
         Map<String, Meter> apple = new HashMap<>();
         Map<String, Meter> ag = new HashMap<>();
         // String key = "Foo";
-        Map<String, Timer> grape = new HashMap<>();
+        Map<String, Timer> cherry = new HashMap<>();
         Map<String, Timer> ag2 = new HashMap<>();
 
         when(mapper.getMetrics()).thenReturn(memberMetrics);
         when(memberMetrics.getMeters()).thenReturn(apple);
         when(metrics.getMeters()).thenReturn(ag);
-        when(memberMetrics.getTimers()).thenReturn(grape);
+        when(memberMetrics.getTimers()).thenReturn(cherry);
         when(metrics.getTimers()).thenReturn(ag2);
         varConflict.aggregate();
     }

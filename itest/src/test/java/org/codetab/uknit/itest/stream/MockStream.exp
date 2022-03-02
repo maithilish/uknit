@@ -34,12 +34,12 @@ public class MockStreamTest {
     public void testStreamCountList() {
         List<String> strings = Mockito.mock(List.class);
         Stream<String> apple = Mockito.mock(Stream.class);
-        Stream<String> grape = Mockito.mock(Stream.class);
+        Stream<String> orange = Mockito.mock(Stream.class);
         long count = 1L;
 
         when(strings.stream()).thenReturn(apple);
-        when(apple.filter(any(Predicate.class))).thenReturn(grape);
-        when(grape.count()).thenReturn(count);
+        when(apple.filter(any(Predicate.class))).thenReturn(orange);
+        when(orange.count()).thenReturn(count);
 
         long actual = mockStream.streamCount(strings);
 

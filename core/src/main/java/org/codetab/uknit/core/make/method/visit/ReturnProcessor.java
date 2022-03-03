@@ -84,13 +84,13 @@ public class ReturnProcessor {
                 Optional<ExpVar> expVar = heap.findByLeftVar(var.getName());
                 if (expVar.isPresent()) {
                     if (!nodes.isAnonOrLambda(expVar.get().getRightExp())) {
-                        var.setHidden(false);
+                        var.setDisable(false); // no change
                     }
                 }
             }
 
             if (nodes.isAnonOrLambda(exp)) {
-                var.setHidden(true);
+                var.setDisable(false); // true
             }
             expectedVar = modelFactory.createReturnVar(var.getName(),
                     var.getType(), var.isMock());
@@ -99,11 +99,11 @@ public class ReturnProcessor {
              * so create returnVar and add it to heap
              */
             if (var.isField() && !var.isMock()) {
-                var.setHidden(false);
+                var.setDisable(false); // no change
                 heap.getVars().add(expectedVar);
             }
 
-            expectedVar.setHidden(var.isHidden());
+            expectedVar.setDisable(var.isDisable());
             expectedVar.setCreated(var.isCreated());
         }
 
@@ -114,7 +114,7 @@ public class ReturnProcessor {
             if (type.isPresent()) {
                 expectedVar =
                         modelFactory.createReturnVar(name, type.get(), false);
-                expectedVar.setHidden(false);
+                expectedVar.setDisable(false); // no change
                 expectedVar.setSelfField(true);
                 heap.getVars().add(expectedVar);
             }

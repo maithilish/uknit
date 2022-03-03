@@ -144,7 +144,7 @@ public class InvokeProcessor {
                 // method invoked on mock or hidden var
                 IVar callVar = invoke.getCallVar();
                 if (nonNull(callVar)) {
-                    if (callVar.isMock() && !callVar.isHidden()) {
+                    if (callVar.isMock() && !callVar.isDisable()) {
                         verifyStager.stageVerify(mi, heap);
                     }
                 }

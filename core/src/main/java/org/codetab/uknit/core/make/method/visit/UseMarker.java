@@ -1,6 +1,8 @@
 package org.codetab.uknit.core.make.method.visit;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -14,16 +16,21 @@ public class UseMarker {
     private UseMarkers useMarkers;
 
     public void mark(final Heap heap) {
-        useMarkers.markVarsUsedInWhens(heap);
-        useMarkers.markVarsUsedInReturn(heap);
-        useMarkers.markVarsUsedInVerify(heap);
+        // useMarkers.markVarsUsedInWhens(heap);
+        // useMarkers.markVarsUsedInReturn(heap);
+        // useMarkers.markVarsUsedInVerify(heap);
+
+        Set<String> names = useMarkers.getEnableNames(heap);
+        useMarkers.enable(names, heap);
 
         List<Expression> exps = useMarkers.getInitializers(heap);
-        useMarkers.markExpVars(exps, heap);
+        useMarkers.getEnableNameForInitializers(exps, heap);
+
+        useMarkers.forceEnable(heap);
     }
 
-    public void mark(final String name, final Heap heap) {
+    public void enforce(final String name, final Heap heap) {
         IVar var = heap.findVar(name);
-        var.setUsed(true);
+        var.setEnforce(Optional.of(true));
     }
 }

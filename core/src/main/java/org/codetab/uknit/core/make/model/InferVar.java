@@ -15,7 +15,6 @@ public class InferVar extends DefaultVar {
         this.name = name;
         this.type = type;
         this.mock = mock;
-        this.used = false;
     }
 
     @Override
@@ -26,7 +25,7 @@ public class InferVar extends DefaultVar {
     @Override
     public String toString() {
         return "InferVar [name=" + name + ", type=" + type + ", mock=" + mock
-                + "]";
+                + ", disable=" + disable + ", created=" + created + "]";
     }
 
     @Override

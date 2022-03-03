@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.jdt.core.dom.Type;
 
@@ -10,13 +11,13 @@ public class DefaultVar implements IVar {
     protected Type type;
     protected boolean mock;
     protected boolean created;
-    protected boolean used;
-    protected boolean hidden;
+    protected boolean disable;
+    protected Optional<Boolean> enforce;
     protected boolean deepStub;
 
     public DefaultVar() {
-        this.used = true;
-        this.hidden = false;
+        this.disable = false; // all are enabled
+        this.enforce = Optional.empty();
         this.deepStub = false;
         this.created = false;
     }
@@ -62,23 +63,23 @@ public class DefaultVar implements IVar {
     }
 
     @Override
-    public boolean isUsed() {
-        return used;
+    public boolean isDisable() {
+        return disable;
     }
 
     @Override
-    public void setUsed(final boolean used) {
-        this.used = used;
+    public void setDisable(final boolean disable) {
+        this.disable = disable;
     }
 
     @Override
-    public boolean isHidden() {
-        return hidden;
+    public Optional<Boolean> getEnforce() {
+        return enforce;
     }
 
     @Override
-    public void setHidden(final boolean hidden) {
-        this.hidden = hidden;
+    public void setEnforce(final Optional<Boolean> enforce) {
+        this.enforce = enforce;
     }
 
     @Override
@@ -107,13 +108,12 @@ public class DefaultVar implements IVar {
                 && Objects.equals(type, other.type)
                 && Objects.equals(mock, other.mock)
                 && Objects.equals(created, other.created)
-                && Objects.equals(used, other.used)
-                && Objects.equals(hidden, other.hidden)
+                && Objects.equals(disable, other.disable)
                 && Objects.equals(deepStub, other.deepStub);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, mock, created, used, hidden, deepStub);
+        return Objects.hash(name, type, mock, created, disable, deepStub);
     }
 }

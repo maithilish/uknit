@@ -28,7 +28,7 @@ public class ReturnVarStmt {
         Statement stmt = null;
         if (returnVar.isPresent()) {
             ReturnVar var = (ReturnVar) returnVar.get();
-            if (var.isUsed() && !var.isHidden() && !var.isSelfField()) {
+            if (!var.isDisable() && !var.isSelfField()) {
                 String initializer = initializers.getInitializer(var, heap);
                 Type type = var.getType();
                 String typeLiteral;

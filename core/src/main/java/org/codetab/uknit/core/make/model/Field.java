@@ -25,6 +25,7 @@ public class Field extends DefaultVar {
         this.fieldDecl = fieldDecl;
         this.srcFieldDecl = srcFieldDecl;
         this.mock = mock;
+        this.disable = false;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class Field extends DefaultVar {
     @Override
     public String toString() {
         return "Field [name=" + name + ", type=" + type + ", mock=" + mock
-                + "]";
+                + ", disable=" + disable + ", created=" + created + "]";
     }
 
     @Override

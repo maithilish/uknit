@@ -43,7 +43,7 @@ public class ReturnVar extends DefaultVar {
     @Override
     public String toString() {
         return "ReturnVar [name=" + name + ", type=" + type + ", mock=" + mock
-                + "]";
+                + ", disable=" + disable + ", created=" + created + "]";
     }
 
     @Override

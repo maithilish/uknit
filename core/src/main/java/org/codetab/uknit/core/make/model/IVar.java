@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.Optional;
+
 import org.eclipse.jdt.core.dom.Type;
 
 public interface IVar {
@@ -20,13 +22,13 @@ public interface IVar {
 
     void setCreated(boolean created);
 
-    boolean isUsed();
+    boolean isDisable();
 
-    void setUsed(boolean used);
+    void setDisable(boolean disable);
 
-    boolean isHidden();
+    void setEnforce(Optional<Boolean> enforce);
 
-    void setHidden(boolean hidden);
+    Optional<Boolean> getEnforce();
 
     boolean isDeepStub();
 

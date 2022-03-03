@@ -63,13 +63,13 @@ public class FieldMaker {
                 modifiers.add(modifier);
 
                 // if not hidden, add field to clzDecl tree (test class)
-                if (!srcField.isHidden()) {
+                if (!srcField.isDisable()) {
                     body.add(fieldDecl);
                 }
 
                 Field testField = fieldMakers.createField(fieldDecl,
                         srcField.getFieldDecl());
-                testField.setHidden(srcField.isHidden());
+                testField.setDisable(srcField.isDisable());
                 testFields.add(testField);
             }
         }

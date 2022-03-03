@@ -67,7 +67,8 @@ public class VarProcessor {
             if (heap.useArgVar(name)) {
                 continue;
             }
-
+            // TODO - create local var if initializer invoke is not present
+            // below else reuse the invoke return var
             IVar localVar = varStager.stageLocalVar(vd, type, mock,
                     internalMethod, heap);
             varMap.put(localVar, vd);
@@ -80,6 +81,16 @@ public class VarProcessor {
                 // TODO - improve the below
                 if (o.isPresent()) {
                     Invoke invoke = o.get();
+                    /*
+                     * if invoke returnVar name is same as variable name then
+                     * disable returnVar as new local var is created for that.
+                     */
+                    invoke.getReturnVar().ifPresent(v -> {
+                        if (v.getName().equals(name)) {
+                            v.setEnforce(Optional.of(false));
+                        }
+                    });
+
                     invoke.setReturnVar(Optional.of(localVar));
                     if (nonNull(invoke.getCallVar())
                             && invoke.getCallVar().isMock()) {

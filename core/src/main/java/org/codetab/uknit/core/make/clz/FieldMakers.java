@@ -54,7 +54,7 @@ public class FieldMakers {
 
             Field field = modelFactory.createField(name, type, mock, fieldDecl,
                     fieldDecl);
-            field.setHidden(hide);
+            field.setDisable(hide);
             fields.add(field);
         }
         return fields;
@@ -72,7 +72,7 @@ public class FieldMakers {
 
         Field field = modelFactory.createField(name, type, mock, fieldDecl,
                 srcFieldDecl);
-        field.setHidden(hide);
+        field.setDisable(hide);
         return field;
     }
 

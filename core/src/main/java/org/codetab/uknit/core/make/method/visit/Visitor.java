@@ -142,7 +142,7 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final ReturnStatement node) {
         returnProcessor.stagePatches(node, heap);
         Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
-        if (expectedVar.isPresent() && !expectedVar.get().isHidden()) {
+        if (expectedVar.isPresent() && !expectedVar.get().isDisable()) {
             heap.setExpectedVar(expectedVar);
         }
     }
@@ -218,13 +218,12 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final EnhancedForStatement node) {
         /*
-         * For each local var is staged by SingleVariableDeclaration visit. Even
-         * if is not used by other, here we just mark it as used for tester
-         * convenience.
+         * Ex: for(String key: list) - Even though key is not used by when etc.,
+         * we force enable it so the test can add an item to list.
          */
         SingleVariableDeclaration svd = node.getParameter();
         String name = nodes.getVariableName(svd);
-        useMarker.mark(name, heap);
+        useMarker.enforce(name, heap);
     }
 
     @Override

@@ -15,7 +15,6 @@ public class LocalVar extends DefaultVar {
         this.name = name;
         this.type = type;
         this.mock = mock;
-        this.used = false; // by default not used
     }
 
     @Override
@@ -26,7 +25,7 @@ public class LocalVar extends DefaultVar {
     @Override
     public String toString() {
         return "LocalVar [name=" + name + ", type=" + type + ", mock=" + mock
-                + "]";
+                + ", disable=" + disable + ", created=" + created + "]";
     }
 
     @Override

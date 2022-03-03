@@ -92,7 +92,7 @@ public class VarStager {
 
                     // type is mock but static call - stage var but hide it
                     if (mock) {
-                        hidden = true;
+                        hidden = false; // true
                     }
                 } else {
                     /*
@@ -168,7 +168,7 @@ public class VarStager {
 
         // if not infer var
         if (localVar.isLocalVar()) {
-            localVar.setHidden(hidden);
+            localVar.setDisable(hidden); // no change
             localVar.setCreated(created);
         }
 
@@ -210,7 +210,7 @@ public class VarStager {
             if (!stageable) {
                 inferVar.setMock(false);
                 inferVar.setCreated(true);
-                inferVar.setHidden(true);
+                inferVar.setDisable(false); // true
             }
 
             return Optional.ofNullable(inferVar);

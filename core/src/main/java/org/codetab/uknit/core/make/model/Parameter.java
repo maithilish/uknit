@@ -25,7 +25,7 @@ public class Parameter extends DefaultVar {
     @Override
     public String toString() {
         return "Parameter [name=" + name + ", type=" + type + ", mock=" + mock
-                + ", disable=" + disable + ", created=" + created + "]";
+                + ", enable=" + enable + ", created=" + created + "]";
     }
 
     @Override

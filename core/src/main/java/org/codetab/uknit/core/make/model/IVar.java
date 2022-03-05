@@ -22,9 +22,9 @@ public interface IVar {
 
     void setCreated(boolean created);
 
-    boolean isDisable();
+    boolean isEnable();
 
-    void setDisable(boolean disable);
+    void setEnable(boolean enable);
 
     void setEnforce(Optional<Boolean> enforce);
 

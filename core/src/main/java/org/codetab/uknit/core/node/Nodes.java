@@ -1,6 +1,5 @@
 package org.codetab.uknit.core.node;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
@@ -50,10 +49,15 @@ public class Nodes {
     }
 
     public String getName(final ASTNode node) {
-        checkArgument(node instanceof SimpleName,
-                spaceit("expected SimpleName, actual",
+        if (node.getNodeType() == ASTNode.SIMPLE_NAME) {
+            return ((SimpleName) node).getFullyQualifiedName();
+        }
+        if (node.getNodeType() == ASTNode.QUALIFIED_NAME) {
+            return ((QualifiedName) node).getName().getFullyQualifiedName();
+        }
+        throw new CodeException(
+                spaceit("node should be Simple or QualifiedName, but was:",
                         node.getClass().getSimpleName()));
-        return ((SimpleName) node).getFullyQualifiedName();
     }
 
     public CodeException getCodeException(final String message,

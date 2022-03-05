@@ -10,11 +10,9 @@ IMC 	- internal method call.
 MI 		- method invocation.
 SMI 	- super method invocation.
 
-
 ## Cast Change type
 
-The varExp is found via cast exp and its left var is modified to cast type. However, 
-if expression is Mi, the ExpReturnType in its invoker is not modified.   
+The varExp is found via cast exp and its left var is modified to cast type. However, if expression is Mi, the ExpReturnType in its invoker is not modified.
 
 ## MethodInvocation
 
@@ -22,21 +20,76 @@ for	date.toString().charAt(0), mi.getExpression() returns date.toString() and mi
 
 for	date.toString(), date and toString.
 	
-## Hidden Var
+## IVar Fields
 
-By default, vars are not hidden. It is used while generating the statements.
+IVar boolean fields and their characteristics.
 
-  - Lambda or Annon expected var is hidden and assert statement is not generated.
-  
+### mock
+
+Indicates whether var is mock or real. By default, any type for which config **uknit.createInstance** is not defined are mocks, otherwise it is real. However, a mock may evolve into real based on certain conditions. For example, if type is primitive, array type or unmodifiable then mock field is set to false.
+
+### created
+
+Indicates whether var is created and it is set to true if,
+
+ - node is of creation type such as StringLiteral, NumberLiteral, InfixExpression etc., See Nodes.creationNodes array for full list of types.
+ - infer var is not stageable
+    - var is real
+    - if method invocation is static call.
+ - local var
+    - initializer is creation
+    - Anon or Lambda
+    - method invocation is static call
+    - top name of method invocation is real. In track = tracks.stream()....; if tracks is real then track is created.
+ - return var
+    - var initializer is creation
+
+### enable
+
+The IVar.enable field controls whether var is part of output. If it is true, then var definition statement is generated in test class or method, otherwise var doesn't find place in the output.
+
+By default all types of vars are enabled when created by DefaultVar constructor. Except Field var, all other retain this state till test method statements are generated.  As the last step in MethodMaker.process() the VarEnabler.updateVarEnableState() method is called to disable the unused vars. The VarEnabler.checkEnableState() throws CriticalError if any var is disabled before that. This is to ensure that any update to enable field is centralized in one place.
+
+For infer, local, return vars and parameters, setEnable() and isEnable() are used only in VarEnabler and VarEnablers class.
+
+For Field var, setEnable() and isEnable() are used in many locations as detailed below.
+
+    setEnable()
+	fields are disabled so that mock field is not injected if, 
+		static, primitive type, unmodifiable and vdf has initializer.
+	
+	returnProcessor
+		if var is field and not mock then enable. Real field is disabled, if returned enabled it.
+
+    isEnable()
+	FieldMaker.addFieldDeclsToTestClz()
+		add fields to body - isEnable() filters the disabled fields.
+		
+	GetterSetters.isMockInjected()
+		if field is mock - isEnable() filters the disabled field.
+		
+	InvokeProcessor.stageVerify()
+		if callVar is mock and enabled, stage verify - isEnable() filters disabled field.
+
+The method generation classes VarStmt and ReturnStmt uses isEnable() to filter and output enabled vars.
+
+### enforce
+
+If any var that doesn't fit the above enable/disable logic then use enforce field to override or hardcode the enable/disable state. Take for example the enhanceForStatement, for(String key: list), even though var key is not used by when etc., we force enable it so var key is defined in test method which is useful to tester to add an item to list. Likewise we can also use it hide any enabled field.
+
+### deepstub
+
+Indicates that MethodInvocation is a chain call and mock should be created with property RETURNS_DEEP_STUBS. 
+
 ## Setters
 
 The setter local var may hide the field as uKnit doesn't check field name for duplicate while generating local vars. See - clz.Pojo.java
 
-	private Date bar;
+    private Date bar;
     public void setBar(final Date bar) {
         this.bar = bar;
-    }  
-    
+    }
+
 ## Stepins
 
 Assertions on contents of objects or collections.

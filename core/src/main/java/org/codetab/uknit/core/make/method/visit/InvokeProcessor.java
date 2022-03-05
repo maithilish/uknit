@@ -138,17 +138,14 @@ public class InvokeProcessor {
     public void stageVerify(final Expression exp, final Heap heap) {
         if (nodes.is(exp, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
-            Optional<Invoke> o = heap.findInvoke(mi);
-            if (o.isPresent()) {
-                Invoke invoke = o.get();
-                // method invoked on mock or hidden var
+            heap.findInvoke(mi).ifPresent(invoke -> {
                 IVar callVar = invoke.getCallVar();
-                if (nonNull(callVar)) {
-                    if (callVar.isMock() && !callVar.isDisable()) {
-                        verifyStager.stageVerify(mi, heap);
-                    }
+                // method invoked on mock - exclude disabled fields
+                if (nonNull(callVar) && callVar.isMock()
+                        && callVar.isEnable()) {
+                    verifyStager.stageVerify(mi, heap);
                 }
-            }
+            });
         }
     }
 

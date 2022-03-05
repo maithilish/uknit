@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -81,6 +82,16 @@ public class AssignProcessor {
             ArrayAccess aa = nodes.as(lExp, ArrayAccess.class);
             Optional<Type> type = Optional.of(types
                     .getType(resolver.resolveTypeBinding(aa), aa.getAST()));
+            LocalVar localVar = modelFactory.createLocalVar(lExp.toString(),
+                    type.get(), false);
+            heap.getVars().add(localVar);
+            ExpVar expVar = varExpStager.stage(lExp, rExp, heap);
+            expVar.setLeftVar(localVar);
+        } else if (nodes.is(lExp, QualifiedName.class)) {
+            QualifiedName qn = nodes.as(lExp, QualifiedName.class);
+
+            Optional<Type> type = Optional.of(types
+                    .getType(resolver.resolveTypeBinding(qn), qn.getAST()));
             LocalVar localVar = modelFactory.createLocalVar(lExp.toString(),
                     type.get(), false);
             heap.getVars().add(localVar);

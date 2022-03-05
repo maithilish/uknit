@@ -25,7 +25,7 @@ public class InferVar extends DefaultVar {
     @Override
     public String toString() {
         return "InferVar [name=" + name + ", type=" + type + ", mock=" + mock
-                + ", disable=" + disable + ", created=" + created + "]";
+                + ", enable=" + enable + ", created=" + created + "]";
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -93,7 +94,8 @@ public class Patchers {
         checkNotNull(exp);
 
         if (nodes.is(node, ReturnStatement.class)
-                || nodes.is(node, VariableDeclarationFragment.class)) {
+                || nodes.is(node, VariableDeclarationFragment.class)
+                || nodes.is(node, EnhancedForStatement.class)) {
             return -1;
         }
         if (nodes.is(node, MethodInvocation.class)) {

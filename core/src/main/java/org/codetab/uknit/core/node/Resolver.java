@@ -8,11 +8,9 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
-import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
@@ -67,12 +65,14 @@ public class Resolver {
         }
     }
 
-    public ITypeBinding resolveTypeBinding(final ArrayAccess arrayAccess) {
-        return arrayAccess.resolveTypeBinding();
-    }
-
-    public ITypeBinding resolveTypeBinding(final LambdaExpression lambdaExp) {
-        return lambdaExp.resolveTypeBinding();
+    public ITypeBinding resolveTypeBinding(final Expression exp) {
+        try {
+            exp.getClass().getMethod("resolveTypeBinding");
+            return exp.resolveTypeBinding();
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw nodes.getCodeException(
+                    "no resolveTypeBinding method in node type: ", exp);
+        }
     }
 
     public ITypeBinding resolveBinding(final Type type) {

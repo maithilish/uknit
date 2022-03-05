@@ -62,14 +62,14 @@ public class FieldMaker {
                 List<Modifier> modifiers = fieldDecl.modifiers();
                 modifiers.add(modifier);
 
-                // if not hidden, add field to clzDecl tree (test class)
-                if (!srcField.isDisable()) {
+                // if enabled, add field to clzDecl tree (test class)
+                if (srcField.isEnable()) {
                     body.add(fieldDecl);
                 }
 
                 Field testField = fieldMakers.createField(fieldDecl,
                         srcField.getFieldDecl());
-                testField.setDisable(srcField.isDisable());
+                testField.setEnable(srcField.isEnable());
                 testFields.add(testField);
             }
         }

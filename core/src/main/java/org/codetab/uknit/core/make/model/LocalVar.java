@@ -25,7 +25,7 @@ public class LocalVar extends DefaultVar {
     @Override
     public String toString() {
         return "LocalVar [name=" + name + ", type=" + type + ", mock=" + mock
-                + ", disable=" + disable + ", created=" + created + "]";
+                + ", enable=" + enable + ", created=" + created + "]";
     }
 
     @Override

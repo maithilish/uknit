@@ -164,7 +164,7 @@ public class GetterSetters {
     public boolean isMockInjected(final String varName,
             final List<Field> fields) {
         boolean mockInjected = fields.stream()
-                .anyMatch(f -> f.getName().equals(varName) && !f.isDisable());
+                .anyMatch(f -> f.getName().equals(varName) && f.isEnable());
         return mockInjected;
     }
 

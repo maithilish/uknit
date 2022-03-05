@@ -1,9 +1,13 @@
 package org.codetab.uknit.core.parse;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.isNull;
+import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,11 +56,45 @@ public class SourceParser {
             String unitName =
                     String.join("/", srcDir, srcPkg.replace(".", "/"), srcClz);
 
+            /*
+             * to avoid scrolling in package explorer, we can place Alpha.java
+             * in test dir itself.
+             */
+            String validSrcPath = null;
+            if (Files.exists(Paths.get(srcPath))) {
+                validSrcPath = srcPath;
+            } else {
+                if (srcFile.equals("Alpha.java")) {
+                    String altFilePath =
+                            srcPath.replace("src/main/java", "src/test/java");
+                    if (Files.exists(Paths.get(altFilePath))) {
+                        validSrcPath = altFilePath;
+                    }
+                }
+            }
+
+            if (isNull(validSrcPath)) {
+                throw new CriticalException(
+                        spaceit("src file not found: ", srcPath));
+            }
+
             char[] src;
             try {
-                src = ioUtils.toCharArray(srcPath, Charset.defaultCharset());
+                src = ioUtils.toCharArray(validSrcPath,
+                        Charset.defaultCharset());
             } catch (IOException e) {
-                throw new CriticalException(e);
+                try {
+                    if (srcFile.equals("Alpha.java")) {
+                        String altPath = srcPath.replace("src/main/java",
+                                "src/test/java");
+                        src = ioUtils.toCharArray(altPath,
+                                Charset.defaultCharset());
+                    } else {
+                        throw new CriticalException(e);
+                    }
+                } catch (IOException e1) {
+                    throw new CriticalException(e);
+                }
             }
 
             CompilationUnit srcCu =
@@ -74,7 +112,9 @@ public class SourceParser {
                 c.setCu(srcCu);
                 cuCache.add(c);
             }
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             sourceVisitor.closeDumpers();
             throw e;
         }

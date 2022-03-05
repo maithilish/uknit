@@ -50,11 +50,11 @@ public class FieldMakers {
             Type type = fieldDecl.getType();
             boolean mock = mocks.isMockable(type);
 
-            boolean hide = hide(fieldDecl);
+            boolean enable = enable(fieldDecl);
 
             Field field = modelFactory.createField(name, type, mock, fieldDecl,
                     fieldDecl);
-            field.setDisable(hide);
+            field.setEnable(enable);
             fields.add(field);
         }
         return fields;
@@ -68,11 +68,11 @@ public class FieldMakers {
         Type type = fieldDecl.getType();
         boolean mock = mocks.isMockable(type);
 
-        boolean hide = hide(fieldDecl);
+        boolean enable = enable(fieldDecl);
 
         Field field = modelFactory.createField(name, type, mock, fieldDecl,
                 srcFieldDecl);
-        field.setDisable(hide);
+        field.setEnable(enable);
         return field;
     }
 
@@ -103,25 +103,25 @@ public class FieldMakers {
         fieldDecls.addAll(newFieldDecls);
     }
 
-    public boolean hide(final FieldDeclaration fieldDecl) {
+    public boolean enable(final FieldDeclaration fieldDecl) {
         if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
-            return true;
+            return false;
         }
         if (nodes.isPrimitiveType(fieldDecl)) {
-            return true;
+            return false;
         }
         String typeName = types.getTypeName(fieldDecl.getType());
         if (types.isUnmodifiable(typeName)) {
-            return true;
+            return false;
         }
         @SuppressWarnings("unchecked")
         List<VariableDeclarationFragment> fragments = fieldDecl.fragments();
         for (VariableDeclarationFragment vd : fragments) {
             if (nonNull(vd.getInitializer())) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void addModifier(final FieldDeclaration fieldDecl,

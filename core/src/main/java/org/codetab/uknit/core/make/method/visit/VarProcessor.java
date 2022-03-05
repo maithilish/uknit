@@ -12,12 +12,10 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.stage.VarExpStager;
 import org.codetab.uknit.core.make.method.stage.VarStager;
 import org.codetab.uknit.core.make.model.Call;
-import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.InferVar;
-import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -67,50 +65,35 @@ public class VarProcessor {
             if (heap.useArgVar(name)) {
                 continue;
             }
-            // TODO - create local var if initializer invoke is not present
-            // below else reuse the invoke return var
+
             IVar localVar = varStager.stageLocalVar(vd, type, mock,
                     internalMethod, heap);
             varMap.put(localVar, vd);
 
+            /*
+             * if invoke for initializer is present and return var name is same
+             * as local var then disable the existing return var using enforce
+             * field and replace return var with local var.
+             */
             Expression initializerExp = vd.getInitializer();
             if (nonNull(initializerExp)) {
-                // TODO - remove this
-                boolean stageVarExp = true;
-                Optional<Invoke> o = heap.findInvoke(initializerExp);
-                // TODO - improve the below
-                if (o.isPresent()) {
-                    Invoke invoke = o.get();
-                    /*
-                     * if invoke returnVar name is same as variable name then
-                     * disable returnVar as new local var is created for that.
-                     */
+                heap.findInvoke(initializerExp).ifPresent(invoke -> {
                     invoke.getReturnVar().ifPresent(v -> {
                         if (v.getName().equals(name)) {
                             v.setEnforce(Optional.of(false));
                         }
                     });
-
                     invoke.setReturnVar(Optional.of(localVar));
-                    if (nonNull(invoke.getCallVar())
-                            && invoke.getCallVar().isMock()) {
-                        stageVarExp = false;
-                    }
-                    Optional<ExpReturnType> e = invoke.getExpReturnType();
-                    if (e.isPresent() && !e.get().isMock()) {
-                        stageVarExp = false;
-                    }
+                });
+                /*
+                 * if expVar is empty stage new one and/else set left var.
+                 */
+                Optional<ExpVar> expVar = heap.findByRightExp(initializerExp);
+                if (expVar.isEmpty()) {
+                    expVar = Optional.of(varExpStager.stage(vd.getName(),
+                            initializerExp, heap));
                 }
-                stageVarExp = true;
-                if (stageVarExp) {
-                    Optional<ExpVar> expVar =
-                            heap.findByRightExp(initializerExp);
-                    if (!expVar.isPresent()) {
-                        expVar = Optional.of(varExpStager.stage(vd.getName(),
-                                initializerExp, heap));
-                    }
-                    expVar.get().setLeftVar(localVar);
-                }
+                expVar.get().setLeftVar(localVar);
             }
         }
         return varMap;

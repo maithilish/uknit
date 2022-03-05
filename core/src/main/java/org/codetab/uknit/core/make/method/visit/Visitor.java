@@ -67,7 +67,7 @@ public class Visitor extends ASTVisitor {
     private Nodes nodes;
 
     @Inject
-    private UseMarker useMarker;
+    private VarEnabler varEnabler;
 
     private Heap heap;
 
@@ -142,7 +142,10 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final ReturnStatement node) {
         returnProcessor.stagePatches(node, heap);
         Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
-        if (expectedVar.isPresent() && !expectedVar.get().isDisable()) {
+        // if (expectedVar.isPresent() && expectedVar.get().isEnable()) {
+        // heap.setExpectedVar(expectedVar);
+        // }
+        if (returnProcessor.isReturnable(expectedVar, heap)) {
             heap.setExpectedVar(expectedVar);
         }
     }
@@ -219,11 +222,11 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final EnhancedForStatement node) {
         /*
          * Ex: for(String key: list) - Even though key is not used by when etc.,
-         * we force enable it so the test can add an item to list.
+         * we force enable it so the tester can add an item to list.
          */
         SingleVariableDeclaration svd = node.getParameter();
         String name = nodes.getVariableName(svd);
-        useMarker.enforce(name, heap);
+        varEnabler.enforce(name, Optional.of(true), heap);
     }
 
     @Override

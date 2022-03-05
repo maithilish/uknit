@@ -75,23 +75,6 @@ public class ReturnProcessor {
         if (nonNull(var)) {
             // one of the localVar acts as returnVar so don't add again to heap
 
-            /*
-             * If var is created by static call, it is staged but hidden in
-             * VarStager.stageLocalVar(). When such vars are returned they are
-             * shown if creation exp is not anon or lambda.
-             */
-            if (var.isCreated()) {
-                Optional<ExpVar> expVar = heap.findByLeftVar(var.getName());
-                if (expVar.isPresent()) {
-                    if (!nodes.isAnonOrLambda(expVar.get().getRightExp())) {
-                        var.setDisable(false); // no change
-                    }
-                }
-            }
-
-            if (nodes.isAnonOrLambda(exp)) {
-                var.setDisable(false); // true
-            }
             expectedVar = modelFactory.createReturnVar(var.getName(),
                     var.getType(), var.isMock());
             /*
@@ -99,11 +82,11 @@ public class ReturnProcessor {
              * so create returnVar and add it to heap
              */
             if (var.isField() && !var.isMock()) {
-                var.setDisable(false); // no change
+                var.setEnable(true);
                 heap.getVars().add(expectedVar);
             }
 
-            expectedVar.setDisable(var.isDisable());
+            expectedVar.setEnable(var.isEnable());
             expectedVar.setCreated(var.isCreated());
         }
 
@@ -114,12 +97,26 @@ public class ReturnProcessor {
             if (type.isPresent()) {
                 expectedVar =
                         modelFactory.createReturnVar(name, type.get(), false);
-                expectedVar.setDisable(false); // no change
                 expectedVar.setSelfField(true);
                 heap.getVars().add(expectedVar);
             }
         }
 
         return Optional.ofNullable(expectedVar);
+    }
+
+    public boolean isReturnable(final Optional<IVar> expectedVar,
+            final Heap heap) {
+        boolean returnable = true;
+        if (expectedVar.isPresent()) {
+            String name = expectedVar.get().getName();
+            Optional<ExpVar> expVar = heap.findByLeftVar(name);
+            if (expVar.isPresent() && nonNull(expVar.get().getRightExp())) {
+                if (nodes.isAnonOrLambda(expVar.get().getRightExp())) {
+                    returnable = false;
+                }
+            }
+        }
+        return returnable;
     }
 }

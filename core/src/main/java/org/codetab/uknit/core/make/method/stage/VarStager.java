@@ -67,7 +67,6 @@ public class VarStager {
          * fragments may still be mock
          */
         boolean fragmentIsMock = mock;
-        boolean hidden = false;
         boolean created = false;
         Type fragmentType = type;
         String name = nodes.getVariableName(vd);
@@ -80,7 +79,6 @@ public class VarStager {
             }
             if (nodes.isAnonOrLambda(initializer)) {
                 fragmentIsMock = false;
-                hidden = true;
                 created = true;
             }
             if (nodes.is(initializer, MethodInvocation.class)) {
@@ -89,11 +87,6 @@ public class VarStager {
                 if (methods.isStaticCall(mi)) {
                     fragmentIsMock = false;
                     created = true;
-
-                    // type is mock but static call - stage var but hide it
-                    if (mock) {
-                        hidden = false; // true
-                    }
                 } else {
                     /*
                      * foo.stream().get(); if obj returned by get() is real then
@@ -142,7 +135,7 @@ public class VarStager {
                     inferVar.setName(name);
                     inferVar.setType(fragmentType);
                     inferVar.setMock(fragmentIsMock);
-                    // retain created and hidden value
+                    // retain created and enable
                     localVar = inferVar;
                 }
             }
@@ -164,11 +157,7 @@ public class VarStager {
             localVar = modelFactory.createLocalVar(name, fragmentType,
                     fragmentIsMock);
             heap.getVars().add(localVar);
-        }
 
-        // if not infer var
-        if (localVar.isLocalVar()) {
-            localVar.setDisable(hidden); // no change
             localVar.setCreated(created);
         }
 
@@ -201,7 +190,7 @@ public class VarStager {
 
             /*
              * Stage all infer vars. If not stageable then mark them as real,
-             * created and hidden.
+             * created.
              */
             String name = varNames.getInferVarName();
             inferVar = modelFactory.createInferVar(name, type, isReturnMock);
@@ -210,7 +199,6 @@ public class VarStager {
             if (!stageable) {
                 inferVar.setMock(false);
                 inferVar.setCreated(true);
-                inferVar.setDisable(false); // true
             }
 
             return Optional.ofNullable(inferVar);

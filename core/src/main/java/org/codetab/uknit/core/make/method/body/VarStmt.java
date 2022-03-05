@@ -34,9 +34,9 @@ public class VarStmt {
             boolean createStmt = false;
             if (var instanceof Parameter) {
                 createStmt = true;
-            } else if (var instanceof InferVar && !var.isDisable()) {
+            } else if (var instanceof InferVar && var.isEnable()) {
                 createStmt = true;
-            } else if (var instanceof LocalVar && !var.isDisable()) {
+            } else if (var instanceof LocalVar && var.isEnable()) {
                 createStmt = true;
             }
             if (createStmt) {

@@ -11,12 +11,12 @@ public class DefaultVar implements IVar {
     protected Type type;
     protected boolean mock;
     protected boolean created;
-    protected boolean disable;
+    protected boolean enable;
     protected Optional<Boolean> enforce;
     protected boolean deepStub;
 
     public DefaultVar() {
-        this.disable = false; // all are enabled
+        this.enable = true; // enable by default
         this.enforce = Optional.empty();
         this.deepStub = false;
         this.created = false;
@@ -63,13 +63,13 @@ public class DefaultVar implements IVar {
     }
 
     @Override
-    public boolean isDisable() {
-        return disable;
+    public boolean isEnable() {
+        return enable;
     }
 
     @Override
-    public void setDisable(final boolean disable) {
-        this.disable = disable;
+    public void setEnable(final boolean disable) {
+        this.enable = disable;
     }
 
     @Override
@@ -108,12 +108,12 @@ public class DefaultVar implements IVar {
                 && Objects.equals(type, other.type)
                 && Objects.equals(mock, other.mock)
                 && Objects.equals(created, other.created)
-                && Objects.equals(disable, other.disable)
+                && Objects.equals(enable, other.enable)
                 && Objects.equals(deepStub, other.deepStub);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, mock, created, disable, deepStub);
+        return Objects.hash(name, type, mock, created, enable, deepStub);
     }
 }

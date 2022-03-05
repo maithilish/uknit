@@ -15,7 +15,7 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.detect.GetterSetter;
 import org.codetab.uknit.core.make.method.stage.CallStager;
-import org.codetab.uknit.core.make.method.visit.UseMarker;
+import org.codetab.uknit.core.make.method.visit.VarEnabler;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.node.Classes;
@@ -52,7 +52,7 @@ public class MethodMaker {
     @Inject
     private VarNames varNames;
     @Inject
-    private UseMarker useMarker;
+    private VarEnabler varEnabler;
     @Inject
     private GetterSetter getterSetter;
 
@@ -99,7 +99,8 @@ public class MethodMaker {
 
         method.accept(visitor);
 
-        useMarker.mark(heap);
+        varEnabler.checkEnableState(heap);
+        varEnabler.updateVarEnableState(heap);
 
         // TODO - enable this after multi try exception fix
         // variables.checkVarConsistency(heap.getVars());

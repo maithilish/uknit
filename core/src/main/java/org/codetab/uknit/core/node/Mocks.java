@@ -66,6 +66,9 @@ public class Mocks {
             final boolean returnIsMock) {
         boolean varIsReal = !varIsMock;
         boolean returnIsReal = !returnIsMock;
+
+        // TODO - logic can be simplified
+
         // Mock returns Mock
         if (varIsMock && returnIsMock) {
             return true;

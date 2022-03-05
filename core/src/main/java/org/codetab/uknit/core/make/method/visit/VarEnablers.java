@@ -1,7 +1,6 @@
 package org.codetab.uknit.core.make.method.visit;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,7 +22,7 @@ import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
 
-public class UseMarkers {
+public class VarEnablers {
 
     @Inject
     private Types types;
@@ -34,37 +33,37 @@ public class UseMarkers {
     @Inject
     private Initializers initializers;
 
-    public void markVarsUsedInWhens(final Heap heap) {
+    public void collectVarNamesOfWhens(final Set<String> names,
+            final Heap heap) {
         for (When when : heap.getWhens()) {
             for (IVar var : when.getReturnVars()) {
-                var.setDisable(false);
+                names.add(var.getName());
             }
-            for (String name : when.getNames()) {
-                heap.findVar(name).setDisable(false);
-            }
+            names.addAll(when.getNames());
         }
     }
 
-    public void markVarsUsedInVerify(final Heap heap) {
+    public void collectVarNamesOfVerifies(final Set<String> names,
+            final Heap heap) {
         for (Verify verify : heap.getVerifies()) {
             MethodInvocation mi = verify.getMi();
             for (String name : methods.getNames(mi)) {
-                heap.findVar(name).setDisable(false);
+                names.add(name);
             }
         }
     }
 
-    public void markVarsUsedInReturn(final Heap heap) {
+    public void collectVarNamesOfReturn(final Set<String> names,
+            final Heap heap) {
         Optional<IVar> expectedVar = heap.getExpectedVar();
         expectedVar.ifPresent(v -> {
             if (!types.isBoolean(v.getType())) {
-                IVar localVar = heap.findVar(v.getName());
-                localVar.setDisable(false);
+                names.add(v.getName());
             }
         });
     }
 
-    public void getEnableNameForInitializers(final List<Expression> exps,
+    public void enableVarsUsedInInitializers(final List<Expression> exps,
             final Heap heap) {
         for (Expression exp : exps) {
             List<String> names = new ArrayList<>();
@@ -92,7 +91,7 @@ public class UseMarkers {
                 }
             }
             for (String name : names) {
-                heap.findVar(name).setDisable(false);
+                heap.findVar(name).setEnable(true);
             }
         }
     }
@@ -101,7 +100,7 @@ public class UseMarkers {
         List<Expression> list = new ArrayList<>();
         List<IVar> usedVars = heap.getVars(
                 v -> (v.isInferVar() || v.isLocalVar() || v.isReturnVar())
-                        && !v.isDisable());
+                        && v.isEnable());
         for (IVar usedVar : usedVars) {
             initializers.getInitializerExp(usedVar, heap)
                     .ifPresent(e -> list.add(e));
@@ -109,47 +108,21 @@ public class UseMarkers {
         return list;
     }
 
-    public Set<String> getEnableNames(final Heap heap) {
-        Set<String> names = new HashSet<>();
-        for (When when : heap.getWhens()) {
-            for (IVar var : when.getReturnVars()) {
-                names.add(var.getName());
-            }
-            names.addAll(when.getNames());
-        }
-        for (Verify verify : heap.getVerifies()) {
-            MethodInvocation mi = verify.getMi();
-            for (String name : methods.getNames(mi)) {
-                names.add(name);
-            }
-        }
-        Optional<IVar> expectedVar = heap.getExpectedVar();
-        expectedVar.ifPresent(v -> {
-            if (!types.isBoolean(v.getType())) {
-                names.add(v.getName());
-            }
-        });
-        return names;
-    }
-
-    public void enable(final Set<String> names, final Heap heap) {
+    public void disableVars(final Set<String> names, final Heap heap) {
         List<IVar> localVars = heap.getVars(
                 v -> (v.isInferVar() || v.isLocalVar() || v.isReturnVar()));
         localVars.forEach(v -> {
             if (!names.contains(v.getName())) {
-                v.setDisable(true);
+                v.setEnable(false);
             }
         });
     }
 
-    public void forceEnable(final Heap heap) {
-        List<IVar> localVars = heap.getVars(v -> (v.getEnforce().isPresent()));
-        localVars.forEach(v -> {
-            if (v.getEnforce().get()) {
-                v.setDisable(false);
-            } else {
-                v.setDisable(true);
-            }
+    public void setEnableFromEnforce(final Heap heap) {
+        List<IVar> enforcedVars =
+                heap.getVars(v -> (v.getEnforce().isPresent()));
+        enforcedVars.forEach(v -> {
+            v.setEnable(v.getEnforce().get());
         });
     }
 }

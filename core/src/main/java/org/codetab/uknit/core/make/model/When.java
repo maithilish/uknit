@@ -10,7 +10,7 @@ import com.google.inject.assistedinject.Assisted;
 public class When {
 
     private String methodSignature;
-    // vars used by when - used to mark used
+    // vars used by when - enabler uses them to enable vars
     private List<String> names;
 
     private List<IVar> returnVars;

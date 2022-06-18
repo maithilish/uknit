@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
@@ -280,6 +281,11 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final QualifiedName node) {
         varProcessor.stageInferVarForLiteralReturn(node, heap);
+    }
+
+    @Override
+    public boolean visit(final LambdaExpression node) {
+        return false; // don't visit child nodes
     }
 
     @Override

@@ -13,14 +13,14 @@ public class LambdaInArgTest {
     public void testCalculate() {
         CalcA calcA = Mockito.mock(CalcA.class);
         int divValue = 1;
-        int kiwi = 1;
+        int apple = 1;
 
         when(calcA.op(8, 4, any(OperationA.class))).thenReturn(divValue);
-        when(calcA.op(6, 3, any(OperationA.class))).thenReturn(kiwi);
+        when(calcA.op(6, 3, any(OperationA.class))).thenReturn(apple);
 
         int actual = lambdaInArg.calculate(calcA);
 
-        assertEquals(kiwi, actual);
+        assertEquals(apple, actual);
 
         ArgumentCaptor<OperationA> argcA = ArgumentCaptor.forClass(OperationA.class);
         ArgumentCaptor<OperationA> argcB = ArgumentCaptor.forClass(OperationA.class);

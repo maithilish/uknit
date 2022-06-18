@@ -1,5 +1,7 @@
 package org.codetab.uknit.itest.lambda;
 
+import java.util.Properties;
+
 public class LambdaInArgGenericTest {
     @InjectMocks
     private LambdaInArgGeneric lambdaInArgGeneric;
@@ -13,14 +15,14 @@ public class LambdaInArgGenericTest {
     public void testCalculate() {
         CalcB calcB = Mockito.mock(CalcB.class);
         int divValue = 1;
-        Integer kiwi = Integer.valueOf(1);
+        Integer apple = Integer.valueOf(1);
 
         when(calcB.op(8, 4, any(OperationB.class))).thenReturn(divValue);
-        when(calcB.op(6, 3, any(OperationB.class))).thenReturn(kiwi);
+        when(calcB.op(6, 3, any(OperationB.class))).thenReturn(apple);
 
         Integer actual = lambdaInArgGeneric.calculate(calcB);
 
-        assertEquals(kiwi, actual);
+        assertEquals(apple, actual);
 
         ArgumentCaptor<OperationB<Integer>> argcA = ArgumentCaptor.forClass(OperationB.class);
         ArgumentCaptor<OperationB<Integer>> argcB = ArgumentCaptor.forClass(OperationB.class);
@@ -28,5 +30,15 @@ public class LambdaInArgGenericTest {
         verify(calcB).op(1, 2, argcA.capture());
         verify(calcB).op(8, 4, argcB.capture());
         verify(calcB).op(6, 3, argcC.capture());
+    }
+
+    @Test
+    public void testCastInlambda() {
+        Properties properties = Mockito.mock(Properties.class);
+        Config<String, String> config = Mockito.mock(Config.class);
+        lambdaInArgGeneric.castInlambda(properties, config);
+        ArgumentCaptor<BiConsumer<? super Object, ? super Object>> argcA = ArgumentCaptor.forClass(BiConsumer.class);
+
+        verify(properties).forEach(argcA.capture());
     }
 }

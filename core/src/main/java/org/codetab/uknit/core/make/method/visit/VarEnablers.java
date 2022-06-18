@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.body.Initializers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.LocalVar;
+import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
@@ -32,6 +34,8 @@ public class VarEnablers {
     private Methods methods;
     @Inject
     private Initializers initializers;
+    @Inject
+    private ModelFactory modelFactory;
 
     public void collectVarNamesOfWhens(final Set<String> names,
             final Heap heap) {
@@ -124,5 +128,20 @@ public class VarEnablers {
         enforcedVars.forEach(v -> {
             v.setEnable(v.getEnforce().get());
         });
+    }
+
+    /**
+     * Create stand-in local var for disabled but used field.
+     * @param field
+     * @return
+     */
+    public IVar createStandinVar(final IVar field) {
+        LocalVar var = modelFactory.createLocalVar(field.getName(),
+                field.getType(), field.isMock());
+        var.setCreated(false);
+        var.setDeepStub(false);
+        var.setEnable(true);
+        var.setEnforce(Optional.of(false));
+        return var;
     }
 }

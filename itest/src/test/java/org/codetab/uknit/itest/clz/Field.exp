@@ -3,7 +3,9 @@ package org.codetab.uknit.itest.clz;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +23,8 @@ public class FieldTest {
     private LocalDateTime dateTimeA;
     @Mock
     private LocalDateTime dateTimeB;
+    @Mock
+    private LocalDateTime dateTimeC;
 
     @BeforeEach
     public void setUp() throws Exception {

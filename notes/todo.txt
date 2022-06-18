@@ -101,3 +101,22 @@ Fix error generating test
 
 	metrics/server/MetricsServletListener - refers nested class in another class
 
+Qualified Names Var
+
+Var accessed through qualified name should be spy instead of mock and when 
+on such method invocation should be name part of qName. However, at present this is 
+not supported. See QNames qNameAsCallMockObj() test as an example.
+
+Initialized Mocks
+
+	private Map<String, Date> cache = new HashMap<>();
+
+    public Date contains(final String key) {
+        return cache.get(key);
+    }
+
+If map is user configured as mock, whether to treat initialized the mock as 
+mock or real. Now, it is treated as mock. If treated as real then make it 
+configurable.
+
+  

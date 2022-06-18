@@ -5,5 +5,6 @@
 .checkstyle
 src/main/resources/*.java
 itest/src/main/java/org/codetab/uknit/itest/alpha/*.java
+itest/src/test/java/org/codetab/uknit/itest/alpha/Alpha.java
 itest/src/test/java/org/codetab/uknit/itest/alpha/AlphaTest.java
 logs

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.ClzNodeFactory;
@@ -36,7 +37,7 @@ public class FieldMaker {
         List<FieldDeclaration> fieldDecls =
                 Lists.newArrayList(srcClz.getFields());
         fieldMakers.expandFieldFragments(fieldDecls);
-        return fieldMakers.createFields(fieldDecls);
+        return fieldMakers.createSrcFields(fieldDecls);
     }
 
     public List<Field> addFieldDeclsToTestClz(final List<Field> fieldList,
@@ -67,7 +68,7 @@ public class FieldMaker {
                     body.add(fieldDecl);
                 }
 
-                Field testField = fieldMakers.createField(fieldDecl,
+                Field testField = fieldMakers.createTestField(fieldDecl,
                         srcField.getFieldDecl());
                 testField.setEnable(srcField.isEnable());
                 testFields.add(testField);
@@ -83,9 +84,9 @@ public class FieldMaker {
         }
     }
 
-    public void annotateFields(final List<Field> fieldList,
+    public void annotateFields(final Clz clz,
             final String[] deepStubAnnotation) {
-        for (Field field : fieldList) {
+        for (Field field : clz.getFields()) {
             FieldDeclaration fieldDecl = field.getFieldDecl();
             Annotation annotation = null;
             if (field.isDeepStub()) {
@@ -99,6 +100,23 @@ public class FieldMaker {
                 annotation = nodeFactory.createMarkerAnnotation("Mock");
             }
             fieldMakers.addAnnotation(fieldDecl, annotation);
+        }
+    }
+
+    /**
+     * If field is not mock (even when uninitialised), then remove it from test
+     * clz. Example: removes the field private List<String> list (with or
+     * without initialization) in FieldIT test.
+     * @param clz
+     */
+    public void removeFields(final Clz clz) {
+        TypeDeclaration testClz = clz.getTestTypeDecl();
+        List<Field> fieldList = clz.getFields();
+        for (Field field : fieldList) {
+            if (!field.isMock()) {
+                FieldDeclaration fieldDecl = field.getFieldDecl();
+                testClz.bodyDeclarations().remove(fieldDecl);
+            }
         }
     }
 

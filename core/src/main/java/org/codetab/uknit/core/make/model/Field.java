@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -38,6 +39,20 @@ public class Field extends DefaultVar {
 
     public FieldDeclaration getSrcFieldDecl() {
         return srcFieldDecl;
+    }
+
+    /**
+     * Deep copy of the field. However, fieldDecl and srcFieldDecl are not deep
+     * copy but points to the originals.
+     * @return
+     */
+    public Field deepCopy() {
+        Field field = new Field(name, type, mock, fieldDecl, srcFieldDecl);
+        field.setCreated(created);
+        field.setEnable(enable);
+        enforce.ifPresent(e -> field.setEnforce(Optional.of(e)));
+        field.setDeepStub(deepStub);
+        return field;
     }
 
     @Override

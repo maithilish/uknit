@@ -41,7 +41,8 @@ public class FieldMakers {
     @Inject
     private Mocks mocks;
 
-    public List<Field> createFields(final List<FieldDeclaration> fieldDecls) {
+    public List<Field> createSrcFields(
+            final List<FieldDeclaration> fieldDecls) {
         List<Field> fields = new ArrayList<>();
         for (FieldDeclaration fieldDecl : fieldDecls) {
             VariableDeclarationFragment vdf =
@@ -50,29 +51,30 @@ public class FieldMakers {
             Type type = fieldDecl.getType();
             boolean mock = mocks.isMockable(type);
 
-            boolean enable = enable(fieldDecl);
-
             Field field = modelFactory.createField(name, type, mock, fieldDecl,
                     fieldDecl);
-            field.setEnable(enable);
+
+            field.setEnable(enable(fieldDecl, mock));
+            field.setCreated(isCreated(fieldDecl));
+
             fields.add(field);
         }
         return fields;
     }
 
-    public Field createField(final FieldDeclaration fieldDecl,
+    public Field createTestField(final FieldDeclaration fieldDecl,
             final FieldDeclaration srcFieldDecl) {
         VariableDeclarationFragment vdf =
                 (VariableDeclarationFragment) fieldDecl.fragments().get(0);
         String name = nodes.getVariableName(vdf);
         Type type = fieldDecl.getType();
         boolean mock = mocks.isMockable(type);
-
-        boolean enable = enable(fieldDecl);
-
         Field field = modelFactory.createField(name, type, mock, fieldDecl,
                 srcFieldDecl);
-        field.setEnable(enable);
+
+        field.setEnable(enable(fieldDecl, mock));
+        field.setCreated(isCreated(fieldDecl));
+
         return field;
     }
 
@@ -103,7 +105,8 @@ public class FieldMakers {
         fieldDecls.addAll(newFieldDecls);
     }
 
-    public boolean enable(final FieldDeclaration fieldDecl) {
+    public boolean enable(final FieldDeclaration fieldDecl,
+            final boolean mock) {
         if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
             return false;
         }
@@ -117,11 +120,22 @@ public class FieldMakers {
         @SuppressWarnings("unchecked")
         List<VariableDeclarationFragment> fragments = fieldDecl.fragments();
         for (VariableDeclarationFragment vd : fragments) {
-            if (nonNull(vd.getInitializer())) {
+            if (!mock && nonNull(vd.getInitializer())) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isCreated(final FieldDeclaration fieldDecl) {
+        @SuppressWarnings("unchecked")
+        List<VariableDeclarationFragment> fragments = fieldDecl.fragments();
+        for (VariableDeclarationFragment vd : fragments) {
+            if (nonNull(vd.getInitializer())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addModifier(final FieldDeclaration fieldDecl,

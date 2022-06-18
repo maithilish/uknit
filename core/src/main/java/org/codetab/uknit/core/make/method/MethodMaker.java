@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.method;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,7 @@ import org.codetab.uknit.core.make.method.stage.CallStager;
 import org.codetab.uknit.core.make.method.visit.VarEnabler;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
@@ -84,7 +86,7 @@ public class MethodMaker {
 
         if (configs.getConfig("uknit.detect.getterSetter", true)) {
             getterSetter.detect(clz, method, methodDecl,
-                    clzMap.getFields(testClzName));
+                    clzMap.getFieldsCopy(testClzName));
         }
 
         Visitor visitor = di.instance(Visitor.class);
@@ -95,13 +97,17 @@ public class MethodMaker {
         callStager.stageCall(method, heap);
 
         // to set deep stub, set fields
-        heap.getVars().addAll(clzMap.getFields(testClzName));
+        heap.getVars().addAll(clzMap.getFieldsCopy(testClzName));
 
         method.accept(visitor);
 
         varEnabler.checkEnableState(heap);
-        varEnabler.updateVarEnableState(heap);
 
+        Set<String> usedNames = varEnabler.collectUsedVarNames(heap);
+        varEnabler.updateVarEnableState(usedNames, heap);
+        varEnabler.addLocalVarForDisabledField(usedNames, heap);
+
+        clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
         // TODO - enable this after multi try exception fix
         // variables.checkVarConsistency(heap.getVars());
 

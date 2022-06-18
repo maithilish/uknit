@@ -1,0 +1,99 @@
+package org.codetab.uknit.itest.variable;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public class StandinVarTest {
+    @InjectMocks
+    private StandinVar standinVar;
+
+    @Mock
+    private Date mockField;
+    @Mock
+    private Date initMockField;
+    @Mock
+    private Date assignedMockField;
+    @Mock
+    private Date unassignedMockField;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testOpen() {
+        String name = "Foo";
+        standinVar.open(name);
+    }
+
+    @Test
+    public void testUseAssignedField() {
+        Object apple = STEPIN;
+
+        Object actual = standinVar.useAssignedField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testUseUnassignedField() {
+        Object apple = STEPIN;
+
+        Object actual = standinVar.useUnassignedField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testUseRealField() {
+        Object apple = STEPIN;
+
+        Object actual = standinVar.useRealField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testUseinitRealField() {
+        Object apple = STEPIN;
+
+        Object actual = standinVar.useinitRealField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testUseMockField() {
+        int apple = 1;
+
+        when(mockField.compareTo(assignedMockField)).thenReturn(apple);
+
+        int actual = standinVar.useMockField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testUseInitMockField() {
+        int apple = 1;
+
+        when(initMockField.compareTo(assignedMockField)).thenReturn(apple);
+
+        int actual = standinVar.useInitMockField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testUseUnassignedMockField() {
+        int apple = 1;
+
+        when(mockField.compareTo(unassignedMockField)).thenReturn(apple);
+
+        int actual = standinVar.useUnassignedMockField();
+
+        assertEquals(apple, actual);
+    }
+}

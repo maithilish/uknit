@@ -155,8 +155,19 @@ public class ClzMaker {
                 configs.getConfig("uknit.annotation.chainCall").split("=");
         for (String clzName : clzMap.keySet()) {
             Clz clz = clzMap.get(clzName);
-            List<Field> fieldList = clz.getFields();
-            fieldMaker.annotateFields(fieldList, deepStubAnnotation);
+            fieldMaker.annotateFields(clz, deepStubAnnotation);
+        }
+    }
+
+    /**
+     * Remove unnecessary fields that are not injected, as they are to be
+     * initialized by class under test.
+     * @param configs
+     */
+    public void removeFields(final Configs configs) {
+        for (String clzName : clzMap.keySet()) {
+            Clz clz = clzMap.get(clzName);
+            fieldMaker.removeFields(clz);
         }
     }
 

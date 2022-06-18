@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.visit;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
@@ -47,6 +48,10 @@ public class ReturnProcessor {
     public Optional<IVar> getExpectedVar(final ReturnStatement rs,
             final Heap heap) {
         Expression exp = rs.getExpression();
+        if (isNull(exp)) {
+            return Optional.empty();
+        }
+
         ReturnVar expectedVar = null;
 
         IVar var = null;

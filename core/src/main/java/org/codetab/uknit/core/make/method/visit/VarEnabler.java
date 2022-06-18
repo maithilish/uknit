@@ -30,16 +30,12 @@ public class VarEnabler {
      * collects the initializer expressions assigned to enabled vars and marks
      * the vars used by such expression also as enabled. Finally, it overrides
      * enable state with state - true or false - of enforce field.
+     * @param names
      * @param heap
      */
-    public void updateVarEnableState(final Heap heap) {
+    public void updateVarEnableState(final Set<String> names, final Heap heap) {
 
         // disable vars that are not used in when, verify and return
-        Set<String> names = new HashSet<>();
-        varEnablers.collectVarNamesOfWhens(names, heap);
-        varEnablers.collectVarNamesOfVerifies(names, heap);
-        varEnablers.collectVarNamesOfReturn(names, heap);
-
         varEnablers.disableVars(names, heap);
 
         // enable vars used in initializer assigned to vars enabled above
@@ -85,5 +81,29 @@ public class VarEnabler {
             final Heap heap) {
         IVar var = heap.findVar(name);
         var.setEnforce(value);
+    }
+
+    /**
+     * Add stand-in local var for disabled but used field.
+     * @param names
+     * @param heap
+     */
+    public void addLocalVarForDisabledField(final Set<String> names,
+            final Heap heap) {
+        for (String name : names) {
+            Optional<IVar> field = heap.findField(name);
+            if (field.isPresent() && !field.get().isEnable()) {
+                IVar var = varEnablers.createStandinVar(field.get());
+                heap.getVars().add(var);
+            }
+        }
+    }
+
+    public Set<String> collectUsedVarNames(final Heap heap) {
+        Set<String> names = new HashSet<>();
+        varEnablers.collectVarNamesOfWhens(names, heap);
+        varEnablers.collectVarNamesOfVerifies(names, heap);
+        varEnablers.collectVarNamesOfReturn(names, heap);
+        return names;
     }
 }

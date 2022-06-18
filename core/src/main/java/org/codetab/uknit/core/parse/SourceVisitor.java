@@ -73,8 +73,12 @@ public class SourceVisitor extends ASTVisitor {
         getterSetter.reset();
     }
 
+    /**
+     * Post process after visit of all nodes in the source.
+     */
     public void postProcess() {
         clzMaker.annotateFields(configs);
+        clzMaker.removeFields(configs);
 
         if (configs.getConfig("uknit.detect.getterSetter", true)) {
             getterSetter.postProcess();

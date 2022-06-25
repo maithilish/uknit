@@ -60,9 +60,11 @@ public class MethodMaker {
 
     private ClzMap clzMap;
 
-    private MethodDeclaration methodDecl;
+    private MethodDeclaration testMethod;
 
     private TypeDeclaration clzDecl;
+
+    private Clz clz;
 
     public boolean stageMethod(final MethodDeclaration method,
             final Heap heap) {
@@ -78,14 +80,14 @@ public class MethodMaker {
         String testClzName = methodMakers
                 .getTestClzName((TypeDeclaration) method.getParent());
         clzDecl = clzMap.getTypeDecl(testClzName);
-        Clz clz = clzMap.getClz(testClzName);
+        clz = clzMap.getClz(testClzName);
 
         String testMethodName = methodMakers.getTestMethodName(method, clzDecl);
 
-        methodDecl = methodMakers.constructTestMethod(method, testMethodName);
+        testMethod = methodMakers.constructTestMethod(method, testMethodName);
 
         if (configs.getConfig("uknit.detect.getterSetter", true)) {
-            getterSetter.detect(clz, method, methodDecl,
+            getterSetter.detect(clz, method, testMethod,
                     clzMap.getFieldsCopy(testClzName));
         }
 
@@ -158,15 +160,20 @@ public class MethodMaker {
 
     public void generateTestMethod(final Heap heap) {
         // generate parameters, infer and local vars
-        bodyMaker.generateVarStmts(methodDecl, heap);
-        bodyMaker.generateReturnVarStmt(methodDecl, heap);
-        bodyMaker.generateWhenStmts(methodDecl, heap);
-        bodyMaker.generateCallStmt(methodDecl, heap);
-        bodyMaker.generateAssertStmt(methodDecl, heap);
-        bodyMaker.generateArgCaptureStmts(methodDecl, heap);
-        bodyMaker.generateVerifyStmts(methodDecl, heap);
+        bodyMaker.generateVarStmts(testMethod, heap);
+        bodyMaker.generateReturnVarStmt(testMethod, heap);
+        bodyMaker.generateWhenStmts(testMethod, heap);
+        bodyMaker.generateCallStmt(testMethod, heap);
+        bodyMaker.generateAssertStmt(testMethod, heap);
+        bodyMaker.generateArgCaptureStmts(testMethod, heap);
+        bodyMaker.generateVerifyStmts(testMethod, heap);
 
-        methodMakers.addMethod(clzDecl, methodDecl);
+        if (!getterSetter.isGetter(clz, testMethod)
+                && !getterSetter.isSetter(clz, testMethod)) {
+            bodyMaker.generateFailAssertStmt(testMethod, heap);
+        }
+
+        methodMakers.addMethod(clzDecl, testMethod);
     }
 
     public void addBeforeMethod(final TypeDeclaration node,

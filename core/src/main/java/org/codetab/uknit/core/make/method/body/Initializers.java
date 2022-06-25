@@ -50,6 +50,8 @@ public class Initializers {
     private DerivedInitialzer derivedInitialzer;
     @Inject
     private Patcher patcher;
+    @Inject
+    private Nodes nodes;
 
     public String getInitializer(final IVar var, final Heap heap) {
         String initializer = null;
@@ -60,6 +62,9 @@ public class Initializers {
         if (iniExp.isPresent() && definedInitialzer.isAllowed(iniExp.get())) {
             Expression exp = patcher.copyAndPatch(iniExp.get(), heap);
             initializer = exp.toString();
+        } else if (iniExp.isPresent()
+                && nodes.is(iniExp.get(), SimpleName.class)) {
+            initializer = nodes.getName(iniExp.get());
         } else if (enumIni.isPresent()) {
             initializer = enumIni.get();
         } else {
@@ -185,6 +190,10 @@ class DefinedInitialzer {
                 // no more match, break
                 break;
             }
+        }
+        if (isNull(initializerExp) && nonNull(rExp)
+                && nodes.is(rExp, SimpleName.class)) {
+            initializerExp = rExp;
         }
         return Optional.ofNullable(initializerExp);
     }

@@ -36,5 +36,6 @@ public class CastTypeChangeTest {
 
         when(((CastTypeChange) other).getCount()).thenReturn(count);
         castTypeChange.aggregate(other);
+        fail("unable to assert, STEPIN");
     }
 }

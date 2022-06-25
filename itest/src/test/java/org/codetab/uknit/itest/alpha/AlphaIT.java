@@ -1,5 +1,7 @@
 package org.codetab.uknit.itest.alpha;
 
+import static java.util.Objects.isNull;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -12,6 +14,12 @@ public class AlphaIT extends ITBase {
     public void test() throws IOException {
 
         System.setProperty("uknit.configs.loadUserDefined", "true");
+
+        // don't run in cli
+        String alphaRun = System.getProperty("uknit.alpha.run");
+        if (isNull(alphaRun) || !alphaRun.equalsIgnoreCase("true")) {
+            return;
+        }
 
         configure();
 

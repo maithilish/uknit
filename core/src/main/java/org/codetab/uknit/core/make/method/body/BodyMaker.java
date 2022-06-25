@@ -53,7 +53,15 @@ public class BodyMaker {
             final Heap heap) {
         Optional<Statement> stmt = assertStmt.createStmt(heap);
         assertStmt.addStmt(methodDecl, stmt);
+    }
 
+    public void generateFailAssertStmt(final MethodDeclaration methodDecl,
+            final Heap heap) {
+        // when no assert or verify statement exists, generate fail assertion
+        if (!heap.isAsserted()) {
+            Optional<Statement> stmt = assertStmt.createFailStmt(heap);
+            assertStmt.addStmt(methodDecl, stmt);
+        }
     }
 
     public void generateReturnVarStmt(final MethodDeclaration methodDecl,

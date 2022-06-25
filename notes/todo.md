@@ -1,5 +1,5 @@
 
-add test
+## add test
 
 	public StringBuilder argArgMethodInvoke(final StringBuilder s1,
             final File src, final File dest) {
@@ -26,24 +26,24 @@ add test
         return foo;
     }
     
-var args ...    
+## var args ...    
         
-matcher
+## matcher
 
 	verify(pets).add(new Dog(apple)); to verify(pets).add(any(Dog.class));
 	
-	see invoke.MiCreateInstanceIT
+see invoke.MiCreateInstanceIT
 	
-Real returns real
+## Real returns real
 	    
     public String notOk() {
         String path = "foo";
         return path.toLowerCase();
     }
     	    
-StringLiteral passed to private method is initialized to foo
+## StringLiteral passed to private method is initialized to foo
 
-	see FileAppender init() method - String filePath = getPluginField("file");
+see FileAppender init() method - String filePath = getPluginField("file");
 
 Field creation in constructor - mock should not be injected 
 
@@ -61,9 +61,9 @@ Field creation in constructor - mock should not be injected
                 .toFormatter();
     }
 
-Pojo fields - mock should not be injected for gauges  
+## Pojo fields - mock should not be injected for gauges  
  
-  public class Metrics {
+    public class Metrics {
     
     private Map<String, Gauge> gauges;
 
@@ -75,15 +75,15 @@ Pojo fields - mock should not be injected for gauges
         this.gauges = gauges;
     }
     
-Public fields Pojo 
+## Public fields Pojo 
 
-	try to improve test for org.codetab.scoopi.metrics.serialize.Meter and Timer
+try to improve test for org.codetab.scoopi.metrics.serialize.Meter and Timer
     
-discard previous assignment
+## discard previous assignment
 
 don't generate test for abstract classes
 
-junit 4 and 5 profiles
+## junit 4 and 5 profiles
 
 Fix errors by comparing with corrected tests in scoopi 
 
@@ -91,23 +91,23 @@ Fix errors by comparing with corrected tests in scoopi
 	plugin/converter/DateRoller
 	metrics/SystemStat	
 	
-Try to Improve
+## Try to Improve
 		
 	metrics/serialize/Serializer - Builder pattern
 	metrics/server/MetricsServlet - Nested class test
 	metrics/server/MetricsServlet - used static fields
 	
-Fix error generating test
+## Fix error generating test
 
 	metrics/server/MetricsServletListener - refers nested class in another class
 
-Qualified Names Var
+## Qualified Names Var
 
 Var accessed through qualified name should be spy instead of mock and when 
 on such method invocation should be name part of qName. However, at present this is 
 not supported. See QNames qNameAsCallMockObj() test as an example.
 
-Initialized Mocks
+## Initialized Mocks
 
 	private Map<String, Date> cache = new HashMap<>();
 
@@ -119,4 +119,22 @@ If map is user configured as mock, whether to treat initialized the mock as
 mock or real. Now, it is treated as mock. If treated as real then make it 
 configurable.
 
-  
+## This in calls
+
+The keyword this should be replaced with SUT. See cluster.hz.JobStore.close() method.
+
+## Multiple Tests for Branches
+
+See notes in tech-doc folder. For test cases refer cluster.hz.JobStore.
+
+## Abstract Class
+
+	Don't generate test class
+	
+## QNames
+
+Create infer var, return and assert. See QNameIT.
+
+	public String qNameInCast(final Point point) {
+        return (String) point.attchment;
+    }	

@@ -3,7 +3,9 @@ package org.codetab.uknit.itest.superclass;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SuperCallsTest {
     @InjectMocks
@@ -44,5 +46,44 @@ public class SuperCallsTest {
         Date actual = superCalls.defineVarFromMocks(dateFormat, dateStr);
 
         assertSame(date, actual);
+    }
+
+    @Test
+    public void testReturnFromCreate() {
+        Date apple = STEPIN;
+
+        Date actual = superCalls.returnFromCreate();
+
+        assertSame(apple, actual);
+    }
+
+    @Test
+    public void testReturnFromCreateAndMock() throws Exception {
+        String dateStr = "Foo";
+        Date apple = STEPIN;
+
+        Date actual = superCalls.returnFromCreateAndMock(dateStr);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testReturnFromMocks() throws Exception {
+        DateFormat dateFormat = Mockito.mock(DateFormat.class);
+        String dateStr = "Foo";
+        Date apple = Mockito.mock(Date.class);
+
+        when(dateFormat.parse(dateStr)).thenReturn(apple);
+
+        Date actual = superCalls.returnFromMocks(dateFormat, dateStr);
+
+        assertSame(apple, actual);
+    }
+
+    @Test
+    public void testInForEach() {
+        Point point = Mockito.mock(Point.class);
+        superCalls.inForEach();
+        fail("unable to assert, STEPIN");
     }
 }

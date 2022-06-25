@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
 
 public class Types {
@@ -75,6 +76,12 @@ public class Types {
             if (type.isArrayType()) {
                 ArrayType at = (ArrayType) type;
                 return at.toString();
+            }
+            if (type.isUnionType()) {
+                UnionType ut = (UnionType) type;
+                // consider only the first element
+                Type ft = (Type) ut.types().get(0);
+                return ft.toString();
             }
             throw new TypeNameException(
                     spaceit(type.getClass().getName(), "has no name"));

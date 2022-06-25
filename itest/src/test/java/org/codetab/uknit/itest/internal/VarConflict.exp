@@ -31,5 +31,6 @@ public class VarConflictTest {
         when(memberMetrics.getTimers()).thenReturn(cherry);
         when(metrics.getTimers()).thenReturn(ag2);
         varConflict.aggregate();
+        fail("unable to assert, STEPIN");
     }
 }

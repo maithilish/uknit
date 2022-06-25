@@ -29,11 +29,13 @@ public class CallStaticTest {
     public void testStaticCallReturn() {
 
         Date actual = callStatic.staticCallReturn();
+        fail("unable to assert, STEPIN");
     }
 
     @Test
     public void testRealCallReturn() {
 
         Date actual = callStatic.realCallReturn();
+        fail("unable to assert, STEPIN");
     }
 }

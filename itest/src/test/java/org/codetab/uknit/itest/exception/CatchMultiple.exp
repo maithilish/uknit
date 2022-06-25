@@ -1,0 +1,32 @@
+package org.codetab.uknit.itest.exception;
+
+import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class CatchMultipleTest {
+    @InjectMocks
+    private CatchMultiple catchMultiple;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testRun() {
+        Config config = Mockito.mock(Config.class);
+        String key = "foo";
+        IllegalStateException e = Mockito.mock(IllegalStateException.class);
+        String apple = "Foo";
+        IllegalArgumentException e = Mockito.mock(IllegalArgumentException.class);
+        String grape = "Bar";
+
+        when(e.getLocalizedMessage()).thenReturn(apple).thenReturn(grape);
+        catchMultiple.run(config);
+
+        verify(config).getConfigA(key);
+        verify(config).getConfigB(key);
+        verify(config).getConfigC(key);
+    }
+}

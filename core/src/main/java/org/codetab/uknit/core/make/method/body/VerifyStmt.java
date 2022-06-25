@@ -27,6 +27,9 @@ public class VerifyStmt {
                     nodeFactory.createVerifyStatement(verify.getMi(), format);
             stmts.add(stmt);
         }
+        if (!heap.getVerifies().isEmpty()) {
+            heap.setAsserted(true);
+        }
         return stmts;
     }
 

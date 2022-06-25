@@ -19,5 +19,6 @@ public class CastExpTest {
 
         when(pets.getPet("foo")).thenReturn(dog);
         castExp.declare(pets);
+        fail("unable to assert, STEPIN");
     }
 }

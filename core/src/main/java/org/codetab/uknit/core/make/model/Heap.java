@@ -49,6 +49,12 @@ public class Heap {
      */
     private Map<String, String> paramArgMap;
 
+    /*
+     * True when at least one assert or verify statement is present, else create
+     * fail in post process
+     */
+    private boolean asserted = false;
+
     public List<IVar> getVars() {
         return vars;
     }
@@ -307,5 +313,21 @@ public class Heap {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Set as true when at least one assert or verify statement is present.
+     * @param asserted
+     */
+    public void setAsserted(final boolean asserted) {
+        this.asserted = asserted;
+    }
+
+    /**
+     * At least one assert or verify statement is present
+     * @return
+     */
+    public boolean isAsserted() {
+        return asserted;
     }
 }

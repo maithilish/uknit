@@ -19,7 +19,7 @@
 
 		<eclipse.jdt.version>3.28.0</eclipse.jdt.version>
 
-		<guice.version>5.0.1</guice.version>
+		<guice.version>5.1.0</guice.version>
 		<guava.version>30.1.1-jre</guava.version>
 
 		<junit.version>5.8.1</junit.version>

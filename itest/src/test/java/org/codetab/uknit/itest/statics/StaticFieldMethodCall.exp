@@ -17,6 +17,7 @@ public class StaticFieldMethodCallTest {
         String names = "Foo";
 
         Timer actual = staticFieldMethodCall.getTimer(clz, names);
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -25,6 +26,7 @@ public class StaticFieldMethodCallTest {
         String names = "Foo";
 
         Meter actual = staticFieldMethodCall.getMeter(clz, names);
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -33,5 +35,6 @@ public class StaticFieldMethodCallTest {
         Object clz = Mockito.mock(Object.class);
         String names = "Foo";
         staticFieldMethodCall.registerGuage(value, clz, names);
+        fail("unable to assert, STEPIN");
     }
 }

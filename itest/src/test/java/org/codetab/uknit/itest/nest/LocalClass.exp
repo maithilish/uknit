@@ -14,5 +14,6 @@ public class LocalClassTest {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        fail("unable to assert, STEPIN");
     }
 }

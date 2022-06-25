@@ -20,6 +20,7 @@ public class PojoTest {
         Date bar = Mockito.mock(Date.class);
 
         Pojo actual = new Pojo(foo, bar);
+        fail("unable to assert, STEPIN");
     }
 
     @Test

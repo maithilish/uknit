@@ -26,6 +26,7 @@ public class StandinVarTest {
     public void testOpen() {
         String name = "Foo";
         standinVar.open(name);
+        fail("unable to assert, STEPIN");
     }
 
     @Test

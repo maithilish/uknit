@@ -17,5 +17,6 @@ public class InferredForEachTest {
         Map<String, Pet> pets = new HashMap<>();
         String key = "Foo";
         inferredForEach.process(pets);
+        fail("unable to assert, STEPIN");
     }
 }

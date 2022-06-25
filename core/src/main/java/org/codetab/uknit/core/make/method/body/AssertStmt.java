@@ -41,6 +41,22 @@ public class AssertStmt {
                 stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
             }
         }
+        stmt.ifPresent(s -> heap.setAsserted(true));
+        return stmt;
+    }
+
+    /**
+     * Create fail assertion when there is no assert or verify statement.
+     * @param heap
+     * @return
+     */
+    public Optional<Statement> createFailStmt(final Heap heap) {
+        Optional<Statement> stmt = Optional.empty();
+        if (stmt.isEmpty()) {
+            String key = "fail";
+            String fmt = asserts.getAssertFormat(key, "");
+            stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
+        }
         return stmt;
     }
 

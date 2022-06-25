@@ -22,5 +22,6 @@ public class MiInstanceOfTest {
 
         when(pets.getPet("foo")).thenReturn(apple);
         miInstanceOf.process(pets, names);
+        fail("unable to assert, STEPIN");
     }
 }

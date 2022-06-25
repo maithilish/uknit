@@ -20,6 +20,7 @@ public class InferredChainCallTest {
 
         when(pets.getPets()).thenReturn(apple);
         inferredChainCall.infer(pets);
+        fail("unable to assert, STEPIN");
     }
 
     @Test

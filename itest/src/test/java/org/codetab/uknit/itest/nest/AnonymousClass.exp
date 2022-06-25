@@ -17,6 +17,7 @@ public class AnonymousClassTest {
         File file = Mockito.mock(File.class);
 
         FileFilter actual = anonymousClass.anonymousReturn(file);
+        fail("unable to assert, STEPIN");
     }
 
     @Test

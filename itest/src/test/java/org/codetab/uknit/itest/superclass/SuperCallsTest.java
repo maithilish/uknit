@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.when;
 
@@ -21,17 +22,19 @@ public class SuperCallsTest {
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-
     }
 
     @Test
     public void testDefineVarFromCreate() {
-        superCalls.defineVarFromCreate();
+
+        Date actual = superCalls.defineVarFromCreate();
+
+        assertNotNull(actual);
     }
 
     @Test
     public void testDefineVarFromCreateAndMock() throws Exception {
-        String dateStr = "05/03/22, 7:37 AM";
+        String dateStr = "24/06/22, 2:04 PM";
 
         DateFormat dateFormat = new SimpleDateFormat();
 
@@ -45,7 +48,7 @@ public class SuperCallsTest {
     @Test
     public void testDefineVarFromMocks() throws Exception {
         DateFormat dateFormat = Mockito.mock(DateFormat.class);
-        String dateStr = "Foo";
+        String dateStr = "24/06/22, 2:04 PM";
         Date date = Mockito.mock(Date.class);
 
         when(dateFormat.parse(dateStr)).thenReturn(date);
@@ -53,5 +56,44 @@ public class SuperCallsTest {
         Date actual = superCalls.defineVarFromMocks(dateFormat, dateStr);
 
         assertSame(date, actual);
+    }
+
+    @Test
+    public void testReturnFromCreate() {
+
+        Date actual = superCalls.returnFromCreate();
+
+        assertNotNull(actual);
+    }
+
+    @Test
+    public void testReturnFromCreateAndMock() throws Exception {
+        String dateStr = "24/06/22, 2:04 PM";
+
+        DateFormat dateFormat = new SimpleDateFormat();
+
+        Date date = dateFormat.parse(dateStr);
+
+        Date actual = superCalls.returnFromCreateAndMock(dateStr);
+
+        assertEquals(date, actual);
+    }
+
+    @Test
+    public void testReturnFromMocks() throws Exception {
+        DateFormat dateFormat = Mockito.mock(DateFormat.class);
+        String dateStr = "Foo";
+        Date apple = Mockito.mock(Date.class);
+
+        when(dateFormat.parse(dateStr)).thenReturn(apple);
+
+        Date actual = superCalls.returnFromMocks(dateFormat, dateStr);
+
+        assertSame(apple, actual);
+    }
+
+    @Test
+    public void testInForEach() {
+        superCalls.inForEach();
     }
 }

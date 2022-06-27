@@ -46,10 +46,21 @@ public class IOUtils {
                 try (BufferedReader br = new BufferedReader(
                         new InputStreamReader(new FileInputStream(file)))) {
                     String line;
+                    boolean inBlockComment = false;
                     while ((line = br.readLine()) != null) {
-                        if (line.contains(regex)) {
+                        boolean processLine = true;
+                        if (line.contains("/*")) {
+                            inBlockComment = true;
+                        }
+                        if (line.contains("//") || inBlockComment) {
+                            processLine = false;
+                        }
+                        if (processLine && line.contains(regex)) {
                             fileList.add(file);
                             break;
+                        }
+                        if (line.contains("*/")) {
+                            inBlockComment = false;
                         }
                     }
                 } catch (IOException e) {

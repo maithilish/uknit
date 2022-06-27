@@ -132,9 +132,19 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final SuperMethodInvocation node) {
         invokeProcessor.stagePatches(node, heap);
-        Optional<IVar> retVar = invokeProcessor.process(node, heap);
-        if (retVar.isPresent()) {
-            invokeProcessor.stageExpVar(node, retVar.get(), heap);
+        Invoke invoke = invokeProcessor.process(node, heap);
+        heap.getInvokes().add(invoke);
+        Optional<IVar> retVar = invoke.getReturnVar();
+        if (invoke.isInfer()) {
+            if (invoke.getReturnVar().isPresent()) {
+                /*
+                 * for internal call arg in internal call (see internal itest),
+                 * stage expVar
+                 */
+                invokeProcessor.stageExpVar(invoke, heap);
+            } else {
+                invokeProcessor.stageInferVar(invoke, heap);
+            }
         }
         invokeProcessor.stageSuperPatch(node, retVar, heap);
     }
@@ -143,9 +153,7 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final ReturnStatement node) {
         returnProcessor.stagePatches(node, heap);
         Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
-        // if (expectedVar.isPresent() && expectedVar.get().isEnable()) {
-        // heap.setExpectedVar(expectedVar);
-        // }
+
         if (returnProcessor.isReturnable(expectedVar, heap)) {
             heap.setExpectedVar(expectedVar);
         }

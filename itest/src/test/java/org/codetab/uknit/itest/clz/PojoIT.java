@@ -16,12 +16,12 @@ public class PojoIT extends ITBase {
 
         configure();
 
-        addConfig("uknit.ignore.method.constructor", "false");
+        addTransientConfig("uknit.ignore.method.constructor", "false");
 
         try {
             generateTestClass();
         } finally {
-            addConfig("uknit.ignore.method.constructor", "true");
+            restoreTransientConfigs();
         }
 
         File actualFile = getActualFile();

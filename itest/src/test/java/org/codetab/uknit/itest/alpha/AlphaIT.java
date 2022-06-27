@@ -14,6 +14,8 @@ public class AlphaIT extends ITBase {
     public void test() throws IOException {
 
         System.setProperty("uknit.configs.loadUserDefined", "true");
+        // uknit and itest uses 5
+        System.setProperty("uknit.profile.test.framework", "junit5");
 
         // don't run in cli
         String alphaRun = System.getProperty("uknit.alpha.run");
@@ -23,15 +25,16 @@ public class AlphaIT extends ITBase {
 
         configure();
 
-        // String listKey = "uknit.createInstance.List";
-        // String listConfig = getConfig(listKey);
-        // addConfig(listKey, "mock"); // mock the list
-        //
-        // String streamKey = "uknit.createInstance.Stream";
-        // String streamConfig = getConfig(streamKey);
-        // addConfig(streamKey, "mock"); // mock the stream
+        // addTransientConfig("uknit.createInstance.PayloadReal",
+        // "new PayloadReal();");
+        // addTransientConfig("uknit.createInstance.InfoReal", "new
+        // InfoReal();");
 
-        generateTestClass();
+        try {
+            generateTestClass();
+        } finally {
+            restoreTransientConfigs();
+        }
 
         File actualFile = getActualFile();
 

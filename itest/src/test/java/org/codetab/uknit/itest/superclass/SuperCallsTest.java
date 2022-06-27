@@ -26,7 +26,6 @@ public class SuperCallsTest {
 
     @Test
     public void testDefineVarFromCreate() {
-
         Date actual = superCalls.defineVarFromCreate();
 
         assertNotNull(actual);
@@ -38,7 +37,8 @@ public class SuperCallsTest {
 
         DateFormat dateFormat = new SimpleDateFormat();
 
-        Date date = dateFormat.parse(dateStr);
+        Date apple = dateFormat.parse(dateStr);
+        Date date = apple;
 
         Date actual = superCalls.defineVarFromCreateAndMock(dateStr);
 
@@ -49,9 +49,10 @@ public class SuperCallsTest {
     public void testDefineVarFromMocks() throws Exception {
         DateFormat dateFormat = Mockito.mock(DateFormat.class);
         String dateStr = "24/06/22, 2:04 PM";
-        Date date = Mockito.mock(Date.class);
+        Date apple = Mockito.mock(Date.class);
+        Date date = apple;
 
-        when(dateFormat.parse(dateStr)).thenReturn(date);
+        when(dateFormat.parse(dateStr)).thenReturn(apple);
 
         Date actual = superCalls.defineVarFromMocks(dateFormat, dateStr);
 
@@ -60,7 +61,6 @@ public class SuperCallsTest {
 
     @Test
     public void testReturnFromCreate() {
-
         Date actual = superCalls.returnFromCreate();
 
         assertNotNull(actual);
@@ -72,11 +72,11 @@ public class SuperCallsTest {
 
         DateFormat dateFormat = new SimpleDateFormat();
 
-        Date date = dateFormat.parse(dateStr);
+        Date apple = dateFormat.parse(dateStr);
 
         Date actual = superCalls.returnFromCreateAndMock(dateStr);
 
-        assertEquals(date, actual);
+        assertEquals(apple, actual);
     }
 
     @Test

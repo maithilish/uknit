@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Expression;
 
 import com.google.inject.assistedinject.Assisted;
 
@@ -19,26 +19,24 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class Invoke {
 
-    private MethodInvocation mi;
-    // var on which method invoked
-    private IVar callVar;
-    // method return type
-    private Optional<ExpReturnType> expReturnType;
+    private Expression exp; // either mi or superMi
+    private IVar callVar; // var on which method invoked
+    private Optional<ExpReturnType> expReturnType; // method return type
     private Optional<IVar> returnVar;
 
     @Inject
     public Invoke(@Assisted @Nullable final IVar callVar,
             @Assisted final Optional<ExpReturnType> expReturnType,
-            @Assisted final MethodInvocation mi) {
+            @Assisted final Expression exp) {
         this.callVar = callVar;
         this.expReturnType = expReturnType;
-        this.mi = mi;
+        this.exp = exp;
         this.returnVar = Optional.empty();
     }
 
     public boolean isInfer() {
         boolean infer = true;
-        int parentType = mi.getParent().getNodeType();
+        int parentType = exp.getParent().getNodeType();
         switch (parentType) {
         case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
             infer = false;
@@ -72,8 +70,8 @@ public class Invoke {
         return expReturnType;
     }
 
-    public MethodInvocation getMi() {
-        return mi;
+    public Expression getExp() {
+        return exp;
     }
 
     public Optional<IVar> getReturnVar() {
@@ -86,6 +84,6 @@ public class Invoke {
 
     @Override
     public String toString() {
-        return "Invoke [mi=" + mi + "]";
+        return "Invoke [exp=" + exp + "]";
     }
 }

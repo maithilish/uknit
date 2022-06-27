@@ -169,29 +169,33 @@ public class Patchers {
         return exps;
     }
 
-    public boolean patchable(final MethodInvocation mi, final Invoke invoke) {
-        boolean patch = true;
-        if (nodes.is(mi.getParent(), MethodInvocation.class)) {
-            /*
-             * static calls: return Byte.valueOf("100"); replace
-             * date.compareTo(LocalDate.now()) == 1; don't replace
-             */
-
-            if (methods.isStaticCall(mi)) {
-                patch = false;
-            }
-
-            /*
-             * return s2.append(file.getName().toLowerCase()); toLowerCase on
-             * string is real returning real, don't replace it.
-             */
-            Optional<ExpReturnType> ro = invoke.getExpReturnType();
-            if (ro.isPresent()) {
-                boolean returnReal = !ro.get().isMock();
-                IVar var = invoke.getCallVar();
-                boolean varReal = !(nonNull(var) && var.isMock());
-                if (varReal && returnReal) {
+    public boolean patchable(final Invoke invoke) {
+        boolean patch = false;
+        if (nodes.is(invoke.getExp(), MethodInvocation.class)) {
+            patch = true;
+            MethodInvocation mi =
+                    nodes.as(invoke.getExp(), MethodInvocation.class);
+            if (nodes.is(mi.getParent(), MethodInvocation.class)) {
+                /*
+                 * static calls: return Byte.valueOf("100"); replace
+                 * date.compareTo(LocalDate.now()) == 1; don't replace
+                 */
+                if (methods.isStaticCall(mi)) {
                     patch = false;
+                }
+
+                /*
+                 * return s2.append(file.getName().toLowerCase()); toLowerCase
+                 * on string is real returning real, don't replace it.
+                 */
+                Optional<ExpReturnType> ro = invoke.getExpReturnType();
+                if (ro.isPresent()) {
+                    boolean returnReal = !ro.get().isMock();
+                    IVar var = invoke.getCallVar();
+                    boolean varReal = !(nonNull(var) && var.isMock());
+                    if (varReal && returnReal) {
+                        patch = false;
+                    }
                 }
             }
         }

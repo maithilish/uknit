@@ -86,6 +86,10 @@ enum Configuration {
         return props.getProperty(key);
     }
 
+    public String clearProperty(final String key) {
+        return (String) props.remove(key);
+    }
+
     public String getProperty(final String key, final String def) {
         return props.getProperty(key, def);
     }

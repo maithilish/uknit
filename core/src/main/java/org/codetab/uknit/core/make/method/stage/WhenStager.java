@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 
 public class WhenStager {
@@ -30,6 +31,8 @@ public class WhenStager {
     private Methods methods;
     @Inject
     private Patcher patcher;
+    @Inject
+    private Nodes nodes;
 
     public void stageWhen(final Invoke invoke, final IVar var,
             final Heap heap) {
@@ -39,13 +42,17 @@ public class WhenStager {
         if (callVar.isCreated() || !callVar.isMock()) {
             return;
         }
+        // don't stage if not mi
+        if (!nodes.is(invoke.getExp(), MethodInvocation.class)) {
+            return;
+        }
         /*
          * As when replaces anon and lambda with arg matchers and verify
          * replaces it with captures, we need two copies of mi. Source mi is
          * untouched and used to resolve type binding of lambda. The copy
          * doesn't resolve bindings!
          */
-        MethodInvocation mi = invoke.getMi();
+        MethodInvocation mi = nodes.as(invoke.getExp(), MethodInvocation.class);
         MethodInvocation patchedMi = patcher.copyAndPatch(mi, heap);
 
         boolean anonReplaced =

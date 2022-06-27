@@ -54,6 +54,10 @@ public class Configs {
         configuration.setProperty(key, value);
     }
 
+    public String clearProperty(final String key) {
+        return configuration.clearProperty(key);
+    }
+
     public String getFormat(final String key) {
         String value = null;
         switch (key) {

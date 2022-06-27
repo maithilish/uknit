@@ -18,7 +18,6 @@ import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
@@ -44,15 +43,13 @@ public class Patcher {
             Optional<Invoke> o = heap.findInvoke(exp);
             if (o.isPresent() && o.get().getReturnVar().isPresent()) {
                 Invoke invoke = o.get();
-                MethodInvocation mi = invoke.getMi();
-
-                boolean patchable = patchers.patchable(mi, invoke);
+                boolean patchable = patchers.patchable(invoke);
                 if (patchable) {
                     // if when returns inferVar, then replace
                     String name = invoke.getReturnVar().get().getName();
                     int argIndex = patchers.getArgIndex(node, exp);
-                    Patch patch = modelFactory.createPatch(node, invoke.getMi(),
-                            name, argIndex);
+                    Patch patch = modelFactory.createPatch(node,
+                            invoke.getExp(), name, argIndex);
                     heap.getPatches().add(patch);
                 }
             }

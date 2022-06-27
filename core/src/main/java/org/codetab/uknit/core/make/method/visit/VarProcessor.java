@@ -16,7 +16,9 @@ import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.InferVar;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Mocks;
+import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -33,6 +35,8 @@ public class VarProcessor {
     private Mocks mocks;
     @Inject
     private Nodes nodes;
+    @Inject
+    private NodeFactory nodeFactory;
     @Inject
     private VarStager varStager;
     @Inject
@@ -70,30 +74,40 @@ public class VarProcessor {
                     internalMethod, heap);
             varMap.put(localVar, vd);
 
-            /*
-             * if invoke for initializer is present and return var name is same
-             * as local var then disable the existing return var using enforce
-             * field and replace return var with local var.
-             */
             Expression initializerExp = vd.getInitializer();
             if (nonNull(initializerExp)) {
-                heap.findInvoke(initializerExp).ifPresent(invoke -> {
-                    invoke.getReturnVar().ifPresent(v -> {
-                        if (v.getName().equals(name)) {
-                            v.setEnforce(Optional.of(false));
-                        }
-                    });
-                    invoke.setReturnVar(Optional.of(localVar));
-                });
-                /*
-                 * if expVar is empty stage new one and/else set left var.
-                 */
+                // if expVar is empty stage new one
                 Optional<ExpVar> expVar = heap.findByRightExp(initializerExp);
                 if (expVar.isEmpty()) {
+                    Optional<Invoke> invoke = heap.findInvoke(initializerExp);
+                    if (invoke.isPresent()
+                            && invoke.get().getReturnVar().isPresent()) {
+                        IVar retVar = invoke.get().getReturnVar().get();
+                        if (name.equals(retVar.getName())) {
+                            /*
+                             * if invoke for initializer is present and return
+                             * var name is same as local var then disable the
+                             * existing return var using enforce field.
+                             */
+                            retVar.setEnforce(Optional.of(false));
+                        } else {
+                            /*
+                             * when names differs use return var name as
+                             * initializer. Ex: getBar() is assigned to foo
+                             *
+                             * Foo foo = getBar() => Foo foo = bar
+                             */
+                            initializerExp =
+                                    nodeFactory.createName(retVar.getName());
+                        }
+                    }
                     expVar = Optional.of(varExpStager.stage(vd.getName(),
                             initializerExp, heap));
                 }
-                expVar.get().setLeftVar(localVar);
+
+                if (expVar.isPresent()) {
+                    expVar.get().setLeftVar(localVar);
+                }
             }
         }
         return varMap;

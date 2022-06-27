@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.node;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.util.Optional;
 
@@ -24,23 +25,32 @@ public class Resolver {
     @Inject
     private Nodes nodes;
 
-    public Optional<ExpReturnType> getExpReturnType(final MethodInvocation mi) {
-        IMethodBinding methodBinding = mi.resolveMethodBinding();
-        ITypeBinding typeBinding = methodBinding.getReturnType();
+    public Optional<ExpReturnType> getExpReturnType(final Expression exp) {
+        IMethodBinding methodBinding = null;
+        if (nodes.is(exp, MethodInvocation.class)) {
+            methodBinding = nodes.as(exp, MethodInvocation.class)
+                    .resolveMethodBinding();
+        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
+            methodBinding = nodes.as(exp, SuperMethodInvocation.class)
+                    .resolveMethodBinding();
+        }
         ExpReturnType methodReturnType = null;
-        try {
-            Optional<Type> type =
-                    Optional.of(types.getType(typeBinding, mi.getAST()));
-            if (type.isPresent()) {
-                boolean mock = mocks.isMockable(type.get());
-                if (typeBinding.isEnum()) {
-                    mock = false;
+        if (nonNull(methodBinding)) {
+            ITypeBinding typeBinding = methodBinding.getReturnType();
+            try {
+                Optional<Type> type =
+                        Optional.of(types.getType(typeBinding, exp.getAST()));
+                if (type.isPresent()) {
+                    boolean mock = mocks.isMockable(type.get());
+                    if (typeBinding.isEnum()) {
+                        mock = false;
+                    }
+                    // TODO - move to model factory
+                    methodReturnType =
+                            new ExpReturnType(type.get(), mock, typeBinding);
                 }
-                // TODO - move to model factory
-                methodReturnType =
-                        new ExpReturnType(type.get(), mock, typeBinding);
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
         }
         return Optional.ofNullable(methodReturnType);
     }

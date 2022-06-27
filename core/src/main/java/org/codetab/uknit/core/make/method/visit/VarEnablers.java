@@ -93,6 +93,8 @@ public class VarEnablers {
                 if (nodes.is(e, SimpleName.class)) {
                     names.add(nodes.getName(e));
                 }
+            } else if (nodes.is(exp, SimpleName.class)) {
+                names.add(nodes.getName(exp));
             }
             for (String name : names) {
                 heap.findVar(name).setEnable(true);

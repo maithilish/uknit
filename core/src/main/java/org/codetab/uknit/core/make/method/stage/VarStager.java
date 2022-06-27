@@ -166,7 +166,7 @@ public class VarStager {
     }
 
     public Optional<IVar> stageInferVar(final Invoke invoke, final Heap heap) {
-        LOG.debug("mi node: {}", invoke.getMi());
+        LOG.debug("mi node: {}", invoke.getExp());
         Optional<ExpReturnType> expReturnType = invoke.getExpReturnType();
         InferVar inferVar = null;
         if (expReturnType.isPresent()) {
@@ -181,7 +181,7 @@ public class VarStager {
             boolean stageable = false;
             if (mocks.isInferVarStageable(isVarMock, isReturnMock)) {
                 stageable = true;
-            } else if (methods.isStaticCall(invoke.getMi())) {
+            } else if (methods.isStaticCall(invoke.getExp())) {
                 /*
                  * Byte.valueOf("100")
                  */
@@ -205,7 +205,7 @@ public class VarStager {
         } else {
             throw new CodeException(
                     spaceit("unable to create inferred var for mi",
-                            invoke.getMi().toString()));
+                            invoke.getExp().toString()));
         }
     }
 

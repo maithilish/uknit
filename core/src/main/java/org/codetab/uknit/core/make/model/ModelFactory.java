@@ -32,7 +32,7 @@ public interface ModelFactory {
             MethodDeclaration methodDecl);
 
     Invoke createInvoke(IVar var, Optional<ExpReturnType> expReturnType,
-            MethodInvocation exp);
+            Expression exp);
 
     ExpVar createVarExp(@Assisted("left") Expression leftExp,
             @Assisted("right") Expression rightExp);

@@ -73,7 +73,7 @@ public class InvokeProcessor {
         Invoke invoke = modelFactory.createInvoke(var, expReturnType, mi);
 
         if (isNull(patchedExp)) {
-            // mi may be static or internal call
+            // mi may be static or internal call - process internal, not static
             if (!methods.isStaticCall(mi)) {
                 IMethodBinding methodBinding =
                         resolver.resolveMethodBinding(mi);
@@ -92,13 +92,18 @@ public class InvokeProcessor {
      * @param heap
      * @return IVar returnVar
      */
-    public Optional<IVar> process(final SuperMethodInvocation smi,
-            final Heap heap) {
+    public Invoke process(final SuperMethodInvocation smi, final Heap heap) {
+        Optional<ExpReturnType> expReturnType = resolver.getExpReturnType(smi);
+        IVar var = null; // no call var
+        Invoke invoke = modelFactory.createInvoke(var, expReturnType, smi);
+
         IMethodBinding methodBinding = resolver.resolveMethodBinding(smi);
         List<Expression> arguments = methods.getArguments(smi);
         Optional<IVar> retVar =
                 internalCallProcessor.process(methodBinding, arguments, heap);
-        return retVar;
+        invoke.setReturnVar(retVar);
+
+        return invoke;
     }
 
     public Optional<IVar> stageInferVar(final Invoke invoke, final Heap heap) {
@@ -106,7 +111,7 @@ public class InvokeProcessor {
         invoke.setReturnVar(inferVar);
 
         if (inferVar.isPresent()) {
-            ExpVar varExp = varExpStager.stage(null, invoke.getMi(), heap);
+            ExpVar varExp = varExpStager.stage(null, invoke.getExp(), heap);
             varExp.setLeftVar(inferVar.get());
         }
 
@@ -162,23 +167,11 @@ public class InvokeProcessor {
      * @param heap
      */
     public void stageExpVar(final Invoke invoke, final Heap heap) {
-        MethodInvocation mi = invoke.getMi();
-        if (heap.findByRightExp(mi).isEmpty()) {
-            ExpVar varExp = varExpStager.stage(null, mi, heap);
+        Expression exp = invoke.getExp();
+        if (heap.findByRightExp(exp).isEmpty()) {
+            ExpVar varExp = varExpStager.stage(null, exp, heap);
             invoke.getReturnVar().ifPresent(v -> varExp.setLeftVar(v));
         }
-    }
-
-    /**
-     * Stage expVar for SuperMethodInvocation.
-     * @param node
-     * @param retVar
-     * @param heap
-     */
-    public void stageExpVar(final SuperMethodInvocation node, final IVar retVar,
-            final Heap heap) {
-        ExpVar varExp = varExpStager.stage(null, node, heap);
-        varExp.setLeftVar(retVar);
     }
 
     /**
@@ -246,7 +239,7 @@ public class InvokeProcessor {
      */
     public boolean nonStubable(final Invoke invoke) {
         int modifier =
-                resolver.resolveMethodBinding(invoke.getMi()).getModifiers();
+                resolver.resolveMethodBinding(invoke.getExp()).getModifiers();
         return resolver.hasModifier(modifier, Modifier.FINAL);
     }
 }

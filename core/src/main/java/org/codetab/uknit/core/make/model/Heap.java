@@ -127,18 +127,18 @@ public class Heap {
     }
 
     public Optional<Invoke> findInvoke(final Expression exp) {
-        return invokes.stream().filter(n -> n.getMi().equals(exp)).findFirst();
+        return invokes.stream().filter(i -> i.getExp().equals(exp)).findFirst();
     }
 
     public Optional<Invoke> findInvoke(final IVar var) {
-        return invokes.stream().filter(n -> {
-            return n.getCallVar().getName().equals(var.getName());
+        return invokes.stream().filter(i -> {
+            return i.getCallVar().getName().equals(var.getName());
         }).findFirst();
     }
 
     public Optional<ExpReturnType> findExpReturnType(final Expression exp) {
-        Optional<Invoke> invoke =
-                invokes.stream().filter(n -> n.getMi().equals(exp)).findFirst();
+        Optional<Invoke> invoke = invokes.stream()
+                .filter(i -> i.getExp().equals(exp)).findFirst();
         if (invoke.isPresent()) {
             return invoke.get().getExpReturnType();
         } else {
@@ -147,8 +147,8 @@ public class Heap {
     }
 
     public Optional<Invoke> findInvokeByInferVar(final IVar var) {
-        return invokes.stream().filter(n -> {
-            Optional<IVar> v = n.getReturnVar();
+        return invokes.stream().filter(i -> {
+            Optional<IVar> v = i.getReturnVar();
             if (v.isPresent()) {
                 return v.get().getName().equals(var.getName());
             } else {

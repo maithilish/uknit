@@ -9,14 +9,22 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
-public class SuperCallsIT extends ITBase {
+public class MultiGetRealIT extends ITBase {
 
     @Test
     public void test() throws IOException {
 
         configure();
 
-        generateTestClass();
+        addTransientConfig("uknit.createInstance.PayloadReal",
+                "new PayloadReal();");
+        addTransientConfig("uknit.createInstance.InfoReal", "new InfoReal();");
+
+        try {
+            generateTestClass();
+        } finally {
+            restoreTransientConfigs();
+        }
 
         File actualFile = getActualFile();
         File expectedFile = getExpectedFile();

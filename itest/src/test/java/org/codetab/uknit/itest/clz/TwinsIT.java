@@ -19,29 +19,37 @@ public class TwinsIT extends ITBase {
 
         configure(testCaseDir, className);
 
-        generateTestClass();
+        try {
+            generateTestClass();
 
-        addConfig("uknit.expectedFile", "TwinsFooTest.exp");
+            addTransientConfig("uknit.expectedFile", "TwinsFooTest.exp");
 
-        File actualFile = getActualFile();
-        File expectedFile = getExpectedFile();
+            File actualFile = getActualFile();
+            File expectedFile = getExpectedFile();
 
-        assertThat(actualFile).exists();
-        assertThat(expectedFile).exists();
+            assertThat(actualFile).exists();
+            assertThat(expectedFile).exists();
 
-        assertThat(contentOf(actualFile)).isEqualTo(contentOf(expectedFile));
+            assertThat(contentOf(actualFile))
+                    .isEqualTo(contentOf(expectedFile));
 
-        className = "TwinsBar";
+            className = "TwinsBar";
 
-        configure(testCaseDir, className);
+            configure(testCaseDir, className);
 
-        addConfig("uknit.expectedFile", "TwinsBarTest.exp");
-        actualFile = getActualFile();
-        expectedFile = getExpectedFile();
+            restoreTransientConfigs();
+            addTransientConfig("uknit.expectedFile", "TwinsBarTest.exp");
 
-        assertThat(actualFile).exists();
-        assertThat(expectedFile).exists();
+            actualFile = getActualFile();
+            expectedFile = getExpectedFile();
 
-        assertThat(contentOf(actualFile)).isEqualTo(contentOf(expectedFile));
+            assertThat(actualFile).exists();
+            assertThat(expectedFile).exists();
+
+            assertThat(contentOf(actualFile))
+                    .isEqualTo(contentOf(expectedFile));
+        } finally {
+            restoreTransientConfigs();
+        }
     }
 }

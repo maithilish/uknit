@@ -86,7 +86,12 @@ public class Methods {
         }
     }
 
-    public boolean isStaticCall(final MethodInvocation mi) {
+    public boolean isStaticCall(final Expression expression) {
+        if (!nodes.is(expression, MethodInvocation.class)) {
+            return false;
+        }
+
+        MethodInvocation mi = nodes.as(expression, MethodInvocation.class);
         Expression exp = mi.getExpression();
         // method of this object
         if (isNull(exp) || nodes.is(exp, SimpleName.class)) {

@@ -16,20 +16,7 @@ public class SuperVsInternalCallIT extends ITBase {
 
         configure();
 
-        String listKey = "uknit.createInstance.List";
-        String listConfig = getConfig(listKey);
-        addConfig(listKey, "mock"); // mock the list
-
-        String streamKey = "uknit.createInstance.Stream";
-        String streamConfig = getConfig(streamKey);
-        addConfig(streamKey, "mock"); // mock the stream
-
-        try {
-            generateTestClass();
-        } finally {
-            addConfig(listKey, listConfig);
-            addConfig(streamKey, streamConfig);
-        }
+        generateTestClass();
 
         File actualFile = getActualFile();
         File expectedFile = getExpectedFile();

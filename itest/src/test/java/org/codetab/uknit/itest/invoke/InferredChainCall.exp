@@ -16,9 +16,9 @@ public class InferredChainCallTest {
     @Test
     public void testInfer() {
         Pets pets = Mockito.mock(Pets.class);
-        Map<String, List<Pet>> apple = new HashMap<>();
+        Map<String, List<Pet>> map = new HashMap<>();
 
-        when(pets.getPets()).thenReturn(apple);
+        when(pets.getPets()).thenReturn(map);
         inferredChainCall.infer(pets);
         fail("unable to assert, STEPIN");
     }
@@ -26,10 +26,10 @@ public class InferredChainCallTest {
     @Test
     public void testInferAndReturn() {
         Pets pets = Mockito.mock(Pets.class);
-        Map<String, List<Pet>> apple = new HashMap<>();
+        Map<String, List<Pet>> map = new HashMap<>();
         List<Pet> dogs = new ArrayList<>();
 
-        when(pets.getPets()).thenReturn(apple);
+        when(pets.getPets()).thenReturn(map);
 
         List<Pet> actual = inferredChainCall.inferAndReturn(pets);
 

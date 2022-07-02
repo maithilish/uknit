@@ -31,8 +31,8 @@ public class AnonymousClassTest {
 
         assertArrayEquals(hiddenFiles, actual);
 
-        ArgumentCaptor<FileFilter> argcA = ArgumentCaptor.forClass(FileFilter.class);
-        verify(file).listFiles(argcA.capture());
+        ArgumentCaptor<FileFilter> captorA = ArgumentCaptor.forClass(FileFilter.class);
+        verify(file).listFiles(captorA.capture());
     }
 
     @Test
@@ -52,8 +52,8 @@ public class AnonymousClassTest {
     public void testAnonymousInVerify() {
         File file = Mockito.mock(File.class);
         anonymousClass.anonymousInVerify(file);
-        ArgumentCaptor<FileFilter> argcA = ArgumentCaptor.forClass(FileFilter.class);
+        ArgumentCaptor<FileFilter> captorA = ArgumentCaptor.forClass(FileFilter.class);
 
-        verify(file).listFiles(argcA.capture());
+        verify(file).listFiles(captorA.capture());
     }
 }

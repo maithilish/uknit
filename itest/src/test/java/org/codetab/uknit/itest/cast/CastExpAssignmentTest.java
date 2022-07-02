@@ -46,9 +46,9 @@ public class CastExpAssignmentTest {
     @Test
     public void testAssignToArray() {
         Pets pets = Mockito.mock(Pets.class);
-        Dog grape = Mockito.mock(Dog.class);
+        Dog apple = Mockito.mock(Dog.class);
 
-        when(pets.getPet("foo")).thenReturn(grape);
+        when(pets.getPet("foo")).thenReturn(apple);
         castExpAssignment.assignToArray(pets);
     }
 
@@ -56,9 +56,9 @@ public class CastExpAssignmentTest {
     public void testAssignToParameterArray() {
         Pets pets = Mockito.mock(Pets.class);
         Dog[] dogs = new Dog[2];
-        Dog grape = Mockito.mock(Dog.class);
+        Dog apple = Mockito.mock(Dog.class);
 
-        when(pets.getPet("foo")).thenReturn(grape);
+        when(pets.getPet("foo")).thenReturn(apple);
         castExpAssignment.assignToParameterArray(pets, dogs);
     }
 }

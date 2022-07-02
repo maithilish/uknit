@@ -22,13 +22,13 @@ public class CheckPersonTest {
 
     @Test
     public void testCheck() {
-        Sex apple = Person.Sex.MALE;
-        int grape = 18;
-        int orange = 25;
         Person p = Mockito.mock(Person.class);
+        Sex sex = Person.Sex.MALE;
+        int grape = 18;
+        int mango = 25;
 
-        when(p.getGender()).thenReturn(apple);
-        when(p.getAge()).thenReturn(grape).thenReturn(orange);
+        when(p.getGender()).thenReturn(sex);
+        when(p.getAge()).thenReturn(grape).thenReturn(mango);
 
         boolean actual = checkPerson.check(p);
 

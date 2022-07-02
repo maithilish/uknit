@@ -31,12 +31,12 @@ public class GenericsTest {
 
     @Test
     public void testInferInArg() {
-        Map<String, List<String>> apple = new HashMap<>();
+        Map<String, List<String>> map = new HashMap<>();
 
-        when(contacts.getContactsMap("foo")).thenReturn(apple);
+        when(contacts.getContactsMap("foo")).thenReturn(map);
         generics.inferInArg();
 
-        verify(contactsData).setContactsMap(apple);
+        verify(contactsData).setContactsMap(map);
     }
 
     @Test

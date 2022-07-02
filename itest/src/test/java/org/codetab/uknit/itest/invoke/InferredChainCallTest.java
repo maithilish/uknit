@@ -28,20 +28,20 @@ public class InferredChainCallTest {
     @Test
     public void testInfer() {
         Pets pets = Mockito.mock(Pets.class);
-        Map<String, List<Pet>> apple = new HashMap<>();
+        Map<String, List<Pet>> map = new HashMap<>();
 
-        when(pets.getPets()).thenReturn(apple);
+        when(pets.getPets()).thenReturn(map);
         inferredChainCall.infer(pets);
     }
 
     @Test
     public void testInferAndReturn() {
         Pets pets = Mockito.mock(Pets.class);
-        Map<String, List<Pet>> apple = new HashMap<>();
+        Map<String, List<Pet>> map = new HashMap<>();
         List<Pet> dogs = new ArrayList<>();
-        apple.put("dog", dogs);
+        map.put("dog", dogs);
 
-        when(pets.getPets()).thenReturn(apple);
+        when(pets.getPets()).thenReturn(map);
 
         List<Pet> actual = inferredChainCall.inferAndReturn(pets);
 

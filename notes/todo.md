@@ -125,7 +125,7 @@ The keyword this should be replaced with SUT. See cluster.hz.JobStore.close() me
 
 ## Multiple Tests for Branches
 
-See notes in tech-doc folder. For test cases refer cluster.hz.JobStore.
+See notes in tech-doc folder. For test cases refer cluster.hz.JobStore, step.mediator.StateFliper
 
 ## Abstract Class
 
@@ -138,3 +138,8 @@ Create infer var, return and assert. See QNameIT.
 	public String qNameInCast(final Point point) {
         return (String) point.attchment;
     }	
+
+## Field and Parameter Same Name
+
+Rename parameter name with index if field exists with same name. See superclass.MultiGetMock.getMulti(final Payload payload) method.
+    

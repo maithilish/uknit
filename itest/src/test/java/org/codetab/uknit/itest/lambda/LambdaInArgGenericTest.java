@@ -37,14 +37,14 @@ public class LambdaInArgGenericTest {
 
         assertEquals(kiwi, actual);
 
-        ArgumentCaptor<OperationB<Integer>> argcA =
+        ArgumentCaptor<OperationB<Integer>> captorA =
                 ArgumentCaptor.forClass(OperationB.class);
-        ArgumentCaptor<OperationB<Integer>> argcB =
+        ArgumentCaptor<OperationB<Integer>> captorB =
                 ArgumentCaptor.forClass(OperationB.class);
-        ArgumentCaptor<OperationB<Integer>> argcC =
+        ArgumentCaptor<OperationB<Integer>> captorC =
                 ArgumentCaptor.forClass(OperationB.class);
-        verify(calcB).op(eq(1), eq(2), argcA.capture());
-        verify(calcB).op(eq(8), eq(4), argcB.capture());
-        verify(calcB).op(eq(6), eq(3), argcC.capture());
+        verify(calcB).op(eq(1), eq(2), captorA.capture());
+        verify(calcB).op(eq(8), eq(4), captorB.capture());
+        verify(calcB).op(eq(6), eq(3), captorC.capture());
     }
 }

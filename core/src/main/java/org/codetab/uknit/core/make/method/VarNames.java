@@ -1,16 +1,21 @@
 package org.codetab.uknit.core.make.method;
 
+import static java.util.Objects.isNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.util.StringUtils;
+
+import com.google.common.base.CaseFormat;
 
 @Singleton
 public class VarNames {
@@ -37,18 +42,18 @@ public class VarNames {
 
     public void setup() {
         msIndex = 0;
-        String value = configs.getConfig("uknit.createInstance.string.value",
-                "foo,bar,baz,qux,quux,corge,grault,garply,waldo,fred,plugh,xyzzy,thud");
+        String value = configs.getNames("uknit.names.string.value",
+                "Foo,Bar,Baz,Qux,Quux,Corge,Grault,Garply,Waldo,Fred,Plugh,Xyzzy,Thud");
         metaSyntantics = value.split(",");
 
         ivIndex = 0;
-        value = configs.getConfig("uknit.inferVar.name",
-                "apple,grape,orange,kiwi,mango,banana,cherry,apricot,peach,fig,plum,lychee,melon");
+        value = configs.getNames("uknit.names.inferVar",
+                "apple,grape,orange,kiwi,mango,banana,cherry,apricot,peach,fig,plum,lychee");
         inferredVars = value.split(",");
 
         capIndex = 0;
-        value = configs.getConfig("uknit.anonymous.class.capture.name",
-                "capA,capB,capC,capD,capE,capF,capG,capH,capI,capK,capL");
+        value = configs.getNames("uknit.names.anonymous.class.capture",
+                "captorA,captorB,captorC,captorD,captorE,captorF,captorG,captorH,captorI,captorK,captorL");
         captureVars = value.split(",");
     }
 
@@ -59,12 +64,36 @@ public class VarNames {
         renameIndex = 1;
     }
 
-    public String getInferVarName() {
-        if (ivIndex < inferredVars.length) {
-            return inferredVars[ivIndex++];
-        } else {
-            return stringUtils.generateString(RANDOM_STR_LEN);
+    public String getInferVarName(final Optional<String> typeName,
+            final Heap heap) {
+
+        String name = null;
+
+        // names from type name - date, date2, date3 etc.,
+        if (typeName.isPresent()) {
+            String typeCamelName = CaseFormat.UPPER_CAMEL
+                    .to(CaseFormat.LOWER_CAMEL, typeName.get());
+            String configKey = String.join(".", "uknit.inferVar.name.useType",
+                    typeName.get());
+            boolean useTypeName = configs.getConfig(configKey, true);
+            if (useTypeName) {
+                // if alias is defined for type use it, else use typeCamelName
+                configKey = String.join(".", "uknit.inferVar.name.alias",
+                        typeName.get());
+                typeCamelName = configs.getConfig(configKey, typeCamelName);
+                name = heap.getIndexedVar(typeCamelName);
+            }
         }
+
+        // names from uknit.names.inferVar - apple, grape etc.,
+        if (isNull(name)) {
+            if (ivIndex < inferredVars.length) {
+                name = inferredVars[ivIndex++];
+            } else {
+                name = stringUtils.generateString(RANDOM_STR_LEN);
+            }
+        }
+        return name;
     }
 
     public String getCaptureVarName() {

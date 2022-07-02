@@ -14,37 +14,37 @@ public class BlendVarTest {
     @Test
     public void testInvokeInternalMock() {
         AFactory aFactory = Mockito.mock(AFactory.class);
-        Date apple = Mockito.mock(Date.class);
+        Date date = Mockito.mock(Date.class);
 
-        when(aFactory.getDate()).thenReturn(apple);
+        when(aFactory.getDate()).thenReturn(date);
 
         Date actual = blendVar.invokeInternalMock(aFactory);
 
-        assertSame(apple, actual);
+        assertSame(date, actual);
     }
 
     @Test
     public void testInvokeFromSuperMock() {
         AFactory aFactory = Mockito.mock(AFactory.class);
-        Date apple = Mockito.mock(Date.class);
+        Date date = Mockito.mock(Date.class);
 
-        when(aFactory.getDate()).thenReturn(apple);
+        when(aFactory.getDate()).thenReturn(date);
 
         Date actual = blendVar.invokeFromSuperMock(aFactory);
 
-        assertSame(apple, actual);
+        assertSame(date, actual);
     }
 
     @Test
     public void testInvokeWithSuperMock() {
         AFactory aFactory = Mockito.mock(AFactory.class);
-        Date apple = Mockito.mock(Date.class);
+        Date date = Mockito.mock(Date.class);
 
-        when(aFactory.getDate()).thenReturn(apple);
+        when(aFactory.getDate()).thenReturn(date);
 
         Date actual = blendVar.invokeWithSuperMock(aFactory);
 
-        assertSame(apple, actual);
+        assertSame(date, actual);
     }
 
     @Test

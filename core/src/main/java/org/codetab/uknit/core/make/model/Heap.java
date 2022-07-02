@@ -330,4 +330,37 @@ public class Heap {
     public boolean isAsserted() {
         return asserted;
     }
+
+    /**
+     * Search for named var is var list and if exist then return next available
+     * var name. Search is across all types of vars such as fields, parameters,
+     * local, infer vars etc.,
+     * <p>
+     * For example: if name is date and var named date doesn't exists then
+     * returns date else returns date2. If also date2 exists then return date3
+     * and so on. It never returns date1 as index 1 is skipped.
+     * @param name
+     * @return
+     */
+    public String getIndexedVar(final String name) {
+        /*
+         * first name, foo, is without index, rest foo2 foo3 ..., index starts
+         * with 1 but 1 itself is ignored
+         */
+        int index = 1;
+        List<IVar> varList =
+                vars.stream().filter(v -> v.getName().startsWith(name))
+                        .collect(Collectors.toList());
+        String varName = name;
+        while (true) {
+            final String n = varName;
+            if (varList.stream().anyMatch(v -> v.getName().equals(n))) {
+                index++;
+                varName = name.concat(String.valueOf(index));
+            } else {
+                break;
+            }
+        }
+        return varName;
+    }
 }

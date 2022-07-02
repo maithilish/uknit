@@ -26,12 +26,12 @@ public class AnonymousClassAbstractTest {
         anonymousClassAbstract.add(calc);
 
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<Addable<Integer>> argcA =
+        ArgumentCaptor<Addable<Integer>> captorA =
                 ArgumentCaptor.forClass(Addable.class);
 
-        verify(calc).op(eq(1), eq(2), argcA.capture());
+        verify(calc).op(eq(1), eq(2), captorA.capture());
 
-        Addable<Integer> v = argcA.getValue();
+        Addable<Integer> v = captorA.getValue();
         assertThat(5).isEqualTo(v.add(2, 3));
     }
 }

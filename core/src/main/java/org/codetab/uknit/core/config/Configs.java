@@ -54,6 +54,15 @@ public class Configs {
         configuration.setProperty(key, value);
     }
 
+    public String getNames(final String key, final String def) {
+        String value = configuration.getNames(key);
+        if (isNull(value)) {
+            return def;
+        } else {
+            return value;
+        }
+    }
+
     public String clearProperty(final String key) {
         return configuration.clearProperty(key);
     }

@@ -46,21 +46,21 @@ public class MockStreamTest {
     @Test
     public void testStreamCountList() {
         List<String> strings = Mockito.mock(List.class);
-        Stream<String> apple = Mockito.mock(Stream.class);
-        Stream<String> orange = Mockito.mock(Stream.class);
+        Stream<String> stream = Mockito.mock(Stream.class);
+        Stream<String> stream2 = Mockito.mock(Stream.class);
         long count = 1L;
 
-        when(strings.stream()).thenReturn(apple);
-        when(apple.filter(any(Predicate.class))).thenReturn(orange);
-        when(orange.count()).thenReturn(count);
+        when(strings.stream()).thenReturn(stream);
+        when(stream.filter(any(Predicate.class))).thenReturn(stream2);
+        when(stream2.count()).thenReturn(count);
 
         long actual = mockStream.streamCount(strings);
 
         assertEquals(count, actual);
 
-        ArgumentCaptor<Predicate<? super String>> argcA =
+        ArgumentCaptor<Predicate<? super String>> captorA =
                 ArgumentCaptor.forClass(Predicate.class);
-        verify(apple).filter(argcA.capture());
+        verify(stream).filter(captorA.capture());
     }
 
     @Test
@@ -108,15 +108,15 @@ public class MockStreamTest {
     public void testFindLongTracks() {
         List<Album> albums = Mockito.mock(List.class);
         Set<String> trackNames = new HashSet<>();
-        Stream<Album> apple = Mockito.mock(Stream.class);
+        Stream<Album> stream = Mockito.mock(Stream.class);
 
-        when(albums.stream()).thenReturn(apple);
+        when(albums.stream()).thenReturn(stream);
 
         Set<String> actual = mockStream.findLongTracks(albums);
 
         assertEquals(trackNames, actual);
-        ArgumentCaptor<Consumer<? super Album>> argcA =
+        ArgumentCaptor<Consumer<? super Album>> captorA =
                 ArgumentCaptor.forClass(Consumer.class);
-        verify(apple).forEach(argcA.capture());
+        verify(stream).forEach(captorA.capture());
     }
 }

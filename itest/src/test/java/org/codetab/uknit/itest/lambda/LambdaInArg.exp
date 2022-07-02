@@ -22,11 +22,11 @@ public class LambdaInArgTest {
 
         assertEquals(apple, actual);
 
-        ArgumentCaptor<OperationA> argcA = ArgumentCaptor.forClass(OperationA.class);
-        ArgumentCaptor<OperationA> argcB = ArgumentCaptor.forClass(OperationA.class);
-        ArgumentCaptor<OperationA> argcC = ArgumentCaptor.forClass(OperationA.class);
-        verify(calcA).op(1, 2, argcA.capture());
-        verify(calcA).op(8, 4, argcB.capture());
-        verify(calcA).op(6, 3, argcC.capture());
+        ArgumentCaptor<OperationA> captorA = ArgumentCaptor.forClass(OperationA.class);
+        ArgumentCaptor<OperationA> captorB = ArgumentCaptor.forClass(OperationA.class);
+        ArgumentCaptor<OperationA> captorC = ArgumentCaptor.forClass(OperationA.class);
+        verify(calcA).op(1, 2, captorA.capture());
+        verify(calcA).op(8, 4, captorB.capture());
+        verify(calcA).op(6, 3, captorC.capture());
     }
 }

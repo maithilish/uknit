@@ -58,33 +58,33 @@ public class CallInternalWithInternalArgTest {
     @Test
     public void testMockDiffNameC() {
         Instant instant = Mockito.mock(Instant.class);
-        Instant apple = Mockito.mock(Instant.class);
-        Instant grape = Mockito.mock(Instant.class);
-        Instant orange = Mockito.mock(Instant.class);
+        Instant instant2 = Mockito.mock(Instant.class);
+        Instant instant3 = Mockito.mock(Instant.class);
+        Instant instant4 = Mockito.mock(Instant.class);
 
-        when(instant.minusMillis(1)).thenReturn(apple);
-        when(apple.minusMillis(2)).thenReturn(grape);
-        when(grape.minusMillis(3)).thenReturn(orange);
+        when(instant.minusMillis(1)).thenReturn(instant2);
+        when(instant2.minusMillis(2)).thenReturn(instant3);
+        when(instant3.minusMillis(3)).thenReturn(instant4);
 
         Instant actual = callInternalWithInternalArg.mockDiffNameC(instant);
 
-        assertSame(orange, actual);
+        assertSame(instant4, actual);
     }
 
     @Test
     public void testMockSameNameD() {
         Instant instant = Mockito.mock(Instant.class);
-        Instant apple = Mockito.mock(Instant.class);
-        Instant grape = Mockito.mock(Instant.class);
-        Instant orange = Mockito.mock(Instant.class);
+        Instant instant2 = Mockito.mock(Instant.class);
+        Instant instant3 = Mockito.mock(Instant.class);
+        Instant instant4 = Mockito.mock(Instant.class);
 
-        when(instant.minusMillis(4)).thenReturn(apple);
-        when(apple.minusMillis(5)).thenReturn(grape);
-        when(grape.minusMillis(6)).thenReturn(orange);
+        when(instant.minusMillis(4)).thenReturn(instant2);
+        when(instant2.minusMillis(5)).thenReturn(instant3);
+        when(instant3.minusMillis(6)).thenReturn(instant4);
 
         Instant actual = callInternalWithInternalArg.mockSameNameD(instant);
 
-        assertSame(orange, actual);
+        assertSame(instant4, actual);
     }
 
     @Test

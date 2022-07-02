@@ -25,6 +25,8 @@ enum Configuration {
 
     private Properties knowTypes;
 
+    private Properties names;
+
     Configuration() {
         try {
             defaults = new Properties();
@@ -61,6 +63,9 @@ enum Configuration {
                     .getProperty("uknit.profile.test.framework", "junit5"));
             props.putAll(testFrameworkProps);
 
+            names = new Properties();
+            names.load(Configuration.class.getClassLoader()
+                    .getResourceAsStream("names.properties"));
         } catch (Exception e) {
             System.out.println("properties file not found, " + e);
             System.exit(0);
@@ -100,5 +105,9 @@ enum Configuration {
 
     public String getKnownTypeFqn(final String clsName) {
         return knowTypes.getProperty(clsName);
+    }
+
+    public String getNames(final String key) {
+        return names.getProperty(key);
     }
 }

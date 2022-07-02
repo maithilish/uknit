@@ -29,16 +29,16 @@ public class InferredVarTest {
         StringBuilder s2 = Mockito.mock(StringBuilder.class);
         File file = Mockito.mock(File.class);
         String apple = "Foo";
-        StringBuilder orange = Mockito.mock(StringBuilder.class);
-        StringBuilder kiwi = Mockito.mock(StringBuilder.class);
+        StringBuilder stringBuilder = Mockito.mock(StringBuilder.class);
+        StringBuilder stringBuilder2 = Mockito.mock(StringBuilder.class);
 
         when(file.getName()).thenReturn(apple);
-        when(s2.append(apple.toLowerCase())).thenReturn(orange);
-        when(s1.append(orange)).thenReturn(kiwi);
+        when(s2.append(apple.toLowerCase())).thenReturn(stringBuilder);
+        when(s1.append(stringBuilder)).thenReturn(stringBuilder2);
 
         StringBuilder actual = inferredVar.chainedCall(s1, s2, file);
 
-        assertSame(kiwi, actual);
+        assertSame(stringBuilder2, actual);
     }
 
     @Test

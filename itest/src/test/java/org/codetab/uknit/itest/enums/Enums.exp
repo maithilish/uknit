@@ -15,11 +15,11 @@ public class EnumsTest {
     @Test
     public void testQualifiedName() {
         Account a = Mockito.mock(Account.class);
-        Type apple = Type.SAVINGS;
+        Type type = Type.SAVINGS;
 
         Type actual = enums.qualifiedName(a);
 
-        assertEquals(apple, actual);
+        assertEquals(type, actual);
     }
 
     @Test
@@ -35,13 +35,13 @@ public class EnumsTest {
     @Test
     public void testMi() {
         Account a = Mockito.mock(Account.class);
-        Type apple = Account.Type.OVERDRAFT;
+        Type type = Account.Type.OVERDRAFT;
 
-        when(a.getType()).thenReturn(apple);
+        when(a.getType()).thenReturn(type);
 
         Type actual = enums.mi(a);
 
-        assertEquals(apple, actual);
+        assertEquals(type, actual);
     }
 
     @Test

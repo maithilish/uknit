@@ -18,13 +18,13 @@ public class NullThenAssignTest {
     public void testRun() throws Exception {
         PrintPayload printPayload = Mockito.mock(PrintPayload.class);
         String path = "Foo";
-        String grape = "Bar";
+        String apple = "Bar";
 
         when(q.take()).thenReturn(printPayload);
         when(printPayload.getId()).thenReturn(path);
 
         String actual = nullThenAssign.run();
 
-        assertEquals(grape, actual);
+        assertEquals(apple, actual);
     }
 }

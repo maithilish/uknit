@@ -29,16 +29,16 @@ public class VarConflictTest {
     @Test
     public void testAggregate() {
         Metrics memberMetrics = Mockito.mock(Metrics.class);
-        Map<String, Meter> apple = new HashMap<>();
+        Map<String, Meter> map = new HashMap<>();
         Map<String, Meter> ag = new HashMap<>();
         // String key = "Foo";
-        Map<String, Timer> cherry = new HashMap<>();
+        Map<String, Timer> map2 = new HashMap<>();
         Map<String, Timer> ag2 = new HashMap<>();
 
         when(mapper.getMetrics()).thenReturn(memberMetrics);
-        when(memberMetrics.getMeters()).thenReturn(apple);
+        when(memberMetrics.getMeters()).thenReturn(map);
         when(metrics.getMeters()).thenReturn(ag);
-        when(memberMetrics.getTimers()).thenReturn(cherry);
+        when(memberMetrics.getTimers()).thenReturn(map2);
         when(metrics.getTimers()).thenReturn(ag2);
         varConflict.aggregate();
     }

@@ -26,12 +26,12 @@ public class AnonymousClassParameterizedTest {
         Calc2 calc = Mockito.mock(Calc2.class);
         anonymousClassParameterized.add(calc);
 
-        ArgumentCaptor<IAddable<Integer>> argcA =
+        ArgumentCaptor<IAddable<Integer>> captorA =
                 ArgumentCaptor.forClass(IAddable.class);
 
-        verify(calc).op(eq(1), eq(2), argcA.capture());
+        verify(calc).op(eq(1), eq(2), captorA.capture());
 
-        IAddable<Integer> v = argcA.getValue();
+        IAddable<Integer> v = captorA.getValue();
         assertThat(5).isEqualTo(v.add(2, 3));
     }
 }

@@ -136,11 +136,11 @@ public class QNameTest {
         Point point = Mockito.mock(Point.class);
         point.x = 2;
         point.x = 5;
-        SimpleEntry<Integer, Integer> apple =
+        SimpleEntry<Integer, Integer> entry =
                 new SimpleEntry<Integer, Integer>(point.x, point.y);
 
         SimpleEntry<Integer, Integer> actual = qName.qNameInCreate(point);
 
-        assertEquals(apple, actual);
+        assertEquals(entry, actual);
     }
 }

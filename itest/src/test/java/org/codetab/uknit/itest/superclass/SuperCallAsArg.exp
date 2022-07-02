@@ -26,11 +26,11 @@ public class SuperCallAsArgTest {
         DateFormat dateFormat = Mockito.mock(DateFormat.class);
         String dateStr1 = "Foo";
         Date date2 = Mockito.mock(Date.class);
-        Date apple = Mockito.mock(Date.class);
-        boolean grape = true;
+        Date date = Mockito.mock(Date.class);
+        boolean apple = true;
 
-        when(dateFormat.parse(dateStr1)).thenReturn(apple);
-        when(apple.after(date2)).thenReturn(grape);
+        when(dateFormat.parse(dateStr1)).thenReturn(date);
+        when(date.after(date2)).thenReturn(apple);
 
         boolean actual = superCallAsArg.callInternalGetArgFromSuper(dateFormat, dateStr1, date2);
 

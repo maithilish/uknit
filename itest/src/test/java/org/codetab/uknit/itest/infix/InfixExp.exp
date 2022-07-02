@@ -14,9 +14,9 @@ public class InfixExpTest {
     @Test
     public void testReturnInfixLeft() {
         LocalDate date = Mockito.mock(LocalDate.class);
-        int grape = 1;
+        int apple = 1;
 
-        when(date.compareTo(LocalDate.now())).thenReturn(grape);
+        when(date.compareTo(LocalDate.now())).thenReturn(apple);
 
         boolean actual = infixExp.returnInfixLeft(date);
 
@@ -26,9 +26,9 @@ public class InfixExpTest {
     @Test
     public void testReturnInfixRight() {
         LocalDate date = Mockito.mock(LocalDate.class);
-        int grape = 1;
+        int apple = 1;
 
-        when(date.compareTo(LocalDate.now())).thenReturn(grape);
+        when(date.compareTo(LocalDate.now())).thenReturn(apple);
 
         boolean actual = infixExp.returnInfixRight(date);
 

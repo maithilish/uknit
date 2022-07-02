@@ -16,13 +16,13 @@ public class CallStaticTest {
     @Test
     public void testCallStatic() {
         LocalDate date = Mockito.mock(LocalDate.class);
-        int grape = 1;
+        int apple = 1;
 
-        when(date.compareTo(LocalDate.now())).thenReturn(grape);
+        when(date.compareTo(LocalDate.now())).thenReturn(apple);
 
         int actual = callStatic.callStatic(date);
 
-        assertEquals(grape, actual);
+        assertEquals(apple, actual);
     }
 
     @Test

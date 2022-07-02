@@ -25,6 +25,7 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
+import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -39,6 +40,8 @@ public class VarStager {
     private Mocks mocks;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Types types;
     @Inject
     private Methods methods;
     @Inject
@@ -192,7 +195,13 @@ public class VarStager {
              * Stage all infer vars. If not stageable then mark them as real,
              * created.
              */
-            String name = varNames.getInferVarName();
+            Optional<String> typeName = Optional.empty();
+            try {
+                typeName = Optional.of(types.getTypeName(type));
+            } catch (Exception e) {
+                // ignore
+            }
+            String name = varNames.getInferVarName(typeName, heap);
             inferVar = modelFactory.createInferVar(name, type, isReturnMock);
             heap.getVars().add(inferVar);
 
@@ -214,7 +223,15 @@ public class VarStager {
         if (o.isPresent()) {
             Type type = o.get();
             boolean mock = mocks.isMockable(type);
-            String name = varNames.getInferVarName();
+
+            Optional<String> typeName = Optional.empty();
+            try {
+                typeName = Optional.of(types.getTypeName(type));
+            } catch (Exception e) {
+                // ignore
+            }
+            String name = varNames.getInferVarName(typeName, heap);
+
             InferVar inferVar = modelFactory.createInferVar(name, type, mock);
             if (nodes.isCreation(exp)) {
                 inferVar.setCreated(true);
@@ -230,7 +247,13 @@ public class VarStager {
 
     public InferVar stageInferVar(final Type type, final boolean mock,
             final Heap heap) {
-        String name = varNames.getInferVarName();
+        Optional<String> typeName = Optional.empty();
+        try {
+            typeName = Optional.of(types.getTypeName(type));
+        } catch (Exception e) {
+            // ignore
+        }
+        String name = varNames.getInferVarName(typeName, heap);
         InferVar inferVar = modelFactory.createInferVar(name, type, mock);
         heap.getVars().add(inferVar);
         LOG.debug("stage var {}", inferVar);

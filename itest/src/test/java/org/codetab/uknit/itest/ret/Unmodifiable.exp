@@ -416,11 +416,11 @@ public class UnmodifiableTest {
 
     @Test
     public void testReturnClass() {
-        Class<?> apple = String.class;
+        Class<?> clz = String.class;
 
         Class<?> actual = unmodifiable.returnClass();
 
-        assertEquals(apple, actual);
+        assertEquals(clz, actual);
     }
 
     @Test
@@ -434,11 +434,11 @@ public class UnmodifiableTest {
 
     @Test
     public void testReturnClassNull() {
-        Class<?> apple = null;
+        Class<?> clz = null;
 
         Class<?> actual = unmodifiable.returnClassNull();
 
-        assertEquals(apple, actual);
+        assertEquals(clz, actual);
     }
 
     @Test

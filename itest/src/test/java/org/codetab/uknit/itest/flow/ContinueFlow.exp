@@ -10,12 +10,29 @@ public class ContinueFlowTest {
     }
 
     @Test
+    public void testPlainContinueIf() {
+        int numPs = 0;
+
+        int actual = continueFlow.plainContinue();
+
+        assertEquals(numPs, actual);
+    }
+
+    @Test
     public void testPlainContinue() {
         int numPs = 0;
 
         int actual = continueFlow.plainContinue();
 
         assertEquals(numPs, actual);
+    }
+
+    @Test
+    public void testLabeledContinueIf() {
+
+        boolean actual = continueFlow.labeledContinue();
+
+        assertTrue(actual);
     }
 
     @Test

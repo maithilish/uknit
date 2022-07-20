@@ -10,6 +10,7 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
+import org.codetab.uknit.core.tree.TreeFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -23,6 +24,8 @@ public class UknitModule extends AbstractModule {
 
         install(new FactoryModuleBuilder().implement(Object.class, Object.class)
                 .build(ModelFactory.class));
+        install(new FactoryModuleBuilder().implement(Object.class, Object.class)
+                .build(TreeFactory.class));
     }
 
     @Provides

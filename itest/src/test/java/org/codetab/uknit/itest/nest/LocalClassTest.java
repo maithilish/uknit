@@ -15,9 +15,66 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumber() {
-        String phoneNumber1 = "foo";
-        String phoneNumber2 = "bar";
+    public void testValidatePhoneNumberIf() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberElse() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumber() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberStringString() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberStringStringIf() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberStringStringElse() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberStringStringIf2() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberStringStringElse2() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        // fail("unable to assert, STEPIN");
     }
 }

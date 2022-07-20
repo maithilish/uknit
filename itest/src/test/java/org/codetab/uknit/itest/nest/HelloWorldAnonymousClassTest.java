@@ -17,5 +17,36 @@ public class HelloWorldAnonymousClassTest {
     @Test
     public void testSayHello() {
         helloWorldAnonymousClass.sayHello();
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testSayHello2() {
+        helloWorldAnonymousClass.sayHello();
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testSayHello3() {
+        helloWorldAnonymousClass.sayHello();
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testSayHello4() {
+        helloWorldAnonymousClass.sayHello();
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testSayHello5() {
+        helloWorldAnonymousClass.sayHello();
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testSayHello6() {
+        helloWorldAnonymousClass.sayHello();
+        // fail("unable to assert, STEPIN");
     }
 }

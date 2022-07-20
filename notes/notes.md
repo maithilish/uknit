@@ -4,6 +4,18 @@ Eclipse 4.17 (2020-09) onwards mandates JDK version 11 or newer. Stand alone Ecl
 
 The eclipse.jdt version should be 3.26.0 or newer.
 
+## Java Statement vs Expression
+
+An expression is a construct made up of variables, operators, and method invocations that evaluates to a single value. 
+
+A statement forms a complete unit of execution. 
+
+  - expression statements - assignment expressions, ++, --, Method Invocation, creation expressions can be made into a statement by terminating the expression with a semicolon (;).
+  - declaration statements - declares a variable.
+  - control flow statements
+
+A block is a group of zero or more statements between balanced braces and can be used anywhere a single statement is allowed. 
+
 ## Abbreviations
 
 IMC 	- internal method call.

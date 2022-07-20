@@ -132,7 +132,7 @@ public class NodeFactory {
         return (Block) ASTNode.copySubtree(ast, block);
     }
 
-    public Block createMethodBlock() {
+    public Block createBlock() {
         return ast.newBlock();
     }
 

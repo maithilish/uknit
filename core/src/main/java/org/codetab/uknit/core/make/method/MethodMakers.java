@@ -7,22 +7,27 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.make.method.visit.NameVisitor;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.util.StringUtils;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -42,6 +47,8 @@ public class MethodMakers {
     private NodeFactory nodeFactory;
     @Inject
     private Configs configs;
+    @Inject
+    private NameVisitor nameVisitor;
 
     public String getClzName(final TypeDeclaration clzDecl) {
         return clzDecl.getName().getFullyQualifiedName();
@@ -92,7 +99,7 @@ public class MethodMakers {
     }
 
     public String getTestMethodName(final MethodDeclaration method,
-            final TypeDeclaration clzDecl) {
+            final TypeDeclaration clzDecl, final String nameSuffix) {
         String methodName = methods.getMethodName(method);
         String testMethodName = String.join("", "test",
                 CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, methodName));
@@ -109,7 +116,9 @@ public class MethodMakers {
             testMethodName = String.join("", "test", CaseFormat.LOWER_CAMEL
                     .to(CaseFormat.UPPER_CAMEL, sb.toString()));
         }
-        return testMethodName;
+        testMethodName = String.join("", testMethodName, nameSuffix);
+        return String.join("", testMethodName,
+                methods.getMethodsNameNextIndex(clzDecl, testMethodName));
     }
 
     @SuppressWarnings("unchecked")
@@ -131,7 +140,7 @@ public class MethodMakers {
             Type exception = nodeFactory.createSimpleType("Exception");
             methodDecl.thrownExceptionTypes().add(exception);
         }
-        Block block = nodeFactory.createMethodBlock();
+        Block block = nodeFactory.createBlock();
         methodDecl.setBody(block);
         return methodDecl;
     }
@@ -185,5 +194,44 @@ public class MethodMakers {
 
     public boolean isAnonymousClassMethod(final MethodDeclaration node) {
         return nodes.is(node.getParent(), AnonymousClassDeclaration.class);
+    }
+
+    /**
+     * Return suffix for test method. Example: for a method foo() then default
+     * test method is testFoo(...). For same method and a control path,
+     * if(done){...}, the suffix is IfDone and test method becomes
+     * testFooIfDone(...).
+     * @param ctlPath
+     * @param ctlTree
+     * @return
+     */
+    public String getTestMethodNameSuffix(final List<TreeNode<ASTNode>> ctlPath,
+            final int lastCtlNodeIndex, final TreeNode<ASTNode> ctlTree) {
+
+        TreeNode<ASTNode> ctlTNode = ctlPath.get(lastCtlNodeIndex);
+        nameVisitor.setup(ctlTNode, ctlPath, ctlTree);
+
+        // visit and construct suffix
+        ASTNode ctlNode = ctlTNode.getObject();
+        ctlNode.accept(nameVisitor);
+
+        return nameVisitor.getSuffix();
+    }
+
+    /**
+     * Return index of last control flow node in ctlPath list.
+     * @param ctlPath
+     * @return
+     */
+    public int getLastCtlNodeIndex(final List<TreeNode<ASTNode>> ctlPath) {
+        int index = -1;
+        for (int i = 0; i < ctlPath.size(); i++) {
+            ASTNode node = ctlPath.get(i).getObject();
+            if (node instanceof IfStatement || node instanceof TryStatement
+                    || node instanceof CatchClause) {
+                index = i;
+            }
+        }
+        return index;
     }
 }

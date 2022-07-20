@@ -2,6 +2,7 @@ package org.codetab.uknit.core.make.method;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +24,8 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.tree.TreeNode;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -67,6 +70,7 @@ public class MethodMaker {
     private Clz clz;
 
     public boolean stageMethod(final MethodDeclaration method,
+            final List<TreeNode<ASTNode>> path, final String testNameSuffix,
             final Heap heap) {
 
         checkNotNull(method);
@@ -82,7 +86,11 @@ public class MethodMaker {
         clzDecl = clzMap.getTypeDecl(testClzName);
         clz = clzMap.getClz(testClzName);
 
-        String testMethodName = methodMakers.getTestMethodName(method, clzDecl);
+        String testMethodName =
+                methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
+
+        LOG.debug("==== test method: {} ====", testMethodName);
+        logCtlFlowPath(path);
 
         testMethod = methodMakers.constructTestMethod(method, testMethodName);
 
@@ -94,6 +102,9 @@ public class MethodMaker {
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(heap);
         visitor.setInternalMethod(false);
+        visitor.setCtlPath(path);
+        visitor.setSplitOnControlFlow(
+                configs.getConfig("uknit.controlFlow.method.split", true));
 
         // add method under test call
         callStager.stageCall(method, heap);
@@ -236,5 +247,52 @@ public class MethodMaker {
     public boolean isStageable(final MethodDeclaration node) {
         boolean ignorePrivate = true;
         return isStageable(node, ignorePrivate);
+    }
+
+    /**
+     * Return suffix for test method. Example: for a method foo() then default
+     * test method is testFoo(...). For same method and a control path,
+     * if(done){...}, the suffix is IfDone and test method becomes
+     * testFooIfDone(...).
+     * @param ctlPath
+     * @param ctlTree
+     * @return
+     */
+    public String getTestMethodNameSuffix(final List<TreeNode<ASTNode>> ctlPath,
+            final TreeNode<ASTNode> ctlTree) {
+        int lastCtlNodeIndex = methodMakers.getLastCtlNodeIndex(ctlPath);
+        if (lastCtlNodeIndex >= 0) {
+            return methodMakers.getTestMethodNameSuffix(ctlPath,
+                    lastCtlNodeIndex, ctlTree);
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Log control flow path node details.
+     * @param path
+     */
+    private void logCtlFlowPath(final List<TreeNode<ASTNode>> path) {
+        LOG.debug("Control Flow Path");
+        final int hashLength = 4;
+        if (LOG.isDebugEnabled()) {
+            path.stream().forEach(t -> {
+                ASTNode obj = t.getObject();
+                String hash =
+                        String.valueOf(obj.hashCode()).substring(0, hashLength);
+                LOG.debug("{} {}", obj.getClass().getSimpleName(), hash);
+            });
+        }
+
+        if (LOG.isTraceEnabled()) {
+            path.stream().forEach(t -> {
+                ASTNode obj = t.getObject();
+                String hash =
+                        String.valueOf(obj.hashCode()).substring(0, hashLength);
+                LOG.trace("\n{} {} \n{}", obj.getClass().getSimpleName(), hash,
+                        obj.toString());
+            });
+        }
     }
 }

@@ -1,27 +1,16 @@
 # Missing Features
 
-## Separate Test methods for branches
+## Control Flow Branches
 
-Single test method is generated containing statements from all the three branches.
-
-	try {
-		if(mode.equals("server")) {
-			do something
-		} else {
-			do some other thing
-		}
-	catch(Exception e) {
-		output log
-	}	
-
-Similarly any other type of branches results in a single test method.
+  - Branches for internal methods, private and super methods, yet to be implemented.
+  - Booleans in all branches are set to true. Developer has to set false for else method branches.
+  - Throw statement is not created for exception branches. Developer has to step in and create them.
 
 ## No assertThrows 
 
 Exception test such as the below is not yet implemented.
 
 	assertThrows(IllegalStateException.class, () -> cluster.getLeader());
-
 
 ## Same Class Name in Packages
 

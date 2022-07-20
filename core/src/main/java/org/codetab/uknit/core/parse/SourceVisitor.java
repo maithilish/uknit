@@ -3,6 +3,7 @@ package org.codetab.uknit.core.parse;
 import static java.util.Objects.nonNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -19,8 +20,12 @@ import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
 import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.method.detect.GetterSetter;
+import org.codetab.uknit.core.make.method.visit.ControlFlowVisitor;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.tree.TreeNode;
+import org.codetab.uknit.core.tree.Trees;
 import org.eclipse.jdt.core.compiler.IProblem;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -45,6 +50,8 @@ public class SourceVisitor extends ASTVisitor {
     private EndDumper methodEndDumper;
     @Inject
     private GetterSetter getterSetter;
+    @Inject
+    private Trees trees;
 
     private ClzMaker clzMaker;
 
@@ -160,14 +167,73 @@ public class SourceVisitor extends ASTVisitor {
 
         if (methodMaker.isStageable(node)) {
 
-            Heap heap = di.instance(Heap.class);
-            heap.setSelfFieldName(clzMaker.getSelfFieldName()); // SUT
+            boolean splitMethodsOnControlFlow =
+                    configs.getConfig("uknit.controlFlow.method.split", true);
 
-            if (methodMaker.stageMethod(node, heap)) {
-                methodMaker.generateTestMethod(heap);
+            if (splitMethodsOnControlFlow) {
+
+                // separate method for each control flow path
+                ControlFlowVisitor ctlFlowVisitor =
+                        di.instance(ControlFlowVisitor.class);
+                ctlFlowVisitor.setup();
+                node.accept(ctlFlowVisitor);
+
+                List<TreeNode<ASTNode>> leaves =
+                        trees.findLeaves(ctlFlowVisitor.getTree());
+
+                // for each control path create a test method
+                for (int i = 0; i < leaves.size(); i++) {
+
+                    // get ctlPath for a leaf.
+                    TreeNode<ASTNode> leaf = leaves.get(i);
+                    List<TreeNode<ASTNode>> ctlPath =
+                            trees.getPathFromRoot(leaf);
+
+                    // suffix such as IfDone, ElseFlag etc.,
+                    String suffix = methodMaker.getTestMethodNameSuffix(ctlPath,
+                            ctlFlowVisitor.getTree());
+
+                    Heap heap = di.instance(Heap.class);
+                    heap.setSelfFieldName(clzMaker.getSelfFieldName()); // SUT
+
+                    // finally stage and generate the test method.
+                    if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
+                        methodMaker.generateTestMethod(heap);
+                    }
+
+                }
+            } else {
+                // ignore control flow path, single test method
+                @SuppressWarnings("unchecked")
+                List<TreeNode<ASTNode>> ctlPath = di.instance(ArrayList.class);
+                String suffix = "";
+                Heap heap = di.instance(Heap.class);
+                heap.setSelfFieldName(clzMaker.getSelfFieldName()); // SUT
+                if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
+                    methodMaker.generateTestMethod(heap);
+                }
             }
         }
 
         return true;
     }
+
+    // private void logCtlFlowPath(final TreeNode<ASTNode> leaf) {
+    // LOG.debug("Control Flow Path");
+    // List<TreeNode<ASTNode>> path = trees.getPathFromRoot(leaf);
+    // path.stream().forEach(t -> {
+    // ASTNode obj = t.getObject();
+    // LOG.debug("{} {}", obj.getClass().getSimpleName(),
+    // String.format("|%4d|", obj.hashCode()));
+    // });
+    //
+    // if (LOG.isTraceEnabled()) {
+    // path.stream().forEach(t -> {
+    // ASTNode obj = t.getObject();
+    // LOG.trace("{} {} {}", obj.getClass().getSimpleName(),
+    // String.format("|%4d|%n", obj.hashCode()),
+    // obj.toString());
+    // });
+    // }
+    // }
 }

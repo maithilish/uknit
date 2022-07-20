@@ -1,0 +1,27 @@
+package org.codetab.uknit.itest.flow.nosplit;
+
+public class BreakFlowTest {
+    @InjectMocks
+    private BreakFlow breakFlow;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPlainBreak() {
+
+        boolean actual = breakFlow.plainBreak();
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testLabeledBreak() {
+
+        boolean actual = breakFlow.labeledBreak();
+
+        assertTrue(actual);
+    }
+}

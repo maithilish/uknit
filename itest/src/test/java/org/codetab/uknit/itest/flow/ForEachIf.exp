@@ -13,7 +13,7 @@ public class ForEachIfTest {
     }
 
     @Test
-    public void testAddOrderIfAbsent() {
+    public void testAddOrderIfAbsentIf() {
         List<YmlNode> itemsList = new ArrayList<>();
         YmlNode items = Mockito.mock(YmlNode.class);
         List<YmlNode> itemList = new ArrayList<>();
@@ -26,5 +26,19 @@ public class ForEachIfTest {
         forEachIf.addOrderIfAbsent(itemsList);
 
         verify(item).put("order", i);
+    }
+
+    @Test
+    public void testAddOrderIfAbsent() {
+        List<YmlNode> itemsList = new ArrayList<>();
+        YmlNode items = Mockito.mock(YmlNode.class);
+        List<YmlNode> itemList = new ArrayList<>();
+        YmlNode item = Mockito.mock(YmlNode.class);
+        Object kiwi = Mockito.mock(Object.class);
+
+        when(items.findValues("item")).thenReturn(itemList);
+        when(item.findValue("order")).thenReturn(kiwi);
+        forEachIf.addOrderIfAbsent(itemsList);
+        fail("unable to assert, STEPIN");
     }
 }

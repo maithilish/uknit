@@ -17,7 +17,16 @@ public class MultiReturnPathTest {
     }
 
     @Test
-    public void testTwoReturnPaths() {
+    public void testTwoReturnPathsIfFlag() {
+        String apple = "foo";
+
+        String actual = multiReturnPath.twoReturnPaths();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testTwoReturnPathsElseFlag() {
         String apple = "foo";
 
         String actual = multiReturnPath.twoReturnPaths();

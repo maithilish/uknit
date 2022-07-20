@@ -14,12 +14,14 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Variables;
+import org.codetab.uknit.core.tree.TreeNode;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -48,6 +50,11 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
+/**
+ * Visitor to create test methods.
+ * @author m
+ *
+ */
 public class Visitor extends ASTVisitor {
 
     @Inject
@@ -76,6 +83,17 @@ public class Visitor extends ASTVisitor {
      * whether internal method call visitor
      */
     private boolean internalMethod = false;
+
+    /*
+     * Control flow path.
+     */
+    private List<TreeNode<ASTNode>> ctlPath;
+
+    /*
+     * if true then separate test method is created for each control flow path
+     * else creates single combined method.
+     */
+    private boolean splitOnControlFlow;
 
     @Override
     public void endVisit(final VariableDeclarationStatement node) {
@@ -306,11 +324,45 @@ public class Visitor extends ASTVisitor {
         return false; // for now don't process local class inside a method
     }
 
+    /**
+     * Decides how blocks are processed based on Control Flow Path.
+     * <p>
+     * Returns true for blocks that are in ctlPath which ensures that child
+     * nodes of blocks are processed and added to test method. Returns false for
+     * the blocks that are not in ctlPath and the block's statements are
+     * ignored.
+     */
+    @Override
+    public boolean visit(final Block node) {
+        // ctl flow for internal method call is not yet implemented
+        if (internalMethod) {
+            return true;
+        }
+        if (splitOnControlFlow) {
+            return ctlPath.stream()
+                    .anyMatch(treeNode -> treeNode.getObject().equals(node));
+        } else {
+            // for combined test method process all blocks.
+            return true;
+        }
+    }
+
+    /*
+     * setters
+     */
     public void setHeap(final Heap heap) {
         this.heap = heap;
     }
 
     public void setInternalMethod(final boolean internalMethod) {
         this.internalMethod = internalMethod;
+    }
+
+    public void setCtlPath(final List<TreeNode<ASTNode>> ctlPath) {
+        this.ctlPath = ctlPath;
+    }
+
+    public void setSplitOnControlFlow(final boolean splitOnControlFlow) {
+        this.splitOnControlFlow = splitOnControlFlow;
     }
 }

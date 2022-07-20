@@ -48,6 +48,43 @@ public class Methods {
         return list;
     }
 
+    /**
+     * When Test Method of same name exists, find and return next index starting
+     * from 2. For first method returns blank string.
+     * @param typeDecl
+     * @param name
+     * @return
+     */
+    public String getMethodsNameNextIndex(final TypeDeclaration typeDecl,
+            final String name) {
+        int nextIndex = 1;
+        MethodDeclaration[] methods = typeDecl.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+            MethodDeclaration method = methods[i];
+            String methodName = method.getName().getFullyQualifiedName();
+            if (methodName.startsWith(name)) {
+                String suffix = methodName.replace(name, "");
+                try {
+                    if (suffix.equals("")) {
+                        nextIndex = 2;
+                    } else {
+                        int index = Integer.parseInt(suffix);
+                        if (index >= nextIndex) {
+                            nextIndex = index + 1;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        }
+        if (nextIndex > 1) {
+            return String.valueOf(nextIndex);
+        } else {
+            return "";
+        }
+    }
+
     public boolean isMain(final MethodDeclaration node) {
         return (node.getModifiers() & Modifier.STATIC) > 0
                 && node.getName().getFullyQualifiedName().equals("main");

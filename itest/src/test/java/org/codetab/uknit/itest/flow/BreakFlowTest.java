@@ -17,9 +17,25 @@ public class BreakFlowTest {
     }
 
     @Test
+    public void testPlainBreakIf() {
+
+        boolean actual = breakFlow.plainBreak();
+
+        assertTrue(actual);
+    }
+
+    @Test
     public void testPlainBreak() {
 
         boolean actual = breakFlow.plainBreak();
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testLabeledBreakIf() {
+
+        boolean actual = breakFlow.labeledBreak();
 
         assertTrue(actual);
     }

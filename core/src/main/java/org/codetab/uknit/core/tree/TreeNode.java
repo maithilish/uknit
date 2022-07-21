@@ -32,14 +32,16 @@ public class TreeNode<T>
 
     private static final long serialVersionUID = 8655205359948583064L;
 
+    protected String name;
     // object held by this
     protected T object;
     protected TreeNode<T> parent;
     protected List<TreeNode<T>> children;
 
     @Inject
-    public TreeNode(@Assisted final T object) {
+    public TreeNode(@Assisted final T object, @Assisted final String name) {
         this.object = object;
+        this.name = name;
     }
 
     public void add(final TreeNode<T> newChild) {
@@ -95,8 +97,8 @@ public class TreeNode<T>
     }
 
     public TreeNode<T> getChildAt(final int index) {
-        if (isNull(children)) {
-            throw new ArrayIndexOutOfBoundsException("node has no children");
+        if (isNull(children) || index >= children.size()) {
+            throw new NoSuchElementException("child not found");
         }
         return children.get(index);
     }
@@ -158,6 +160,18 @@ public class TreeNode<T>
      */
     public T getObject() {
         return object;
+    }
+
+    /**
+     * Get children of this node.
+     * @return
+     */
+    public List<TreeNode<T>> getChildren() {
+        return children;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
@@ -226,12 +240,20 @@ public class TreeNode<T>
 
     @Override
     public String toString() {
-        return object.toString();
+        return String.format("%s%n%s", object.getClass().getSimpleName(),
+                object.toString());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(children, object, parent);
+        // to avoid stack overflow parent is not included
+        return Objects.hash(children, object);
+    }
+
+    public String objectId() {
+        final int len = 4;
+        String id = String.valueOf(System.identityHashCode(object));
+        return id.substring(id.length() - len);
     }
 
     @Override
@@ -245,11 +267,11 @@ public class TreeNode<T>
         if (getClass() != obj.getClass()) {
             return false;
         }
+        // to avoid stack overflow parent is not compared
         @SuppressWarnings("unchecked")
         TreeNode<T> other = (TreeNode<T>) obj;
         return Objects.equals(children, other.children)
-                && Objects.equals(object, other.object)
-                && Objects.equals(parent, other.parent);
+                && Objects.equals(object, other.object);
     }
 
     private class DepthFirstIterator<U> implements Iterator<TreeNode<T>> {

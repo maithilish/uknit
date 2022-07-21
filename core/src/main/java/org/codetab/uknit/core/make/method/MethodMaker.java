@@ -275,22 +275,19 @@ public class MethodMaker {
      */
     private void logCtlFlowPath(final List<TreeNode<ASTNode>> path) {
         LOG.debug("Control Flow Path");
-        final int hashLength = 4;
         if (LOG.isDebugEnabled()) {
             path.stream().forEach(t -> {
                 ASTNode obj = t.getObject();
-                String hash =
-                        String.valueOf(obj.hashCode()).substring(0, hashLength);
-                LOG.debug("{} {}", obj.getClass().getSimpleName(), hash);
+                String objId = t.objectId();
+                LOG.debug("{} {}", obj.getClass().getSimpleName(), objId);
             });
         }
 
         if (LOG.isTraceEnabled()) {
             path.stream().forEach(t -> {
                 ASTNode obj = t.getObject();
-                String hash =
-                        String.valueOf(obj.hashCode()).substring(0, hashLength);
-                LOG.trace("\n{} {} \n{}", obj.getClass().getSimpleName(), hash,
+                String objId = t.objectId();
+                LOG.trace("\n{} {} \n{}", obj.getClass().getSimpleName(), objId,
                         obj.toString());
             });
         }

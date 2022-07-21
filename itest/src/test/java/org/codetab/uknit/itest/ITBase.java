@@ -112,6 +112,7 @@ public class ITBase {
         return configs.getConfig(key);
     }
 
+    // TODO clean the target/itest dir after each IT
     protected void generateTestClass() throws IOException {
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);

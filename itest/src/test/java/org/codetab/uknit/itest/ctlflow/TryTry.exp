@@ -1,0 +1,176 @@
+package org.codetab.uknit.itest.ctlflow;
+
+public class TryTryTest {
+    @InjectMocks
+    private TryTry tryTry;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testTryTryFooTry2() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("try try");
+        verify(sb).append("try try finally");
+        verify(sb).append("finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryTryFooCatchIllegalAccessError() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("try try");
+        verify(sb).append("try try catch");
+        verify(sb).append("try try finally");
+        verify(sb).append("finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryTryFooCatchIllegalArgumentException() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("catch");
+        verify(sb).append("finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryCatchTryFooTry() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryCatchTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryCatchTryFooTry2() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryCatchTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("catch");
+        verify(sb).append("catch try");
+        verify(sb).append("catch finally");
+        verify(sb).append("finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryCatchTryFooCatchIllegalAccessError() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryCatchTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("catch");
+        verify(sb).append("catch try");
+        verify(sb).append("catch catch");
+        verify(sb).append("catch finally");
+        verify(sb).append("finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryFinallyTryFooTry2() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryFinallyTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("finally");
+        verify(sb).append("finally try");
+        verify(sb).append("finally finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryFinallyTryFooCatchIllegalAccessError() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryFinallyTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("finally");
+        verify(sb).append("finally try");
+        verify(sb).append("finally catch");
+        verify(sb).append("finally finally");
+        verify(sb).append("end");
+    }
+
+    @Test
+    public void testTryFinallyTryFooTry3() {
+        StringBuilder sb = Mockito.mock(StringBuilder.class);
+        String apple = "Foo";
+
+        when(sb.toString()).thenReturn(apple);
+
+        String actual = tryTry.tryFinallyTryFoo(sb);
+
+        assertEquals(apple, actual);
+        verify(sb).append("start");
+        verify(sb).append("try");
+        verify(sb).append("catch");
+        verify(sb).append("finally");
+        verify(sb).append("finally try");
+        verify(sb).append("finally finally");
+        verify(sb).append("end");
+    }
+}

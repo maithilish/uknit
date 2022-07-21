@@ -178,6 +178,9 @@ public class SourceVisitor extends ASTVisitor {
                 ctlFlowVisitor.setup();
                 node.accept(ctlFlowVisitor);
 
+                LOG.debug("Flow Tree{}", trees
+                        .prettyPrint(ctlFlowVisitor.getTree(), "", "", null));
+
                 List<TreeNode<ASTNode>> leaves =
                         trees.findLeaves(ctlFlowVisitor.getTree());
 
@@ -217,23 +220,4 @@ public class SourceVisitor extends ASTVisitor {
 
         return true;
     }
-
-    // private void logCtlFlowPath(final TreeNode<ASTNode> leaf) {
-    // LOG.debug("Control Flow Path");
-    // List<TreeNode<ASTNode>> path = trees.getPathFromRoot(leaf);
-    // path.stream().forEach(t -> {
-    // ASTNode obj = t.getObject();
-    // LOG.debug("{} {}", obj.getClass().getSimpleName(),
-    // String.format("|%4d|", obj.hashCode()));
-    // });
-    //
-    // if (LOG.isTraceEnabled()) {
-    // path.stream().forEach(t -> {
-    // ASTNode obj = t.getObject();
-    // LOG.trace("{} {} {}", obj.getClass().getSimpleName(),
-    // String.format("|%4d|%n", obj.hashCode()),
-    // obj.toString());
-    // });
-    // }
-    // }
 }

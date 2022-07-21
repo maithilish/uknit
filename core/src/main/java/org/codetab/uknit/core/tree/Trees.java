@@ -1,9 +1,11 @@
 package org.codetab.uknit.core.tree;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -32,7 +34,17 @@ public class Trees {
         } else if (list.size() == 0) {
             throw new NoSuchElementException("node not found in tree");
         }
-        throw new IllegalStateException("found multiple nodes");
+        return list.get(0);
+        // throw new IllegalStateException(
+        // String.format("same node found in multiple branches in tree %s",
+        // prettyPrint(tree, "", "", null)));
+    }
+
+    public <T> List<TreeNode<T>> findAll(final TreeNode<T> tree, final T node) {
+        List<TreeNode<T>> list =
+                tree.stream().filter(t -> t.getObject().equals(node))
+                        .collect(Collectors.toList());
+        return list;
     }
 
     public <T> List<TreeNode<T>> findLeaves(final TreeNode<T> tree) {
@@ -95,5 +107,50 @@ public class Trees {
                 .filter(t -> t.getObject().getClass().isAssignableFrom(clz))
                 .collect(Collectors.toList()).indexOf(node);
         return pos;
+    }
+
+    /**
+     * Returns tree as string similar to Linux tree cmd output.
+     * @param <T>
+     * @param tree
+     * @param prefix
+     * @param childrenPrefix
+     * @param sb
+     * @return
+     */
+    public <T> String prettyPrint(final TreeNode<T> tree, final String prefix,
+            final String childrenPrefix, final StringBuilder sb) {
+
+        T obj = tree.getObject();
+        List<TreeNode<T>> children = tree.getChildren();
+
+        StringBuilder buffer = sb;
+        if (isNull(buffer)) {
+            buffer = new StringBuilder();
+            buffer.append(System.lineSeparator());
+        }
+        buffer.append(prefix);
+        buffer.append(obj.getClass().getSimpleName());
+        buffer.append(" ");
+        buffer.append(tree.getName());
+        buffer.append(" ");
+        buffer.append(tree.objectId());
+        buffer.append(System.lineSeparator());
+
+        if (nonNull(children)) {
+            Iterator<TreeNode<T>> it = children.iterator();
+            while (it.hasNext()) {
+                TreeNode<T> next = it.next();
+                if (it.hasNext()) {
+                    prettyPrint(next, childrenPrefix + "├── ",
+                            childrenPrefix + "│   ", buffer);
+                } else {
+                    prettyPrint(next, childrenPrefix + "└── ",
+                            childrenPrefix + "    ", buffer);
+                }
+            }
+        }
+
+        return buffer.toString();
     }
 }

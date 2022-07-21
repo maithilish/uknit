@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.method.visit;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -37,11 +38,9 @@ public class ControlFlowVisitor extends ASTVisitor {
     @Inject
     private NodeFactory nodeFactory;
     @Inject
-    private Trees trees;
-    @Inject
     private TreeFactory treeFactory;
     @Inject
-    private Ancestors ancestors;
+    private NodeFinder nodeFinder;
 
     private TreeNode<ASTNode> tree;
 
@@ -57,18 +56,18 @@ public class ControlFlowVisitor extends ASTVisitor {
     public boolean visit(final MethodDeclaration methodDecl) {
         TreeNode<ASTNode> parentTNode;
         if (isNull(tree)) {
-            tree = treeFactory.createTreeNode(methodDecl);
+            tree = treeFactory.createTreeNode(methodDecl, "");
             parentTNode = tree;
         } else {
             // for inner method such as anonymous object's method.
-            parentTNode = ancestors.findNearest(tree, methodDecl);
+            parentTNode = nodeFinder.findAncestor(tree, methodDecl);
         }
         Block body = methodDecl.getBody();
         if (body == null) {
             // abstract method
             return true;
         }
-        TreeNode<ASTNode> blockTNode = treeFactory.createTreeNode(body);
+        TreeNode<ASTNode> blockTNode = treeFactory.createTreeNode(body, "md");
         parentTNode.add(blockTNode);
         return true;
     }
@@ -79,23 +78,39 @@ public class ControlFlowVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(final IfStatement ifStmt) {
-        TreeNode<ASTNode> parentTNode = ancestors.findNearest(tree, ifStmt);
-        TreeNode<ASTNode> ifTNode = treeFactory.createTreeNode(ifStmt);
-        parentTNode.add(ifTNode);
 
-        Statement thenStmt = ifStmt.getThenStatement();
+        TreeNode<ASTNode> pTNode = nodeFinder.findAncestor(tree, ifStmt);
+        List<TreeNode<ASTNode>> parentNodes =
+                nodeFinder.findParentNodes(tree, pTNode);
 
-        TreeNode<ASTNode> thenTNode = treeFactory.createTreeNode(thenStmt);
-        ifTNode.add(thenTNode);
+        // for each branch add if branches for completeness
+        for (int i = 0; i < parentNodes.size(); i++) {
+            TreeNode<ASTNode> parentTNode = parentNodes.get(i);
+            parentTNode = nodeFinder.findFinally(parentTNode);
+            TreeNode<ASTNode> ifTNode = treeFactory.createTreeNode(ifStmt, "");
+            Statement thenStmt = ifStmt.getThenStatement();
+            TreeNode<ASTNode> thenTNode =
+                    treeFactory.createTreeNode(thenStmt, "if");
 
-        Statement elseStmt = ifStmt.getElseStatement();
-        if (nonNull(elseStmt)) {
-            TreeNode<ASTNode> elseTNode = treeFactory.createTreeNode(elseStmt);
-            ifTNode.add(elseTNode);
-        } else {
-            TreeNode<ASTNode> emptyBlockTNode =
-                    treeFactory.createTreeNode(nodeFactory.createBlock());
-            ifTNode.add(emptyBlockTNode);
+            // add if (to parent as new branch) and then block
+            parentTNode.add(ifTNode);
+            ifTNode.add(thenTNode);
+
+            // add else only to the first branch to avoid repeats of else test
+            if (i == 0) {
+                // if exists, add else block else empty block
+                Statement elseStmt = ifStmt.getElseStatement();
+                if (nonNull(elseStmt)) {
+                    TreeNode<ASTNode> elseTNode =
+                            treeFactory.createTreeNode(elseStmt, "else");
+                    ifTNode.add(elseTNode);
+                } else {
+                    TreeNode<ASTNode> emptyBlockTNode =
+                            treeFactory.createTreeNode(
+                                    nodeFactory.createBlock(), "empty else");
+                    ifTNode.add(emptyBlockTNode);
+                }
+            }
         }
         return true;
     }
@@ -106,15 +121,33 @@ public class ControlFlowVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(final TryStatement tryStmt) {
-        TreeNode<ASTNode> parentTNode = ancestors.findNearest(tree, tryStmt);
-        TreeNode<ASTNode> tryTNode = treeFactory.createTreeNode(tryStmt);
-        parentTNode.add(tryTNode);
 
-        // add try body block, finally block is added by block end visit
-        Block tryBody = tryStmt.getBody();
-        TreeNode<ASTNode> blockTNode = treeFactory.createTreeNode(tryBody);
-        tryTNode.add(blockTNode);
+        TreeNode<ASTNode> pTNode = nodeFinder.findAncestor(tree, tryStmt);
+        List<TreeNode<ASTNode>> parentNodes =
+                nodeFinder.findParentNodes(tree, pTNode);
 
+        // for each branch add if branches for completeness
+        for (int i = 0; i < parentNodes.size(); i++) {
+
+            TreeNode<ASTNode> parentTNode = parentNodes.get(i);
+            parentTNode = nodeFinder.findFinally(parentTNode);
+
+            TreeNode<ASTNode> tryTNode =
+                    treeFactory.createTreeNode(tryStmt, "");
+            TreeNode<ASTNode> bodyTNode =
+                    treeFactory.createTreeNode(tryStmt.getBody(), "try");
+
+            // add try (to parent as new branch), body and finally
+            parentTNode.add(tryTNode);
+            tryTNode.add(bodyTNode);
+
+            Block finallyBlock = tryStmt.getFinally();
+            if (nonNull(finallyBlock)) {
+                TreeNode<ASTNode> finallyTNode = treeFactory
+                        .createTreeNode(tryStmt.getFinally(), "finally");
+                bodyTNode.add(finallyTNode);
+            }
+        }
         return true;
     }
 
@@ -123,45 +156,33 @@ public class ControlFlowVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(final CatchClause catchClause) {
-
         TryStatement tryStmt =
                 nodes.as(catchClause.getParent(), TryStatement.class);
-        TreeNode<ASTNode> tryTNode = ancestors.findNearest(tree, catchClause);
+        TreeNode<ASTNode> tryTNode = nodeFinder.findAncestor(tree, catchClause);
+        /*
+         * don't look for finally, we add try block to create new branch
+         */
 
         TreeNode<ASTNode> tryBlockTNode =
-                treeFactory.createTreeNode(tryStmt.getBody());
-        TreeNode<ASTNode> catchTNode = treeFactory.createTreeNode(catchClause);
+                treeFactory.createTreeNode(tryStmt.getBody(), "try");
+        TreeNode<ASTNode> catchTNode =
+                treeFactory.createTreeNode(catchClause, "");
         TreeNode<ASTNode> catchBlockTNode =
-                treeFactory.createTreeNode(catchClause.getBody());
+                treeFactory.createTreeNode(catchClause.getBody(), "catch");
 
-        // add tryBody catch catchBody
+        // add tryBody (to try as new branch), catch, body and finally
         tryTNode.add(tryBlockTNode);
         tryBlockTNode.add(catchTNode);
         catchTNode.add(catchBlockTNode);
 
-        return true;
-    }
-
-    /**
-     * If TryStmt finally block, then add it to all leaves of try block.
-     */
-    @Override
-    public void endVisit(final Block block) {
-        ASTNode parent = block.getParent();
-        if (nodes.is(parent, TryStatement.class)) {
-            TryStatement tryStmt = nodes.as(parent, TryStatement.class);
-            Block tryFinallyBlock = tryStmt.getFinally();
-            // add try finally block to all leaves of try block
-            if (block.equals(tryFinallyBlock)) {
-                TreeNode<ASTNode> parentTNode = trees.findOne(tree, tryStmt);
-                List<TreeNode<ASTNode>> leaves = trees.findLeaves(parentTNode);
-                for (TreeNode<ASTNode> leaf : leaves) {
-                    TreeNode<ASTNode> blockTNode =
-                            treeFactory.createTreeNode(block);
-                    leaf.add(blockTNode);
-                }
-            }
+        Block finallyBlock = tryStmt.getFinally();
+        if (nonNull(finallyBlock)) {
+            TreeNode<ASTNode> finallyTNode =
+                    treeFactory.createTreeNode(tryStmt.getFinally(), "finally");
+            catchBlockTNode.add(finallyTNode);
         }
+
+        return true;
     }
 
     /**
@@ -181,8 +202,11 @@ public class ControlFlowVisitor extends ASTVisitor {
             return true;
         }
 
-        TreeNode<ASTNode> parentTNode = ancestors.findNearest(tree, block);
-        TreeNode<ASTNode> blockTNode = treeFactory.createTreeNode(block);
+        TreeNode<ASTNode> parentTNode = nodeFinder.findAncestor(tree, block);
+        parentTNode = nodeFinder.findFinally(parentTNode);
+
+        TreeNode<ASTNode> blockTNode =
+                treeFactory.createTreeNode(block, "block");
         parentTNode.add(blockTNode);
 
         return true;
@@ -193,10 +217,12 @@ public class ControlFlowVisitor extends ASTVisitor {
     }
 }
 
-class Ancestors {
+class NodeFinder {
 
     @Inject
     private Trees trees;
+    @Inject
+    private Nodes nodes;
 
     /**
      * Scroll up through the node's parent nodes and return the first parent
@@ -205,7 +231,7 @@ class Ancestors {
      * @param node
      * @return
      */
-    TreeNode<ASTNode> findNearest(final TreeNode<ASTNode> tree,
+    TreeNode<ASTNode> findAncestor(final TreeNode<ASTNode> tree,
             final ASTNode node) {
         ASTNode parent = node;
         TreeNode<ASTNode> ancestor = null;
@@ -224,4 +250,50 @@ class Ancestors {
         }
     }
 
+    /**
+     * If node, such as finally, can occur in multiple branches then return list
+     * of all its occurrences otherwise return list with the single node.
+     * @param node
+     * @return
+     */
+    public List<TreeNode<ASTNode>> findParentNodes(final TreeNode<ASTNode> tree,
+            final TreeNode<ASTNode> node) {
+        ASTNode parent = node.getObject().getParent();
+        // same finally can occur in multiple branches
+        if (nodes.is(parent, TryStatement.class) && node.getObject()
+                .equals(nodes.as(parent, TryStatement.class).getFinally())) {
+            return trees.findAll(tree, node.getObject());
+        } else {
+            ArrayList<TreeNode<ASTNode>> list = new ArrayList<>();
+            list.add(node);
+            // return list;
+            return trees.findAll(tree, node.getObject());
+        }
+    }
+
+    /**
+     * If tree object parent is TryStatement or CatchClause then look for try's
+     * finally block. If found return it else return the tree itself.
+     * @param tree
+     * @return
+     */
+    TreeNode<ASTNode> findFinally(final TreeNode<ASTNode> tree) {
+        ASTNode parent = tree.getObject().getParent();
+        Block finallyBlock = null;
+        if (nodes.is(parent, TryStatement.class)) {
+            finallyBlock = nodes.as(parent, TryStatement.class).getFinally();
+        }
+        if (nodes.is(parent, CatchClause.class)) {
+            finallyBlock = nodes.as(parent.getParent(), TryStatement.class)
+                    .getFinally();
+        }
+        try {
+            TreeNode<ASTNode> child = tree.getChildAt(0);
+            if (child.getObject().equals(finallyBlock)) {
+                return child;
+            }
+        } catch (NoSuchElementException e) {
+        }
+        return tree;
+    }
 }

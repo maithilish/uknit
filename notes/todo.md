@@ -143,3 +143,13 @@ Create infer var, return and assert. See QNameIT.
 
 Rename parameter name with index if field exists with same name. See superclass.MultiGetMock.getMulti(final Payload payload) method.
     
+## Arg Validation and Control Flow
+
+Arg Validations in step.parse.IndexerFactory throws Exceptions. For coverage separate test is required for this. Refactor control flow paths to handle this.
+
+	validState((itemNames.indexOf("fact") == itemNames.size() - 1),
+                "fact should be last item of the list");
+    
+On the other hand for the following validation in step.parse.PrefixProcessor the coverage goes through without separate test. Analyze the reasons.
+
+	notNull(value, "value must not be null");

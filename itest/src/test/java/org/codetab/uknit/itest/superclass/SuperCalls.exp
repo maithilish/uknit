@@ -60,11 +60,11 @@ public class SuperCallsTest {
     @Test
     public void testReturnFromCreateAndMock() throws Exception {
         String dateStr = "Foo";
-        Date date = STEPIN;
+        Date date = Mockito.mock(Date.class);
 
         Date actual = superCalls.returnFromCreateAndMock(dateStr);
 
-        assertEquals(date, actual);
+        assertSame(date, actual);
     }
 
     @Test

@@ -43,9 +43,15 @@ public class ControlFlowVisitor extends ASTVisitor {
     private NodeFinder nodeFinder;
 
     private TreeNode<ASTNode> tree;
+    private TreeNode<ASTNode> methodTBlock;
+    /*
+     * only first ctl node is top level ctl node
+     */
+    private boolean topLevelCtlNode;
 
     public void setup() {
         tree = null;
+        topLevelCtlNode = true;
     }
 
     /**
@@ -67,8 +73,8 @@ public class ControlFlowVisitor extends ASTVisitor {
             // abstract method
             return true;
         }
-        TreeNode<ASTNode> blockTNode = treeFactory.createTreeNode(body, "md");
-        parentTNode.add(blockTNode);
+        methodTBlock = treeFactory.createTreeNode(body, "md");
+        parentTNode.add(methodTBlock);
         return true;
     }
 
@@ -105,13 +111,22 @@ public class ControlFlowVisitor extends ASTVisitor {
                             treeFactory.createTreeNode(elseStmt, "else");
                     ifTNode.add(elseTNode);
                 } else {
-                    TreeNode<ASTNode> emptyBlockTNode =
-                            treeFactory.createTreeNode(
-                                    nodeFactory.createBlock(), "empty else");
-                    ifTNode.add(emptyBlockTNode);
+                    /*
+                     * when this if is the top ctl flow node in the method block
+                     * then add empty block for non existence else path.
+                     * Otherwise some other top level ctl node path takes care
+                     * of else path.
+                     */
+                    if (topLevelCtlNode) {
+                        TreeNode<ASTNode> emptyBlockTNode = treeFactory
+                                .createTreeNode(nodeFactory.createBlock(),
+                                        "empty else");
+                        ifTNode.add(emptyBlockTNode);
+                    }
                 }
             }
         }
+        topLevelCtlNode = false;
         return true;
     }
 
@@ -148,6 +163,7 @@ public class ControlFlowVisitor extends ASTVisitor {
                 bodyTNode.add(finallyTNode);
             }
         }
+        topLevelCtlNode = false;
         return true;
     }
 

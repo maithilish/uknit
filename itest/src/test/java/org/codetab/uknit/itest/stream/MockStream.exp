@@ -23,11 +23,19 @@ public class MockStreamTest {
 
     @Test
     public void testStreamCount() {
+        Stream<String> stream = Mockito.mock(Stream.class);
+        Stream<String> stream2 = Mockito.mock(Stream.class);
         long count = 1L;
+
+        when(stream.filter(any(Predicate.class))).thenReturn(stream2);
+        when(stream2.count()).thenReturn(count);
 
         long actual = mockStream.streamCount();
 
         assertEquals(count, actual);
+
+        ArgumentCaptor<Predicate<? super String>> captorA = ArgumentCaptor.forClass(Predicate.class);
+        verify(stream).filter(captorA.capture());
     }
 
     @Test
@@ -44,7 +52,6 @@ public class MockStreamTest {
         long actual = mockStream.streamCount(strings);
 
         assertEquals(count, actual);
-
         ArgumentCaptor<Predicate<? super String>> captorA = ArgumentCaptor.forClass(Predicate.class);
         verify(stream).filter(captorA.capture());
     }
@@ -79,7 +86,11 @@ public class MockStreamTest {
 
     @Test
     public void testCompare() {
+        Stream<Track> stream = Mockito.mock(Stream.class);
+        Optional<Track> apple = Optional.empty();
         Track shortestTrack = STEPIN;
+
+        when(stream.min(Comparator.comparing(track -> track.getLength()))).thenReturn(apple);
 
         Track actual = mockStream.compare();
 

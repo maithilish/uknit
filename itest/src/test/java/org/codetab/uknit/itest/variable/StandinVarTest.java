@@ -1,9 +1,19 @@
 package org.codetab.uknit.itest.variable;
 
-import java.util.Objects.isNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.when;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class StandinVarTest {
     @InjectMocks
@@ -27,13 +37,16 @@ public class StandinVarTest {
     public void testOpen() {
         String name = "Foo";
         standinVar.open(name);
-        fail("unable to assert, STEPIN");
+        // fail("unable to assert, STEPIN");
     }
 
     @Test
     public void testUseAssignedField() {
         Object apple = Mockito.mock(Object.class);
 
+        String name = "Foo";
+        standinVar.open(name);
+        standinVar.getRealField().put(name, apple);
         Object actual = standinVar.useAssignedField();
 
         assertSame(apple, actual);
@@ -41,7 +54,9 @@ public class StandinVarTest {
 
     @Test
     public void testUseUnassignedField() {
-        Object apple = Mockito.mock(Object.class);
+        Object apple = null;
+
+        standinVar.getRealField();
 
         Object actual = standinVar.useUnassignedField();
 
@@ -52,6 +67,10 @@ public class StandinVarTest {
     public void testUseRealField() {
         Object apple = Mockito.mock(Object.class);
 
+        String name = "Foo";
+        standinVar.open(name);
+        standinVar.getRealField().put(name, apple);
+
         Object actual = standinVar.useRealField();
 
         assertSame(apple, actual);
@@ -60,6 +79,10 @@ public class StandinVarTest {
     @Test
     public void testUseinitRealField() {
         Object apple = Mockito.mock(Object.class);
+
+        String name = "Foo";
+        standinVar.open(name);
+        standinVar.getInitRealField().put(name, apple);
 
         Object actual = standinVar.useinitRealField();
 
@@ -120,7 +143,6 @@ public class StandinVarTest {
     @Test
     public void testGetInitRealField() {
         Map<String, Object> initRealField = new HashMap<>();
-        standinVar.setInitRealField(initRealField);
 
         Map<String, Object> actual = standinVar.getInitRealField();
 

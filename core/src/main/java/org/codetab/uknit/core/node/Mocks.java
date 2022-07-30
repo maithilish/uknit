@@ -67,7 +67,7 @@ public class Mocks {
         boolean varIsReal = !varIsMock;
         boolean returnIsReal = !returnIsMock;
 
-        // TODO - logic can be simplified
+        // logic can be simplified but we keep it as such for clarity
 
         // Mock returns Mock
         if (varIsMock && returnIsMock) {
@@ -75,11 +75,23 @@ public class Mocks {
         }
         // Mock returns Real
         if (varIsMock && returnIsReal) {
-            return true;
-        }
-        // Real returns Mock
-        if (varIsReal && returnIsMock) {
             return false;
+        }
+        /**
+         * Real returns Mock is bit complicated.
+         * <p>
+         * Real object may return an mock type object created by it then mock
+         * should be treated as real as it is created by real.
+         * <p>
+         * Else it may return an mock type object held by it. We put mock
+         * objects to Real objects such as Optional or List and such returned
+         * item should be treated as mock.
+         * <p>
+         * It is difficult to distinguish between the two, so treat both as mock
+         * and stage.
+         */
+        if (varIsReal && returnIsMock) {
+            return true;
         }
         // Real returns Real
         if (varIsReal && returnIsReal) {

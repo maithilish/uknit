@@ -57,7 +57,6 @@ public class MockStreamTest {
         long actual = mockStream.streamCount(strings);
 
         assertEquals(count, actual);
-
         ArgumentCaptor<Predicate<? super String>> captorA =
                 ArgumentCaptor.forClass(Predicate.class);
         verify(stream).filter(captorA.capture());

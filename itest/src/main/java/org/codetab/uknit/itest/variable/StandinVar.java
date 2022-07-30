@@ -1,5 +1,7 @@
 package org.codetab.uknit.itest.variable;
 
+import static java.util.Objects.isNull;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,4 +57,16 @@ public class StandinVar {
     public int useUnassignedMockField() {
         return mockField.compareTo(unassignedMockField);
     }
+
+    public Map<String, Object> getRealField() {
+        if (isNull(realField)) {
+            realField = new HashMap<>();
+        }
+        return realField;
+    }
+
+    public Map<String, Object> getInitRealField() {
+        return initRealField;
+    }
+
 }

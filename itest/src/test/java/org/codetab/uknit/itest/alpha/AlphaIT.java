@@ -30,6 +30,9 @@ public class AlphaIT extends ITBase {
         // addTransientConfig("uknit.createInstance.InfoReal", "new
         // InfoReal();");
 
+        // addTransientConfig("uknit.createInstance.List", "mock");
+        // addTransientConfig("uknit.createInstance.Stream", "mock");
+
         try {
             generateTestClass();
         } finally {

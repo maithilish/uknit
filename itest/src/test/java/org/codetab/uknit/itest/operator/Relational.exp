@@ -34,23 +34,7 @@ public class RelationalTest {
     }
 
     @Test
-    public void testCheckRelational2() {
-
-        boolean actual = relational.checkRelational();
-
-        assertTrue(actual);
-    }
-
-    @Test
     public void testCheckRelationalIf3() {
-
-        boolean actual = relational.checkRelational();
-
-        assertTrue(actual);
-    }
-
-    @Test
-    public void testCheckRelational3() {
 
         boolean actual = relational.checkRelational();
 
@@ -66,14 +50,6 @@ public class RelationalTest {
     }
 
     @Test
-    public void testCheckRelational4() {
-
-        boolean actual = relational.checkRelational();
-
-        assertTrue(actual);
-    }
-
-    @Test
     public void testCheckRelationalIf5() {
 
         boolean actual = relational.checkRelational();
@@ -82,23 +58,7 @@ public class RelationalTest {
     }
 
     @Test
-    public void testCheckRelational5() {
-
-        boolean actual = relational.checkRelational();
-
-        assertTrue(actual);
-    }
-
-    @Test
     public void testCheckRelationalIf6() {
-
-        boolean actual = relational.checkRelational();
-
-        assertTrue(actual);
-    }
-
-    @Test
-    public void testCheckRelational6() {
 
         boolean actual = relational.checkRelational();
 
@@ -123,14 +83,6 @@ public class RelationalTest {
 
     @Test
     public void testCheckConditionalIf2() {
-
-        boolean actual = relational.checkConditional();
-
-        assertTrue(actual);
-    }
-
-    @Test
-    public void testCheckConditional2() {
 
         boolean actual = relational.checkConditional();
 

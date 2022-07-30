@@ -33,6 +33,10 @@ public class SuperCalls extends SuperBar {
 
     public Date returnFromCreateAndMock(final String dateStr)
             throws ParseException {
+        /*
+         * Real returns Mock: See org.codetab.uknit.core.node.Mocks
+         * isInferVarStageable method for explanation.
+         */
         return super.getDate(dateStr);
     }
 

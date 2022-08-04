@@ -4,5 +4,5 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 public interface TreeFactory {
 
-    TreeNode<ASTNode> createTreeNode(ASTNode node, String name);
+    TreeNode<ASTNode> createTreeNode(int id, ASTNode node, String name);
 }

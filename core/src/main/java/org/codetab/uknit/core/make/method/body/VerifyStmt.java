@@ -21,8 +21,15 @@ public class VerifyStmt {
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
-        String format = configs.getFormat("uknit.format.verify");
+
         for (Verify verify : heap.getVerifies()) {
+            String format;
+            if (verify.isInCtlFlowPath()) {
+                format = configs.getFormat("uknit.format.verify");
+            } else {
+                format = configs.getFormat("uknit.format.verifyNever");
+            }
+
             Statement stmt =
                     nodeFactory.createVerifyStatement(verify.getMi(), format);
             stmts.add(stmt);

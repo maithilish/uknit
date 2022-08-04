@@ -17,11 +17,14 @@ public class Verify {
      * to create the verify statement at the end.
      */
     private MethodInvocation mi;
+    private boolean inCtlFlowPath;
     private List<ArgCapture> argCaptures;
 
     @Inject
-    public Verify(@Assisted final MethodInvocation mi) {
+    public Verify(@Assisted final MethodInvocation mi,
+            @Assisted final boolean inCtlFlowPath) {
         this.mi = mi;
+        this.inCtlFlowPath = inCtlFlowPath;
         argCaptures = new ArrayList<>();
     }
 
@@ -31,6 +34,10 @@ public class Verify {
 
     public List<ArgCapture> getArgCaptures() {
         return argCaptures;
+    }
+
+    public boolean isInCtlFlowPath() {
+        return inCtlFlowPath;
     }
 
     @Override

@@ -26,7 +26,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumber() {
+    public void testValidatePhoneNumberIf2() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -34,7 +34,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberStringString() {
+    public void testValidatePhoneNumberIf3() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -42,7 +42,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberStringStringIf() {
+    public void testValidatePhoneNumberIf4() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -50,7 +50,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberStringStringElse() {
+    public void testValidatePhoneNumberIf5() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -58,7 +58,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberStringStringIf2() {
+    public void testValidatePhoneNumberIf6() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -66,7 +66,15 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberStringStringElse2() {
+    public void testValidatePhoneNumberIf7() {
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
+        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testValidatePhoneNumberIf8() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);

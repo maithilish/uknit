@@ -153,3 +153,11 @@ Arg Validations in step.parse.IndexerFactory throws Exceptions. For coverage sep
 On the other hand for the following validation in step.parse.PrefixProcessor the coverage goes through without separate test. Analyze the reasons.
 
 	notNull(value, "value must not be null");
+
+## Improve Generated Tests
+
+/step/src/test/java/org/codetab/scoopi/step/parse/QueryVarSubstitutorTest.java	
+
+## Ctl Flow
+
+Complex if generates redundant tests - ifElseIfPlusIf

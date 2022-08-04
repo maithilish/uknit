@@ -7,6 +7,7 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
@@ -146,5 +147,14 @@ public class Nodes {
                     node.getClass().getSimpleName()));
         }
         return label;
+    }
+
+    public boolean isEmptyBlock(final ASTNode node) {
+        if (node.getClass().isAssignableFrom(Block.class)) {
+            Block block = Block.class.cast(node);
+            return block.statements().isEmpty();
+        } else {
+            return false;
+        }
     }
 }

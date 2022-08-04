@@ -33,12 +33,14 @@ public class ForEachIfTest {
         List<YmlNode> itemsList = new ArrayList<>();
         YmlNode items = Mockito.mock(YmlNode.class);
         List<YmlNode> itemList = new ArrayList<>();
+        int i = 0;
         YmlNode item = Mockito.mock(YmlNode.class);
         Object kiwi = Mockito.mock(Object.class);
 
         when(items.findValues("item")).thenReturn(itemList);
         when(item.findValue("order")).thenReturn(kiwi);
         forEachIf.addOrderIfAbsent(itemsList);
-        fail("unable to assert, STEPIN");
+
+        verify(item, never()).put("order", i);
     }
 }

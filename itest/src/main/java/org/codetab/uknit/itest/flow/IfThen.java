@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class IfThen {
 
-    // STEPIN - can't deduce result
     public int ifThen(final Date date1, final Date date2) {
         int result = 0;
         if (date1.compareTo(date2) > 0) {

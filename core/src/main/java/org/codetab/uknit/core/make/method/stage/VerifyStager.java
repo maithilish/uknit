@@ -33,7 +33,8 @@ public class VerifyStager {
         List<ArgCapture> lambdaCaptures = lambdaProcessor
                 .patchLambdaArgsWithCaptures(patchedMi, mi, heap);
 
-        Verify verify = modelFactory.createVerify(patchedMi);
+        Verify verify =
+                modelFactory.createVerify(patchedMi, heap.isInCtlFlowPath());
         verify.getArgCaptures().addAll(anonCaptures);
         verify.getArgCaptures().addAll(lambdaCaptures);
         heap.getVerifies().add(verify);

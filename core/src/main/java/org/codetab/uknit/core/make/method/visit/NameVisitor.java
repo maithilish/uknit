@@ -40,8 +40,8 @@ public class NameVisitor extends ASTVisitor {
     @Inject
     private Trees trees;
 
-    private String name;
-    private String classifier;
+    private String name; // variable name such as done, flag etc.,
+    private String classifier; // Try, If etc.,
 
     private TreeNode<ASTNode> ctlNode;
     private List<TreeNode<ASTNode>> ctlPath; // active path

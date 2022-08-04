@@ -68,39 +68,7 @@ public class Configs {
     }
 
     public String getFormat(final String key) {
-        String value = null;
-        switch (key) {
-        case "uknit.format.when":
-            value = configuration.getProperty("uknit.format.when", "when(%s)");
-            break;
-        case "uknit.format.when.return":
-            value = configuration.getProperty("uknit.format.when.return",
-                    ".thenReturn(%s)");
-            break;
-        case "uknit.format.verify":
-            value = configuration.getProperty("uknit.format.verify",
-                    "verify(%s).%s(%s);");
-            break;
-        case "uknit.format.call":
-            value = configuration.getProperty("uknit.format.call",
-                    "%s actual = %s.%s(%s);");
-            break;
-        case "uknit.format.callVoid":
-            value = configuration.getProperty("uknit.format.callVoid",
-                    "%s.%s(%s);");
-            break;
-        case "uknit.format.callConstructor":
-            value = configuration.getProperty("uknit.format.callConstructor",
-                    "%s actual = new %s(%s);");
-            break;
-        case "uknit.anonymous.class.capture.create":
-            value = configuration.getProperty(
-                    "uknit.anonymous.class.capture.create",
-                    "ArgumentCaptor<%s> %s = ArgumentCaptor.forClass(%s.class);");
-            break;
-        default:
-            break;
-        }
+        String value = configuration.getProperty(key);
         if (isNull(value)) {
             throw new CodeException(spaceit(
                     "could not get method statement format, unknown key:",

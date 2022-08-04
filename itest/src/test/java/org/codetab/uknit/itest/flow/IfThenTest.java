@@ -24,8 +24,8 @@ public class IfThenTest {
     public void testIfThenIf() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
-        int result = 1;
-        int apple = 1;
+        int result = 0;
+        int apple = -1;
 
         when(date1.compareTo(date2)).thenReturn(apple);
 
@@ -38,8 +38,8 @@ public class IfThenTest {
     public void testIfThen() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
-        int result = 0;
-        int apple = -1;
+        int result = 1;
+        int apple = 1;
 
         when(date1.compareTo(date2)).thenReturn(apple);
 
@@ -55,7 +55,7 @@ public class IfThenTest {
         Date date3 = Mockito.mock(Date.class);
         int result = 1;
         int apple = 1;
-        int orange = 1;
+        int orange = -1;
 
         when(date1.compareTo(date2)).thenReturn(apple);
         when(date2.compareTo(date3)).thenReturn(orange);
@@ -66,7 +66,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThenElse() {
+    public void testIfThenElseIf2() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         Date date3 = Mockito.mock(Date.class);
@@ -83,24 +83,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThenElseDateDateDateIf() {
-        Date date1 = Mockito.mock(Date.class);
-        Date date2 = Mockito.mock(Date.class);
-        Date date3 = Mockito.mock(Date.class);
-        int result = 2;
-        int apple = -1;
-        int orange = 1;
-
-        when(date1.compareTo(date2)).thenReturn(apple);
-        when(date2.compareTo(date3)).thenReturn(orange);
-
-        int actual = ifThen.ifThenElse(date1, date2, date3);
-
-        assertEquals(result, actual);
-    }
-
-    @Test
-    public void testIfThenElseDateDateDateElse() {
+    public void testIfThenElseElse() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         Date date3 = Mockito.mock(Date.class);

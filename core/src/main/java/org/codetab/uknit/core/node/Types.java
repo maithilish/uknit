@@ -5,6 +5,7 @@ import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
@@ -144,6 +146,19 @@ public class Types {
             throw new IllegalArgumentException("No name for type binding.");
         }
         return ast.newSimpleType(ast.newName(qualName));
+    }
+
+    public List<Type> getExceptionTypes(final Type type) {
+        List<Type> types = new ArrayList<>();
+        if (type.getClass().isAssignableFrom(SimpleType.class)) {
+            types.add(type);
+        }
+        if (type.getClass().isAssignableFrom(UnionType.class)) {
+            @SuppressWarnings("unchecked")
+            List<Type> unionTypes = ((UnionType) type).types();
+            types.addAll(unionTypes);
+        }
+        return types;
     }
 
 }

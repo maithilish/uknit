@@ -39,7 +39,7 @@ public interface ModelFactory {
 
     When createWhen(String methodSignature);
 
-    Verify createVerify(MethodInvocation mi);
+    Verify createVerify(MethodInvocation mi, boolean inCtlFlowPath);
 
     ArgCapture createArgCapture(String name, Type type);
 

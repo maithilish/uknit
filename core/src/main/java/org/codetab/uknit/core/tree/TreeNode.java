@@ -32,16 +32,33 @@ public class TreeNode<T>
 
     private static final long serialVersionUID = 8655205359948583064L;
 
-    protected String name;
+    private int id;
+    private String name;
     // object held by this
-    protected T object;
-    protected TreeNode<T> parent;
-    protected List<TreeNode<T>> children;
+    private T object;
+    private TreeNode<T> parent;
+    private List<TreeNode<T>> children;
+    private boolean enable;
 
     @Inject
-    public TreeNode(@Assisted final T object, @Assisted final String name) {
+    public TreeNode(@Assisted final int id, @Assisted final T object,
+            @Assisted final String name) {
+        this.id = id;
         this.object = object;
         this.name = name;
+        enable = true;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(final boolean enable) {
+        this.enable = enable;
     }
 
     public void add(final TreeNode<T> newChild) {
@@ -167,6 +184,9 @@ public class TreeNode<T>
      * @return
      */
     public List<TreeNode<T>> getChildren() {
+        if (isNull(children)) {
+            children = new ArrayList<>();
+        }
         return children;
     }
 
@@ -252,8 +272,8 @@ public class TreeNode<T>
 
     public String objectId() {
         final int len = 4;
-        String id = String.valueOf(System.identityHashCode(object));
-        return id.substring(id.length() - len);
+        String identity = String.valueOf(System.identityHashCode(object));
+        return identity.substring(identity.length() - len);
     }
 
     @Override

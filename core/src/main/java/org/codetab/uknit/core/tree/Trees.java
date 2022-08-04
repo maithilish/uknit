@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 public class Trees {
 
     /**
-     * Find node in the tree. Throws exception if node not found or multiple
-     * found.
+     * Find first matching node in the tree. Throws exception if node not found.
      * @param <T>
      * @param tree
      * @param node
@@ -35,11 +34,15 @@ public class Trees {
             throw new NoSuchElementException("node not found in tree");
         }
         return list.get(0);
-        // throw new IllegalStateException(
-        // String.format("same node found in multiple branches in tree %s",
-        // prettyPrint(tree, "", "", null)));
     }
 
+    /**
+     * Find all matching nodes.
+     * @param <T>
+     * @param tree
+     * @param node
+     * @return
+     */
     public <T> List<TreeNode<T>> findAll(final TreeNode<T> tree, final T node) {
         List<TreeNode<T>> list =
                 tree.stream().filter(t -> t.getObject().equals(node))
@@ -47,8 +50,25 @@ public class Trees {
         return list;
     }
 
+    /**
+     * Find all leaves of the tree.
+     * @param <T>
+     * @param tree
+     * @return
+     */
     public <T> List<TreeNode<T>> findLeaves(final TreeNode<T> tree) {
         return tree.stream().filter(t -> t.isLeaf())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Find all leaves of the tree that are enabled.
+     * @param <T>
+     * @param tree
+     * @return
+     */
+    public <T> List<TreeNode<T>> findEnabledLeaves(final TreeNode<T> tree) {
+        return tree.stream().filter(t -> t.isLeaf() && t.isEnable())
                 .collect(Collectors.toList());
     }
 
@@ -101,6 +121,14 @@ public class Trees {
         return list;
     }
 
+    /**
+     * Find position of the node in the tree.
+     * @param <T>
+     * @param tree
+     * @param node
+     * @param clz
+     * @return
+     */
     public <T> int positionInTree(final TreeNode<T> tree,
             final TreeNode<T> node, final Class<?> clz) {
         int pos = tree.stream()
@@ -118,8 +146,9 @@ public class Trees {
      * @param sb
      * @return
      */
-    public <T> String prettyPrint(final TreeNode<T> tree, final String prefix,
-            final String childrenPrefix, final StringBuilder sb) {
+    public <T> String prettyPrintTree(final TreeNode<T> tree,
+            final String prefix, final String childrenPrefix,
+            final StringBuilder sb) {
 
         T obj = tree.getObject();
         List<TreeNode<T>> children = tree.getChildren();
@@ -132,9 +161,14 @@ public class Trees {
         buffer.append(prefix);
         buffer.append(obj.getClass().getSimpleName());
         buffer.append(" ");
-        buffer.append(tree.getName());
-        buffer.append(" ");
+        if (!tree.getName().isBlank()) {
+            buffer.append(tree.getName());
+            buffer.append(" ");
+        }
         buffer.append(tree.objectId());
+        if (tree.isEnable()) {
+            buffer.append("+");
+        }
         buffer.append(System.lineSeparator());
 
         if (nonNull(children)) {
@@ -142,15 +176,67 @@ public class Trees {
             while (it.hasNext()) {
                 TreeNode<T> next = it.next();
                 if (it.hasNext()) {
-                    prettyPrint(next, childrenPrefix + "├── ",
+                    prettyPrintTree(next, childrenPrefix + "├── ",
                             childrenPrefix + "│   ", buffer);
                 } else {
-                    prettyPrint(next, childrenPrefix + "└── ",
+                    prettyPrintTree(next, childrenPrefix + "└── ",
                             childrenPrefix + "    ", buffer);
                 }
             }
         }
 
+        return buffer.toString();
+    }
+
+    /**
+     * Returns a path of a tree as string similar to Linux tree cmd output.
+     * @param <T>
+     * @param tree
+     * @param prefix
+     * @param childrenPrefix
+     * @param sb
+     * @return
+     */
+    public <T> String prettyPrintPath(final TreeNode<T> tree,
+            final List<TreeNode<T>> path, final String prefix,
+            final String childrenPrefix, final StringBuilder sb) {
+
+        T obj = tree.getObject();
+        List<TreeNode<T>> children = tree.getChildren();
+        StringBuilder buffer = sb;
+
+        if (isNull(buffer)) {
+            buffer = new StringBuilder();
+            buffer.append(System.lineSeparator());
+        }
+        if (path.contains(tree)) {
+            buffer.append(prefix);
+            buffer.append(obj.getClass().getSimpleName());
+            buffer.append(" ");
+            if (!tree.getName().isBlank()) {
+                buffer.append(tree.getName());
+                buffer.append(" ");
+            }
+            buffer.append(tree.objectId());
+            if (tree.isEnable()) {
+                buffer.append("+");
+            }
+            buffer.append(System.lineSeparator());
+        }
+
+        if (nonNull(children)) {
+            Iterator<TreeNode<T>> it = children.iterator();
+            while (it.hasNext()) {
+                TreeNode<T> next = it.next();
+                if (it.hasNext()) {
+                    prettyPrintPath(next, path, childrenPrefix + "└── ",
+                            childrenPrefix + "    ", buffer);
+                } else {
+                    prettyPrintPath(next, path, childrenPrefix + "└── ",
+                            childrenPrefix + "    ", buffer);
+                }
+            }
+        }
         return buffer.toString();
     }
 }

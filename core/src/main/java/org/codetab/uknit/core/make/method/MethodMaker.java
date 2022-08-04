@@ -76,9 +76,6 @@ public class MethodMaker {
         checkNotNull(method);
         checkNotNull(heap);
 
-        LOG.debug("==== method under test: {} ====",
-                methods.getMethodName(method));
-
         varNames.resetIndexes();
 
         String testClzName = methodMakers
@@ -89,8 +86,8 @@ public class MethodMaker {
         String testMethodName =
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
 
-        LOG.debug("==== test method: {} ====", testMethodName);
-        logCtlFlowPath(path);
+        LOG.debug("Method: {},    Test: {}", methods.getMethodName(method),
+                testMethodName);
 
         testMethod = methodMakers.constructTestMethod(method, testMethodName);
 
@@ -266,30 +263,6 @@ public class MethodMaker {
                     lastCtlNodeIndex, ctlTree);
         } else {
             return "";
-        }
-    }
-
-    /**
-     * Log control flow path node details.
-     * @param path
-     */
-    private void logCtlFlowPath(final List<TreeNode<ASTNode>> path) {
-        LOG.debug("Control Flow Path");
-        if (LOG.isDebugEnabled()) {
-            path.stream().forEach(t -> {
-                ASTNode obj = t.getObject();
-                String objId = t.objectId();
-                LOG.debug("{} {}", obj.getClass().getSimpleName(), objId);
-            });
-        }
-
-        if (LOG.isTraceEnabled()) {
-            path.stream().forEach(t -> {
-                ASTNode obj = t.getObject();
-                String objId = t.objectId();
-                LOG.trace("\n{} {} \n{}", obj.getClass().getSimpleName(), objId,
-                        obj.toString());
-            });
         }
     }
 }

@@ -55,6 +55,11 @@ public class Heap {
      */
     private boolean asserted = false;
 
+    /*
+     * whether now in ctl flow path
+     */
+    private boolean inCtlFlowPath;
+
     public List<IVar> getVars() {
         return vars;
     }
@@ -329,6 +334,14 @@ public class Heap {
      */
     public boolean isAsserted() {
         return asserted;
+    }
+
+    public boolean isInCtlFlowPath() {
+        return inCtlFlowPath;
+    }
+
+    public void setInCtlFlowPath(final boolean inCtlFlowPath) {
+        this.inCtlFlowPath = inCtlFlowPath;
     }
 
     /**

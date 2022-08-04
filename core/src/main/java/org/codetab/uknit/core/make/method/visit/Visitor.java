@@ -336,15 +336,24 @@ public class Visitor extends ASTVisitor {
     public boolean visit(final Block node) {
         // ctl flow for internal method call is not yet implemented
         if (internalMethod) {
+            heap.setInCtlFlowPath(true);
             return true;
         }
         if (splitOnControlFlow) {
-            return ctlPath.stream()
-                    .anyMatch(treeNode -> treeNode.getObject().equals(node));
+            heap.setInCtlFlowPath(ctlPath.stream()
+                    .anyMatch(treeNode -> treeNode.getObject().equals(node)
+                            && treeNode.isEnable()));
+            return true;
         } else {
             // for combined test method process all blocks.
+            heap.setInCtlFlowPath(true);
             return true;
         }
+    }
+
+    @Override
+    public void endVisit(final Block node) {
+        heap.setInCtlFlowPath(true);
     }
 
     /*

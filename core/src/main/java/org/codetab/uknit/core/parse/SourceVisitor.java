@@ -20,7 +20,7 @@ import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
 import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.method.detect.GetterSetter;
-import org.codetab.uknit.core.make.method.visit.ControlFlowVisitor;
+import org.codetab.uknit.core.make.method.visit.PathFinder;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.tree.Trees;
@@ -173,16 +173,18 @@ public class SourceVisitor extends ASTVisitor {
             if (splitMethodsOnControlFlow) {
 
                 // separate method for each control flow path
-                ControlFlowVisitor ctlFlowVisitor =
-                        di.instance(ControlFlowVisitor.class);
+                PathFinder ctlFlowVisitor = di.instance(PathFinder.class);
                 ctlFlowVisitor.setup();
                 node.accept(ctlFlowVisitor);
 
-                LOG.debug("Flow Tree{}", trees
-                        .prettyPrint(ctlFlowVisitor.getTree(), "", "", null));
+                // ctlFlowVisitor.enableNodes(ctlFlowVisitor.getTree(), true);
+                ctlFlowVisitor.enableUncoveredNodes(ctlFlowVisitor.getTree());
+
+                LOG.debug("Flow Tree [+ enabled path]{}", trees.prettyPrintTree(
+                        ctlFlowVisitor.getTree(), "", "", null));
 
                 List<TreeNode<ASTNode>> leaves =
-                        trees.findLeaves(ctlFlowVisitor.getTree());
+                        trees.findEnabledLeaves(ctlFlowVisitor.getTree());
 
                 // for each control path create a test method
                 for (int i = 0; i < leaves.size(); i++) {
@@ -191,6 +193,10 @@ public class SourceVisitor extends ASTVisitor {
                     TreeNode<ASTNode> leaf = leaves.get(i);
                     List<TreeNode<ASTNode>> ctlPath =
                             trees.getPathFromRoot(leaf);
+
+                    LOG.debug("==== generate test method for flow path ===={}",
+                            trees.prettyPrintPath(ctlFlowVisitor.getTree(),
+                                    ctlPath, "", "", null));
 
                     // suffix such as IfDone, ElseFlag etc.,
                     String suffix = methodMaker.getTestMethodNameSuffix(ctlPath,

@@ -270,6 +270,11 @@ public class PathFinder extends ASTVisitor {
         return true;
     }
 
+    /**
+     * Enable disabled nodes. When multiple tree nodes contains same object then
+     * only one is enabled.
+     * @param treeNode
+     */
     public void enableUncoveredNodes(final TreeNode<ASTNode> treeNode) {
         List<ASTNode> coveredNodes =
                 treeNode.stream().filter(TreeNode::isEnable)
@@ -286,57 +291,10 @@ public class PathFinder extends ASTVisitor {
         }
     }
 
-    // TODO - remove this later
     /**
-     * By default all treeNodes are disabled. Enable them selectively to cover
-     * all paths while excluding redundant paths. See notes for logic.
-     * @param treeNode
-     * @param mainPath
+     * Get tree of all ctl flow paths in a method.
+     * @return
      */
-    // public void enableNodes(final TreeNode<ASTNode> treeNode,
-    // final boolean mainPath) {
-    //
-    // int childIndex = 0;
-    //
-    // for (TreeNode<ASTNode> thisNode : treeNode.getChildren()) {
-    //
-    // List<TreeNode<ASTNode>> children = thisNode.getChildren();
-    //
-    // if (mainPath) {
-    // // in main path
-    // if (childIndex == 0) {
-    // // if main path and 1st child then enable all its children
-    // children.forEach(c -> {
-    // c.setEnable(true);
-    // });
-    // // continue in main path
-    // enableNodes(thisNode, true);
-    // } else {
-    // // not 1st child then enable its 1st child
-    // if (children.size() > 0) {
-    // children.get(0).setEnable(true);
-    // }
-    // // shift to secondary path
-    // enableNodes(thisNode, false);
-    // }
-    // } else {
-    // // continue secondary path
-    // if (childIndex == 0) {
-    // // secondary path and 1st child then enable its 1st child
-    // if (children.size() > 0) {
-    // children.get(0).setEnable(true);
-    // }
-    // enableNodes(thisNode, false); // in 2nd+ path, continue
-    // }
-    // /*
-    // * secondary path and not 1st child then stop processing. Ignore
-    // * the sub tree.
-    // */
-    // }
-    // childIndex++;
-    // }
-    // }
-
     public TreeNode<ASTNode> getTree() {
         return tree;
     }

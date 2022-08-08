@@ -67,18 +67,26 @@ public class WhenStager {
             verifyStager.stageVerify(mi, heap);
         }
 
-        String methodSignature = patchedMi.toString();
-        Optional<When> w = heap.findWhen(methodSignature);
-        When when = null;
-        if (w.isPresent()) {
-            when = w.get();
-        } else {
-            when = modelFactory.createWhen(methodSignature);
-            heap.getWhens().add(when);
-        }
-        when.getReturnVars().add(var);
+        /*
+         * if we are inCtlFlowPath then stage when else stage verify so as to
+         * create verify statement with never().
+         */
+        if (heap.isInCtlFlowPath()) {
+            String methodSignature = patchedMi.toString();
+            Optional<When> w = heap.findWhen(methodSignature);
+            When when = null;
+            if (w.isPresent()) {
+                when = w.get();
+            } else {
+                when = modelFactory.createWhen(methodSignature);
+                heap.getWhens().add(when);
+            }
+            when.getReturnVars().add(var);
 
-        List<String> usedNames = methods.getNames(patchedMi);
-        when.getNames().addAll(usedNames);
+            List<String> usedNames = methods.getNames(patchedMi);
+            when.getNames().addAll(usedNames);
+        } else {
+            verifyStager.stageVerify(mi, heap);
+        }
     }
 }

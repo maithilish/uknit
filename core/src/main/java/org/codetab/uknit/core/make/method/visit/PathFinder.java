@@ -262,9 +262,13 @@ public class PathFinder extends ASTVisitor {
 
         // add to each branch to complete the path
         for (int i = 0; i < leafTNodes.size(); i++) {
+
+            TreeNode<ASTNode> leafTNode = leafTNodes.get(i);
+            leafTNode = nodeFinder.findTerminalNode(leafTNode);
+
             TreeNode<ASTNode> blockTNode = treeFactory.createTreeNode(
                     idCounter.getAndIncrement(), block, "block");
-            parentTNode.add(blockTNode);
+            leafTNode.add(blockTNode);
         }
 
         return true;
@@ -284,7 +288,17 @@ public class PathFinder extends ASTVisitor {
                 .filter(n -> !n.isEnable()).collect(Collectors.toList());
 
         for (TreeNode<ASTNode> node : unCoveredNodes) {
-            if (!coveredNodes.contains(node.getObject())) {
+            if (coveredNodes.contains(node.getObject())) {
+                if (node.isEnable()) {
+                    throw new IllegalStateException("expects disabled node");
+                } else {
+                    /*
+                     * as similar node is already enabled don't enabled this
+                     * node and disable the entire subtree
+                     */
+                    node.stream().forEach(n -> n.setEnable(false));
+                }
+            } else {
                 node.setEnable(true);
                 coveredNodes.add(node.getObject());
             }

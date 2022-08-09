@@ -2,9 +2,12 @@ package org.codetab.uknit.core.make.method.visit;
 
 import static java.util.Objects.nonNull;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -78,6 +81,8 @@ public class Visitor extends ASTVisitor {
     private VarEnabler varEnabler;
 
     private Heap heap;
+
+    private Deque<Boolean> inCtlFlowPathState = new ArrayDeque<>();
 
     /*
      * whether internal method call visitor
@@ -340,6 +345,8 @@ public class Visitor extends ASTVisitor {
             return true;
         }
         if (splitOnControlFlow) {
+            // save the enclosing block state and set new state
+            inCtlFlowPathState.push(heap.isInCtlFlowPath());
             heap.setInCtlFlowPath(ctlPath.stream()
                     .anyMatch(treeNode -> treeNode.getObject().equals(node)
                             && treeNode.isEnable()));
@@ -353,7 +360,14 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final Block node) {
-        heap.setInCtlFlowPath(true);
+        boolean state;
+        try {
+            // restore previous state - enclosing block state
+            state = inCtlFlowPathState.pop();
+        } catch (NoSuchElementException e) {
+            state = true;
+        }
+        heap.setInCtlFlowPath(state);
     }
 
     /*

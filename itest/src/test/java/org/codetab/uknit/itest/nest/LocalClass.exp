@@ -56,28 +56,4 @@ public class LocalClassTest {
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
         fail("unable to assert, STEPIN");
     }
-
-    @Test
-    public void testValidatePhoneNumberIf6() {
-        String phoneNumber1 = "Foo";
-        String phoneNumber2 = "Bar";
-        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
-        fail("unable to assert, STEPIN");
-    }
-
-    @Test
-    public void testValidatePhoneNumberIf7() {
-        String phoneNumber1 = "Foo";
-        String phoneNumber2 = "Bar";
-        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
-        fail("unable to assert, STEPIN");
-    }
-
-    @Test
-    public void testValidatePhoneNumberIf8() {
-        String phoneNumber1 = "Foo";
-        String phoneNumber2 = "Bar";
-        LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
-        fail("unable to assert, STEPIN");
-    }
 }

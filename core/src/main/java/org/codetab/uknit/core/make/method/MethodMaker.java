@@ -257,12 +257,6 @@ public class MethodMaker {
      */
     public String getTestMethodNameSuffix(final List<TreeNode<ASTNode>> ctlPath,
             final TreeNode<ASTNode> ctlTree) {
-        int lastCtlNodeIndex = methodMakers.getLastCtlNodeIndex(ctlPath);
-        if (lastCtlNodeIndex >= 0) {
-            return methodMakers.getTestMethodNameSuffix(ctlPath,
-                    lastCtlNodeIndex, ctlTree);
-        } else {
-            return "";
-        }
+        return methodMakers.getTestMethodNameSuffix(ctlPath);
     }
 }

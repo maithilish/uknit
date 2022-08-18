@@ -1,13 +1,13 @@
 package org.codetab.uknit.core.make.method;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
-import org.codetab.uknit.core.make.method.visit.NameVisitor;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
@@ -47,8 +47,6 @@ public class MethodMakers {
     private NodeFactory nodeFactory;
     @Inject
     private Configs configs;
-    @Inject
-    private NameVisitor nameVisitor;
 
     public String getClzName(final TypeDeclaration clzDecl) {
         return clzDecl.getName().getFullyQualifiedName();
@@ -202,36 +200,62 @@ public class MethodMakers {
      * if(done){...}, the suffix is IfDone and test method becomes
      * testFooIfDone(...).
      * @param ctlPath
-     * @param ctlTree
      * @return
      */
-    public String getTestMethodNameSuffix(final List<TreeNode<ASTNode>> ctlPath,
-            final int lastCtlNodeIndex, final TreeNode<ASTNode> ctlTree) {
+    public String getTestMethodNameSuffix(
+            final List<TreeNode<ASTNode>> ctlPath) {
 
-        TreeNode<ASTNode> ctlTNode = ctlPath.get(lastCtlNodeIndex);
-        nameVisitor.setup(ctlTNode, ctlPath, ctlTree);
+        StringBuilder buffer = new StringBuilder();
 
-        // visit and construct suffix
-        ASTNode ctlNode = ctlTNode.getObject();
-        ctlNode.accept(nameVisitor);
+        int nameDepth = Integer.parseInt(
+                configs.getConfig("uknit.controlFlow.method.name.depth", "3"));
 
-        return nameVisitor.getSuffix();
-    }
+        // get position in ctlPath till no child is disabled
+        long endPos = ctlPath.stream().takeWhile(n -> {
+            // break if any child is disabled
+            return !n.getChildren().stream().anyMatch(c -> !c.isEnable());
+        }).count();
 
-    /**
-     * Return index of last control flow node in ctlPath list.
-     * @param ctlPath
-     * @return
-     */
-    public int getLastCtlNodeIndex(final List<TreeNode<ASTNode>> ctlPath) {
-        int index = -1;
-        for (int i = 0; i < ctlPath.size(); i++) {
-            ASTNode node = ctlPath.get(i).getObject();
-            if (node instanceof IfStatement || node instanceof TryStatement
-                    || node instanceof CatchClause) {
-                index = i;
+        /*
+         * create new list up to endPos of ifStmt, try and catch nodes without
+         * any block nodes
+         */
+        List<TreeNode<ASTNode>> ctlNodeList = ctlPath.stream().limit(endPos)
+                .filter(n -> !nodes.is(n.getObject(), Block.class))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < nameDepth; i++) {
+
+            int nodeIndex = (ctlNodeList.size() - 1) - i;
+            if (nodeIndex < 0) {
+                break;
+            }
+            TreeNode<ASTNode> tNode = ctlNodeList.get(nodeIndex);
+
+            /*
+             * for ifStmt the suffix is IfNameIsPresent or ElseCanSwim. The if
+             * or else part comes from the name field of block tree node and the
+             * rest comes from ifStmt tree node name.
+             */
+            if (nodes.is(tNode.getObject(), IfStatement.class)) {
+                int ifBlkIndex = ctlPath.indexOf(tNode) + 1;
+                buffer.insert(0, tNode.getName());
+                if (ctlPath.size() > ifBlkIndex) {
+                    String ifOrElse = ctlPath.get(ifBlkIndex).getName();
+                    if (ifOrElse.equals("empty else")) {
+                        ifOrElse = "else";
+                    }
+                    buffer.insert(0, StringUtils.capitalize(ifOrElse));
+                }
+            }
+
+            if (nodes.is(tNode.getObject(), TryStatement.class)) {
+                buffer.insert(0, StringUtils.capitalize(tNode.getName()));
+            }
+            if (nodes.is(tNode.getObject(), CatchClause.class)) {
+                buffer.insert(0, StringUtils.capitalize(tNode.getName()));
             }
         }
-        return index;
+        return buffer.toString();
     }
 }

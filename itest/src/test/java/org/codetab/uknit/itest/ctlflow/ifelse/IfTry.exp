@@ -12,7 +12,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryFooTry() {
+    public void testIfTryFooIfCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -32,7 +32,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryFooCatchIllegalStateException() {
+    public void testIfTryFooIfCanSwimTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -52,7 +52,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryFooTry2() {
+    public void testIfTryFooElseCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -72,7 +72,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfFooIfCanSwim() {
+    public void testTryIfFooTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -92,7 +92,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfFooElseCanSwim() {
+    public void testTryIfFooTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -112,7 +112,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfFooIfCanSwim2() {
+    public void testTryIfFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";

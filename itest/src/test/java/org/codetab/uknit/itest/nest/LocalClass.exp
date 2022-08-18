@@ -10,7 +10,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberIf() {
+    public void testValidatePhoneNumberIfCurrentNumberLengthIfMyNumber1GetNumberIfMyNumber2GetNumber() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -18,7 +18,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberElse() {
+    public void testValidatePhoneNumberIfCurrentNumberLengthIfMyNumber1GetNumberElseMyNumber2GetNumber() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -26,7 +26,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberIf2() {
+    public void testValidatePhoneNumberIfCurrentNumberLengthElseMyNumber1GetNumber() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -34,7 +34,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberIf3() {
+    public void testValidatePhoneNumberElseCurrentNumberLength() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -42,7 +42,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberIf4() {
+    public void testValidatePhoneNumber() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);
@@ -50,7 +50,7 @@ public class LocalClassTest {
     }
 
     @Test
-    public void testValidatePhoneNumberIf5() {
+    public void testValidatePhoneNumberStringString() {
         String phoneNumber1 = "Foo";
         String phoneNumber2 = "Bar";
         LocalClass.validatePhoneNumber(phoneNumber1, phoneNumber2);

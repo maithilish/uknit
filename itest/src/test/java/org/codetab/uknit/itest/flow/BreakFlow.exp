@@ -18,7 +18,7 @@ public class BreakFlowTest {
     }
 
     @Test
-    public void testPlainBreak() {
+    public void testPlainBreakElse() {
 
         boolean actual = breakFlow.plainBreak();
 
@@ -34,7 +34,7 @@ public class BreakFlowTest {
     }
 
     @Test
-    public void testLabeledBreak() {
+    public void testLabeledBreakElse() {
 
         boolean actual = breakFlow.labeledBreak();
 

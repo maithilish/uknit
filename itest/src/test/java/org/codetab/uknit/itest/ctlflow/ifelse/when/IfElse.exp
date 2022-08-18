@@ -28,7 +28,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfFooCanSwim() {
+    public void testIfFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -79,7 +79,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfFooIfDone() {
+    public void testIfNestIfFooIfCanSwimIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -102,7 +102,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfFooElseDone() {
+    public void testIfNestIfFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -148,7 +148,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfIfFooIfDone() {
+    public void testIfIfFooIfCanSwimIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -171,7 +171,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfIfFooElseDone() {
+    public void testIfIfFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -194,7 +194,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfIfFooIfDone2() {
+    public void testIfIfFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -217,7 +217,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfIfFooIfDone() {
+    public void testIfNestIfIfFooIfCanSwimIfCanDiveIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean canDive = true;
@@ -245,7 +245,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfIfFooElseDone() {
+    public void testIfNestIfIfFooIfCanSwimIfCanDiveElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean canDive = true;
@@ -273,7 +273,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfIfFooIfDone2() {
+    public void testIfNestIfIfFooIfCanSwimElseCanDive() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean canDive = true;
@@ -346,7 +346,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNoAssignFooCanSwim() {
+    public void testIfNoAssignFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -401,7 +401,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfNoAssignFooIfDone() {
+    public void testIfNestIfNoAssignFooIfCanSwimIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -425,7 +425,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfNoAssignFooElseDone() {
+    public void testIfNestIfNoAssignFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -473,7 +473,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfIfNoAssignFooIfDone() {
+    public void testIfIfNoAssignFooIfCanSwimIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -497,7 +497,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfIfNoAssignFooElseDone() {
+    public void testIfIfNoAssignFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -521,7 +521,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfIfNoAssignFooIfDone2() {
+    public void testIfIfNoAssignFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -545,7 +545,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfIfNoAssignFooIfDone() {
+    public void testIfNestIfIfNoAssignFooIfCanSwimIfCanDiveIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean canDive = true;
@@ -574,7 +574,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfIfNoAssignFooElseDone() {
+    public void testIfNestIfIfNoAssignFooIfCanSwimIfCanDiveElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean canDive = true;
@@ -603,7 +603,7 @@ public class IfElseTest {
     }
 
     @Test
-    public void testIfNestIfIfNoAssignFooIfDone2() {
+    public void testIfNestIfIfNoAssignFooIfCanSwimElseCanDive() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean canDive = true;

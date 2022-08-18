@@ -10,7 +10,7 @@ public class ContinueFlowTest {
     }
 
     @Test
-    public void testPlainContinueIf() {
+    public void testPlainContinueIfSearchMeCharAt() {
         int numPs = 0;
 
         int actual = continueFlow.plainContinue();
@@ -19,7 +19,7 @@ public class ContinueFlowTest {
     }
 
     @Test
-    public void testPlainContinue() {
+    public void testPlainContinueElseSearchMeCharAt() {
         int numPs = 0;
 
         int actual = continueFlow.plainContinue();
@@ -28,7 +28,7 @@ public class ContinueFlowTest {
     }
 
     @Test
-    public void testLabeledContinueIf() {
+    public void testLabeledContinueIfSearchMeCharAt() {
 
         boolean actual = continueFlow.labeledContinue();
 
@@ -36,7 +36,7 @@ public class ContinueFlowTest {
     }
 
     @Test
-    public void testLabeledContinue() {
+    public void testLabeledContinueElseSearchMeCharAt() {
 
         boolean actual = continueFlow.labeledContinue();
 

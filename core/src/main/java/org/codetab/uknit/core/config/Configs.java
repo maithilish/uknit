@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.Optional;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
@@ -61,6 +62,10 @@ public class Configs {
         } else {
             return value;
         }
+    }
+
+    public Properties getProperties(final String prefix) {
+        return configuration.getProperties(prefix);
     }
 
     public String clearProperty(final String key) {

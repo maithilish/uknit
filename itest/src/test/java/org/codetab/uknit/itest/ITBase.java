@@ -1,10 +1,13 @@
 package org.codetab.uknit.itest;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,8 +115,10 @@ public class ITBase {
         return configs.getConfig(key);
     }
 
-    // TODO clean the target/itest dir after each IT
     protected void generateTestClass() throws IOException {
+
+        cleanDestDir(Paths.get(configs.getConfig("uknit.dest")));
+
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);
         Uknit uknit = di.instance(Uknit.class);
@@ -142,6 +147,15 @@ public class ITBase {
 
     protected void print(final File file) throws IOException {
         Files.copy(file.toPath(), System.out);
+    }
+
+    public static void cleanDestDir(final Path directory) throws IOException {
+        final File[] files = directory.toFile().listFiles();
+        if (nonNull(files)) {
+            for (File f : files) {
+                f.delete();
+            }
+        }
     }
 
     protected void display(final File file, final boolean exit) {

@@ -161,3 +161,5 @@ On the other hand for the following validation in step.parse.PrefixProcessor the
 ## Ctl Flow
 
 Complex if generates redundant tests - ifElseIfPlusIf
+for trailing statements in main block after exception is thrown never is not added
+	write tests - throw exception in catch block

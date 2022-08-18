@@ -29,7 +29,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchFooCatchIllegalStateException() {
+    public void testTryMultiCatchFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -46,7 +46,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchFooCatchIllegalStateException2() {
+    public void testTryMultiCatchFooTryCatchIllegalArgumentException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -81,7 +81,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryCatchMultiCatchFooCatchIllegalStateException() {
+    public void testTryCatchMultiCatchFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -99,7 +99,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryCatchMultiCatchFooCatchIllegalAccessError() {
+    public void testTryCatchMultiCatchFooTryCatchIllegalAccessError() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -117,7 +117,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryCatchMultiCatchFooCatchIllegalAccessError2() {
+    public void testTryCatchMultiCatchFooTryCatchIllegalArgumentException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -135,7 +135,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchPlusIfFooIfCanSwim() {
+    public void testTryMultiCatchPlusIfFooTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -155,7 +155,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchPlusIfFooElseCanSwim() {
+    public void testTryMultiCatchPlusIfFooTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -175,7 +175,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchPlusIfFooIfCanSwim2() {
+    public void testTryMultiCatchPlusIfFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -195,7 +195,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchPlusIfFooIfCanSwim3() {
+    public void testTryMultiCatchPlusIfFooTryCatchIllegalArgumentException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -235,7 +235,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchIfPlusIfFooIfCanSwim() {
+    public void testTryMultiCatchIfPlusIfFooTryCatchIllegalStateExceptionIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -255,7 +255,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchIfPlusIfFooElseCanSwim() {
+    public void testTryMultiCatchIfPlusIfFooTryCatchIllegalStateExceptionElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -275,7 +275,7 @@ public class TryMultiCatchTest {
     }
 
     @Test
-    public void testTryMultiCatchIfPlusIfFooIfCanSwim2() {
+    public void testTryMultiCatchIfPlusIfFooTryCatchIllegalArgumentException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";

@@ -12,7 +12,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThenIf() {
+    public void testIfThenIfDate1CompareTo() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         int result = 0;
@@ -26,7 +26,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThen() {
+    public void testIfThenElseDate1CompareTo() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         int result = 0;
@@ -40,7 +40,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThenElseIf() {
+    public void testIfThenElseIfDate1CompareTo() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         Date date3 = Mockito.mock(Date.class);
@@ -57,7 +57,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThenElseIf2() {
+    public void testIfThenElseElseDate1CompareToIfelse() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         Date date3 = Mockito.mock(Date.class);
@@ -74,7 +74,7 @@ public class IfThenTest {
     }
 
     @Test
-    public void testIfThenElseElse() {
+    public void testIfThenElseElseDate1CompareToElseelse() {
         Date date1 = Mockito.mock(Date.class);
         Date date2 = Mockito.mock(Date.class);
         Date date3 = Mockito.mock(Date.class);

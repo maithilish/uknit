@@ -110,4 +110,17 @@ enum Configuration {
     public String getNames(final String key) {
         return names.getProperty(key);
     }
+
+    public Properties getProperties(final String prefix) {
+        Properties matching = new Properties();
+        String pfix = prefix + ".";
+        for (Object k : props.keySet()) {
+            String key = (String) k;
+            if (key.startsWith(prefix)) {
+                String value = props.getProperty(key);
+                matching.put(key.replace(pfix, ""), value);
+            }
+        }
+        return matching;
+    }
 }

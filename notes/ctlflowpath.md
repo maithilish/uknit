@@ -1,9 +1,58 @@
 
+## Visitor
+
+PathFinder visits the method and creates Control Flow Path (CFP) Tree. The tree is partial representation of the AST. Only the interesting statements and blocks are added to the tree skipping statements such as ForStatement etc., At present control paths for only If and Try constructs are implemented.
+
+The visitor is invoked by SourceVisitor.visit(MethodDeclaration node) method. 
+
+## Trailing block
+
+The for stmt trail if done stmt and to complete the path its block is added to every occurrence of if done block. The if done stmt trails if canSwim stmt and to complete the path its block is added to every occurrence of if swim block. 
+
+The main path has two branches - if-canSwim -> if-done -> for  and if-canSwim -> else-done -> for
+The secondary path has only enabled one branch - else-canSwim -> if-done -> for and other branch else-canSwim -> else-done -> for is redundant and is disabled.
+
+    duck.swim("start");
+    if (canSwim) {
+        duck.swim("if");
+    } else {
+        duck.swim("else");
+    }
+    if (done) {
+        duck.swim("if if");
+    } else {
+        duck.swim("if else");
+    }
+    // for block
+    for (String name : names) {
+        duck.swim(name);
+    }
+    duck.swim("end");       
+
+	MethodDeclaration 6989+
+	└── Block md 5648+
+	    └── IfStatement 8513+
+	        ├── Block if 0291+
+	        │   └── IfStatement 4489+
+	        │       ├── Block if 2628+
+	        │       │   └── Block block 4928+
+	        │       └── Block else 1510+
+	        │           └── Block block 4928+
+	        └── Block else 5175+
+	            └── IfStatement 4489+
+	                ├── Block if 2628+
+	                │   └── Block block 4928+
+	                └── Block else 1510
+	                    └── Block block 4928
+        
 
 ## Enable and Disable Logic
 
-By default all treeNodes are enabled. On creation optional items such as else and catch are disabled. Only one instance of each of such items is enabled later with enableUncoveredNodes() method.
+Disabled nodes are enabled selectively in enableUncoveredNodes() method.
 
+By default mandatory constructs such as try and if are enabled. When such tree nodes with same object are found in multiple branches then are enabled.
+
+On the other hand optional constructs such as else and catch are disabled by default. When such tree nodes with same object are found in multiple branches then only one is enabled. The entire subtree of others are disabled.
 
 ## Else vs else if
 
@@ -127,7 +176,8 @@ Secondry Paths: The first if's else-if is the head of secondary path. It branche
 
 Finally blocks, if exists, are added to try and to catch blocks. When ctl flow block's parent is TryStmt or CatchClause then we look for the finally with findTerminalNode() and add the next block to it.
 
+## Test Method Naming
 
+When CFP tree is created by PathFinder the name is set. For ifStmt name is derived from var name or method invoke signature, for example: if(canSwim) suffix is CanSwim, for if(foo.swim(...)) it is FooSwim etc., For if then block it is If and else block the suffix is Else. For try it is Try.
 
-
-    
+Test method name suffix is generated in SourceVistior.visit(MethodDeclaration node) method. For each ctlPath list,  the list is traversed to get end position in ctlPath till no child is disabled. Next create a new list up to endPos of ifStmt, try and catch nodes without any block nodes. Next concated suffix is created from last n nodes (uknit.controlFlow.method.name.depth). 

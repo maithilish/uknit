@@ -28,7 +28,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfFooCanSwim() {
+    public void testIfFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -43,7 +43,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfPlusIfFooIfDone() {
+    public void testIfPlusIfFooIfCanSwimIfDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -62,7 +62,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfPlusIfFooDone() {
+    public void testIfPlusIfFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -81,7 +81,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfPlusIfFooIfDone2() {
+    public void testIfPlusIfFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -100,7 +100,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testTryPlusIfFooIfCanSwim() {
+    public void testTryPlusIfFooTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -120,7 +120,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testTryPlusIfFooCanSwim() {
+    public void testTryPlusIfFooTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -140,7 +140,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfIfPlusIfFooIfEof() {
+    public void testIfIfPlusIfFooIfCanSwimIfDoneIfEof() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -162,7 +162,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfIfPlusIfFooEof() {
+    public void testIfIfPlusIfFooIfCanSwimIfDoneElseEof() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -184,7 +184,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfIfPlusIfFooIfEof2() {
+    public void testIfIfPlusIfFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;
@@ -206,7 +206,7 @@ public class ElsePathTest {
     }
 
     @Test
-    public void testIfIfPlusIfFooIfEof3() {
+    public void testIfIfPlusIfFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         boolean done = true;

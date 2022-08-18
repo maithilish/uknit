@@ -12,7 +12,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryFooTry2() {
+    public void testTryNestTryFooTryTry() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -32,7 +32,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryFooCatchIllegalStateException() {
+    public void testTryNestTryFooTryTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -52,7 +52,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryFooCatchIllegalStateException2() {
+    public void testTryNestTryFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -92,7 +92,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryCatchNestTryFooTry2() {
+    public void testTryCatchNestTryFooTryCatchIllegalStateExceptionTry() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -112,7 +112,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryCatchNestTryFooCatchIllegalStateException() {
+    public void testTryCatchNestTryFooCatchIllegalStateExceptionTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -132,7 +132,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryFooTry2() {
+    public void testTryFinallyNestTryFooTryTry() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -152,7 +152,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryFooCatchIllegalStateException() {
+    public void testTryFinallyNestTryFooTryTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -172,7 +172,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryFooTry3() {
+    public void testTryFinallyNestTryFooTryCatchIllegalStateExceptionTry() {
         Duck duck = Mockito.mock(Duck.class);
         String apple = "Foo";
 
@@ -192,7 +192,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryPlusIfFooIfCanSwim() {
+    public void testTryNestTryPlusIfFooTryTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -215,7 +215,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryPlusIfFooElseCanSwim() {
+    public void testTryNestTryPlusIfFooTryTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -238,7 +238,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryPlusIfFooIfCanSwim2() {
+    public void testTryNestTryPlusIfFooTryTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -261,7 +261,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryNestTryPlusIfFooIfCanSwim3() {
+    public void testTryNestTryPlusIfFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -284,7 +284,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryCatchNestTryPlusIfFooIfCanSwim() {
+    public void testTryCatchNestTryPlusIfFooTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -307,7 +307,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryCatchNestTryPlusIfFooElseCanSwim() {
+    public void testTryCatchNestTryPlusIfFooTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -330,7 +330,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryCatchNestTryPlusIfFooIfCanSwim2() {
+    public void testTryCatchNestTryPlusIfFooTryCatchIllegalStateExceptionTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -353,7 +353,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryCatchNestTryPlusIfFooIfCanSwim3() {
+    public void testTryCatchNestTryPlusIfFooCatchIllegalStateExceptionTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -376,7 +376,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryPlusIfFooIfCanSwim() {
+    public void testTryFinallyNestTryPlusIfFooTryTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -399,7 +399,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryPlusIfFooElseCanSwim() {
+    public void testTryFinallyNestTryPlusIfFooTryTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -422,7 +422,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryPlusIfFooIfCanSwim2() {
+    public void testTryFinallyNestTryPlusIfFooTryTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -445,7 +445,7 @@ public class TryNestTryTest {
     }
 
     @Test
-    public void testTryFinallyNestTryPlusIfFooIfCanSwim3() {
+    public void testTryFinallyNestTryPlusIfFooTryCatchIllegalStateExceptionTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";

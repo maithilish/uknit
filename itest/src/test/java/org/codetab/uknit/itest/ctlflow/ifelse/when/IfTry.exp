@@ -12,7 +12,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryFooTry() {
+    public void testIfTryFooIfCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -36,7 +36,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryFooCatchIllegalStateException() {
+    public void testIfTryFooIfCanSwimTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -60,7 +60,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryFooTry2() {
+    public void testIfTryFooElseCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -84,7 +84,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfFooIfCanSwim() {
+    public void testTryIfFooTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -108,7 +108,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfFooElseCanSwim() {
+    public void testTryIfFooTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -132,7 +132,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfFooIfCanSwim2() {
+    public void testTryIfFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String state = "Foo";
@@ -156,7 +156,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryNoAssignFooTry() {
+    public void testIfTryNoAssignFooIfCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -181,7 +181,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryNoAssignFooCatchIllegalStateException() {
+    public void testIfTryNoAssignFooIfCanSwimTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -206,7 +206,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testIfTryNoAssignFooTry2() {
+    public void testIfTryNoAssignFooElseCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -231,7 +231,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfNoAssignFooIfCanSwim() {
+    public void testTryIfNoAssignFooTryIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -256,7 +256,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfNoAssignFooElseCanSwim() {
+    public void testTryIfNoAssignFooTryElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";
@@ -281,7 +281,7 @@ public class IfTryTest {
     }
 
     @Test
-    public void testTryIfNoAssignFooIfCanSwim2() {
+    public void testTryIfNoAssignFooTryCatchIllegalStateException() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
         String apple = "Foo";

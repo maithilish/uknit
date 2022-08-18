@@ -100,7 +100,7 @@ public class StandinVarTest {
     }
 
     @Test
-    public void testGetRealFieldIf() {
+    public void testGetRealFieldIfIsNull() {
         Map<String, Object> realField = new HashMap<>();
 
         Map<String, Object> actual = standinVar.getRealField();
@@ -109,7 +109,7 @@ public class StandinVarTest {
     }
 
     @Test
-    public void testGetRealField() {
+    public void testGetRealFieldElseIsNull() {
         Map<String, Object> realField = new HashMap<>();
 
         Map<String, Object> actual = standinVar.getRealField();

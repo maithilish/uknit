@@ -2,6 +2,7 @@ package org.codetab.uknit.core.util;
 
 import static java.util.Objects.nonNull;
 
+import java.util.List;
 import java.util.Random;
 
 public class StringUtils {
@@ -64,5 +65,33 @@ public class StringUtils {
             sb.append(str.substring(1));
         }
         return sb.toString();
+    }
+
+    /**
+     * Capitalise each string and concat.
+     * @param parts
+     * @return
+     */
+    public static String concatCapitalized(final List<String> parts) {
+        StringBuilder buffer = new StringBuilder();
+        for (String part : parts) {
+            int strLen = 0;
+            if (nonNull(part) && !part.isBlank()) {
+                strLen = part.length();
+            }
+            if (strLen > 0) {
+                char firstChar = (char) part.codePointAt(0);
+                char upperChar = Character.toTitleCase(firstChar);
+                if (firstChar == upperChar) {
+                    buffer.append(part);
+                } else {
+                    buffer.append(upperChar);
+                    if (strLen > 1) {
+                        buffer.append(part.substring(1));
+                    }
+                }
+            }
+        }
+        return buffer.toString();
     }
 }

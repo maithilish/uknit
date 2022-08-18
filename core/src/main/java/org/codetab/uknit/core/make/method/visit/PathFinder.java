@@ -6,17 +6,21 @@ import static java.util.Objects.nonNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.tree.TreeFactory;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.tree.Trees;
+import org.codetab.uknit.core.util.StringUtils;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
@@ -43,6 +47,10 @@ public class PathFinder extends ASTVisitor {
     @Inject
     private Types types;
     @Inject
+    private Configs configs;
+    @Inject
+    private Expressions expressions;
+    @Inject
     private NodeFactory nodeFactory;
     @Inject
     private TreeFactory treeFactory;
@@ -52,10 +60,12 @@ public class PathFinder extends ASTVisitor {
     private TreeNode<ASTNode> tree;
     private TreeNode<ASTNode> methodTBlock;
     private AtomicInteger idCounter;
+    private Properties properties;
 
     public void setup() {
         tree = null;
         idCounter = new AtomicInteger(1);
+        properties = configs.getProperties("uknit.controlFlow.method.name");
     }
 
     /**
@@ -97,6 +107,11 @@ public class PathFinder extends ASTVisitor {
         parentTNode = nodeFinder.findElseIf(tree, ifStmt);
         boolean isElseIf;
 
+        // ifName for if(canSwim) is CanSwim, for if(foo.swim(...)) is fooSwim
+        List<String> names = new ArrayList<>();
+        expressions.collectNames(ifStmt.getExpression(), names, properties);
+        String ifName = StringUtils.concatCapitalized(names);
+
         /*
          * if if-else find leaves of all its occurrences. if if-else-if treat
          * ifStmt of else as the leaf.
@@ -115,7 +130,7 @@ public class PathFinder extends ASTVisitor {
 
         // optional else stmt
         Statement elseStmt = ifStmt.getElseStatement();
-        String elseName = "else";
+        String elseName = properties.getProperty("suffix.else");
 
         // if else doesn't exists, create empty else block
         if (isNull(elseStmt)) {
@@ -138,13 +153,14 @@ public class PathFinder extends ASTVisitor {
                 ifTNode = parentTNode;
             } else {
                 ifTNode = treeFactory.createTreeNode(
-                        idCounter.getAndIncrement(), ifStmt, "");
+                        idCounter.getAndIncrement(), ifStmt, ifName);
                 leafTNode.add(ifTNode);
             }
 
+            String thenName = properties.getProperty("suffix.if");
             Statement thenStmt = ifStmt.getThenStatement();
             TreeNode<ASTNode> thenTNode = treeFactory.createTreeNode(
-                    idCounter.getAndIncrement(), thenStmt, "if");
+                    idCounter.getAndIncrement(), thenStmt, thenName);
             ifTNode.add(thenTNode);
 
             // add optional else or empty else
@@ -175,19 +191,21 @@ public class PathFinder extends ASTVisitor {
             leafTNode = nodeFinder.findTerminalNode(leafTNode);
 
             // add try (to parent as new branch) and body
+            String name = properties.getProperty("suffix.try");
             TreeNode<ASTNode> tryTNode = treeFactory
-                    .createTreeNode(idCounter.getAndIncrement(), tryStmt, "");
+                    .createTreeNode(idCounter.getAndIncrement(), tryStmt, name);
             TreeNode<ASTNode> bodyTNode = treeFactory.createTreeNode(
-                    idCounter.getAndIncrement(), tryStmt.getBody(), "try");
+                    idCounter.getAndIncrement(), tryStmt.getBody(), name);
             leafTNode.add(tryTNode);
             tryTNode.add(bodyTNode);
 
             // if exists add finally block
             Block finallyBlock = tryStmt.getFinally();
             if (nonNull(finallyBlock)) {
+                name = properties.getProperty("suffix.finally");
                 TreeNode<ASTNode> finallyTNode =
                         treeFactory.createTreeNode(idCounter.getAndIncrement(),
-                                tryStmt.getFinally(), "finally");
+                                tryStmt.getFinally(), name);
                 bodyTNode.add(finallyTNode);
             }
         }
@@ -213,13 +231,15 @@ public class PathFinder extends ASTVisitor {
                 types.getExceptionTypes(catchClause.getException().getType());
 
         for (int i = 0; i < exceptions.size(); i++) {
+            String exceptionName = types.getTypeName(exceptions.get(i));
+            String name = properties.getProperty("suffix.catch");
             TreeNode<ASTNode> tryBlockTNode = treeFactory.createTreeNode(
                     idCounter.getAndIncrement(), tryStmt.getBody(), "try");
             TreeNode<ASTNode> catchTNode = treeFactory.createTreeNode(
-                    idCounter.getAndIncrement(), catchClause, "");
-            TreeNode<ASTNode> catchBlockTNode =
-                    treeFactory.createTreeNode(idCounter.getAndIncrement(),
-                            catchClause.getBody(), "catch");
+                    idCounter.getAndIncrement(), catchClause,
+                    String.join("", "catch", exceptionName));
+            TreeNode<ASTNode> catchBlockTNode = treeFactory.createTreeNode(
+                    idCounter.getAndIncrement(), catchClause.getBody(), name);
 
             // add tryBody (to try as new branch), catch, body and finally
             tryTNode.add(tryBlockTNode);
@@ -228,9 +248,10 @@ public class PathFinder extends ASTVisitor {
 
             Block finallyBlock = tryStmt.getFinally();
             if (nonNull(finallyBlock)) {
+                name = properties.getProperty("suffix.finally");
                 TreeNode<ASTNode> finallyTNode =
                         treeFactory.createTreeNode(idCounter.getAndIncrement(),
-                                tryStmt.getFinally(), "finally");
+                                tryStmt.getFinally(), name);
                 catchBlockTNode.add(finallyTNode);
             }
         }
@@ -276,7 +297,16 @@ public class PathFinder extends ASTVisitor {
 
     /**
      * Enable disabled nodes. When multiple tree nodes contains same object then
-     * only one is enabled.
+     * only one is enabled. Disable entire subtree if node is disabled.
+     * <p>
+     * By default mandatory constructs such as try and if are enabled. When such
+     * tree nodes with same object are found in multiple branches then are
+     * enabled.
+     * <p>
+     * On the other hand optional constructs such as else and catch are disabled
+     * by default. When such tree nodes with same object are found in multiple
+     * branches then only one is enabled. The entire subtree of others are
+     * disabled.
      * @param treeNode
      */
     public void enableUncoveredNodes(final TreeNode<ASTNode> treeNode) {

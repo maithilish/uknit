@@ -36,9 +36,7 @@ public class VarNames {
 
     private int capIndex;
     private String[] captureVars;
-    private static final int RANDOM_STR_LEN = 8;
-
-    private int renameIndex;
+    private static final int RANDOM_STR_LEN = 4;
 
     public void setup() {
         msIndex = 0;
@@ -61,7 +59,6 @@ public class VarNames {
         ivIndex = 0;
         msIndex = 0;
         capIndex = 0;
-        renameIndex = 1;
     }
 
     public String getInferVarName(final Optional<String> typeName,
@@ -138,8 +135,21 @@ public class VarNames {
         }
     }
 
+    /**
+     * Vars may have to be renamed when IM are called multiple times. There is
+     * high probability that similar names may be indexed foo, foo1, foo2 etc.,
+     * To avoid conflict better to use infer var name as suffix so that vars are
+     * renamed as fooApple, fooGrape etc., instead of index.
+     * @param name
+     * @return
+     */
     public String renameVar(final String name) {
-        renameIndex++;
-        return name + renameIndex;
+        String suffix;
+        if (ivIndex < inferredVars.length) {
+            suffix = inferredVars[ivIndex++];
+        } else {
+            suffix = stringUtils.generateString(RANDOM_STR_LEN);
+        }
+        return name + StringUtils.capitalize(suffix);
     }
 }

@@ -37,7 +37,7 @@ public interface ModelFactory {
     ExpVar createVarExp(@Assisted("left") Expression leftExp,
             @Assisted("right") Expression rightExp);
 
-    When createWhen(String methodSignature);
+    When createWhen(String methodSignature, IVar callVar);
 
     Verify createVerify(MethodInvocation mi, boolean inCtlFlowPath);
 

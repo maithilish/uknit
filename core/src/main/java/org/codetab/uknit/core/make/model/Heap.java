@@ -254,6 +254,13 @@ public class Heap {
      */
     public void initialize(final Heap other) {
         vars.addAll(other.vars);
+        /*
+         * add field whens of other to this heap, when is required to chain
+         * multiple call to same field. Other var types are local to the IM, so
+         * they are excluded.
+         */
+        other.whens.stream().filter(w -> w.getCallVar().isField())
+                .forEach(w -> whens.add(w));
         selfFieldName = other.getSelfFieldName();
     }
 
@@ -262,15 +269,11 @@ public class Heap {
      * @param other
      */
     public void merge(final Heap other) {
-        // add vars that are not in list
-        List<IVar> oVars = other.getVars();
-        for (IVar oVar : oVars) {
-            if (!vars.contains(oVar)) {
-                vars.add(oVar);
-            }
-        }
-
-        whens.addAll(other.getWhens());
+        // merge other.vars that are not in vars
+        other.vars.stream().filter(v -> !vars.contains(v)).forEach(vars::add);
+        // merge other.whens that are not in when
+        other.whens.stream().filter(w -> !whens.contains(w))
+                .forEach(whens::add);
         verifies.addAll(other.getVerifies());
         expectedVar = other.getExpectedVar();
     }

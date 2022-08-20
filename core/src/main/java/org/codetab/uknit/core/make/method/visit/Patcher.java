@@ -22,7 +22,14 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 /**
- * Patch expression with corresponding infer var.
+ * Direct modification to src node affects the subsequent internal calls
+ * (private calls). Instead, keep the source node unmodified and create patch,
+ * in visit, for later replacement and collect them in heap. Defer actual
+ * patching to statements generate phase.
+ * <p>
+ * To generate statements - when, verify and initializer - the copyAndPatch()
+ * method creates copy of the source node and patch its infer expressions and
+ * copy is used.
  * @author Maithilish
  *
  */
@@ -37,10 +44,34 @@ public class Patcher {
     @Inject
     private Nodes nodes;
 
+    /**
+     * When inner expressions such as MethodInvocation returns InferVar then in
+     * outer node replace it with infer var. Patches map expression to
+     * corresponding var.
+     *
+     * <code>
+     *   sb.append(file.getName().toLowerCase())
+     *   emits
+     *   when(file.getName()).thenReturn(apple);
+     *   when(sb.append(apple.toLowerCase())).thenReturn(stringBuilder);
+     * </code>
+     *
+     * For outer MI stage patch to replace file.getName() with apple.
+     *
+     * @param node
+     * @param exps
+     * @param heap
+     */
     public void stageInferPatch(final ASTNode node, final List<Expression> exps,
             final Heap heap) {
         for (Expression exp : exps) {
             Optional<Invoke> o = heap.findInvoke(exp);
+            /*
+             * Ex: sb.append(file.getName().toLowerCase()), if file.getName()
+             * returns inferVar apple then when should be
+             * when(sb.append(apple.toLowerCase())).thenReturn(...). Create a
+             * patch for exp file.getName() to apple.
+             */
             if (o.isPresent() && o.get().getReturnVar().isPresent()) {
                 Invoke invoke = o.get();
                 boolean patchable = patchers.patchable(invoke);
@@ -126,6 +157,17 @@ public class Patcher {
         }
     }
 
+    /**
+     * Direct modification messes the src node and subsequent internal calls
+     * (private calls). To generate statements - when, verify and initializer -
+     * create copy of the source node, patch its infer expressions and return
+     * patched copy. The copy is not resolvable!
+     *
+     * @param <T>
+     * @param node
+     * @param heap
+     * @return copy of node.
+     */
     public <T extends ASTNode> T copyAndPatch(final T node, final Heap heap) {
         @SuppressWarnings("unchecked")
         T nodeCopy = (T) ASTNode.copySubtree(node.getAST(), node);

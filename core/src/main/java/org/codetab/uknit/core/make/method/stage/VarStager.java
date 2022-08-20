@@ -145,15 +145,24 @@ public class VarStager {
         }
 
         if (isNull(localVar)) {
-            /*
-             * multiple calls to same internal method (IM) results in duplicate
-             * vars, rename such vars. Parameters of IM are staged as local var
-             * and when variableDecl's parent is methodDecl then it is
-             * parameter. Don't rename parameters.
+            /**
+             * Multiple calls to same internal method (IM) results in duplicate
+             * vars. Also, calling method and IM may have vars with same name.
+             * Rename all such duplicate vars.
+             * <p>
+             * Don't rename parameters. When variableDecl's parent is methodDecl
+             * then it is parameter and parameters of IM are staged as local
+             * var.
+             * <p>
+             * Renamed var is added to paramArgMap so that patches are created
+             * and the renamed var occurrences are patched in output. This is a
+             * workaround and may need changes later.
              */
             if (internalMethod && heap.findLocalVar(name).isPresent()) {
                 if (!nodes.is(vd.getParent(), MethodDeclaration.class)) {
+                    String fromName = name;
                     name = varNames.renameVar(name);
+                    heap.getParamArgMap().put(fromName, name);
                 }
             }
 

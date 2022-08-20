@@ -78,7 +78,7 @@ public class WhenStager {
             if (w.isPresent()) {
                 when = w.get();
             } else {
-                when = modelFactory.createWhen(methodSignature);
+                when = modelFactory.createWhen(methodSignature, callVar);
                 heap.getWhens().add(when);
             }
             when.getReturnVars().add(var);

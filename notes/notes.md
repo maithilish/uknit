@@ -106,14 +106,33 @@ The setter local var may hide the field as uKnit doesn't check field name for du
 
 Assertions on contents of objects or collections.
 
-## Infer Var Patch
+## Patches
 
-Infer vars are patched to expressions but direct modification to src node affects
-the subsequent internal calls (private calls). Instead, keep the source node unmodified and create patch for replacement during visit and collect patches in heap. Defer actual patching to statement generate phase.
+### MethodInvocation and Infer Vars
+
+Infer vars are patched to expressions but direct modification to src node affects the subsequent internal calls (private calls). Instead, keep the source node unmodified and create patch, in visit, for later replacement and collect them in heap. Defer actual patching to statement to generate phase.
 
 While generating statements, when, verify and initializer, the ExpPatcher.copyAndPatch() method creates copy of the source node and patch its infer expressions and copy is used to generate statements.
 
-All visit processing happens on source AST nodes as they are resolvable while the nodes created with ASTNode.copySubtree() are not.
+The visit processing happens on source AST nodes as they are resolvable while the nodes created with ASTNode.copySubtree() are not resolvable.
+
+When inner expressions such as MethodInvocation returns InferVar then in outer node replace it with infer var. Patches map expression to corresponding var.
+
+    sb.append(file.getName().toLowerCase())
+    	emits
+    when(file.getName()).thenReturn(apple);
+    when(sb.append(apple.toLowerCase())).thenReturn(stringBuilder);
+
+For outer MI stage patch to replace file.getName() with apple.
+
+### Others
+
+Patch for IMC - if calling arg name is different from the parameter name of the internal method then stage patch. Ex: if calling arg is inferVar apple and parameter is fruit, then fruit.pie() becomes apple.pie().
+
+Patch for super method invocation. Patch patches the smi exp in parent with return var name. Ex: return super.foo(bar); if super call returns var named orange  then the return statement becomes return orange.
+
+Patch for initializers. Ex: return new Date();
+
 
 ## Injected Field and Local Create
 

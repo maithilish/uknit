@@ -35,21 +35,23 @@ public class VarConflictTest {
         String key = "Foo";
         Meter meter = Mockito.mock(Meter.class);
         Meter meter2 = Mockito.mock(Meter.class);
+
+        Map<String, Timer> map2 = new HashMap<>();
+        Map<String, Timer> agOrange = new HashMap<>();
+        Timer timer = Mockito.mock(Timer.class);
+        Timer timer2 = Mockito.mock(Timer.class);
+
         map.put(key, meter2);
         ag.put(key, meter);
 
-        Map<String, Timer> map2 = new HashMap<>();
-        Map<String, Timer> ag2 = new HashMap<>();
-        Timer timer = Mockito.mock(Timer.class);
-        Timer timer2 = Mockito.mock(Timer.class);
         map2.put(key, timer2);
-        ag2.put(key, timer);
+        agOrange.put(key, timer);
 
         when(mapper.getMetrics()).thenReturn(memberMetrics);
         when(memberMetrics.getMeters()).thenReturn(map);
         when(metrics.getMeters()).thenReturn(ag);
         when(memberMetrics.getTimers()).thenReturn(map2);
-        when(metrics.getTimers()).thenReturn(ag2);
+        when(metrics.getTimers()).thenReturn(agOrange);
         varConflict.aggregate();
 
         verify(meter).aggregate(meter2);

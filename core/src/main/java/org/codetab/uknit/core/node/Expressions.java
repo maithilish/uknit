@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -88,7 +89,7 @@ public class Expressions {
             LOG.debug("arg {} is creation node, ignore",
                     arg.getClass().getSimpleName());
         } else {
-            throw nodes.unexpectedException(arg);
+            throw new CodeException(nodes.noImplmentationMessage(arg));
         }
         return Optional.ofNullable(argName);
     }

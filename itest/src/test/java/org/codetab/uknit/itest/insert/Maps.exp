@@ -1,0 +1,150 @@
+package org.codetab.uknit.itest.insert;
+
+import java.util.Date;
+import java.util.Map;
+
+public class MapsTest {
+    @InjectMocks
+    private Maps maps;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetAssign() {
+        Map<String, Date> names = new HashMap<>();
+        String key = "foo";
+        Date date = Mockito.mock(Date.class);
+        names.put(key, date);
+
+        Date actual = maps.getAssign(names);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testGetReturn() {
+        Map<String, Date> names = new HashMap<>();
+        String key = "foo";
+        Date date = Mockito.mock(Date.class);
+        names.put(key, date);
+
+        Date actual = maps.getReturn(names);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testRemoveAssign() {
+        Map<String, Date> names = new HashMap<>();
+        String key = "foo";
+        Date date = Mockito.mock(Date.class);
+        names.put(key, date);
+
+        Date actual = maps.removeAssign(names);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testRemoveReturn() {
+        Map<String, Date> names = new HashMap<>();
+        String key = "foo";
+        Date date = Mockito.mock(Date.class);
+        names.put(key, date);
+
+        Date actual = maps.removeReturn(names);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testGetAssignMapHolder() {
+        MapHolder holder = Mockito.mock(MapHolder.class);
+        String key = "foo";
+        Map<String, Date> map = new HashMap<>();
+        Date date = Mockito.mock(Date.class);
+        map.put(key, date);
+
+        when(holder.getMap()).thenReturn(map);
+
+        Date actual = maps.getAssign(holder);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testGetReturnMapHolder() {
+        MapHolder holder = Mockito.mock(MapHolder.class);
+        String key = "foo";
+        Map<String, Date> map = new HashMap<>();
+        Date date = Mockito.mock(Date.class);
+        map.put(key, date);
+
+        when(holder.getMap()).thenReturn(map);
+
+        Date actual = maps.getReturn(holder);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testForValuesAssign() {
+        Map<String, Date> names = new HashMap<>();
+        Date date = null;
+        Date d = Mockito.mock(Date.class);
+        String apple = "Foo";
+        names.put(apple, d);
+
+        Date actual = maps.forValuesAssign(names);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testForValuesAssignMapHolder() {
+        MapHolder holder = Mockito.mock(MapHolder.class);
+        Date date = null;
+        Date d = Mockito.mock(Date.class);
+        Map<String, Date> map = new HashMap<>();
+        String apple = "Foo";
+        map.put(apple, d);
+
+        when(holder.getMap()).thenReturn(map);
+
+        Date actual = maps.forValuesAssign(holder);
+
+        assertSame(date, actual);
+    }
+
+    @Test
+    public void testForKeySetAssign() {
+        Map<String, Date> names = new HashMap<>();
+        String name = null;
+        String str = "Foo";
+        Date apple = Mockito.mock(Date.class);
+        names.put(str, apple);
+
+        String actual = maps.forKeySetAssign(names);
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testForKeySetAssignMapHolder() {
+        MapHolder holder = Mockito.mock(MapHolder.class);
+        String name = null;
+        String str = "Foo";
+        Map<String, Date> map = new HashMap<>();
+        Date apple = Mockito.mock(Date.class);
+        map.put(str, apple);
+
+        when(holder.getMap()).thenReturn(map);
+
+        String actual = maps.forKeySetAssign(holder);
+
+        assertEquals(name, actual);
+    }
+}

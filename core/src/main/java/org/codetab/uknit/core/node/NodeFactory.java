@@ -150,6 +150,24 @@ public class NodeFactory {
         return (Statement) ASTNode.copySubtree(ast, stmt);
     }
 
+    /**
+     * Creates collections insert statements such as list.add(apple);
+     * @param consumer
+     * @param call
+     * @param args
+     * @param format
+     * @return
+     */
+    public Statement createInsertStmt(final IVar consumer, final String call,
+            final List<IVar> args, final String format) {
+        String argsStr = args.stream().map(v -> v.getName())
+                .collect(Collectors.joining(","));
+        String insert =
+                String.format(format, consumer.getName(), call, argsStr);
+        Statement insertStmt = snippetParser.parseStatement(insert);
+        return (Statement) ASTNode.copySubtree(ast, insertStmt);
+    }
+
     public Statement createWhenStatement(final String methodSignature,
             final List<IVar> returnVars, final String whenFormat,
             final String returnFormat) {

@@ -1,4 +1,8 @@
 
+## Purpose of uKnit
+
+To reduce typing but not to reduce effort to test.
+
 ## Local var hides field
 
 	private ScriptEngine jsEngine;
@@ -26,5 +30,46 @@ User has couple of options here
 
  - if no other test method uses the field then delete the field so that mockito doesn't inserts the mock before hand. 
  - otherwise, rename the local jsEngine var something like jsEngine2.
- 
+
+
+## Var Forward References 
+
+Sometimes you may see errors where vars are referred before it is defined. This happens when vars are initialized by calling internal methods such as private or super methods. 
+
+    WebClient webClient = getWebClient();
+
+    	emits
+
+    WebClient webClient = webClientPlum;
+    WebClient webClientPlum = Mockito.mock(WebClient.class);
+
+It is so because var webClient is added to source and then the private method getWebClient() creates and adds the webClient renaming it as webClientPlum. Just cut the error line and paste it after the var definition.
+
+## Collection Insert
+
+uKnit adds single object to collections such as List or Map etc., This feature works as long as variables are of base interface type. For example, the ArrayList are referred using List interface.
+
+    public String getReturn(final List<String> names) {
+        return names.get(0);
+    }
+
+uKnit emits
+
+    @Test
+    public void testGetReturn() {
+        List<String> names = new ArrayList<>();
+        String apple = "Foo";
+        names.add(apple);
+		 ...
+
+If param **names** is defined as ArrayList<String> instead of List<String> then item is not added. In case, if you code to specific type instead of interface then you have to add list of access methods of specific type in uknit.properties file. For ArrayList this would be
+
+	uknit.createInstance.ArrayList=new ArrayList<>();
+	uknit.collection.access.java.util.ArrayList=get,remove
+	
+	
+
+		 
+		 
+	
  

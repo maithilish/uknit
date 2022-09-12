@@ -12,6 +12,7 @@ public class VarConflict {
     private Mapper mapper;
     private Metrics metrics;
 
+    // TODO - fix inserts issue
     public void aggregate() {
         Metrics memberMetrics = mapper.getMetrics();
         aggregate(memberMetrics);

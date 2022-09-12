@@ -246,3 +246,4 @@ basedir
 downgrade
 stmt
 ctl
+insertable

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
@@ -71,7 +72,7 @@ public class Resolver {
             return nodes.as(exp, SuperMethodInvocation.class)
                     .resolveMethodBinding();
         } else {
-            throw nodes.unexpectedException(exp);
+            throw new CodeException(nodes.noImplmentationMessage(exp));
         }
     }
 
@@ -80,8 +81,9 @@ public class Resolver {
             exp.getClass().getMethod("resolveTypeBinding");
             return exp.resolveTypeBinding();
         } catch (NoSuchMethodException | SecurityException e) {
-            throw nodes.getCodeException(
+            String msg = nodes.codeExceptionMessage(
                     "no resolveTypeBinding method in node type: ", exp);
+            throw new CodeException(msg);
         }
     }
 

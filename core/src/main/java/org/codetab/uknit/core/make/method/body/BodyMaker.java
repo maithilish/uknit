@@ -14,6 +14,8 @@ public class BodyMaker {
     @Inject
     private VarStmt varStmt;
     @Inject
+    private InsertStmt insertStmt;
+    @Inject
     private ReturnVarStmt returnVarStmt;
     @Inject
     private VerifyStmt verifyStmt;
@@ -29,6 +31,12 @@ public class BodyMaker {
     public void generateVarStmts(final MethodDeclaration methodDecl,
             final Heap heap) {
         List<Statement> stmts = varStmt.createStmts(heap);
+        varStmt.addStmts(methodDecl, stmts);
+    }
+
+    public void generateInserts(final MethodDeclaration methodDecl,
+            final Heap heap) {
+        List<Statement> stmts = insertStmt.createStmts(heap);
         varStmt.addStmts(methodDecl, stmts);
     }
 

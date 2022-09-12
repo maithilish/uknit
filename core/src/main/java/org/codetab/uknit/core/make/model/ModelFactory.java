@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.codetab.uknit.core.node.ArgCapture;
@@ -40,6 +41,10 @@ public interface ModelFactory {
     When createWhen(String methodSignature, IVar callVar);
 
     Verify createVerify(MethodInvocation mi, boolean inCtlFlowPath);
+
+    Insert createInsert(IVar var, String call,
+            @Assisted("args") List<IVar> args,
+            @Assisted("usedVars") List<IVar> usedVars);
 
     ArgCapture createArgCapture(String name, Type type);
 

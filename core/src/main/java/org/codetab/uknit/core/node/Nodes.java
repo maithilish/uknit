@@ -61,14 +61,9 @@ public class Nodes {
                         node.getClass().getSimpleName()));
     }
 
-    public CodeException getCodeException(final String message,
-            final ASTNode node) {
-        return new CodeException(spaceit(message, node.toString()));
-    }
-
-    public CodeException unexpectedException(final ASTNode node) {
-        return new CodeException(spaceit("unexpected node type:",
-                node.getClass().getSimpleName()));
+    public boolean isName(final ASTNode node) {
+        return node.getNodeType() == ASTNode.SIMPLE_NAME
+                || node.getNodeType() == ASTNode.QUALIFIED_NAME;
     }
 
     public boolean isClassInstanceCreation(final Expression exp) {
@@ -156,5 +151,28 @@ public class Nodes {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Formatted message for CodeException.
+     * @param message
+     * @param node
+     * @return
+     */
+    public String codeExceptionMessage(final String message,
+            final ASTNode node) {
+        return spaceit(message, node.getClass().getSimpleName(),
+                node.toString());
+    }
+
+    /**
+     * Formatted message for ASTNode that are yet to be implemented.
+     * @param message
+     * @param node
+     * @return
+     */
+    public String noImplmentationMessage(final ASTNode node) {
+        return spaceit("no implmentation for node type:",
+                node.getClass().getSimpleName(), "-", node.toString());
     }
 }

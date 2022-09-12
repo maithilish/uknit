@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.node;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.TypeNameException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ArrayType;
@@ -30,6 +33,8 @@ public class Types {
 
     @Inject
     private Nodes nodes;
+    @Inject
+    private Configs configs;
 
     private Set<String> unmodifiableTypes;
 
@@ -161,4 +166,34 @@ public class Types {
         return types;
     }
 
+    /**
+     * Get FQ Class name from type. If type is resolvable, get clz name from
+     * binding else try to get it from well known types. Returns null if not
+     * able to find clz name.
+     * @param var
+     * @return clz name or null.
+     */
+    public String getClzName(final Type type) {
+        String clzName = null;
+        ITypeBinding typeBinding = type.resolveBinding();
+        if (nonNull(typeBinding)) {
+            clzName = typeBinding.getBinaryName();
+        } else {
+            Optional<String> kName = configs.getKnownTypeFqn(getTypeName(type));
+            if (kName.isPresent()) {
+                clzName = kName.get();
+            }
+        }
+        return clzName;
+    }
+
+    /**
+     * Return type for Class Name (Fully Qualified) such as java.lang.String,
+     * java.lang.Object
+     * @param ast
+     * @return
+     */
+    public Type getType(final String clzName, final AST ast) {
+        return ast.newSimpleType(ast.newName(clzName));
+    }
 }

@@ -268,5 +268,4 @@ public class VarStager {
         LOG.debug("stage var {}", inferVar);
         return inferVar;
     }
-
 }

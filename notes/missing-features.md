@@ -75,5 +75,22 @@ Creates local var axis twice for following code.
     	...
     }
 
+## Collections
 
-	
+    String key = list.get(0);
+    String name = list.get(1);
+    String nameA = map.get(id);
+    String nameB = map.get(person.getId());	
+    	
+uKnit emits
+
+    String name = "Foo";
+    list.add(name);
+    map.put(id, nameA);
+    map.put(apple, nameB);
+
+For index based list only one add stmt is created and user has to step in and insert additional items, but for key based map multiple puts are created.
+
+When a collection is inferVar (returned by a method) then items are not inserted as the type is not resolvable.
+
+Insert for common operations such as get, remove, values, keySet etc are implemented. Operations such as Map.containsKey(key) are yet be implemented.

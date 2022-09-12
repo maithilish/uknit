@@ -163,3 +163,22 @@ On the other hand for the following validation in step.parse.PrefixProcessor the
 Complex if generates redundant tests - ifElseIfPlusIf
 for trailing statements in main block after exception is thrown never is not added
 	write tests - throw exception in catch block
+
+## Exceptions Thrown by MI
+
+When exceptions are thrown by MI such as by when statement, add throws Exception to test method declaration.
+
+    @Test
+    public void testPostInitialize() {   
+        when(htmlUnitFactory.createUrl(cherry)).thenReturn(url);
+
+The MI createUrl throws MalformedException so change test method declaration to 
+	
+    @Test
+    public void testPostInitialize() throws Exception {   
+
+## Mock added to List	
+
+When real list stream contains mocks try to create when for that. See org.codetab.scoopi.step.parse.htmlunit.QueryAnalyzer.getQueryElements() 
+
+

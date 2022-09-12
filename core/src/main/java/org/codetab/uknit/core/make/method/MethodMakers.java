@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
@@ -134,13 +135,14 @@ public class MethodMakers {
                 nodeFactory.createModifier(ModifierKeyword.PUBLIC_KEYWORD);
         methodDecl.modifiers().add(modifier);
 
-        if (!methodUnderTest.thrownExceptionTypes().isEmpty()) {
-            Type exception = nodeFactory.createSimpleType("Exception");
-            methodDecl.thrownExceptionTypes().add(exception);
-        }
         Block block = nodeFactory.createBlock();
         methodDecl.setBody(block);
         return methodDecl;
+    }
+
+    public boolean isMethodUnderTestThrowsException(
+            final MethodDeclaration methodUnderTest) {
+        return !methodUnderTest.thrownExceptionTypes().isEmpty();
     }
 
     public boolean ignoreMethod(final MethodDeclaration node,
@@ -257,5 +259,14 @@ public class MethodMakers {
             }
         }
         return buffer.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addThrowsException(final MethodDeclaration testMethod,
+            final Heap heap) {
+        if (heap.isTestThrowsException()) {
+            Type exception = nodeFactory.createSimpleType("Exception");
+            testMethod.thrownExceptionTypes().add(exception);
+        }
     }
 }

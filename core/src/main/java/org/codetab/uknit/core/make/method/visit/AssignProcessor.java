@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.stage.VarExpStager;
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.Heap;
@@ -138,7 +139,7 @@ public class AssignProcessor {
             ExpVar expVar = varExpStager.stage(lExp, rExp, heap);
             expVar.setLeftVar(localVar);
         } else {
-            throw nodes.unexpectedException(lExp);
+            throw new CodeException(nodes.noImplmentationMessage(lExp));
         }
     }
 }

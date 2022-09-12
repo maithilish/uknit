@@ -30,7 +30,7 @@ public class StaticFieldMethodCallTest {
     }
 
     @Test
-    public void testRegisterGuage() {
+    public void testRegisterGuage() throws Exception {
         T value = STEPIN;
         Object clz = Mockito.mock(Object.class);
         String names = "Foo";

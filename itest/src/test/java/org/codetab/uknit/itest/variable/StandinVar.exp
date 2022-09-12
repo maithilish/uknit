@@ -33,6 +33,7 @@ public class StandinVarTest {
     @Test
     public void testUseAssignedField() {
         Object apple = Mockito.mock(Object.class);
+        realField.put(assignedField, apple);
 
         Object actual = standinVar.useAssignedField();
 
@@ -42,6 +43,7 @@ public class StandinVarTest {
     @Test
     public void testUseUnassignedField() {
         Object apple = Mockito.mock(Object.class);
+        realField.put(unassignedField, apple);
 
         Object actual = standinVar.useUnassignedField();
 
@@ -51,6 +53,7 @@ public class StandinVarTest {
     @Test
     public void testUseRealField() {
         Object apple = Mockito.mock(Object.class);
+        realField.put(assignedField, apple);
 
         Object actual = standinVar.useRealField();
 
@@ -60,6 +63,7 @@ public class StandinVarTest {
     @Test
     public void testUseinitRealField() {
         Object apple = Mockito.mock(Object.class);
+        initRealField.put(assignedField, apple);
 
         Object actual = standinVar.useinitRealField();
 

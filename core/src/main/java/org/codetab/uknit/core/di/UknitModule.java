@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.codetab.uknit.core.make.model.ExpVar;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Insert;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Patch;
@@ -60,6 +61,11 @@ public class UknitModule extends AbstractModule {
 
     @Provides
     public List<String> newStringList() {
+        return new ArrayList<>();
+    }
+
+    @Provides
+    public List<Insert> newInsert() {
         return new ArrayList<>();
     }
 }

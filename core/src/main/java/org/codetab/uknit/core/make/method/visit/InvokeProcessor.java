@@ -72,11 +72,15 @@ public class InvokeProcessor {
         Optional<ExpReturnType> expReturnType = resolver.getExpReturnType(mi);
         Invoke invoke = modelFactory.createInvoke(var, expReturnType, mi);
 
+        IMethodBinding methodBinding = resolver.resolveMethodBinding(mi);
+
+        if (methodBinding.getExceptionTypes().length > 0) {
+            heap.setTestThrowsException(true);
+        }
+
         if (isNull(patchedExp)) {
             // mi may be static or internal call - process internal, not static
             if (!methods.isStaticCall(mi)) {
-                IMethodBinding methodBinding =
-                        resolver.resolveMethodBinding(mi);
                 List<Expression> arguments = methods.getArguments(mi);
                 Optional<IVar> retVar = internalCallProcessor
                         .process(methodBinding, arguments, heap);

@@ -30,6 +30,8 @@ public class ForEachIfTest {
         int i = 0;
         YmlNode item = Mockito.mock(YmlNode.class);
         Object kiwi = Mockito.mock(Object.class);
+        itemList.add(item);
+        itemsList.add(items);
 
         when(items.findValues("item")).thenReturn(itemList);
         when(item.findValue("order")).thenReturn(kiwi);

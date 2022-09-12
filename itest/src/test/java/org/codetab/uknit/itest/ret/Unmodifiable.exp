@@ -10,7 +10,7 @@ public class UnmodifiableTest {
     }
 
     @Test
-    public void testReturnByte() {
+    public void testReturnByte() throws Exception {
         Byte apple = Byte.valueOf("100");
 
         Byte actual = unmodifiable.returnByte();
@@ -19,7 +19,7 @@ public class UnmodifiableTest {
     }
 
     @Test
-    public void testReturnByteVar() {
+    public void testReturnByteVar() throws Exception {
         Byte value = Byte.valueOf("101");
 
         Byte actual = unmodifiable.returnByteVar();
@@ -55,7 +55,7 @@ public class UnmodifiableTest {
     }
 
     @Test
-    public void testReturnShort() {
+    public void testReturnShort() throws Exception {
         Short apple = Short.valueOf("7");
 
         Short actual = unmodifiable.returnShort();
@@ -64,7 +64,7 @@ public class UnmodifiableTest {
     }
 
     @Test
-    public void testReturnShortVar() {
+    public void testReturnShortVar() throws Exception {
         Short value = Short.valueOf("7");
 
         Short actual = unmodifiable.returnShortVar();

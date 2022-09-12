@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.detect.Inserter;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -72,6 +73,8 @@ public class Visitor extends ASTVisitor {
     private VarProcessor varProcessor;
     @Inject
     private LiteralProcessor literalProcessor;
+    @Inject
+    private Inserter inserter;
     @Inject
     private Variables variables;
     @Inject
@@ -259,6 +262,7 @@ public class Visitor extends ASTVisitor {
         SingleVariableDeclaration svd = node.getParameter();
         String name = nodes.getVariableName(svd);
         varEnabler.enforce(name, Optional.of(true), heap);
+        inserter.process(node, heap);
     }
 
     @Override

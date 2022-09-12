@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -86,7 +87,7 @@ public class Patchers {
             argPatcher.patch(args, patch);
             return true;
         }
-        throw nodes.unexpectedException(node);
+        throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
     public int getArgIndex(final ASTNode node, final Expression exp) {
@@ -139,7 +140,7 @@ public class Patchers {
                 return -1;
             }
         }
-        throw nodes.unexpectedException(node);
+        throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
     public List<Expression> getExps(final ASTNode node) {

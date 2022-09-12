@@ -7,6 +7,7 @@ import org.codetab.uknit.itest.model.Pet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class InferredForEachTest {
@@ -20,10 +21,11 @@ public class InferredForEachTest {
 
     @Test
     public void testProcess() {
-        String key = "foo";
         Map<String, Pet> pets = new HashMap<>();
-        // STEPIN - wire map put
-        pets.put(key, null);
+        String key = "Foo";
+        Pet apple = Mockito.mock(Pet.class);
+        pets.put(key, apple);
         inferredForEach.process(pets);
+        // fail("unable to assert, STEPIN");
     }
 }

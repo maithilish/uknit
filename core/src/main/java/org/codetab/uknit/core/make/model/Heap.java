@@ -29,6 +29,8 @@ public class Heap {
     private List<Invoke> invokes;
     @Inject
     private List<Verify> verifies;
+    @Inject
+    private List<Insert> inserts;
     /*
      * list of expressions that eventually maps to a var
      */
@@ -59,6 +61,11 @@ public class Heap {
      * whether now in ctl flow path
      */
     private boolean inCtlFlowPath;
+
+    /*
+     * Is any method invocation in test method throws exception
+     */
+    private boolean testThrowsException;
 
     public List<IVar> getVars() {
         return vars;
@@ -96,6 +103,10 @@ public class Heap {
         this.expectedVar = expectedVar;
     }
 
+    public List<Insert> getInserts() {
+        return inserts;
+    }
+
     /**
      * Name of class under test or system under test (SUT)
      * @return name
@@ -122,6 +133,14 @@ public class Heap {
 
     public void setParamArgMap(final Map<String, String> paramArgMap) {
         this.paramArgMap = paramArgMap;
+    }
+
+    public void setTestThrowsException(final boolean testThrowsException) {
+        this.testThrowsException = testThrowsException;
+    }
+
+    public boolean isTestThrowsException() {
+        return testThrowsException;
     }
 
     // finders
@@ -271,11 +290,19 @@ public class Heap {
     public void merge(final Heap other) {
         // merge other.vars that are not in vars
         other.vars.stream().filter(v -> !vars.contains(v)).forEach(vars::add);
-        // merge other.whens that are not in when
+        // merge other.whens
         other.whens.stream().filter(w -> !whens.contains(w))
                 .forEach(whens::add);
+        // merge other.inserts
+        other.inserts.stream().filter(i -> !inserts.contains(i))
+                .forEach(inserts::add);
+
         verifies.addAll(other.getVerifies());
         expectedVar = other.getExpectedVar();
+        // copy testThrowsException only if true
+        if (other.testThrowsException) {
+            testThrowsException = other.testThrowsException;
+        }
     }
 
     /**
@@ -379,4 +406,5 @@ public class Heap {
         }
         return varName;
     }
+
 }

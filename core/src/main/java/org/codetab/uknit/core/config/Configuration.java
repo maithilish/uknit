@@ -23,7 +23,7 @@ enum Configuration {
 
     private Properties props; // effective configs
 
-    private Properties knowTypes;
+    private Properties knownTypes;
 
     private Properties names;
 
@@ -66,6 +66,11 @@ enum Configuration {
             names = new Properties();
             names.load(Configuration.class.getClassLoader()
                     .getResourceAsStream("names.properties"));
+
+            knownTypes = new Properties();
+            knownTypes.load(Configuration.class.getClassLoader()
+                    .getResourceAsStream("knowntypes.properties"));
+
         } catch (Exception e) {
             System.out.println("properties file not found, " + e);
             System.exit(0);
@@ -104,7 +109,7 @@ enum Configuration {
     }
 
     public String getKnownTypeFqn(final String clsName) {
-        return knowTypes.getProperty(clsName);
+        return knownTypes.getProperty(clsName);
     }
 
     public String getNames(final String key) {

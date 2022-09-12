@@ -19,6 +19,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -38,6 +39,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -57,6 +59,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -77,6 +80,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -98,6 +102,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -121,6 +126,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -144,6 +150,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -167,6 +174,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -188,6 +196,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -209,6 +218,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -230,6 +240,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -253,6 +264,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -276,6 +288,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -300,6 +313,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -326,6 +340,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -352,6 +367,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -378,6 +394,7 @@ public class IfPlusBlockTest {
         List<String> names = new ArrayList<>();
         String name = "Foo";
         String apple = "Bar";
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -405,6 +422,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -431,6 +450,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -457,6 +478,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -484,6 +507,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -513,6 +538,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -542,6 +569,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 
@@ -571,6 +600,8 @@ public class IfPlusBlockTest {
         String lane = "Foo";
         String name = "Bar";
         String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
 
         when(duck.toString()).thenReturn(apple);
 

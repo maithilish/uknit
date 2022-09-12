@@ -16,6 +16,7 @@ public class ForEachTest {
         List<YmlNode> itemList = new ArrayList<>();
         int i = 0;
         YmlNode item = Mockito.mock(YmlNode.class);
+        itemList.add(item);
         forEach.basicFor(itemList);
 
         verify(item).put("order", i);
@@ -26,6 +27,7 @@ public class ForEachTest {
         List<YmlNode> itemList = new ArrayList<>();
         int i = 1;
         YmlNode item = Mockito.mock(YmlNode.class);
+        itemList.add(item);
         forEach.basicForAssign(itemList);
 
         verify(item).put("order", i);
@@ -37,6 +39,8 @@ public class ForEachTest {
         YmlNode items = Mockito.mock(YmlNode.class);
         List<YmlNode> itemList = new ArrayList<>();
         YmlNode item = Mockito.mock(YmlNode.class);
+        itemsList.add(items);
+        itemList.add(item);
 
         when(items.findValues("item")).thenReturn(itemList);
         forEach.enhancedFor(itemsList);
@@ -51,6 +55,8 @@ public class ForEachTest {
         List<YmlNode> itemList = new ArrayList<>();
         int i = 0;
         YmlNode item = Mockito.mock(YmlNode.class);
+        itemsList.add(items);
+        itemList.add(item);
 
         when(items.findValues("item")).thenReturn(itemList);
         forEach.combined(itemsList);

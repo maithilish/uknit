@@ -29,9 +29,13 @@ public class InferredChainCallTest {
     public void testInfer() {
         Pets pets = Mockito.mock(Pets.class);
         Map<String, List<Pet>> map = new HashMap<>();
+        List<Pet> dogs = new ArrayList<>();
+        String apple = "dog";
+        map.put(apple, dogs);
 
         when(pets.getPets()).thenReturn(map);
         inferredChainCall.infer(pets);
+        // fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -39,7 +43,8 @@ public class InferredChainCallTest {
         Pets pets = Mockito.mock(Pets.class);
         Map<String, List<Pet>> map = new HashMap<>();
         List<Pet> dogs = new ArrayList<>();
-        map.put("dog", dogs);
+        String apple = "dog";
+        map.put(apple, dogs);
 
         when(pets.getPets()).thenReturn(map);
 

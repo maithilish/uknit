@@ -16,6 +16,8 @@ public class InferredForEachTest {
     public void testProcess() {
         Map<String, Pet> pets = new HashMap<>();
         String key = "Foo";
+        Pet apple = Mockito.mock(Pet.class);
+        pets.put(key, apple);
         inferredForEach.process(pets);
         fail("unable to assert, STEPIN");
     }

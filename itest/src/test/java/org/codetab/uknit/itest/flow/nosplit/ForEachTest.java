@@ -33,6 +33,17 @@ public class ForEachTest {
     }
 
     @Test
+    public void testBasicForAssign() {
+        List<YmlNode> itemList = new ArrayList<>();
+        int i = 0;
+        YmlNode item = Mockito.mock(YmlNode.class);
+        itemList.add(item);
+        forEach.basicForAssign(itemList);
+
+        verify(item).put("order", i);
+    }
+
+    @Test
     public void testEnhancedFor() {
         List<YmlNode> itemsList = new ArrayList<>();
         YmlNode items = Mockito.mock(YmlNode.class);

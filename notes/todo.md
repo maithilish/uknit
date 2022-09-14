@@ -181,4 +181,8 @@ The MI createUrl throws MalformedException so change test method declaration to
 
 When real list stream contains mocks try to create when for that. See org.codetab.scoopi.step.parse.htmlunit.QueryAnalyzer.getQueryElements() 
 
+## Inserts
+
+Improve inserts into collection got from super. See itest inserts.SuperGetIT.
+
 

@@ -160,3 +160,64 @@ This is also happens with POJO fields.
 When call arg and internal method parameter are named same then second local var is created which acts as parameter inside the internal call. Deduplicate such vars. When names are different then in VarProcessor.stageLocalVars() local var parameter is not staged instead arg is used as var.
 
 if names are same use the arg as param in IM else stage patch.
+
+## Class isAssignableFrom
+
+isAssignableFrom() determines if the class or interface of calling Class object is either the same as, or is a superclass or super interface of, the parameter's class or interface.
+
+Otherwise, whether parameter is assignable to caller class. The ArrayList (parameter) is assignable to the List (caller) but not otherwise.
+
+        List.class.isAssignableFrom(ArrayList.class)  // true
+        ArrayList.class.isAssignableFrom(List.class)  // false
+        
+
+Class from variables:
+
+        List<String> cowArrayList = new CopyOnWriteArrayList<>();
+        cowArrayList.getClass() // CopyOnWriteArrayList
+
+        List<String> arrayList = new ArrayList<>();
+        arrayList.getClass() // ArrayList
+
+        ArrayList<Date> dateArrayList = new ArrayList<>();
+        dateArrayList.getClass() // ArrayList
+
+        List<String> nullList = null;
+        arrayList.getClass() // NullPointerException
+	
+Class is obtained from the object held by variable and it not from the variable type.
+
+        cowArrayList.getClass().isAssignableFrom(arrayList.getClass()) // false
+        arrayList.getClass().isAssignableFrom(cowArrayList.getClass()) // false
+        arrayList.getClass().isAssignableFrom(dateArrayList.getClass()) // true (erased type parameter is ignored)
+        dateArrayList.getClass().isAssignableFrom(arrayList.getClass()) // true
+	
+In above, the class of object held by var is used from comparision, not the var type. Both the cowArrayList and arrayList are List and we can assign one to another but isAssignableFrom returns false.
+
+        // can assign List to List
+        arrayList = cowArrayList;  // allowed
+
+        // can't assign ArrayList to CopyOnWriteArrayList
+        cowArrayList.getClass().isAssignableFrom(arrayList.getClass()) // false
+
+Class from types.
+
+        System.out.println(List.class); // interface java.util.List
+
+Class of the Type is obtained from it.
+
+        // can assign CopyOnWriteArrayList to List
+        List.class.isAssignableFrom(cowArrayList.getClass())); // true
+
+        // can't assign List to CopyOnWriteArrayList
+        cowArrayList.getClass().isAssignableFrom(List.class)); // false
+
+        // CopyOnWriteArrayList implements List but not extends ArrayList
+        // can't assign CopyOnWriteArrayList to ArrayList
+        ArrayList.class.isAssignableFrom(cowArrayList.getClass())); // false
+        
+        // can't assign ArrayList to CopyOnWriteArrayList
+        cowArrayList.getClass().isAssignableFrom(ArrayList.class)); // false
+	
+
+	

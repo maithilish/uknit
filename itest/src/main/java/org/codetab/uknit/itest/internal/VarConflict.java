@@ -1,83 +1,62 @@
 package org.codetab.uknit.itest.internal;
 
-import java.util.Map;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Two private methods with similarly named local vars.
+ * <p>
+ * To avoid conflict between vars Date other and Local other, the Local other is
+ * named as otherApple. The final set vars: <code>
+ *      Date date = Mockito.mock(Date.class);
+ *      Date other = Mockito.mock(Date.class);
+ *      Locale locale = Mockito.mock(Locale.class);
+ *      Locale otherApple = Mockito.mock(Locale.class);
+ * </code>
  * @author Maithilish
  *
  */
 public class VarConflict {
 
-    private Mapper mapper;
-    private Metrics metrics;
+    private Provider provider;
+    private Holder otherHolder;
 
-    // TODO - fix inserts issue
-    public void aggregate() {
-        Metrics memberMetrics = mapper.getMetrics();
-        aggregate(memberMetrics);
+    public void compare() {
+        Holder holder = provider.getHolder();
+        compare(holder);
     }
 
-    private void aggregate(final Metrics memberMetrics) {
-        aggregateMeters(memberMetrics.getMeters());
-        aggregateTimers(memberMetrics.getTimers());
+    private void compare(final Holder holder) {
+        compareDate(holder.getDate());
+        compareLocale(holder.getLocale());
     }
 
-    private void aggregateMeters(final Map<String, Meter> meters) {
-        Map<String, Meter> ag = metrics.getMeters();
-        for (String key : meters.keySet()) {
-            if (ag.containsKey(key)) {
-                ag.get(key).aggregate(meters.get(key));
-            } else {
-                ag.put(key, meters.get(key));
-            }
-        }
+    private void compareDate(final Date date) {
+        Date other = otherHolder.getDate();
+        date.compareTo(other);
     }
 
-    private void aggregateTimers(final Map<String, Timer> timers) {
-        Map<String, Timer> ag = metrics.getTimers();
-        for (String key : timers.keySet()) {
-            if (ag.containsKey(key)) {
-                ag.get(key).aggregate(timers.get(key));
-            } else {
-                ag.put(key, timers.get(key));
-            }
-        }
+    private void compareLocale(final Locale locale) {
+        Locale other = otherHolder.getLocale();
+        locale.getDisplayCountry(other);
     }
+
 }
 
-class Mapper {
-    public Metrics getMetrics() {
-        return null;
-    }
+interface Provider {
+    Holder getHolder();
 }
 
-interface Metric {
-    void aggregate(Metric other);
-}
+class Holder {
 
-class Timer implements Metric {
-    @Override
-    public void aggregate(final Metric other) {
-    }
-}
+    private Date date;
+    private Locale locale;
 
-class Meter implements Metric {
-    @Override
-    public void aggregate(final Metric other) {
-    }
-}
-
-class Metrics {
-
-    private Map<String, Meter> meters;
-    private Map<String, Timer> timers;
-
-    public Map<String, Meter> getMeters() {
-        return meters;
+    public Date getDate() {
+        return date;
     }
 
-    public Map<String, Timer> getTimers() {
-        return timers;
+    public Locale getLocale() {
+        return locale;
     }
 }

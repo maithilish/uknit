@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.detect;
+package org.codetab.uknit.core.make.method.detect.insert;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -19,6 +19,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -53,8 +54,8 @@ public class InsertVars {
      * @param heap
      * @return
      */
-    public InferVar createInsertVar(final Expression exp, final Type type,
-            final Heap heap) {
+    public InferVar createInsertVarForLiteral(final Expression exp,
+            final Type type, final Heap heap) {
 
         checkNotNull(exp);
         checkNotNull(type);
@@ -110,5 +111,52 @@ public class InsertVars {
             throw new CodeException(nodes.noImplmentationMessage(argType));
         }
         return argType;
+    }
+
+    /**
+     * When requireKey collections, such as Map, is used in forEach then either
+     * for key or value is missing depending whether keySet() or values() method
+     * invoked. We create InferVar for the missing. Ex: Take Map<String, Date>
+     * then,
+     * <p>
+     * for(String key : map.keySet()) {..} - keySet() returns key as loop var
+     * but the value var is missing.
+     * <p>
+     * for(Date date : map.values()) {..} - values() returns date the value as
+     * loop var but the key var is missing.
+     *
+     * @param var
+     * @param rightExp
+     * @param heap
+     * @return
+     */
+    public Optional<InferVar> createPutInferVar(final IVar var,
+            final Expression rightExp, final Heap heap) {
+        if (nodes.is(rightExp, MethodInvocation.class)) {
+            MethodInvocation mi = nodes.as(rightExp, MethodInvocation.class);
+            String invokedMethod = nodes.getName(mi.getName());
+
+            Type callType = var.getType();
+            Type type = null;
+            if (nodes.is(callType, ParameterizedType.class)) {
+                if (invokedMethod.equals("keySet")) {
+                    type = (Type) ((ParameterizedType) callType).typeArguments()
+                            .get(1);
+                } else {
+                    type = (Type) ((ParameterizedType) callType).typeArguments()
+                            .get(0);
+                }
+            }
+            // if not generic collection then type is Object
+            if (nodes.is(callType, SimpleType.class)) {
+                type = types.getType("java.lang.Object", callType.getAST());
+            }
+
+            String name = varNames.getInferVarName(Optional.empty(), heap);
+            InferVar inferVar = modelFactory.createInferVar(name, type,
+                    mocks.isMockable(type));
+            return Optional.of(inferVar);
+        }
+        return Optional.empty();
     }
 }

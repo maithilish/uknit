@@ -1,0 +1,46 @@
+package org.codetab.uknit.itest.internal;
+
+import java.util.Map;
+
+public class VarConflictTest {
+    @InjectMocks
+    private VarConflict varConflict;
+
+    @Mock
+    private Mapper mapper;
+    @Mock
+    private Metrics metrics;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAggregate() {
+        Metrics memberMetrics = Mockito.mock(Metrics.class);
+        Map<String, Meter> map = new HashMap<>();
+        Map<String, Meter> ag = new HashMap<>();
+        String key = "Foo";
+        Meter meter = Mockito.mock(Meter.class);
+        Meter meter2 = Mockito.mock(Meter.class);
+        Meter grape = Mockito.mock(Meter.class);
+        Map<String, Timer> map2 = new HashMap<>();
+        Map<String, Timer> agOrange = new HashMap<>();
+        Timer timer = Mockito.mock(Timer.class);
+        Timer timer2 = Mockito.mock(Timer.class);
+        Timer banana = Mockito.mock(Timer.class);
+        map.put(key, grape);
+        map2.put(key, banana);
+
+        when(mapper.getMetrics()).thenReturn(memberMetrics);
+        when(memberMetrics.getMeters()).thenReturn(map);
+        when(metrics.getMeters()).thenReturn(ag);
+        when(memberMetrics.getTimers()).thenReturn(map2);
+        when(metrics.getTimers()).thenReturn(agOrange);
+        varConflict.aggregate();
+
+        verify(meter).aggregate(meter2);
+        verify(timer).aggregate(timer2);
+    }
+}

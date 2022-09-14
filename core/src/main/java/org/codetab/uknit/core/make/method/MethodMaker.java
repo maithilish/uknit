@@ -15,8 +15,8 @@ import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
-import org.codetab.uknit.core.make.method.detect.GetterSetter;
-import org.codetab.uknit.core.make.method.detect.Inserter;
+import org.codetab.uknit.core.make.method.detect.getter.GetterSetter;
+import org.codetab.uknit.core.make.method.detect.insert.Inserter;
 import org.codetab.uknit.core.make.method.stage.CallStager;
 import org.codetab.uknit.core.make.method.visit.VarEnabler;
 import org.codetab.uknit.core.make.method.visit.Visitor;
@@ -125,7 +125,8 @@ public class MethodMaker {
         clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
 
         // create inserts for list.add() etc.,
-        inserter.process(heap);
+        List<IVar> insertableVars = inserter.filterInsertableVars(heap.getVars());
+        inserter.processInsertableVars(insertableVars, heap);
         inserter.enableInserts(heap);
 
         methodMakers.addThrowsException(testMethod, heap);
@@ -170,7 +171,9 @@ public class MethodMaker {
 
         method.accept(visitor);
 
-        inserter.process(heap);
+        List<IVar> insertableVars =
+                inserter.filterInsertableVars(internalHeap.getVars());
+        inserter.processInsertableVars(insertableVars, internalHeap);
 
         heap.merge(internalHeap);
 

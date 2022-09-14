@@ -247,3 +247,5 @@ downgrade
 stmt
 ctl
 insertable
+iterable
+deque

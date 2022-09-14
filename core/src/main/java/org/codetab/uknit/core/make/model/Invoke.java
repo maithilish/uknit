@@ -20,7 +20,11 @@ import com.google.inject.assistedinject.Assisted;
 public class Invoke {
 
     private Expression exp; // either mi or superMi
-    private IVar callVar; // var on which method invoked
+    /*
+     * var on which method invoked, it is null for imported static call and call
+     * with super keyword such as super.foo()
+     */
+    private IVar callVar;
     private Optional<ExpReturnType> expReturnType; // method return type
     private Optional<IVar> returnVar;
 

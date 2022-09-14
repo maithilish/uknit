@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.detect;
+package org.codetab.uknit.core.make.method.detect.getter;
 
 import static java.util.Objects.isNull;
 

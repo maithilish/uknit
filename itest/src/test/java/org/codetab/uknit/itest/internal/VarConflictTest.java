@@ -3,8 +3,8 @@ package org.codetab.uknit.itest.internal;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,9 @@ public class VarConflictTest {
     private VarConflict varConflict;
 
     @Mock
-    private Mapper mapper;
+    private Provider provider;
     @Mock
-    private Metrics metrics;
+    private Holder otherHolder;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -28,33 +28,22 @@ public class VarConflictTest {
     }
 
     @Test
-    public void testAggregate() {
-        Metrics memberMetrics = Mockito.mock(Metrics.class);
-        Map<String, Meter> map = new HashMap<>();
-        Map<String, Meter> ag = new HashMap<>();
-        String key = "Foo";
-        Meter meter = Mockito.mock(Meter.class);
-        Meter meter2 = Mockito.mock(Meter.class);
+    public void testCompare() {
+        Holder holder = Mockito.mock(Holder.class);
+        Date date = Mockito.mock(Date.class);
+        Date other = Mockito.mock(Date.class);
+        Locale locale = Mockito.mock(Locale.class);
+        Locale otherApple = Mockito.mock(Locale.class);
 
-        Map<String, Timer> map2 = new HashMap<>();
-        Map<String, Timer> agOrange = new HashMap<>();
-        Timer timer = Mockito.mock(Timer.class);
-        Timer timer2 = Mockito.mock(Timer.class);
+        when(provider.getHolder()).thenReturn(holder);
+        when(holder.getDate()).thenReturn(date);
+        when(otherHolder.getDate()).thenReturn(other);
+        when(holder.getLocale()).thenReturn(locale);
+        when(otherHolder.getLocale()).thenReturn(otherApple);
 
-        map.put(key, meter2);
-        ag.put(key, meter);
+        varConflict.compare();
 
-        map2.put(key, timer2);
-        agOrange.put(key, timer);
-
-        when(mapper.getMetrics()).thenReturn(memberMetrics);
-        when(memberMetrics.getMeters()).thenReturn(map);
-        when(metrics.getMeters()).thenReturn(ag);
-        when(memberMetrics.getTimers()).thenReturn(map2);
-        when(metrics.getTimers()).thenReturn(agOrange);
-        varConflict.aggregate();
-
-        verify(meter).aggregate(meter2);
-        verify(timer).aggregate(timer2);
+        verify(date).compareTo(other);
+        verify(locale).getDisplayCountry(otherApple);
     }
 }

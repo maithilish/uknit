@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.detect.insert;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -28,9 +30,15 @@ public class InvokeStrategy {
 
     public Optional<Insert> process(final IVar var, final Class<?> clz,
             final Heap heap) {
+
+        checkNotNull(var);
+        checkNotNull(clz);
+        checkNotNull(heap);
+
         IVar keyVar = null;
         IVar valueVar = null;
         boolean createInsert = false;
+
         Optional<ExpVar> expVarO =
                 inserters.findFirstAllowedExpVar(var, clz, heap);
         if (expVarO.isPresent() && expVarO.get().getLeftVar().isPresent()) {
@@ -39,15 +47,17 @@ public class InvokeStrategy {
 
             // check insertable with allowed method calls
             if (inserters.isInsertable(var, clz, rExp)) {
+
                 if (nodes.is(rExp, MethodInvocation.class)
                         && inserters.requiresKey(clz)) {
-
+                    // requires key such as map.put()
                     rExp = patcher.copyAndPatch(
                             nodes.as(rExp, MethodInvocation.class), heap);
                     keyVar = inserters.getKeyArg(var,
                             nodes.as(rExp, MethodInvocation.class), heap);
                     logInsert("invoke [key,value]", var, valueVar, keyVar);
                 } else {
+                    // requires no key such as list.add()
                     logInsert("invoke [value]", var, valueVar, keyVar);
                 }
                 createInsert = true;

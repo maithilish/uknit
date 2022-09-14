@@ -61,7 +61,7 @@ Field creation in constructor - mock should not be injected
                 .toFormatter();
     }
 
-## Pojo fields - mock should not be injected for gauges  
+## POJO fields - mock should not be injected for gauges  
  
     public class Metrics {
     
@@ -75,7 +75,7 @@ Field creation in constructor - mock should not be injected
         this.gauges = gauges;
     }
     
-## Public fields Pojo 
+## Public fields POJO
 
 try to improve test for org.codetab.scoopi.metrics.serialize.Meter and Timer
     
@@ -183,6 +183,11 @@ When real list stream contains mocks try to create when for that. See org.codeta
 
 ## Inserts
 
-Improve inserts into collection got from super. See itest inserts.SuperGetIT.
+Improve inserts into collection got from super. See itest insert.SuperGetIT.
 
+ForEach in two IMC with two loop vars with same name (key) wrongly renames second key as keyApple. See itest insert.ForEachMapsInternal.
+
+## Treatment of super private fields.
+
+Analyze whether to add super private field as @Mock in test class. See: itest insert.SuperGetIT for example.
 

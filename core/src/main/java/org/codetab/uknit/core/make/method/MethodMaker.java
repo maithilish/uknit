@@ -125,7 +125,8 @@ public class MethodMaker {
         clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
 
         // create inserts for list.add() etc.,
-        List<IVar> insertableVars = inserter.filterInsertableVars(heap.getVars());
+        List<IVar> insertableVars =
+                inserter.filterInsertableVars(heap.getVars());
         inserter.processInsertableVars(insertableVars, heap);
         inserter.enableInserts(heap);
 

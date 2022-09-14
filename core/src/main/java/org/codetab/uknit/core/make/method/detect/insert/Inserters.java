@@ -186,6 +186,11 @@ public class Inserters {
         }
     }
 
+    /**
+     * If collection has put method then return true else false.
+     * @param clz
+     * @return
+     */
     public boolean requiresKey(final Class<?> clz) {
         if (insertMethods.containsKey(clz)) {
             return insertMethods.get(clz).equals("put");
@@ -229,7 +234,7 @@ public class Inserters {
                  * inserts, create inferVar without patching them to mi.
                  */
                 final int argIndex = 0;
-                Type arg1Type = insertVars.getArgType(collectionVar.getType(),
+                Type arg1Type = insertVars.getTypeArg(collectionVar.getType(),
                         argIndex);
                 InferVar inferVar = insertVars.createInsertVarForLiteral(arg1,
                         arg1Type, heap);
@@ -242,8 +247,22 @@ public class Inserters {
         return null;
     }
 
+    /**
+     * Find first allowed ExpVar for the var via invoke call var. Return the
+     * first ExpVar with allowed access method such as get() etc., Ex: There are
+     * two invokes and expVar on collection map - map.size() and map.get(key).
+     * If var is map, search for invokes with call var equals map and return the
+     * map.get() expVar as size() is not allowed access method.
+     * @param var
+     * @param clz
+     * @param heap
+     * @return
+     */
     public Optional<ExpVar> findFirstAllowedExpVar(final IVar var,
             final Class<?> clz, final Heap heap) {
+        checkNotNull(var);
+        checkNotNull(clz);
+        checkNotNull(heap);
 
         List<Invoke> invokes = heap.getInvokes().stream().filter(i -> {
             // static calls such as nonNull(...) results in null callVar
@@ -265,8 +284,22 @@ public class Inserters {
         return Optional.empty();
     }
 
+    /**
+     * Find all allowed ExpVar for the var via invoke call var. Ex: There are
+     * three invokes and expVar on collection map - map.size(), map.get(key) and
+     * map.remove(key). If var is map, search for invokes with call var equals
+     * map and return the map.get() and map.remove() expVar as size() is not
+     * allowed access method.
+     * @param var
+     * @param clz
+     * @param heap
+     * @return
+     */
     public List<ExpVar> findAllowedExpVars(final IVar var, final Class<?> clz,
             final Heap heap) {
+        checkNotNull(var);
+        checkNotNull(clz);
+        checkNotNull(heap);
 
         List<Invoke> invokes = heap.getInvokes().stream().filter(i -> {
             // static calls such as nonNull(...) results in null callVar
@@ -286,8 +319,20 @@ public class Inserters {
         return list;
     }
 
+    /**
+     * Create insert.
+     * @param var
+     * @param valueVar
+     * @param keyVar
+     * @param insertMethod
+     * @return
+     */
     public Insert createInsert(final IVar var, final IVar valueVar,
             final IVar keyVar, final String insertMethod) {
+        checkNotNull(var);
+        checkNotNull(valueVar);
+        checkNotNull(insertMethod);
+
         List<IVar> args = new ArrayList<>();
         List<IVar> usedVars = new ArrayList<>();
         if (isNull(keyVar)) {
@@ -312,6 +357,7 @@ public class Inserters {
      * @return
      */
     public Optional<Class<?>> getClz(final IVar var) {
+
         Class<?> clz = null;
         try {
             if (nonNull(var)) {
@@ -323,5 +369,32 @@ public class Inserters {
         } catch (ClassNotFoundException e) {
         }
         return Optional.ofNullable(clz);
+    }
+
+    /**
+     * From the list of expVar get leftVar where var type arg equals leftVar
+     * type. Ex: if var is Map<String, Date>, the type args are String and Date.
+     * Search and return leftVar whose type is either String or Date.
+     *
+     * @param expVars
+     * @param var
+     * @param heap
+     * @return
+     */
+    public Optional<IVar> findPutInferVar(final List<ExpVar> expVars,
+            final IVar var, final Heap heap) {
+        List<Type> typeArgs = insertVars.getTypeArgs(var.getType());
+
+        for (ExpVar expVar : expVars) {
+            Optional<IVar> leftVarO = expVar.getLeftVar();
+            if (leftVarO.isPresent()) {
+                Type type = leftVarO.get().getType();
+                if (typeArgs.stream().anyMatch(
+                        ta -> ta.toString().equals(type.toString()))) {
+                    return leftVarO;
+                }
+            }
+        }
+        return Optional.empty();
     }
 }

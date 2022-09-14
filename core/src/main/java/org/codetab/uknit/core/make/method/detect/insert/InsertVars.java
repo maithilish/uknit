@@ -2,6 +2,7 @@ package org.codetab.uknit.core.make.method.detect.insert;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,13 +92,15 @@ public class InsertVars {
     }
 
     /**
-     * Return arg type from ParameterizedType or java.lang.Object for simple
+     * Return type arg from ParameterizedType or java.lang.Object for simple *
      * type.
+     * <p>
+     * Ex: for List<String, Date> returns type String.
      * @param type
      * @param argIndex
      * @return
      */
-    public Type getArgType(final Type type, final int argIndex) {
+    public Type getTypeArg(final Type type, final int argIndex) {
 
         checkNotNull(type);
 
@@ -111,6 +114,29 @@ public class InsertVars {
             throw new CodeException(nodes.noImplmentationMessage(argType));
         }
         return argType;
+    }
+
+    /**
+     * Return arg type from ParameterizedType or java.lang.Object for simple
+     * type.
+     * @param type
+     * @param argIndex
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<Type> getTypeArgs(final Type type) {
+        checkNotNull(type);
+
+        List<Type> typeArgs = new ArrayList<>();
+        if (nodes.is(type, ParameterizedType.class)) {
+            typeArgs.addAll(((ParameterizedType) type).typeArguments());
+        } else if (nodes.is(type, SimpleType.class)) {
+            typeArgs.add(types.getType("java.lang.Object", type.getAST()));
+        } else {
+            throw new CodeException(nodes.noImplmentationMessage(type));
+        }
+
+        return typeArgs;
     }
 
     /**
@@ -130,7 +156,7 @@ public class InsertVars {
      * @param heap
      * @return
      */
-    public Optional<InferVar> createPutInferVar(final IVar var,
+    public Optional<IVar> createPutInferVar(final IVar var,
             final Expression rightExp, final Heap heap) {
         if (nodes.is(rightExp, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(rightExp, MethodInvocation.class);

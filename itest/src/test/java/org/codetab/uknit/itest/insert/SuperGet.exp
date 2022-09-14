@@ -1,0 +1,62 @@
+package org.codetab.uknit.itest.insert;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class SuperGetTest {
+    @InjectMocks
+    private SuperGet superGet;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetSuperField() {
+        List<Date> fieldList = new ArrayList<>();
+
+        List<Date> actual = superGet.getSuperField();
+
+        assertEquals(fieldList, actual);
+    }
+
+    @Test
+    public void testGetSuperCreatedList() {
+        Date aDate = Mockito.mock(Date.class);
+
+        Date actual = superGet.getSuperCreatedList();
+
+        assertSame(aDate, actual);
+    }
+
+    @Test
+    public void testGetSuperFieldList() {
+        Date aDate = Mockito.mock(Date.class);
+
+        Date actual = superGet.getSuperFieldList();
+
+        assertSame(aDate, actual);
+    }
+
+    @Test
+    public void testGetSuperCreatedListInForEach() {
+        Date aDate = null;
+        Date date = Mockito.mock(Date.class);
+
+        Date actual = superGet.getSuperCreatedListInForEach();
+
+        assertSame(aDate, actual);
+    }
+
+    @Test
+    public void testGetSuperFieldListInForEach() {
+        Date aDate = null;
+        Date date = Mockito.mock(Date.class);
+
+        Date actual = superGet.getSuperFieldListInForEach();
+
+        assertSame(aDate, actual);
+    }
+}

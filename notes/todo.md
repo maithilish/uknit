@@ -1,3 +1,79 @@
+# TODO
+
+## Optional
+
+Optional is empty at present. It should be initialized with value. See: itest.optional.OptionalLists
+
+When Optional contains list then Optional.get() in arg is not patched and NoSuchElement exception is thrown. Also, list is not defined. See: itest.optional.OptionalOps.
+
+## Ctl Flow
+
+add never() to trailing statements in main block after exception is thrown.
+write tests - throw exception in catch block.
+
+### Ctl Flow for Arg Validation
+
+Arg Validations in step.parse.IndexerFactory throws Exceptions. For coverage separate test is required for this. Refactor control flow paths to handle this.
+
+	validState((itemNames.indexOf("fact") == itemNames.size() - 1),
+                "fact should be last item of the list");
+
+### Ctl Flow Missing Test Method
+
+May be else path of, if (!lgs.containsKey(linkGroup)) is missing in LocatorGroupFactory, is missing in /step/src/main/java/org/codetab/scoopi/step/process/LocatorGroupFactory.java. Needs investigation.
+
+## Static Calls
+
+Static call in new object creation creates inferVar apple but not replace in call. See: itest.statics.StaticCalls.
+
+## Factory
+
+Factory test creates object of same type and tests with assertSame(). Explore better way to test created object. See: itest.create.Factory.
+
+## IMC
+
+Internal call returns separate mock for each call instead of single mock. See: itest.internal.MultiCall.
+
+Chaining multiple mocks is ok as long as thenReturn returns only the necessary mocks based on path, otherwise results in error. For example, if jobInfo2 is in catch block but test path is try then we have to return jobInfo and jobInfo3 and not jobInfo2.
+
+         when(payload.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2).thenReturn(jobInfo3);
+
+See: org.codetab.scoopi.step.Step.handover() method for refactor and test this. In else test it is proper!
+
+## Same method call in Try and Catch blocks
+
+When same method is invoked in try as well as in catch then verify never statement is generated for that method. Should generate verify times statement. See: itest.invoke.TryCatch.
+
+## This in calls
+
+The keyword this should be replaced with CUT. See cluster.hz.JobStore.close() method.
+
+## Catch Multi Exception
+
+Configurize whether to generate separate test method for each exception in catch clause or single test.
+
+## Verify or VerifyZeroInteraction
+
+Explore replacing multiple verify with single VerifyZeroInteraction when there is no interaction.
+
+## Pseudo Getter
+
+For methods similar to getter, uKnit wrongly calls setter method. See: itest.getset.detect.PseudoGetter.
+
+
+
+## Reorganise the old entries
+
+Clean and reorganise the below old entries:
+
+## Inner classes and interfaces
+
+Test classes or interfaces nested in another class. 
+For Inner classes and nested static classes see https://www.programiz.com/java-programming/nested-inner-class
+
+## Lambda Functions
+
+Test lambda functions. see org.codetab.scoopi.step.webdriver.DriverFactory.
 
 ## add test
 
@@ -119,10 +195,6 @@ If map is user configured as mock, whether to treat initialized the mock as
 mock or real. Now, it is treated as mock. If treated as real then make it 
 configurable.
 
-## This in calls
-
-The keyword this should be replaced with SUT. See cluster.hz.JobStore.close() method.
-
 ## Multiple Tests for Branches
 
 See notes in tech-doc folder. For test cases refer cluster.hz.JobStore, step.mediator.StateFliper
@@ -142,13 +214,7 @@ Create infer var, return and assert. See QNameIT.
 ## Field and Parameter Same Name
 
 Rename parameter name with index if field exists with same name. See superclass.MultiGetMock.getMulti(final Payload payload) method.
-    
-## Arg Validation and Control Flow
-
-Arg Validations in step.parse.IndexerFactory throws Exceptions. For coverage separate test is required for this. Refactor control flow paths to handle this.
-
-	validState((itemNames.indexOf("fact") == itemNames.size() - 1),
-                "fact should be last item of the list");
+   
     
 On the other hand for the following validation in step.parse.PrefixProcessor the coverage goes through without separate test. Analyze the reasons.
 
@@ -157,12 +223,6 @@ On the other hand for the following validation in step.parse.PrefixProcessor the
 ## Improve Generated Tests
 
 /step/src/test/java/org/codetab/scoopi/step/parse/QueryVarSubstitutorTest.java	
-
-## Ctl Flow
-
-Complex if generates redundant tests - ifElseIfPlusIf
-for trailing statements in main block after exception is thrown never is not added
-	write tests - throw exception in catch block
 
 ## Exceptions Thrown by MI
 

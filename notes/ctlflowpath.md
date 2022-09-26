@@ -145,7 +145,7 @@ Effective paths are: 1-4, 1-5, 1-6 (main paths) and 2-4, 3-4 (secondary paths)
     
 Main Path: The first if's then (9753-8219) is the main path. To it, all paths of second if are added. This results in 3 tests - canSwim-canFlip, canSwim-canFly and canSwim-2nd emptyElse. 
 
-Secondry Paths: The first if's else-if is the head of secondary path. It branches to two test canDive and 1st emptyElse. To complete the paths of these branches, second if's then (canFlip) is added to both. This results in two tests - canDive-canFlip and 1st emptyElse-canFlip.
+Secondary Paths: The first if's else-if is the head of secondary path. It branches to two test canDive and 1st emptyElse. To complete the paths of these branches, second if's then (canFlip) is added to both. This results in two tests - canDive-canFlip and 1st emptyElse-canFlip.
 
     MethodDeclaration 7490+
     └── Block md 8980+

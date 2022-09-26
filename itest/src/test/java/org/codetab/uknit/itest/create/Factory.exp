@@ -1,0 +1,21 @@
+package org.codetab.uknit.itest.create;
+
+public class FactoryTest {
+    @InjectMocks
+    private Factory factory;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCreateDriver() {
+        String name = "Foo";
+        Driver driver = new Driver(name);
+
+        Driver actual = factory.createDriver(name);
+
+        assertSame(driver, actual);
+    }
+}

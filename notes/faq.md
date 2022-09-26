@@ -67,9 +67,52 @@ If param **names** is defined as ArrayList<String> instead of List<String> then 
 	uknit.createInstance.ArrayList=new ArrayList<>();
 	uknit.collection.access.java.util.ArrayList=get,remove
 	
-	
+## Ctl Path and Code Coverage
 
-		 
+uKnit generates multiple test methods based on ctl flow paths. Consider the following,
+
+	if (fetchDocument && persist) {
+	  ...
+	}
+	
+uKnit generates two tests one for if path and another for else path. For complete test coverage, we need one more else test where both operands are false and you have to add the missing test manually.
+
+## Why there is no thenThrow statements in Test Methods That test Try Catch Paths
+
+In test methods that tests the try catch path, no thenThrow statements are created instead regular when or verify statements are created. Developer has to modify appropriate when or verify statements to throw exception.
+
+Mockito expects doThrow statements for void methods. At present uKnit generates verify for such items. Developer has to step in and change it.
+
+For catch path tests, uKnit simply call the the method under test and doesn't generate junit assertThrows() statement.
+
+## Infinite Loop
+
+The culprit usually is the while(foo.hasNext()) or similar construct. Add second thenReturn(false) to break the loop.
+
+        when(indexer.hasNext()).thenReturn(peach).thenReturn(false);
+        
+## How to Test Abstract Class
+
+uKnit generates normal test class for abstract CUT and test run throws 
+
+        Cannot instantiate @InjectMocks field named 'baseProcessor'! Cause: the type 'BaseProcessor' is an abstract class.
+
+To test this, add a static nested class in the test class that extends the abstract class and add unimplemented methods in it. Next change the CUT (var with @ InjectMocks) to static nested class type as shown below,
+
+        @InjectMocks
+        private TestBaseProcessor baseProcessor;
+    
+        static class TestBaseProcessor extends BaseProcessor {
+                @Override
+                public void process() {            
+                }
+        }
+    
+
+
+
+
+ 
 		 
 	
  

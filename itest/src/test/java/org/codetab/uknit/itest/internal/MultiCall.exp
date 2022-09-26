@@ -1,0 +1,25 @@
+package org.codetab.uknit.itest.internal;
+
+public class MultiCallTest {
+    @InjectMocks
+    private MultiCall multiCall;
+
+    @Mock
+    private Payload payload;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testMultiCallInternalMethod() {
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+        JobInfo jobInfo3 = Mockito.mock(JobInfo.class);
+
+        when(payload.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2).thenReturn(jobInfo3);
+        multiCall.multiCallInternalMethod();
+        fail("unable to assert, STEPIN");
+    }
+}

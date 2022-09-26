@@ -1,0 +1,62 @@
+package org.codetab.uknit.itest.optional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+public class OptionalListsTest {
+    @InjectMocks
+    private OptionalLists optionalLists;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCollectIfDatesIsPresentIfDateEquals() {
+        OptionalListHolder holder = Mockito.mock(OptionalListHolder.class);
+        Date inDate = Mockito.mock(Date.class);
+        Optional<List<Date>> dates = Optional.empty();
+        Date date = Mockito.mock(Date.class);
+        boolean grape = true;
+
+        when(holder.getDates()).thenReturn(dates);
+        when(date.equals(inDate)).thenReturn(grape);
+
+        boolean actual = optionalLists.collect(holder, inDate);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testCollectIfDatesIsPresentElseDateEquals() {
+        OptionalListHolder holder = Mockito.mock(OptionalListHolder.class);
+        Date inDate = Mockito.mock(Date.class);
+        Optional<List<Date>> dates = Optional.empty();
+        Date date = Mockito.mock(Date.class);
+        boolean grape = true;
+
+        when(holder.getDates()).thenReturn(dates);
+        when(date.equals(inDate)).thenReturn(grape);
+
+        boolean actual = optionalLists.collect(holder, inDate);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testCollectElseDatesIsPresent() {
+        OptionalListHolder holder = Mockito.mock(OptionalListHolder.class);
+        Date inDate = Mockito.mock(Date.class);
+        Optional<List<Date>> dates = Optional.empty();
+        Date date = Mockito.mock(Date.class);
+
+        when(holder.getDates()).thenReturn(dates);
+
+        boolean actual = optionalLists.collect(holder, inDate);
+
+        assertTrue(actual);
+        verify(date, never()).equals(inDate);
+    }
+}

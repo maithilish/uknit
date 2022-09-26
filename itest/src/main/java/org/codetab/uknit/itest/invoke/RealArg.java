@@ -4,9 +4,12 @@ import java.util.Map;
 
 public class RealArg {
 
-    /*
-     * TODO - fix the error. real var is not staged, but used in Some some =
-     * Some.builder().consume(real).build();
+    /**
+     * real var is not staged, but used in
+     * <code> Some some = Some.builder().consume(real).build(); </code>
+     *
+     * TODO - fix the error.
+     *
      */
     public Some consumer(final String id, final Map<String, byte[]> map) {
         String real = "real";

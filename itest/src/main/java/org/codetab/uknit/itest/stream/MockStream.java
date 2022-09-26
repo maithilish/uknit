@@ -68,7 +68,7 @@ public class MockStream {
         return trackNames;
     }
 
-    // TODO - to be implemented
+    // TODO - refactor
     // public Optional<Artist> biggestGroup(final Stream<Artist> artists) {
     // Function<Artist, Long> getCount = artist -> artist.getMembers().count();
     // return artists.collect(maxBy(Comparator.comparing(getCount)));

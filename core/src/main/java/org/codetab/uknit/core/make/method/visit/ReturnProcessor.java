@@ -3,7 +3,6 @@ package org.codetab.uknit.core.make.method.visit;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -23,27 +22,14 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.Type;
 
-import com.google.common.collect.Lists;
-
 public class ReturnProcessor {
 
-    @Inject
-    private Patcher patcher;
     @Inject
     private Nodes nodes;
     @Inject
     private ModelFactory modelFactory;
     @Inject
     private Resolver resolver;
-
-    public void stagePatches(final ReturnStatement rs, final Heap heap) {
-        Expression exp = rs.getExpression();
-        if (nonNull(exp)) {
-            List<Expression> exps = Lists.newArrayList(exp);
-            patcher.stageInferPatch(rs, exps, heap);
-            patcher.stageInitializerPatch(rs, exps, heap);
-        }
-    }
 
     public Optional<IVar> getExpectedVar(final ReturnStatement rs,
             final Heap heap) {

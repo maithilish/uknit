@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -216,6 +217,15 @@ public class Methods {
         for (Expression arg : args) {
             if (nodes.is(arg, SimpleName.class)) {
                 names.add(nodes.getName(arg));
+            }
+            if (nodes.is(arg, InfixExpression.class)) {
+                InfixExpression infix = nodes.as(arg, InfixExpression.class);
+                List<Expression> exps = new ArrayList<>();
+                exps.add(infix.getLeftOperand());
+                exps.add(infix.getRightOperand());
+                exps.addAll(infix.extendedOperands());
+                exps.stream().filter(e -> nodes.is(e, SimpleName.class))
+                        .forEach(e -> names.add(nodes.getName(e)));
             }
         }
         return names;

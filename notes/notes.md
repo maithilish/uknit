@@ -110,9 +110,9 @@ Assertions on contents of objects or collections.
 
 ### MethodInvocation and Infer Vars
 
-Infer vars are patched to expressions but direct modification to src node affects the subsequent internal calls (private calls). Instead, keep the source node unmodified and create patch, in visit, for later replacement and collect them in heap. Defer actual patching to statement to generate phase.
+Infer vars are patched to expressions but direct modification to src node affects the subsequent internal calls (private calls). Instead, keep the source node unmodified and during visit, for later replacement, create patch and collect them in heap. 
 
-While generating statements, when, verify and initializer, the ExpPatcher.copyAndPatch() method creates copy of the source node and patch its infer expressions and copy is used to generate statements.
+Generate phase creates copy of node and patches it and generate test statements from it. While generating statements, when, verify and initializer, the ExpPatcher.copyAndPatch() method creates copy of the source node and patch its infer expressions and copy is used to generate statements.
 
 The visit processing happens on source AST nodes as they are resolvable while the nodes created with ASTNode.copySubtree() are not resolvable.
 

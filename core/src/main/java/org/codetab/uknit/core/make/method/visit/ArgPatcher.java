@@ -8,7 +8,7 @@ import org.eclipse.jdt.core.dom.Expression;
 public class ArgPatcher {
 
     public void patch(final List<Expression> args, final Patch patch) {
-        int index = patch.getArgIndex();
+        int index = patch.getExpIndex();
         if (index >= 0) {
             args.remove(index);
             args.add(index,

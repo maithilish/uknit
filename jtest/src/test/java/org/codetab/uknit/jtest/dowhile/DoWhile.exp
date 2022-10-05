@@ -1,0 +1,73 @@
+package org.codetab.uknit.jtest.dowhile;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class DoWhileTest {
+    @InjectMocks
+    private DoWhile doWhile;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testWhileDo() {
+        AtomicInteger counter = Mockito.mock(AtomicInteger.class);
+
+        AtomicInteger actual = doWhile.whileDo(counter);
+
+        assertSame(counter, actual);
+        verify(counter).getAndIncrement();
+    }
+
+    @Test
+    public void testDoWhile() {
+        AtomicInteger counter = Mockito.mock(AtomicInteger.class);
+
+        AtomicInteger actual = doWhile.doWhile(counter);
+
+        assertSame(counter, actual);
+        verify(counter).getAndIncrement();
+    }
+
+    @Test
+    public void testWhileDoBreakIfCounterGet() {
+        AtomicInteger counter = Mockito.mock(AtomicInteger.class);
+
+        AtomicInteger actual = doWhile.whileDoBreak(counter);
+
+        assertSame(counter, actual);
+        verify(counter).getAndIncrement();
+    }
+
+    @Test
+    public void testWhileDoBreakElseCounterGet() {
+        AtomicInteger counter = Mockito.mock(AtomicInteger.class);
+
+        AtomicInteger actual = doWhile.whileDoBreak(counter);
+
+        assertSame(counter, actual);
+        verify(counter).getAndIncrement();
+    }
+
+    @Test
+    public void testDoWhileBreakIfCounterGet() {
+        AtomicInteger counter = Mockito.mock(AtomicInteger.class);
+
+        AtomicInteger actual = doWhile.doWhileBreak(counter);
+
+        assertSame(counter, actual);
+        verify(counter).getAndIncrement();
+    }
+
+    @Test
+    public void testDoWhileBreakElseCounterGet() {
+        AtomicInteger counter = Mockito.mock(AtomicInteger.class);
+
+        AtomicInteger actual = doWhile.doWhileBreak(counter);
+
+        assertSame(counter, actual);
+        verify(counter).getAndIncrement();
+    }
+}

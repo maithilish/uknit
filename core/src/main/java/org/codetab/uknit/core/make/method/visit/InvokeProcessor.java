@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -175,46 +174,6 @@ public class InvokeProcessor {
         if (heap.findByRightExp(exp).isEmpty()) {
             ExpVar varExp = varExpStager.stage(null, exp, heap);
             invoke.getReturnVar().ifPresent(v -> varExp.setLeftVar(v));
-        }
-    }
-
-    /**
-     * Stage patches for method (exp and args) and super method invocation (only
-     * args).
-     * @param exp
-     * @param heap
-     */
-    public void stagePatches(final Expression exp, final Heap heap) {
-        List<Expression> exps = new ArrayList<>();
-
-        if (nodes.is(exp, MethodInvocation.class)) {
-            MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
-            exps.add(mi.getExpression());
-            exps.addAll(methods.getArguments(mi));
-        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
-            SuperMethodInvocation smi =
-                    nodes.as(exp, SuperMethodInvocation.class);
-            exps.addAll(methods.getArguments(smi));
-        } else {
-            throw new IllegalArgumentException(
-                    "expression is not MethodInvocation or SuperMethodInvocation");
-        }
-
-        patcher.stageInferPatch(exp, exps, heap);
-    }
-
-    /**
-     * Stage patch to replace entire super method invocation with return var.
-     * <p>
-     * Example: return super.foo(bar); to return orange;
-     * @param node
-     * @param retVar
-     * @param heap
-     */
-    public void stageSuperPatch(final SuperMethodInvocation node,
-            final Optional<IVar> retVar, final Heap heap) {
-        if (retVar.isPresent()) {
-            patcher.stageSuperPatch(node, retVar.get(), heap);
         }
     }
 

@@ -2,7 +2,9 @@ package org.codetab.uknit.core.make.method.visit;
 
 import static java.util.Objects.nonNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -44,6 +46,27 @@ public class Patcher {
     @Inject
     private Nodes nodes;
 
+    public Map<Expression, Invoke> filterPatchables(final List<Expression> exps,
+            final Heap heap) {
+        final Map<Expression, Invoke> patchables = new HashMap<>();
+        for (Expression exp : exps) {
+            Optional<Invoke> invokeO = heap.findInvoke(exp);
+            /*
+             * Ex: sb.append(file.getName().toLowerCase()), if file.getName()
+             * returns inferVar apple then when should be
+             * when(sb.append(apple.toLowerCase())).thenReturn(...). Create a
+             * patch for exp file.getName() to apple.
+             */
+            if (invokeO.isPresent()
+                    && invokeO.get().getReturnVar().isPresent()) {
+                if (patchers.patchable(invokeO.get())) {
+                    patchables.put(exp, invokeO.get());
+                }
+            }
+        }
+        return patchables;
+    }
+
     /**
      * When inner expressions such as MethodInvocation returns InferVar then in
      * outer node replace it with infer var. Patches map expression to
@@ -64,26 +87,38 @@ public class Patcher {
      */
     public void stageInferPatch(final ASTNode node, final List<Expression> exps,
             final Heap heap) {
+
+        final Map<Expression, Invoke> patchables = new HashMap<>();
         for (Expression exp : exps) {
-            Optional<Invoke> o = heap.findInvoke(exp);
+            Optional<Invoke> invokeO = heap.findInvoke(exp);
+            if (invokeO.isPresent()
+                    && invokeO.get().getReturnVar().isPresent()) {
+                if (patchers.patchable(invokeO.get())) {
+                    patchables.put(exp, invokeO.get());
+                }
+            }
+        }
+
+        for (Expression exp : patchables.keySet()) {
             /*
              * Ex: sb.append(file.getName().toLowerCase()), if file.getName()
              * returns inferVar apple then when should be
              * when(sb.append(apple.toLowerCase())).thenReturn(...). Create a
              * patch for exp file.getName() to apple.
              */
-            if (o.isPresent() && o.get().getReturnVar().isPresent()) {
-                Invoke invoke = o.get();
-                boolean patchable = patchers.patchable(invoke);
-                if (patchable) {
-                    // if when returns inferVar, then replace
-                    String name = invoke.getReturnVar().get().getName();
-                    int argIndex = patchers.getArgIndex(node, exp);
-                    Patch patch = modelFactory.createPatch(node,
-                            invoke.getExp(), name, argIndex);
-                    heap.getPatches().add(patch);
-                }
-            }
+            Invoke invoke = patchables.get(exp);
+            // if when returns inferVar, then replace
+            String name = invoke.getReturnVar().get().getName();
+            int expIndex = patchers.getExpIndex(node, exp);
+            Patch patch = modelFactory.createPatch(node, invoke.getExp(), name,
+                    expIndex);
+            heap.getPatches().add(patch);
+        }
+    }
+
+    public void stageInternalPatch(final ASTNode node,
+            final List<Expression> exps, final Heap heap) {
+        for (Expression exp : exps) {
             /*
              * IMC - if calling arg name is different from parameter name then
              * stage patch. Ex: if calling arg is inferVar apple and parameter
@@ -94,9 +129,9 @@ public class Patcher {
                 if (heap.useArgVar(paramName)) {
                     String argName = heap.getArgName(paramName);
                     if (!argName.equals(paramName)) {
-                        int argIndex = patchers.getArgIndex(node, exp);
+                        int expIndex = patchers.getExpIndex(node, exp);
                         Patch patch = modelFactory.createPatch(node, exp,
-                                argName, argIndex);
+                                argName, expIndex);
                         heap.getPatches().add(patch);
                     }
                 }
@@ -118,9 +153,9 @@ public class Patcher {
     public void stageSuperPatch(final SuperMethodInvocation node,
             final IVar retVar, final Heap heap) {
         ASTNode parent = node.getParent();
-        int argIndex = patchers.getArgIndex(parent, node);
+        int expIndex = patchers.getExpIndex(parent, node);
         Patch patch = modelFactory.createPatch(parent, node, retVar.getName(),
-                argIndex);
+                expIndex);
         heap.getPatches().add(patch);
     }
 
@@ -133,9 +168,9 @@ public class Patcher {
     public void stageInitializerPatch(final ASTNode node,
             final List<Expression> exps, final Heap heap) {
         for (Expression exp : exps) {
-            Optional<ExpVar> o = heap.findByRightExp(exp);
-            if (o.isPresent()) {
-                ExpVar expVar = o.get();
+            Optional<ExpVar> expVarO = heap.findByRightExp(exp);
+            if (expVarO.isPresent()) {
+                ExpVar expVar = expVarO.get();
                 /*
                  * ex: return new String(); the var is null so stage a new one
                  */
@@ -147,10 +182,10 @@ public class Patcher {
                 }
                 Optional<IVar> leftVar = expVar.getLeftVar();
                 if (leftVar.isPresent()) {
-                    int argIndex = -1;
+                    int expIndex = -1;
                     Patch patch =
                             modelFactory.createPatch(node, expVar.getRightExp(),
-                                    leftVar.get().getName(), argIndex);
+                                    leftVar.get().getName(), expIndex);
                     heap.getPatches().add(patch);
                 }
             }
@@ -193,4 +228,5 @@ public class Patcher {
         }
         return nodeCopy;
     }
+
 }

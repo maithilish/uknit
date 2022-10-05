@@ -60,7 +60,47 @@ Explore replacing multiple verify with single VerifyZeroInteraction when there i
 
 For methods similar to getter, uKnit wrongly calls setter method. See: itest.getset.detect.PseudoGetter.
 
+## Stubbing final/private/equals()/hashCode
 
+The org.mockito.exceptions.misusing.MissingMethodInvocationException: this error might show up because:
+You stub either of: final/private/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+
+Fix: drop when statements for final/private/equals()/hashCode().
+
+## Array
+
+Tests are not proper when,
+array is casted, test is not proper. See: jtest.array.ArrayType.java
+array var with []. See: jtest.array.ArrayVarDim.java
+
+## Creations
+
+Generate initialization for exp.new creation. See: jtest.cic.ExpNewCreation.java
+
+## Conditional
+
+Enable ctl flow logic for missing test branch. See: jtest.conditional.ConditionalExp.java
+
+## Continue and Break
+
+Ignore statements after continue and break.
+
+        public void foo(final List<String> list, final Log log) {
+          for (String name : list) {
+            if (name.equals("hello")) {
+                break;  // or continue;
+            }
+            log.debug(name);
+          }
+        }
+
+## Cast 
+
+Return cast test is not proper. See: jtest.cast.CastInReturn.java
+
+        
 
 ## Reorganise the old entries
 

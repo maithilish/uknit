@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
@@ -64,7 +65,7 @@ public class Patchers {
         }
         if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
-            if (patch.getArgIndex() >= 0) {
+            if (patch.getExpIndex() >= 0) {
                 @SuppressWarnings("unchecked")
                 List<Expression> args = mi.arguments();
                 argPatcher.patch(args, patch);
@@ -87,10 +88,27 @@ public class Patchers {
             argPatcher.patch(args, patch);
             return true;
         }
+        if (nodes.is(node, InfixExpression.class)) {
+            InfixExpression infix = nodes.as(node, InfixExpression.class);
+            if (patch.getExpIndex() == 0) {
+                infix.setLeftOperand(infix.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 1) {
+                infix.setRightOperand(infix.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() > 1) {
+                final int offset = 2;
+                @SuppressWarnings("unchecked")
+                List<Expression> extOperands = infix.extendedOperands();
+                int index = patch.getExpIndex() - offset;
+                extOperands.remove(index);
+                extOperands.add(index, infix.getAST().newSimpleName(name));
+            }
+
+            return true;
+        }
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
-    public int getArgIndex(final ASTNode node, final Expression exp) {
+    public int getExpIndex(final ASTNode node, final Expression exp) {
         checkNotNull(node);
         checkNotNull(exp);
 
@@ -138,6 +156,18 @@ public class Patchers {
                 return args.indexOf(exp);
             } else {
                 return -1;
+            }
+        }
+        if (nodes.is(node, InfixExpression.class)) {
+            InfixExpression infix = nodes.as(node, InfixExpression.class);
+            if (infix.getLeftOperand().equals(exp)) {
+                return 0;
+            } else if (infix.getRightOperand().equals(exp)) {
+                return 1;
+            } else {
+                final int operandOffset = 2;
+                int index = infix.extendedOperands().indexOf(exp);
+                return operandOffset + index;
             }
         }
         throw new CodeException(nodes.noImplmentationMessage(node));

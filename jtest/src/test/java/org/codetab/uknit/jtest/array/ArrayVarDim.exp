@@ -1,0 +1,47 @@
+package org.codetab.uknit.jtest.array;
+
+public class ArrayVarDimTest {
+    @InjectMocks
+    private ArrayVarDim arrayVarDim;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPrimitiveTypeVarDim() {
+        int foo = new int[5];
+
+        int[] actual = arrayVarDim.primitiveTypeVarDim();
+
+        assertArrayEquals(foo, actual);
+    }
+
+    @Test
+    public void testTypeNameVarDim() {
+        String foo = new String[4];
+
+        String[] actual = arrayVarDim.typeNameVarDim();
+
+        assertArrayEquals(foo, actual);
+    }
+
+    @Test
+    public void testPrimitiveTypeVarTwoDim() {
+        int foo = new int[5][2];
+
+        int[][] actual = arrayVarDim.primitiveTypeVarTwoDim();
+
+        assertArrayEquals(foo, actual);
+    }
+
+    @Test
+    public void testTypeNameVarThreeDim() {
+        String foo = new String[4][2][1];
+
+        String[][][] actual = arrayVarDim.typeNameVarThreeDim();
+
+        assertArrayEquals(foo, actual);
+    }
+}

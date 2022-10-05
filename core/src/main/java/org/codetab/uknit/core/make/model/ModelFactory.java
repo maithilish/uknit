@@ -52,5 +52,5 @@ public interface ModelFactory {
             @Assisted("clzName") String clzName,
             @Assisted("srcPath") String srcPath);
 
-    Patch createPatch(ASTNode node, Expression exp, String name, int argIndex);
+    Patch createPatch(ASTNode node, Expression exp, String name, int expIndex);
 }

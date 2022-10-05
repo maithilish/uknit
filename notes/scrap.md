@@ -39,3 +39,5 @@ Intellij
         };
 
         System.out.println(result);        
+        
+4. new String syntax

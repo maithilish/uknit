@@ -1,0 +1,18 @@
+package org.codetab.uknit.jtest.array;
+
+public class ArrayTypeTest {
+    @InjectMocks
+    private ArrayType arrayType;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testArrayTypeCast() {
+
+        String[] actual = arrayType.arrayTypeCast();
+        fail("unable to assert, STEPIN");
+    }
+}

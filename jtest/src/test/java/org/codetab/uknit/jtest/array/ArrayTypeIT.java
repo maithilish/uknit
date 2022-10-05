@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.ex;
+package org.codetab.uknit.jtest.array;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.contentOf;
 import java.io.File;
 import java.io.IOException;
 
-import org.codetab.uknit.itest.ITBase;
+import org.codetab.uknit.jtest.ITBase;
 import org.junit.jupiter.api.Test;
 
-public class DealsServiceAdapterIT extends ITBase {
+public class ArrayTypeIT extends ITBase {
 
     @Test
     public void test() throws IOException {
@@ -26,5 +26,4 @@ public class DealsServiceAdapterIT extends ITBase {
 
         assertThat(contentOf(actualFile)).isEqualTo(contentOf(expectedFile));
     }
-
 }

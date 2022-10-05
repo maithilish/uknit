@@ -62,6 +62,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 public class Visitor extends ASTVisitor {
 
     @Inject
+    private PatchProcessor patchProcessor;
+    @Inject
     private InvokeProcessor invokeProcessor;
     @Inject
     private AssignProcessor assignProcessor;
@@ -125,7 +127,7 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final MethodInvocation node) {
 
-        invokeProcessor.stagePatches(node, heap);
+        patchProcessor.stageMiPatches(node, heap);
 
         Invoke invoke = invokeProcessor.process(node, heap);
         heap.getInvokes().add(invoke);
@@ -157,7 +159,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final SuperMethodInvocation node) {
-        invokeProcessor.stagePatches(node, heap);
+        patchProcessor.stageSuperMiPatches(node, heap);
         Invoke invoke = invokeProcessor.process(node, heap);
         heap.getInvokes().add(invoke);
         Optional<IVar> retVar = invoke.getReturnVar();
@@ -172,12 +174,12 @@ public class Visitor extends ASTVisitor {
                 invokeProcessor.stageInferVar(invoke, heap);
             }
         }
-        invokeProcessor.stageSuperPatch(node, retVar, heap);
+        patchProcessor.stageReplaceSuperMiPatch(node, retVar, heap);
     }
 
     @Override
     public void endVisit(final ReturnStatement node) {
-        returnProcessor.stagePatches(node, heap);
+        patchProcessor.stageReturnStmtPatches(node, heap);
         Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
 
         if (returnProcessor.isReturnable(expectedVar, heap)) {
@@ -187,6 +189,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final InfixExpression node) {
+        patchProcessor.stageInfixPatches(node, heap);
         varProcessor.stageInferVar(node, heap);
     }
 
@@ -202,13 +205,13 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ClassInstanceCreation node) {
-        createProcessor.stagePatches(node, heap);
+        patchProcessor.stageInstanceCreationPatches(node, heap);
         createProcessor.process(node, heap);
     }
 
     @Override
     public void endVisit(final ArrayCreation node) {
-        createProcessor.stagePatches(node, heap);
+        patchProcessor.stageArrayCreationPatches(node, heap);
         createProcessor.process(node, heap);
     }
 

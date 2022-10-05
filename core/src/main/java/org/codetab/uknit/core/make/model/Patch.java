@@ -12,16 +12,16 @@ public class Patch {
     private ASTNode node;
     private Expression exp;
     private String name;
-    private int argIndex;
+    private int expIndex;
 
     @Inject
     public Patch(@Assisted final ASTNode node, @Assisted final Expression exp,
-            @Assisted final String name, @Assisted final int argIndex) {
+            @Assisted final String name, @Assisted final int expIndex) {
         super();
         this.node = node;
         this.exp = exp;
         this.name = name;
-        this.argIndex = argIndex;
+        this.expIndex = expIndex;
     }
 
     public ASTNode getNode() {
@@ -36,8 +36,8 @@ public class Patch {
         return name;
     }
 
-    public int getArgIndex() {
-        return argIndex;
+    public int getExpIndex() {
+        return expIndex;
     }
 
     @Override

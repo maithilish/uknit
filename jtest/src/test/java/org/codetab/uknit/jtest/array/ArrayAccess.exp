@@ -1,0 +1,29 @@
+package org.codetab.uknit.jtest.array;
+
+public class ArrayAccessTest {
+    @InjectMocks
+    private ArrayAccess arrayAccess;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPrimitiveType() {
+        int apple = 1;
+
+        int actual = arrayAccess.primitiveType();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testTypeName() {
+        String apple = "Foo";
+
+        String actual = arrayAccess.typeName();
+
+        assertEquals(apple, actual);
+    }
+}

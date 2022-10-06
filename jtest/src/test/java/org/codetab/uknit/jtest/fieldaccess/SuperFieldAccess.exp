@@ -1,0 +1,25 @@
+package org.codetab.uknit.jtest.fieldaccess;
+
+public class SuperFieldAccessTest {
+    @InjectMocks
+    private SuperFieldAccess superFieldAccess;
+
+    @Mock
+    private Log log;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() {
+        int x = 1;
+        superFieldAccess.foo();
+
+        verify(log).info("x " + x);
+        verify(log).info("super.x " + super.x);
+        verify(log).info("(T2)this).x " + ((T2) this).x);
+        verify(log).info("(T1)this).x " + ((T1) this).x);
+    }
+}

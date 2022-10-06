@@ -1,5 +1,12 @@
 package org.codetab.uknit.itest.nest;
 
+/**
+ *
+ * TODO H - tests are not proper after test for interface is disabled.
+ *
+ * @author m
+ *
+ */
 public class HelloWorldAnonymousClassNoSplit {
 
     interface HelloWorld {

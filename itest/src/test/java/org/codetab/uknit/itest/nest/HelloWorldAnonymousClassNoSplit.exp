@@ -8,10 +8,4 @@ public class HelloWorldAnonymousClassNoSplitTest {
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
     }
-
-    @Test
-    public void testSayHello() {
-        helloWorldAnonymousClassNoSplit.sayHello();
-        fail("unable to assert, STEPIN");
-    }
 }

@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class Clz {
 
     private String testClzName;
-    private TypeDeclaration typeDecl; // class under test - SUT
+    private TypeDeclaration typeDecl; // class under test - CUT
     private TypeDeclaration testTypeDecl; // test class
     private PackageDeclaration packageDecl;
     private List<ImportDeclaration> imports;

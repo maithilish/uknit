@@ -1,0 +1,23 @@
+package org.codetab.uknit.jtest.fieldaccess;
+
+public class FieldAccessTest {
+    @InjectMocks
+    private FieldAccess fieldAccess;
+
+    @Mock
+    private Log log;
+    @Mock
+    private F2 f2;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() {
+        fieldAccess.foo();
+
+        verify(log).info("x " + f2.x);
+    }
+}

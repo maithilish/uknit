@@ -160,7 +160,11 @@ public class ITBase {
 
     protected void display(final File file, final boolean exit) {
         try {
-            Files.copy(file.toPath(), System.out);
+            if (file.exists()) {
+                Files.copy(file.toPath(), System.out);
+            } else {
+                System.out.printf("file not generated: %s%n", file);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

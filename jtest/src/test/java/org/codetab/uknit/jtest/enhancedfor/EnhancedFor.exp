@@ -1,0 +1,25 @@
+package org.codetab.uknit.jtest.enhancedfor;
+
+import java.util.List;
+
+public class EnhancedForTest {
+    @InjectMocks
+    private EnhancedFor enhancedFor;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testForeach() {
+        List<String> names = new ArrayList<>();
+        String name = null;
+        String n = "Foo";
+        names.add(n);
+
+        String actual = enhancedFor.foreach(names);
+
+        assertEquals(name, actual);
+    }
+}

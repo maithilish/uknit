@@ -52,7 +52,7 @@ Primary expressions include most of the simplest kinds of expressions, from whic
 
 ## Exp for MI, Return, Infer
 
-ArrayCreation (with new), ArrayInitializer (no new), ArrayAccess, ClassInstanceCreation, ConditionalExpression, CastExpression
+ArrayCreation (with new), ArrayInitializer (no new), ArrayAccess, ClassInstanceCreation, ConditionalExpression, CastExpression, FieldAccess,
 
 
 ## AST Nodes used by uKnit
@@ -69,8 +69,8 @@ ConditionalExpression
 CreationReference
 Dimension
 DoStatement, WhileStatement
-
-
+EnhancedForStatement
+ExpressionStatement
 
 ## No Impact AST Nodes 
 
@@ -82,17 +82,19 @@ BlockComment
 ConstructorInvocation
 CompilationUnit
 EmptyStatement
-
+ExportsDirective
+EmptyStatement
+ModuleDeclaration
+ModuleModifier
+Javadoc
+LabeledStatement
+LineComment
+MarkerAnnotation
+NormalAnnotation
+PackageDeclaration
 
 ## Nodes
 
-EmptyStatement
-EnhancedForStatement
-EnumConstantDeclaration
-EnumDeclaration
-ExportsDirective
-ExpressionMethodReference
-ExpressionStatement
 FieldAccess
 FieldDeclaration
 ForStatement
@@ -102,25 +104,18 @@ InfixExpression
 Initializer
 InstanceofExpression
 IntersectionType
-Javadoc
-LabeledStatement
-LambdaExpression
-LineComment
-MarkerAnnotation
+
 MemberRef
 MemberValuePair
 MethodRef
 MethodRefParameter
 MethodDeclaration
 Modifier
-ModuleDeclaration
-ModuleModifier
+
 NameQualifiedType
-NormalAnnotation
-NullLiteral
-NumberLiteral
+
 OpensDirective
-PackageDeclaration
+
 ParameterizedType
 ParenthesizedExpression
 PatternInstanceofExpression
@@ -138,7 +133,7 @@ SimpleName
 SimpleType
 SingleMemberAnnotation
 SingleVariableDeclaration
-StringLiteral
+
 SuperConstructorInvocation
 SuperFieldAccess
 SuperMethodInvocation
@@ -163,18 +158,19 @@ UsesDirective
 VariableDeclarationExpression
 VariableDeclarationStatement
 VariableDeclarationFragment
-
 WildcardType
 YieldStatement
 
 ## For Review
 
 AnonymousClassDeclaration
-BooleanLiteral
-CharacterLiteral
+BooleanLiteral, CharacterLiteral, NullLiteral, NumberLiteral, StringLiteral
 Assignment
 CatchClause
 ContinueStatement
 BreakStatement
 Extra Dimensions in SingleVariableDeclaration, VariableDeclarationFragment
-
+EnumConstantDeclaration
+EnumDeclaration
+ExpressionMethodReference
+LambdaExpression

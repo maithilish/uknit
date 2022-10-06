@@ -55,7 +55,10 @@ public class SourceVisitor extends ASTVisitor {
 
     private ClzMaker clzMaker;
 
+    private boolean testable;
+
     public void preProcess() {
+        testable = true;
         CompilationUnit srcCu = ctl.getSrcCompilationUnit();
         IProblem[] problems = srcCu.getProblems();
         if (problems.length > 0) {
@@ -132,6 +135,13 @@ public class SourceVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(final TypeDeclaration node) {
+        if (node.isInterface()) {
+            LOG.warn("{} is an interface, no test generated", node.getName());
+            testable = false;
+            return true;
+        } else {
+            testable = true;
+        }
         clzMaker.addClass(node);
         clzMaker.addSelfField(node);
         clzMaker.addFields(node);
@@ -161,6 +171,12 @@ public class SourceVisitor extends ASTVisitor {
         }
         if (methodEndDumper.isEnable()) {
             node.accept(methodEndDumper);
+        }
+        /*
+         * don't process method if interface
+         */
+        if (!testable) {
+            return true;
         }
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());

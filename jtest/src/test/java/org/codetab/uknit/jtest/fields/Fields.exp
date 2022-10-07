@@ -1,0 +1,89 @@
+package org.codetab.uknit.jtest.fields;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class FieldsTest {
+    @InjectMocks
+    private Fields fields;
+
+    @Mock
+    private LocalDate date;
+    @Mock
+    private LocalDate defaultDate;
+    @Mock
+    private LocalDate protectedDate;
+    @Mock
+    private LocalDate publicDate;
+    @Mock
+    private LocalDate finalDate;
+    @Mock
+    private LocalDate staticDateA;
+    @Mock
+    private LocalDate staticDateB;
+    @Mock
+    private LocalDate defaultStaticDateA;
+    @Mock
+    private LocalDate defaultStaticDateB;
+    @Mock
+    private LocalDate finalStaticDateA;
+    @Mock
+    private LocalDate finalStaticDateB;
+    @Mock
+    private LocalDate protectedStaticDateA;
+    @Mock
+    private LocalDate protectedStaticDateB;
+    @Mock
+    private LocalDate publicStaticDateA;
+    @Mock
+    private LocalDate publicStaticDateB;
+    @Mock
+    private LocalDate dateA;
+    @Mock
+    private LocalDate dateB;
+    @Mock
+    private LocalDateTime dateTimeA;
+    @Mock
+    private LocalDateTime dateTimeB;
+    @Mock
+    private LocalDateTime dateTimeC;
+    @Mock
+    private LocalDate defaultDateA;
+    @Mock
+    private LocalDate defaultDateB;
+    @Mock
+    private LocalDate protectedDateA;
+    @Mock
+    private LocalDate protectedDateB;
+    @Mock
+    private LocalDate publicDateA;
+    @Mock
+    private LocalDate publicDateB;
+    @Mock
+    private LocalDate finalDateA;
+    @Mock
+    private LocalDate finalDateB;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetDateStr() {
+        LocalDate dateP = Mockito.mock(LocalDate.class);
+        String apple = "Foo";
+
+        when(dateP.toString()).thenReturn(apple);
+
+        String actual = fields.getDateStr(dateP);
+
+        assertEquals(apple, actual);
+    }
+}

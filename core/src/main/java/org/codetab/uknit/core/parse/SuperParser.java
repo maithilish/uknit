@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,8 +96,9 @@ public class SuperParser {
             boolean known =
                     cuCache.stream().anyMatch(h -> h.isKnown(clzPkg, clzName));
             if (!known) {
-                String searchDir = String.join("/", srcBase, srcDir,
-                        clzPkg.replace(".", "/"));
+                Path searchPath =
+                        ioUtils.asSrcFolderPath(srcBase, srcDir, clzPkg);
+                String searchDir = searchPath.toString();
                 // source may not be available for external libraries
                 if (ioUtils.dirExists(searchDir)) {
                     String srcPath = sourceFinder.find(searchDir, clzName);

@@ -142,6 +142,9 @@ Test lambda functions. see org.codetab.scoopi.step.webdriver.DriverFactory.
         return foo;
     }
     
+    
+Write Test for - list.stream().toArray(String[]::new)
+    
 ## var args ...    
         
 ## matcher

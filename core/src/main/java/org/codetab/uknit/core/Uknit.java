@@ -11,8 +11,8 @@ import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.di.UknitModule;
 import org.codetab.uknit.core.make.Controller;
+import org.codetab.uknit.core.output.TestWriter;
 import org.codetab.uknit.core.parse.SourceParser;
-import org.codetab.uknit.core.write.TestWriter;
 
 public class Uknit {
 

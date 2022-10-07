@@ -15,6 +15,10 @@ import org.codetab.uknit.core.Uknit;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.di.UknitModule;
+import org.codetab.uknit.core.exception.CriticalException;
+
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 public class ITBase {
 
@@ -71,10 +75,13 @@ public class ITBase {
         configs.setProperty("uknit.source.clz", srcFile);
 
         configs.setProperty("uknit.expectedFile", expFile);
-        configs.setProperty("uknit.dump.method", "true");
 
-        // destination
-        configs.setProperty("uknit.dest", "target/itest");
+        // Suppress console output
+        configs.setProperty("uknit.run.mode", "test");
+        configs.setProperty("uknit.output.file.overwrite", "false");
+
+        // output dir
+        configs.setProperty("uknit.output.dir", "target/jtest");
 
         configs.setProperty("uknit.testClassName", testClzName);
     }
@@ -118,12 +125,31 @@ public class ITBase {
 
     protected void generateTestClass() throws IOException {
 
-        cleanDestDir(Paths.get(configs.getConfig("uknit.dest")));
+        sanityCheckConfigs();
+        cleanDestDir(Paths.get(configs.getConfig("uknit.output.dir")));
 
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);
         Uknit uknit = di.instance(Uknit.class);
         uknit.run();
+    }
+
+    /**
+     * Ensure itest output goes to target/itest and not overwritten and doesn't
+     * land in src/test/java which holds corrected tests.
+     */
+    private void sanityCheckConfigs() {
+        String msg = null;
+        if (!configs.getConfig("uknit.output.dir").equals("target/jtest")) {
+            msg = "uknit.output.dir should be target/itest for jtests";
+        }
+        if (configs.getConfig("uknit.output.file.overwrite")
+                .equalsIgnoreCase("true")) {
+            msg = "uknit.output.file.overwrite should be false for jtests";
+        }
+        if (nonNull(msg)) {
+            throw new CriticalException(msg);
+        }
     }
 
     protected File getExpectedFile() {
@@ -140,10 +166,12 @@ public class ITBase {
 
     protected File getActualFile() {
         String ws = configs.getConfig("uknit.source.base");
-        String destDir = configs.getConfig("uknit.dest");
+        String destDir = configs.getConfig("uknit.output.dir");
+        String pkg = configs.getConfig("uknit.source.package");
         String testClassName = configs.getConfig("uknit.testClassName");
 
-        return new File(String.join("/", ws, destDir, testClassName + ".java"));
+        return new File(String.join("/", ws, destDir, pkg.replace(".", "/"),
+                testClassName + ".java"));
     }
 
     protected void print(final File file) throws IOException {
@@ -153,15 +181,20 @@ public class ITBase {
     public static void cleanDestDir(final Path directory) throws IOException {
         final File[] files = directory.toFile().listFiles();
         if (nonNull(files)) {
-            for (File f : files) {
-                f.delete();
+            for (File file : files) {
+                MoreFiles.deleteRecursively(file.toPath(),
+                        RecursiveDeleteOption.ALLOW_INSECURE);
             }
         }
     }
 
     protected void display(final File file, final boolean exit) {
         try {
-            Files.copy(file.toPath(), System.out);
+            if (file.exists()) {
+                Files.copy(file.toPath(), System.out);
+            } else {
+                System.out.printf("file not generated: %s%n", file);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

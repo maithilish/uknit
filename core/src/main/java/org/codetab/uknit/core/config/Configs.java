@@ -81,4 +81,9 @@ public class Configs {
         }
         return value;
     }
+
+    public boolean isLibRunMode() {
+        return configuration.getProperty("uknit.run.mode")
+                .equalsIgnoreCase("lib");
+    }
 }

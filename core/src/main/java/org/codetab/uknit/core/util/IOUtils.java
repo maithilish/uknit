@@ -7,8 +7,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 public class IOUtils {
 
@@ -29,9 +33,45 @@ public class IOUtils {
         }
     }
 
-    public String getClassFilePath(final String workspace, final String destDir,
-            final String clzName) {
-        return String.join("/", workspace, destDir, clzName + ".java");
+    /**
+     * Get platform neutral path to a source file. Note: pkg is package name
+     * such as org.foo.bar.
+     * @param base
+     *            project dir, /home/x/eclipse-workspace/uknit/core
+     * @param dir
+     *            source dir, src/main/java
+     * @param pkg
+     *            package name, org.foo.bar
+     * @param srcFile
+     *            java file name, Foo.java
+     * @return
+     */
+    public Path asSrcFilePath(final String base, final String dir,
+            final String pkg, final String srcFile) {
+        List<String> list = Lists.newArrayList(Splitter.on(".").split(pkg));
+        list.add(0, dir);
+        list.add(srcFile);
+        String[] more = list.stream().toArray(String[]::new);
+        return java.nio.file.Paths.get(base, more);
+    }
+
+    /**
+     * Get platform neutral path to a source folder. Note: pkg is package name
+     * such as org.foo.bar.
+     * @param base
+     *            project dir, /home/x/eclipse-workspace/uknit/core
+     * @param dir
+     *            source dir, src/main/java
+     * @param pkg
+     *            package name, org.foo.bar
+     * @return
+     */
+    public Path asSrcFolderPath(final String base, final String dir,
+            final String pkg) {
+        List<String> list = Lists.newArrayList(Splitter.on(".").split(pkg));
+        list.add(0, dir);
+        String[] more = list.stream().toArray(String[]::new);
+        return java.nio.file.Paths.get(base, more);
     }
 
     public List<File> searchSource(final String dirName, final String ext,

@@ -22,6 +22,7 @@ import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.method.detect.getter.GetterSetter;
 import org.codetab.uknit.core.make.method.visit.PathFinder;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.output.Console;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.tree.Trees;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -52,6 +53,8 @@ public class SourceVisitor extends ASTVisitor {
     private GetterSetter getterSetter;
     @Inject
     private Trees trees;
+    @Inject
+    private Console console;
 
     private ClzMaker clzMaker;
 
@@ -105,7 +108,7 @@ public class SourceVisitor extends ASTVisitor {
         IProblem[] problems = testCu.getProblems();
         if (problems.length > 0) {
             for (IProblem problem : problems) {
-                System.out.println(problem);
+                console.print(problem.toString());
             }
             throw new CriticalException(
                     "generated test class has errors, unable to write.");

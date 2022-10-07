@@ -71,6 +71,8 @@ Dimension
 DoStatement, WhileStatement
 EnhancedForStatement
 ExpressionStatement
+FieldAccess
+FieldDeclaration
 
 ## No Impact AST Nodes 
 
@@ -92,14 +94,13 @@ LineComment
 MarkerAnnotation
 NormalAnnotation
 PackageDeclaration
+ImportDeclaration
 
 ## Nodes
 
-FieldAccess
-FieldDeclaration
 ForStatement
 IfStatement
-ImportDeclaration
+
 InfixExpression
 Initializer
 InstanceofExpression

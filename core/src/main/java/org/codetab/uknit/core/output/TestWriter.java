@@ -1,8 +1,7 @@
-package org.codetab.uknit.core.write;
-
-import static java.util.Objects.isNull;
+package org.codetab.uknit.core.output;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +32,16 @@ public class TestWriter {
 
         boolean insertLineBreaks =
                 configs.getConfig("uknit.pretty.insertLineBreaks", true);
-        String destDir = configs.getConfig("uknit.dest");
 
-        if (isNull(destDir)) {
-            String code = writer.format(cu);
-            if (insertLineBreaks) {
-                code = writer.insertLineBreaks(code);
-            }
-            writer.display(code);
-        } else {
+        String outputMode = configs.getConfig("uknit.output.mode", "file");
+        boolean outputFileOverwrite =
+                configs.getConfig("uknit.output.file.overwrite", false);
+        String outputDir =
+                configs.getConfig("uknit.output.dir", "src/test/java");
+
+        if (outputMode.equalsIgnoreCase("file")) {
             String sourceBase = configs.getConfig("uknit.source.base");
+            String sourcePkg = configs.getConfig("uknit.source.package");
 
             @SuppressWarnings("unchecked")
             List<AbstractTypeDeclaration> definedTypes =
@@ -57,14 +56,14 @@ public class TestWriter {
                 for (AbstractTypeDeclaration type : definedTypes) {
                     types.add(type);
                     String testClzName = classes.getClzName(type);
-                    String testFileName = ioUtils.getClassFilePath(sourceBase,
-                            destDir, testClzName);
+                    Path outputFilePath = ioUtils.asSrcFilePath(sourceBase,
+                            outputDir, sourcePkg, testClzName + ".java");
                     try {
                         String code = writer.format(cu);
                         if (insertLineBreaks) {
                             code = writer.insertLineBreaks(code);
                         }
-                        writer.write(testFileName, code);
+                        writer.write(outputFilePath, code, outputFileOverwrite);
                     } catch (IOException e) {
                         throw new CriticalException(e);
                     }
@@ -75,6 +74,12 @@ public class TestWriter {
                 types.clear();
                 types.addAll(definedTypes);
             }
+        } else {
+            String code = writer.format(cu);
+            if (insertLineBreaks) {
+                code = writer.insertLineBreaks(code);
+            }
+            writer.display(code);
         }
     }
 

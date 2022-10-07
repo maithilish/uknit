@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ import org.junit.jupiter.api.Test;
 public class AccessPrimitiveIT extends ITBase {
 
     @Test
-    public void test() throws IOException {
+    public void test() throws Exception {
 
         configure();
 

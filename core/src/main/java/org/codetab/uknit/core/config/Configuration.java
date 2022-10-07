@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Singleton, loads uknit properties file and provide access to properties.
  * Default properties are overridden by user defined which is overridden by
@@ -14,6 +17,8 @@ import java.util.Properties;
 enum Configuration {
 
     INSTANCE;
+
+    private final Logger log = LogManager.getLogger();
 
     private Properties defaults;
 
@@ -72,7 +77,7 @@ enum Configuration {
                     .getResourceAsStream("knowntypes.properties"));
 
         } catch (Exception e) {
-            System.out.println("properties file not found, " + e);
+            log.error("properties file not found, {}", e);
             System.exit(0);
         }
     }

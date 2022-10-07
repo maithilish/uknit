@@ -7,6 +7,7 @@ import static org.codetab.uknit.core.util.StringUtils.spaceit;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +51,9 @@ public class SourceParser {
             String srcClz = configs.getConfig("uknit.source.clz");
             String srcFile = String.join(".", srcClz, "java");
 
-            String srcPath = String.join("/", srcBase, srcDir,
-                    srcPkg.replace(".", "/"), srcFile);
+            Path srcPath =
+                    ioUtils.asSrcFilePath(srcBase, srcDir, srcPkg, srcFile);
+            String srcPathStr = srcPath.toString();
 
             String unitName =
                     String.join("/", srcDir, srcPkg.replace(".", "/"), srcClz);
@@ -61,12 +63,12 @@ public class SourceParser {
              * in test dir itself.
              */
             String validSrcPath = null;
-            if (Files.exists(Paths.get(srcPath))) {
-                validSrcPath = srcPath;
+            if (Files.exists(Paths.get(srcPathStr))) {
+                validSrcPath = srcPathStr;
             } else {
                 if (srcFile.equals("Alpha.java")) {
-                    String altFilePath =
-                            srcPath.replace("src/main/java", "src/test/java");
+                    String altFilePath = srcPathStr.replace("src/main/java",
+                            "src/test/java");
                     if (Files.exists(Paths.get(altFilePath))) {
                         validSrcPath = altFilePath;
                     }
@@ -75,7 +77,7 @@ public class SourceParser {
 
             if (isNull(validSrcPath)) {
                 throw new CriticalException(
-                        spaceit("src file not found: ", srcPath));
+                        spaceit("src file not found: ", srcPathStr));
             }
 
             char[] src;
@@ -85,7 +87,7 @@ public class SourceParser {
             } catch (IOException e) {
                 try {
                     if (srcFile.equals("Alpha.java")) {
-                        String altPath = srcPath.replace("src/main/java",
+                        String altPath = srcPathStr.replace("src/main/java",
                                 "src/test/java");
                         src = ioUtils.toCharArray(altPath,
                                 Charset.defaultCharset());
@@ -103,12 +105,13 @@ public class SourceParser {
 
             List<Cu> cuCache = ctl.getCuCache();
             Optional<Cu> cu = cuCache.stream()
-                    .filter(h -> h.getSourcePath().equals(srcPath)).findFirst();
+                    .filter(h -> h.getSourcePath().equals(srcPathStr))
+                    .findFirst();
             if (cu.isPresent()) {
                 cu.get().getClzNames().add(srcClz);
                 cu.get().setCu(srcCu);
             } else {
-                Cu c = modelFactory.createCuMap(srcPkg, srcClz, srcPath);
+                Cu c = modelFactory.createCuMap(srcPkg, srcClz, srcPathStr);
                 c.setCu(srcCu);
                 cuCache.add(c);
             }

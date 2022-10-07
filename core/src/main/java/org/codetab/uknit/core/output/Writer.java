@@ -1,12 +1,16 @@
-package org.codetab.uknit.core.write;
+package org.codetab.uknit.core.output;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +32,9 @@ import com.google.common.io.Files;
 public class Writer {
 
     private static final Logger LOG = LogManager.getLogger();
+
+    @Inject
+    private Console console;
 
     public String format(final CompilationUnit cu) {
         String javaCode = cu.toString();
@@ -128,19 +135,30 @@ public class Writer {
     }
 
     public void display(final String code) {
-        System.out.println(code);
+        console.print(code, true);
     }
 
-    public void write(final String testFileName, final String code)
-            throws IOException {
-        if (nonNull(testFileName)) {
-            File file = new File(testFileName);
-            Files.createParentDirs(file);
-            CharSink cs = Files.asCharSink(file, Charset.defaultCharset());
-            cs.write(code);
-            LOG.info("wrote test class to {}", testFileName);
+    public void write(final Path outputFilePath, final String code,
+            final boolean overwrite) throws IOException {
+        String msg = "";
+        if (isNull(outputFilePath)) {
+            msg = "unable to write test class, dest file name is null";
+            LOG.error(msg);
         } else {
-            LOG.error("unable to write test class, dest file name is null");
+            File file = outputFilePath.toFile();
+            if (!overwrite && file.exists()) {
+                msg = String.format(
+                        "output file not written, test class %s exists and no overwrite",
+                        outputFilePath);
+                LOG.info(msg);
+            } else {
+                Files.createParentDirs(file);
+                CharSink cs = Files.asCharSink(file, Charset.defaultCharset());
+                cs.write(code);
+                msg = String.format("output test class to %s", outputFilePath);
+                LOG.info(msg);
+            }
         }
+        console.print(msg);
     }
 }

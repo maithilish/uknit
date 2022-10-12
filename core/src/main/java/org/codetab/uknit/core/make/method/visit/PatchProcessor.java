@@ -1,8 +1,5 @@
 package org.codetab.uknit.core.make.method.visit;
 
-import static java.util.Objects.nonNull;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,8 +7,8 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.node.Methods;
 import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -19,14 +16,12 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
-import com.google.common.collect.Lists;
-
 public class PatchProcessor {
 
     @Inject
-    private Methods methods;
-    @Inject
     private Patcher patcher;
+    @Inject
+    private Patchers patchers;
 
     /**
      * Stage patches for method (exp and args) and super method invocation (only
@@ -35,25 +30,9 @@ public class PatchProcessor {
      * @param heap
      */
     public void stageMiPatches(final MethodInvocation mi, final Heap heap) {
-        List<Expression> exps = new ArrayList<>();
-        exps.add(mi.getExpression());
-        exps.addAll(methods.getArguments(mi));
+        List<Expression> exps = patchers.getExps(mi);
         patcher.stageInferPatch(mi, exps, heap);
         patcher.stageInternalPatch(mi, exps, heap);
-    }
-
-    /**
-     * Stage patches for method (exp and args) and super method invocation (only
-     * args).
-     * @param exp
-     * @param heap
-     */
-    public void stageSuperMiPatches(final SuperMethodInvocation smi,
-            final Heap heap) {
-        List<Expression> exps = new ArrayList<>();
-        exps.addAll(methods.getArguments(smi));
-        patcher.stageInferPatch(smi, exps, heap);
-        patcher.stageInternalPatch(smi, exps, heap);
     }
 
     /**
@@ -64,54 +43,54 @@ public class PatchProcessor {
      * @param retVar
      * @param heap
      */
-    public void stageReplaceSuperMiPatch(final SuperMethodInvocation node,
+    public void stageSuperMiPatch(final SuperMethodInvocation node,
             final Optional<IVar> retVar, final Heap heap) {
         if (retVar.isPresent()) {
             patcher.stageSuperPatch(node, retVar.get(), heap);
         }
     }
 
+    /**
+     * Replace new instance creation exp with var.
+     * @param cic
+     * @param heap
+     */
     public void stageInstanceCreationPatches(final ClassInstanceCreation cic,
             final Heap heap) {
-        @SuppressWarnings("unchecked")
-        List<Expression> exps = new ArrayList<>(cic.arguments());
+        List<Expression> exps = patchers.getExps(cic);
         patcher.stageInferPatch(cic, exps, heap);
         patcher.stageInternalPatch(cic, exps, heap);
     }
 
     public void stageArrayCreationPatches(final ArrayCreation ac,
             final Heap heap) {
-        @SuppressWarnings("unchecked")
-        List<Expression> exps = new ArrayList<>(ac.dimensions());
+        List<Expression> exps = patchers.getExps(ac);
         patcher.stageInferPatch(ac, exps, heap);
         patcher.stageInternalPatch(ac, exps, heap);
     }
 
     public void stageReturnStmtPatches(final ReturnStatement rs,
             final Heap heap) {
-        Expression exp = rs.getExpression();
-        if (nonNull(exp)) {
-            List<Expression> exps = Lists.newArrayList(exp);
-            patcher.stageInferPatch(rs, exps, heap);
-            patcher.stageInternalPatch(rs, exps, heap);
-            patcher.stageInitializerPatch(rs, exps, heap);
-        }
+        List<Expression> exps = patchers.getExps(rs);
+        patcher.stageInferPatch(rs, exps, heap);
+        patcher.stageInternalPatch(rs, exps, heap);
+        // FIXME - analyze can we drop this
+        patcher.stageInitializerPatch(rs, exps, heap);
+
     }
 
     public void stageInfixPatches(final InfixExpression infix,
             final Heap heap) {
-        List<Expression> exps = new ArrayList<>();
-
-        exps.add(infix.getLeftOperand());
-        exps.add(infix.getRightOperand());
-
-        @SuppressWarnings("unchecked")
-        List<Expression> extOperands = infix.extendedOperands();
-        exps.addAll(extOperands);
-
+        List<Expression> exps = patchers.getExps(infix);
         patcher.stageInferPatch(infix, exps, heap);
         patcher.stageInternalPatch(infix, exps, heap);
         // TODO H - add static call, init and super patch
     }
 
+    public void stageAssignmentPatches(final Assignment assign,
+            final Heap heap) {
+        List<Expression> exps = patchers.getExps(assign);
+        patcher.stageInferPatch(assign, exps, heap);
+        patcher.stageInternalPatch(assign, exps, heap);
+    }
 }

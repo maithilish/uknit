@@ -31,9 +31,28 @@ public class Methods {
     private SnippetParser snippetParser;
     @Inject
     private Resolver resolver;
+    @Inject
+    private Types types;
 
     public String getMethodName(final MethodDeclaration method) {
         return method.getName().getFullyQualifiedName();
+    }
+
+    public String getMethodSignature(final MethodDeclaration method) {
+        StringBuilder sb = new StringBuilder();
+        String name = method.getName().getFullyQualifiedName();
+        sb.append(name);
+        sb.append("(");
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> params = method.parameters();
+        for (int i = 0; i < params.size(); i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(types.getTypeName(params.get(i).getType()));
+        }
+        sb.append(")");
+        return sb.toString();
     }
 
     public List<MethodDeclaration> getMethodsByName(

@@ -41,12 +41,19 @@ public class AssignProcessor {
     private Mocks mocks;
     @Inject
     private Resolver resolver;
+    @Inject
+    private Patcher patcher;
 
     public void process(final Assignment node, final Heap heap) {
+
         Expression rExp = node.getRightHandSide();
         Expression lExp = node.getLeftHandSide();
-        if (nodes.is(lExp, SimpleName.class)) {
-            String name = nodes.getName(lExp);
+
+        Assignment patchedAssign = patcher.copyAndPatch(node, heap);
+        Expression patchedLExp = patchedAssign.getLeftHandSide();
+
+        if (nodes.is(patchedLExp, SimpleName.class)) {
+            String name = nodes.getName(patchedLExp);
             IVar var = heap.findVar(name);
             if (nodes.isCreation(rExp)) {
                 var.setMock(false);

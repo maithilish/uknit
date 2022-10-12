@@ -30,8 +30,14 @@ public class SnippetParser {
 
         ASTNode node = parser.createAST(null);
         if (node.getNodeType() == ASTNode.BLOCK) {
-            Block block = (Block) node;
-            return (Statement) block.statements().get(0);
+            try {
+                Block block = (Block) node;
+                Statement stmt = (Statement) block.statements().get(0);
+                return stmt;
+            } catch (Exception e) {
+                // for debug breakpoint
+                throw e;
+            }
         }
         return (Statement) node;
     }

@@ -74,6 +74,7 @@ Fix: drop when statements for final/private/equals()/hashCode().
 Tests are not proper when,
 array is casted, test is not proper. See: jtest.array.ArrayType.java
 array var with []. See: jtest.array.ArrayVarDim.java
+array creation in return stmt. See: jtest.array.Returns.java
 
 ## Creations
 
@@ -100,6 +101,9 @@ Ignore statements after continue and break.
 
 Return cast test is not proper. See: jtest.cast.CastInReturn.java
 
+## Literal
+
+String eq = "=".repeat(10);
         
 
 ## Reorganise the old entries

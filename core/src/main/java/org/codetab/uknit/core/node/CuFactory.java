@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.node;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.eclipse.jdt.core.dom.AST;
@@ -15,7 +17,9 @@ public class CuFactory {
         ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
         parser.setSource(src);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setCompilerOptions(compilerOptions.getOptions());
+
+        Map<String, String> options = compilerOptions.getOptions();
+        parser.setCompilerOptions(options);
 
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         return cu;
@@ -36,7 +40,8 @@ public class CuFactory {
         parser.setSource(src);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-        parser.setCompilerOptions(compilerOptions.getOptions());
+        Map<String, String> options = compilerOptions.getOptions();
+        parser.setCompilerOptions(options);
 
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         return cu;

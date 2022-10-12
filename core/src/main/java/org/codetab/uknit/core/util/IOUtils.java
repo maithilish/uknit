@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -79,6 +80,7 @@ public class IOUtils {
         File dir = new File(dirName);
         List<File> fileList = new ArrayList<>();
 
+        Pattern pattern = Pattern.compile(regex);
         String suffix = "." + ext;
         File[] files = dir.listFiles((d, name) -> name.endsWith(suffix));
         for (File file : files) {
@@ -95,7 +97,7 @@ public class IOUtils {
                         if (line.contains("//") || inBlockComment) {
                             processLine = false;
                         }
-                        if (processLine && line.contains(regex)) {
+                        if (processLine && pattern.matcher(line).find()) {
                             fileList.add(file);
                             break;
                         }
@@ -109,6 +111,7 @@ public class IOUtils {
             }
         }
         return fileList;
+
     }
 
     public boolean dirExists(final String dir) {

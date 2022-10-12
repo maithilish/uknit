@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.method.visit;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.isNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,14 @@ public class InternalCallProcessor {
         if (cu.isPresent()) {
             MethodDeclaration methodDecl =
                     (MethodDeclaration) cu.get().findDeclaringNode(key);
-
+            /*
+             * method parameter with type parameter results in key mismatch, try
+             * to find node through IMethodBinding.
+             */
+            if (isNull(methodDecl)) {
+                methodDecl = (MethodDeclaration) cu.get()
+                        .findDeclaringNode(methodBinding);
+            }
             /*
              * process the internal method in a new method maker, without
              * staging the method itself. MethodMaker.processMethod() passes new

@@ -42,6 +42,7 @@ public class Heap {
     private Call call; // test method call
 
     // var returned by the method, used to generate assert statement
+    // FIXME - rename it returnVar
     private Optional<IVar> expectedVar = Optional.empty();
 
     private String selfFieldName; // class under test

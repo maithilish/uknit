@@ -41,3 +41,13 @@ Intellij
         System.out.println(result);        
         
 4. new String syntax
+
+## Binding Key without type params
+
+InternalCallProcessor.java
+
+String clzNameWithoutTypeParam = clzName.replaceAll("<.*>", "");
+String regEx = String.format("%s<.*>", clzNameWithoutTypeParam);
+key = key.replaceAll(regEx, clzNameWithoutTypeParam);
+
+

@@ -54,5 +54,4 @@ public class ArrayCreation {
         String[] foo = new String[] {"foo", "bar"};
         return foo;
     }
-
 }

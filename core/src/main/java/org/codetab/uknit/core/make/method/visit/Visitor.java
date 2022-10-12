@@ -117,6 +117,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final Assignment node) {
+        patchProcessor.stageAssignmentPatches(node, heap);
         assignProcessor.process(node, heap);
     }
 
@@ -159,7 +160,6 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final SuperMethodInvocation node) {
-        patchProcessor.stageSuperMiPatches(node, heap);
         Invoke invoke = invokeProcessor.process(node, heap);
         heap.getInvokes().add(invoke);
         Optional<IVar> retVar = invoke.getReturnVar();
@@ -174,16 +174,16 @@ public class Visitor extends ASTVisitor {
                 invokeProcessor.stageInferVar(invoke, heap);
             }
         }
-        patchProcessor.stageReplaceSuperMiPatch(node, retVar, heap);
+        patchProcessor.stageSuperMiPatch(node, retVar, heap);
     }
 
     @Override
     public void endVisit(final ReturnStatement node) {
         patchProcessor.stageReturnStmtPatches(node, heap);
-        Optional<IVar> expectedVar = returnProcessor.getExpectedVar(node, heap);
 
-        if (returnProcessor.isReturnable(expectedVar, heap)) {
-            heap.setExpectedVar(expectedVar);
+        Optional<IVar> returnVar = returnProcessor.process(node, heap);
+        if (returnProcessor.isReturnable(returnVar, heap)) {
+            heap.setExpectedVar(returnVar);
         }
     }
 

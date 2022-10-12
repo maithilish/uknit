@@ -68,8 +68,8 @@ public class SourceVisitor extends ASTVisitor {
             for (IProblem problem : problems) {
                 LOG.error("{}", problem);
             }
-            throw new CriticalException(
-                    "source has errors, unable to generate test case.");
+            // throw new CriticalException(
+            // "source has errors, unable to generate test case.");
         }
 
         clzMaker = ctl.getClzMaker();

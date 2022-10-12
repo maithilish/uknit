@@ -31,14 +31,14 @@ public class ReturnProcessor {
     @Inject
     private Resolver resolver;
 
-    public Optional<IVar> getExpectedVar(final ReturnStatement rs,
-            final Heap heap) {
+    public Optional<IVar> process(final ReturnStatement rs, final Heap heap) {
+
+        ReturnVar returnVar = null;
+
         Expression exp = rs.getExpression();
         if (isNull(exp)) {
-            return Optional.empty();
+            return Optional.ofNullable(returnVar);
         }
-
-        ReturnVar expectedVar = null;
 
         IVar var = null;
         Optional<Patch> patch = heap.getPatches().stream()
@@ -66,7 +66,7 @@ public class ReturnProcessor {
         if (nonNull(var)) {
             // one of the localVar acts as returnVar so don't add again to heap
 
-            expectedVar = modelFactory.createReturnVar(var.getName(),
+            returnVar = modelFactory.createReturnVar(var.getName(),
                     var.getType(), var.isMock());
             /*
              * field var is not created for real types, but getter may return it
@@ -74,11 +74,11 @@ public class ReturnProcessor {
              */
             if (var.isField() && !var.isMock()) {
                 var.setEnable(true);
-                heap.getVars().add(expectedVar);
+                heap.getVars().add(returnVar);
             }
 
-            expectedVar.setEnable(var.isEnable());
-            expectedVar.setCreated(var.isCreated());
+            returnVar.setEnable(var.isEnable());
+            returnVar.setCreated(var.isCreated());
         }
 
         // statement - return this;
@@ -86,14 +86,14 @@ public class ReturnProcessor {
             String name = heap.getSelfFieldName();
             Optional<Type> type = resolver.getVarClass(exp);
             if (type.isPresent()) {
-                expectedVar =
+                returnVar =
                         modelFactory.createReturnVar(name, type.get(), false);
-                expectedVar.setSelfField(true);
-                heap.getVars().add(expectedVar);
+                returnVar.setSelfField(true);
+                heap.getVars().add(returnVar);
             }
         }
 
-        return Optional.ofNullable(expectedVar);
+        return Optional.ofNullable(returnVar);
     }
 
     public boolean isReturnable(final Optional<IVar> expectedVar,

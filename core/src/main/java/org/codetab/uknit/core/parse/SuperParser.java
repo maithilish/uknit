@@ -70,7 +70,8 @@ public class SuperParser {
             ITypeBinding typeBind =
                     resolver.resolveBinding(typeDecl).getSuperclass();
             while (nonNull(typeBind) && !typeBind.equals(objTypeBind)) {
-                String clzName = typeBind.getName();
+                // strip typeParms from super class name else super call fails
+                String clzName = typeBind.getName().replaceAll("<.*>", "");
                 String clzPkg = typeBind.getPackage().getName();
                 Entry<String, String> entry =
                         new SimpleEntry<>(clzPkg, clzName);
@@ -131,6 +132,7 @@ public class SuperParser {
 
                 String unitName = String.join("/", srcDir,
                         srcPkg.replace(".", "/"), cu.getClzNames().get(0));
+
                 try {
                     char[] src;
                     try {

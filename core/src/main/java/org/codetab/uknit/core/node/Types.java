@@ -16,14 +16,19 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.TypeNameException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IntersectionType;
+import org.eclipse.jdt.core.dom.ModuleQualifiedName;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NameQualifiedType;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.UnionType;
@@ -93,6 +98,66 @@ public class Types {
             throw new TypeNameException(
                     spaceit(type.getClass().getName(), "has no name"));
         }
+    }
+
+    public String getTypeNameAsIdentifier(final Type type) {
+        Type cleanType = type;
+        Name name = null;
+
+        if (type.isArrayType()) {
+            cleanType = ((ArrayType) type).getElementType();
+        }
+        if (type.isWildcardType()) {
+            // do nothing
+        }
+        if (type.isParameterizedType()) {
+            cleanType = ((ParameterizedType) type).getType();
+        }
+
+        /*
+         * union appears in catch clause and intersection in generic type
+         * variables, use only the first element
+         */
+        if (type.isUnionType()) {
+            // consider only the first element
+            cleanType = (Type) ((UnionType) type).types().get(0);
+        }
+        if (type.isIntersectionType()) {
+            cleanType = (Type) ((IntersectionType) type).types().get(0);
+        }
+
+        // finally, process clean type
+        if (cleanType.isPrimitiveType()) {
+            return ((PrimitiveType) cleanType).getPrimitiveTypeCode()
+                    .toString();
+        }
+
+        // get name from clean type
+        if (cleanType.isSimpleType()) {
+            name = ((SimpleType) cleanType).getName();
+            if (name instanceof ModuleQualifiedName) {
+                name = ((ModuleQualifiedName) name).getName();
+            }
+        }
+
+        if (type.isQualifiedType()) {
+            name = ((QualifiedType) type).getName();
+        }
+        if (type.isNameQualifiedType()) {
+            name = ((NameQualifiedType) type).getName();
+        }
+
+        // get unqualified name
+        if (nonNull(name)) {
+            if (name.isQualifiedName()) {
+                name = ((QualifiedName) name).getName();
+            }
+            // now name is really unqualified
+            return name.getFullyQualifiedName();
+        }
+
+        throw new CodeException(
+                nodes.codeExceptionMessage("unable to derive type name", type));
     }
 
     public boolean isBoolean(final Type retType) {

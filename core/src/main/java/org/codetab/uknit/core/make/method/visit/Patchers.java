@@ -18,6 +18,7 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
@@ -105,6 +106,17 @@ public class Patchers {
 
             return true;
         }
+        if (nodes.is(node, Assignment.class)) {
+            Assignment assignment = nodes.as(node, Assignment.class);
+            if (patch.getExpIndex() == 0) {
+                assignment.setLeftHandSide(
+                        assignment.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 1) {
+                assignment.setRightHandSide(
+                        assignment.getAST().newSimpleName(name));
+            }
+            return true;
+        }
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
@@ -170,6 +182,14 @@ public class Patchers {
                 return operandOffset + index;
             }
         }
+        if (nodes.is(node, Assignment.class)) {
+            Assignment assign = nodes.as(node, Assignment.class);
+            if (assign.getLeftHandSide().equals(exp)) {
+                return 0;
+            } else if (assign.getRightHandSide().equals(exp)) {
+                return 1;
+            }
+        }
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
@@ -179,7 +199,9 @@ public class Patchers {
         List<Expression> exps = new ArrayList<>();
         if (nodes.is(node, ReturnStatement.class)) {
             ReturnStatement rs = nodes.as(node, ReturnStatement.class);
-            exps.add(rs.getExpression());
+            if (nonNull(rs.getExpression())) {
+                exps.add(rs.getExpression());
+            }
         } else if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
             exps.add(mi.getExpression());
@@ -196,6 +218,17 @@ public class Patchers {
             List<Expression> args =
                     nodes.as(node, ArrayCreation.class).dimensions();
             exps.addAll(args);
+        } else if (nodes.is(node, Assignment.class)) {
+            Assignment assignment = nodes.as(node, Assignment.class);
+            exps.add(assignment.getLeftHandSide());
+            exps.add(assignment.getRightHandSide());
+        } else if (nodes.is(node, InfixExpression.class)) {
+            InfixExpression infix = nodes.as(node, InfixExpression.class);
+            exps.add(infix.getLeftOperand());
+            exps.add(infix.getRightOperand());
+            @SuppressWarnings("unchecked")
+            List<Expression> extOperands = infix.extendedOperands();
+            exps.addAll(extOperands);
         }
         return exps;
     }

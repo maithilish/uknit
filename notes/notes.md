@@ -108,31 +108,35 @@ Assertions on contents of objects or collections.
 
 ## Patches
 
-### MethodInvocation and Infer Vars
+In some cases the expression in a node needs to be replaced by a var name. To generate a test class uKnit may process a Method Declaration  multiple times - private (or even) method may be called one or more times internally, ctl flow path may result in multiple test methods. Any direct modification to node makes it invalid for any subsequent processing. To avoid modification to the original node, uKnit stages Patch which is simply maps exp to a name in a node. Whenever a patched view of a node is required or in test generation phase, a copy of original node is created and patch is applied to the copy.
 
-Infer vars are patched to expressions but direct modification to src node affects the subsequent internal calls (private calls). Instead, keep the source node unmodified and during visit, for later replacement, create patch and collect them in heap. 
+In JDT only the node that is directly parsed from the source is resolvable and copy is unresoveable. To resolve uKnit uses the original node which is used to create the copy. The Visitor visits the original source AST nodes and they are resolvable while the nodes created with ASTNode.copySubtree() are not resolvable.
 
-Generate phase creates copy of node and patches it and generate test statements from it. While generating statements, when, verify and initializer, the ExpPatcher.copyAndPatch() method creates copy of the source node and patch its infer expressions and copy is used to generate statements.
+### MethodInvocation and Infer Vars Patch
 
-The visit processing happens on source AST nodes as they are resolvable while the nodes created with ASTNode.copySubtree() are not resolvable.
+Infer vars are patched to expressions. 
 
-When inner expressions such as MethodInvocation returns InferVar then in outer node replace it with infer var. Patches map expression to corresponding var.
+        sb.append(file.getName())
+        
+For file.getName() infer var apple is created and used to generate the when(file.getName()).thenReturn(apple). For sb.append(..) node, a patch is created mapping exp file.getName() to var apple with expIndex as 0. While generating the when stmt patch is applied and when(sb.append(apple)).thenReturn(stringBuilder) is generated. While generating statements, when, verify and initializer, the ExpPatcher.copyAndPatch() method creates patched copy of the original node and use it to generate statements.
 
-    sb.append(file.getName().toLowerCase())
-    	emits
-    when(file.getName()).thenReturn(apple);
-    when(sb.append(apple.toLowerCase())).thenReturn(stringBuilder);
+In MI visit patches are created for MI by calling patchProcessor.stageMiPatches() which calls patcher.stageInferPatch() and patcher.stageInternalPatch().
 
-For outer MI stage patch to replace file.getName() with apple.
+  - The stageInferPatch() gets Invoke for MI and its args (only for arg that are MI). If any MI's parent is MI, not static call, not real returning real (String.toLowerCase()) then invoke is patchable.
 
-### Others
+  - The stageInternalPatch() stages patch for internal method call when calling arg name is different from parameter. For example, if calling arg is inferVar apple and parameter of internal method is fruit, then fruit.pie() becomes apple.pie() which IM.
 
-Patch for IMC - if calling arg name is different from the parameter name of the internal method then stage patch. Ex: if calling arg is inferVar apple and parameter is fruit, then fruit.pie() becomes apple.pie().
+Next MI is processed by calling invokeProcessor.process() which applies any existing patches to MI and patchedMI is used to get name etc., For other things original MI is used.
 
-Patch for super method invocation. Patch patches the smi exp in parent with return var name. Ex: return super.foo(bar); if super call returns var named orange  then the return statement becomes return orange.
+### SuperMethodInvocation Patch
 
-Patch for initializers. Ex: return new Date();
+Patch to replace entire super method invocation with return var. Ex: return super.foo(bar); if SMI returns var named orange then stmt becomes return orange;
 
+Similarly, there are patchers for ClassInstanceCreation, ArrayCreation, ReturnStatement, InfixExpression and Assignment - They all call stageInferPatch() and stageInternalPatch().
+
+## Initializer Patch
+
+In addition to stageInferPatch() and stageInternalPatch() the ReturnStatement all call stageInitializerPatch(). Ex: return new Date();
 
 ## Injected Field and Local Create
 
@@ -154,6 +158,13 @@ Even though there is no @Inject for field server, uknit injects mock and also cr
 We can strictly inject mocks only for the @Inject fields, but then for stop() test we have inject a server mock forcibly.
 
 This is also happens with POJO fields.
+
+## Super Class
+
+### Parse Super Class CU
+
+First CUT is parsed. Next for each TypeDecl in CUT CompilationUnit (cu) the super class name and package are collected into a map.  Then for each super class name the source is searched (file content search) in package dir and details are collected in CuCache. Finally, for each entry in CuCache if cu not exists then new cu is parsed.
+
 
 ## IMC Arg Param
 

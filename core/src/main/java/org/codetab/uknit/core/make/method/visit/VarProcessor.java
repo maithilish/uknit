@@ -62,7 +62,9 @@ public class VarProcessor {
 
         for (VariableDeclaration vd : vdList) {
             /*
-             * IMC parameters are local vars but not staged as explained in
+             * IMC parameters are local vars because we can always replace IMC
+             * call with IMC method body statements and vars effectively become
+             * local vars. However they are not staged as explained in
              * InternalCallProcessor.process().
              */
             String name = nodes.getVariableName(vd);

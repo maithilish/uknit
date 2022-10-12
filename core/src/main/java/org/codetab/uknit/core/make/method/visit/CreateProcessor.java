@@ -15,6 +15,14 @@ public class CreateProcessor {
     @Inject
     private Nodes nodes;
 
+    /**
+     * Stage expVar for ClassInstanceCreation.
+     *
+     * FIXME - explore whether we can create infer var for creation node.
+     *
+     * @param cic
+     * @param heap
+     */
     public void process(final ClassInstanceCreation cic, final Heap heap) {
         if (nodes.isAnonOrLambda(cic)) {
             return;

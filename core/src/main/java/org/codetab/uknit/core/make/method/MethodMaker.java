@@ -89,8 +89,9 @@ public class MethodMaker {
         String testMethodName =
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
 
-        LOG.debug("Method: {},    Test: {}", methods.getMethodName(method),
+        LOG.debug("Method: {}", methods.getMethodSignature(method),
                 testMethodName);
+        LOG.debug("Test Method: {}", testMethodName);
 
         testMethod = methodMakers.constructTestMethod(method, testMethodName);
         heap.setTestThrowsException(

@@ -1,8 +1,5 @@
 package org.codetab.uknit.core;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +18,7 @@ public class Uknit {
     @Inject
     private DInjector di;
 
-    public static void main(final String[] args)
-            throws URISyntaxException, IOException {
+    public static void main(final String[] args) throws Exception {
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);
         Uknit uknit = di.instance(Uknit.class);
@@ -44,6 +40,7 @@ public class Uknit {
 
             TestWriter testWriter = di.instance(TestWriter.class);
             testWriter.write(ctl);
+
         } catch (Exception e) {
             String message = "uKnit terminated with error";
             LOG.error("{}", e.getMessage());
@@ -53,7 +50,10 @@ public class Uknit {
             } else {
                 LOG.debug("{}", e);
             }
-            LogManager.shutdown();
+            if (configs.getConfig("uknit.logger.shutdown", true)) {
+                LogManager.shutdown();
+            }
+            throw e;
         }
     }
 }

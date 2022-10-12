@@ -174,7 +174,6 @@ public class Patcher {
                 /*
                  * ex: return new String(); the var is null so stage a new one
                  */
-
                 if (!expVar.getLeftVar().isPresent()) {
                     InferVar inferVar =
                             varStager.stageInferVar(expVar.getRightExp(), heap);

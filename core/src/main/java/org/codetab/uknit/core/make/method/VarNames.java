@@ -13,7 +13,10 @@ import javax.inject.Singleton;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.node.CompilerOptions;
 import org.codetab.uknit.core.util.StringUtils;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.JavaConventions;
 
 import com.google.common.base.CaseFormat;
 
@@ -24,6 +27,8 @@ public class VarNames {
     private Configs configs;
     @Inject
     private StringUtils stringUtils;
+    @Inject
+    private Validator validator;
 
     private int msIndex;
     private String[] metaSyntantics;
@@ -79,6 +84,11 @@ public class VarNames {
                         typeName.get());
                 typeCamelName = configs.getConfig(configKey, typeCamelName);
                 name = heap.getIndexedVar(typeCamelName);
+
+                // if name is not valid identifier then discard it
+                if (!validator.isValidIdentifier(name)) {
+                    name = null;
+                }
             }
         }
 
@@ -151,5 +161,19 @@ public class VarNames {
             suffix = stringUtils.generateString(RANDOM_STR_LEN);
         }
         return name + StringUtils.capitalize(suffix);
+    }
+}
+
+class Validator {
+
+    @Inject
+    private CompilerOptions compilerOptions;
+
+    public boolean isValidIdentifier(final String name) {
+        String sourceLevel = compilerOptions.getSourceLevel();
+        String complianceLevel = compilerOptions.getComplianceLevel();
+        IStatus status = JavaConventions.validateIdentifier(name, sourceLevel,
+                complianceLevel);
+        return status.isOK();
     }
 }

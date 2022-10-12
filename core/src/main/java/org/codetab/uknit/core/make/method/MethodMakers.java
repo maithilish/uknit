@@ -109,7 +109,8 @@ public class MethodMakers {
             @SuppressWarnings("unchecked")
             List<SingleVariableDeclaration> params = method.parameters();
             for (SingleVariableDeclaration param : params) {
-                String typeName = types.getTypeName(param.getType());
+                String typeName =
+                        types.getTypeNameAsIdentifier(param.getType());
                 sb.append(StringUtils.capitalize(typeName));
             }
             testMethodName = String.join("", "test", CaseFormat.LOWER_CAMEL

@@ -25,6 +25,8 @@ public class ITBase {
     private Configs configs;
     private Map<String, String> transientConfigMap = new HashMap<>();
 
+    private String testCat = "itest";
+
     protected String getTestCasePkg() {
         return this.getClass().getPackage().getName();
     }
@@ -81,7 +83,7 @@ public class ITBase {
         configs.setProperty("uknit.output.file.overwrite", "false");
 
         // output dir
-        configs.setProperty("uknit.output.dir", "target/itest");
+        configs.setProperty("uknit.output.dir", "target/" + testCat);
 
         configs.setProperty("uknit.testClassName", testClzName);
     }
@@ -126,7 +128,7 @@ public class ITBase {
     protected void generateTestClass() throws IOException {
 
         sanityCheckConfigs();
-        cleanDestDir(Paths.get(configs.getConfig("uknit.output.dir")));
+        cleanOutputDir(Paths.get(configs.getConfig("uknit.output.dir")));
 
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);
@@ -140,12 +142,16 @@ public class ITBase {
      */
     private void sanityCheckConfigs() {
         String msg = null;
-        if (!configs.getConfig("uknit.output.dir").equals("target/itest")) {
-            msg = "uknit.output.dir should be target/itest for itests";
+        if (!configs.getConfig("uknit.output.dir")
+                .equals("target/" + testCat)) {
+            msg = String.format("uknit.output.dir should be target/%s for %s",
+                    testCat);
         }
         if (configs.getConfig("uknit.output.file.overwrite")
                 .equalsIgnoreCase("true")) {
-            msg = "uknit.output.file.overwrite should be false for itests";
+            msg = String.format(
+                    "uknit.output.file.overwrite should be false for %s",
+                    testCat);
         }
         if (nonNull(msg)) {
             throw new CriticalException(msg);
@@ -166,11 +172,11 @@ public class ITBase {
 
     protected File getActualFile() {
         String ws = configs.getConfig("uknit.source.base");
-        String destDir = configs.getConfig("uknit.output.dir");
+        String outputDir = configs.getConfig("uknit.output.dir");
         String pkg = configs.getConfig("uknit.source.package");
         String testClassName = configs.getConfig("uknit.testClassName");
 
-        return new File(String.join("/", ws, destDir, pkg.replace(".", "/"),
+        return new File(String.join("/", ws, outputDir, pkg.replace(".", "/"),
                 testClassName + ".java"));
     }
 
@@ -178,7 +184,7 @@ public class ITBase {
         Files.copy(file.toPath(), System.out);
     }
 
-    public static void cleanDestDir(final Path directory) throws IOException {
+    public static void cleanOutputDir(final Path directory) throws IOException {
         final File[] files = directory.toFile().listFiles();
         if (nonNull(files)) {
             for (File file : files) {

@@ -51,10 +51,11 @@ public class InvokeStrategy {
                 if (nodes.is(rExp, MethodInvocation.class)
                         && inserters.requiresKey(clz)) {
                     // requires key such as map.put()
-                    rExp = patcher.copyAndPatch(
+                    MethodInvocation patchedRExp = patcher.copyAndPatch(
                             nodes.as(rExp, MethodInvocation.class), heap);
                     keyVar = inserters.getKeyArg(var,
-                            nodes.as(rExp, MethodInvocation.class), heap);
+                            nodes.as(rExp, MethodInvocation.class), patchedRExp,
+                            heap);
                     logInsert("invoke [key,value]", var, valueVar, keyVar);
                 } else {
                     // requires no key such as list.add()

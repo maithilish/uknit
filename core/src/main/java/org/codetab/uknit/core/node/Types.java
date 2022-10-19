@@ -19,6 +19,7 @@ import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.TypeNameException;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IntersectionType;
@@ -30,6 +31,7 @@ import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
@@ -107,9 +109,9 @@ public class Types {
         if (type.isArrayType()) {
             cleanType = ((ArrayType) type).getElementType();
         }
-        if (type.isWildcardType()) {
-            // do nothing
-        }
+        // ignored for now
+        // if (type.isWildcardType()) {
+        // }
         if (type.isParameterizedType()) {
             cleanType = ((ParameterizedType) type).getType();
         }
@@ -174,14 +176,32 @@ public class Types {
                     PrimitiveType.toCode(typeBinding.getName()));
         }
 
+        /**
+         * <code> class Foo<T extends A & B> {
+         * private Class<? extends T> clz;
+         * T createInstance(final Object bean) {
+         *      return clz.cast(bean);
+         * </code>
+         *
+         * The TypeBinding for clz.cast() is capture#1-of ? extends T. We get
+         * bound of the capture (T extends A & B) and from it bounds (A and B)
+         * and return the first type (A) as type.
+         */
         if (typeBinding.isCapture()) {
             ITypeBinding wildCard = typeBinding.getWildcard();
             WildcardType capType = ast.newWildcardType();
             ITypeBinding bound = wildCard.getBound();
             if (bound != null) {
-                capType.setBound(getType(bound, ast), wildCard.isUpperbound());
+                ITypeBinding[] bounds = bound.getTypeBounds();
+                if (bounds.length > 0) {
+                    return ast.newSimpleType(ast.newName(bounds[0].getName()));
+                } else {
+                    capType.setBound(getType(bound, ast),
+                            wildCard.isUpperbound());
+                }
             }
             return capType;
+
         }
 
         if (typeBinding.isArray()) {
@@ -260,5 +280,27 @@ public class Types {
      */
     public Type getType(final String clzName, final AST ast) {
         return ast.newSimpleType(ast.newName(clzName));
+    }
+
+    /**
+     * Return type of the node. For regular types use node.getType() and special
+     * cases call this method.
+     *
+     * @param node
+     * @return
+     */
+    public Type getType(final ASTNode node) {
+        if (nodes.is(node, SingleVariableDeclaration.class)) {
+            SingleVariableDeclaration svd =
+                    nodes.as(node, SingleVariableDeclaration.class);
+            if (svd.isVarargs()) {
+                String clzName = getTypeName(svd.getType());
+                AST ast = svd.getAST();
+                return ast
+                        .newArrayType(ast.newSimpleType(ast.newName(clzName)));
+            }
+            return svd.getType();
+        }
+        throw new CodeException(nodes.noImplmentationMessage(node));
     }
 }

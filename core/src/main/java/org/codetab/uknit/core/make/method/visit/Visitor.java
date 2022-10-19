@@ -3,7 +3,6 @@ package org.codetab.uknit.core.make.method.visit;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +16,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -81,6 +81,8 @@ public class Visitor extends ASTVisitor {
     private Variables variables;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Types types;
 
     @Inject
     private VarEnabler varEnabler;
@@ -265,14 +267,14 @@ public class Visitor extends ASTVisitor {
         SingleVariableDeclaration svd = node.getParameter();
         String name = nodes.getVariableName(svd);
         varEnabler.enforce(name, Optional.of(true), heap);
-        inserter.processForEach(node, heap);
+        inserter.processForEach(node, internalMethod, heap);
     }
 
     @Override
     public void endVisit(final SingleVariableDeclaration node) {
-        List<VariableDeclaration> vdList = new ArrayList<>();
-        vdList.add(node);
-        Type type = node.getType();
+        List<VariableDeclaration> vdList = List.of(node);
+        // Type type = node.getType();
+        Type type = types.getType(node);
 
         // svd may be parameter or local var
         ASTNode parent = node.getParent();

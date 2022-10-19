@@ -77,14 +77,15 @@ public class InvokeProcessor {
             heap.setTestThrowsException(true);
         }
 
-        if (isNull(patchedExp)) {
-            // mi may be static or internal call - process internal, not static
-            if (!methods.isStaticCall(mi)) {
-                List<Expression> arguments = methods.getArguments(mi);
-                Optional<IVar> retVar = internalCallProcessor
-                        .process(methodBinding, arguments, heap);
-                invoke.setReturnVar(retVar);
-            }
+        /*
+         * The MI foo.bar(zoo) is exp.name(exp). If leading exp is null then MI
+         * may be internal or static call.
+         */
+        if (isNull(patchedExp) && !methods.isStaticCall(mi)) {
+            List<Expression> arguments = methods.getArguments(mi);
+            Optional<IVar> retVar = internalCallProcessor.process(methodBinding,
+                    arguments, heap);
+            invoke.setReturnVar(retVar);
         }
         return invoke;
     }

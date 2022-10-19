@@ -88,8 +88,13 @@ public class InternalCallProcessor {
 
                 paramArgMapper.setArguments(arguments);
                 paramArgMapper.setParameters(methods.getParameters(methodDecl));
-                Map<String, String> paramArgMap =
-                        paramArgMapper.getParamArgMap(heap);
+
+                Map<String, String> paramArgMap = null;
+                if (paramArgMapper.hasVarargsParameter()) {
+                    paramArgMap = paramArgMapper.getVarargsParamArgMap(heap);
+                } else {
+                    paramArgMap = paramArgMapper.getParamArgMap(heap);
+                }
 
                 methodMaker.processMethod(methodDecl, paramArgMap,
                         internalMethod, heap);
@@ -136,8 +141,43 @@ class ParamArgMapper {
         for (int i = 0; i < arguments.size(); i++) {
             Expression arg = arguments.get(i);
 
-            Optional<String> argName = expressions.mapExpToName(arg, heap);
             String paramName = nodes.getName(parameters.get(i).getName());
+            Optional<String> argName = expressions.mapExpToName(arg, heap);
+
+            if (argName.isPresent()) {
+                paramArgMap.put(paramName, argName.get());
+            }
+        }
+        return paramArgMap;
+    }
+
+    /**
+     * Map IMC parameter name to calling arg name when parameter has a VarArg.
+     * @param heap
+     * @return param to arg map
+     */
+    public Map<String, String> getVarargsParamArgMap(final Heap heap) {
+
+        Map<String, String> paramArgMap = new HashMap<>();
+
+        // limit to parameters.size()
+        for (int i = 0; i < parameters.size(); i++) {
+            Expression arg = arguments.get(i);
+
+            String paramName = nodes.getName(parameters.get(i).getName());
+            Optional<String> argName;
+            if (i == parameters.size() - 1) {
+                if (arguments.size() == parameters.size()) {
+                    // check arg and param type for equality ?
+                    argName = expressions.mapExpToName(arg, heap);
+                } else {
+                    // last parameter is VarArg, map arg as parameter name
+                    argName = Optional.of(paramName);
+                    /// LAST EDIT
+                }
+            } else {
+                argName = expressions.mapExpToName(arg, heap);
+            }
 
             if (argName.isPresent()) {
                 paramArgMap.put(paramName, argName.get());
@@ -153,5 +193,20 @@ class ParamArgMapper {
     public void setParameters(
             final List<SingleVariableDeclaration> parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * Whether last parameter is of varargs type.
+     *
+     * @return
+     */
+    public boolean hasVarargsParameter() {
+        if (parameters.size() > 0) {
+            SingleVariableDeclaration lastParameter =
+                    parameters.get(parameters.size() - 1);
+            return lastParameter.isVarargs();
+        } else {
+            return false;
+        }
     }
 }

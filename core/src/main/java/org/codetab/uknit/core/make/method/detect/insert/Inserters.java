@@ -29,6 +29,7 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
@@ -210,23 +211,37 @@ public class Inserters {
      * which create a new inferVar apple and pets is inserted with
      * map.put(apple, pets).
      * @param collectionVar
-     * @param resolvedMi
+     * @param patchedMi
      * @param heap
      * @return
      */
-    public IVar getKeyArg(final IVar collectionVar,
-            final MethodInvocation resolvedMi, final Heap heap) {
+    public IVar getKeyArg(final IVar collectionVar, final MethodInvocation mi,
+            final MethodInvocation patchedMi, final Heap heap) {
         checkNotNull(collectionVar);
-        checkNotNull(resolvedMi);
+        checkNotNull(mi);
+        checkNotNull(patchedMi);
         checkNotNull(heap);
 
         @SuppressWarnings("unchecked")
-        List<Expression> miArgs = resolvedMi.arguments();
+        List<Expression> miArgs = patchedMi.arguments();
         if (miArgs.size() > 0) {
             Expression arg1 = miArgs.get(0);
             if (nodes.isName(arg1)) {
                 // resolved var
                 return heap.findVar(nodes.getName(arg1));
+            } else if (nodes.is(arg1, ArrayAccess.class)) {
+                /*
+                 * FIXME N - ArrayAccess arg in MI is not patched.
+                 */
+                ArrayAccess aa =
+                        nodes.as(mi.arguments().get(0), ArrayAccess.class);
+                Optional<IVar> varO = heap.findLeftVarByRightExp(aa);
+                if (varO.isPresent()) {
+                    return varO.get();
+                } else {
+                    throw new IllegalStateException(
+                            "infer var not staged for array access" + aa);
+                }
             } else {
                 /*
                  * For mi literal arg, such as map.get("foo"), inferVar is

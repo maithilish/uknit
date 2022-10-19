@@ -49,10 +49,11 @@ public class Inserter {
      * invocations etc., Collect loop var and the collection (from the
      * expression) in a map for later processing.
      * @param node
+     * @param internalMethod
      * @param heap
      */
     public void processForEach(final EnhancedForStatement node,
-            final Heap heap) {
+            final boolean internalMethod, final Heap heap) {
         Expression exp = node.getExpression();
         IVar loopVar = heap.findVar(nodes.getVariableName(node.getParameter()));
         if (nodes.is(exp, SimpleName.class)) {
@@ -60,7 +61,17 @@ public class Inserter {
              * The simple name is the collection var. No need to validate it as
              * compiler will allow only Iterable in for each statement.
              */
-            IVar collectionVar = heap.findVar(nodes.getName(exp));
+            String name = nodes.getName(exp);
+
+            /*
+             * When IMC parameter is mapped to calling arg, then use arg instead
+             * of parameter.
+             */
+            if (internalMethod && heap.useArgVar(name)) {
+                name = heap.getArgName(name);
+            }
+
+            IVar collectionVar = heap.findVar(name);
             forEachVars.put(collectionVar, loopVar);
         }
         if (nodes.is(exp, MethodInvocation.class)

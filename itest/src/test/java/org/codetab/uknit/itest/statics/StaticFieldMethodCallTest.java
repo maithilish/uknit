@@ -18,7 +18,7 @@ public class StaticFieldMethodCallTest {
     @Test
     public void testGetTimer() {
         Object clz = Mockito.mock(Object.class);
-        String names = "Foo";
+        String[] names = {"Foo"};
 
         @SuppressWarnings("unused")
         Timer actual = staticFieldMethodCall.getTimer(clz, names);
@@ -27,7 +27,7 @@ public class StaticFieldMethodCallTest {
     @Test
     public void testGetMeter() {
         Object clz = Mockito.mock(Object.class);
-        String names = "Foo";
+        String[] names = {"Foo"};
 
         @SuppressWarnings("unused")
         Meter actual = staticFieldMethodCall.getMeter(clz, names);
@@ -37,7 +37,7 @@ public class StaticFieldMethodCallTest {
     public void testRegisterGuage() {
         Integer value = 5;
         Object clz = Mockito.mock(Object.class);
-        String names = "Foo";
+        String[] names = {"Foo"};
         staticFieldMethodCall.registerGuage(value, clz, names);
     }
 }

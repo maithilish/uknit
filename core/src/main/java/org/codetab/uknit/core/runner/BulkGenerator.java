@@ -1,13 +1,19 @@
 package org.codetab.uknit.core.runner;
 
+import static java.util.Objects.nonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +52,7 @@ public class BulkGenerator {
     private static final Logger LOG = LogManager.getLogger();
 
     private int errorCount;
+    private Map<String, Exception> errors;
 
     public static void main(final String[] args)
             throws URISyntaxException, IOException {
@@ -66,6 +73,7 @@ public class BulkGenerator {
         Set<String> modulePaths = getModulePaths(baseDir, srcDir);
 
         errorCount = 0;
+        errors = new HashMap<>();
         for (String modulePath : modulePaths) {
             List<File> filePaths =
                     getJavaFilePaths(baseDir, modulePath, srcDir);
@@ -93,16 +101,33 @@ public class BulkGenerator {
                     runUknit(baseDir, modulePath, srcDir, pkg, fileName,
                             shutdownLogger);
                 } catch (Exception e) {
-                    String dash = "=".repeat(15);
+                    final int repeat = 15;
+                    String dash = "=".repeat(repeat);
                     String br = System.lineSeparator();
                     LOG.error("{}{} test not generated: {} {}{}", br, dash,
                             fileName, dash, br);
+                    errors.put(String.join(".", pkg, fileName), e);
                     errorCount++;
                 }
 
             }
         }
         System.out.printf("%n%nNo. of Errors: %d%n", errorCount);
+
+        // sort on exception message and output errors
+        List<Entry<String, Exception>> sortedErrors =
+                errors.entrySet().stream().sorted((e1, e2) -> {
+                    String m1 = e1.getValue().getMessage();
+                    String m2 = e2.getValue().getMessage();
+                    if (nonNull(m1) && nonNull(m2)) {
+                        return m1.compareTo(m2);
+                    } else {
+                        return 0;
+                    }
+                }).collect(Collectors.toList());
+
+        sortedErrors.forEach(e -> System.out.printf("%s %s%n", e.getKey(),
+                e.getValue().getMessage()));
     }
 
     private void runUknit(final String baseDir, final String modulePath,

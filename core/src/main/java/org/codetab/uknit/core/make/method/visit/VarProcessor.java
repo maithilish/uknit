@@ -180,4 +180,5 @@ public class VarProcessor {
         List<VariableDeclaration> list = vde.fragments();
         return list;
     }
+
 }

@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
@@ -26,12 +27,13 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 public class Nodes {
 
-    private Class<?>[] creationNodes = {NumberLiteral.class,
-            StringLiteral.class, TypeLiteral.class, CharacterLiteral.class,
-            NullLiteral.class, ClassInstanceCreation.class, ArrayCreation.class,
-            ArrayInitializer.class, PrefixExpression.class,
-            PostfixExpression.class, InfixExpression.class,
-            QualifiedName.class};
+    private Class<?>[] creationNodes =
+            {NumberLiteral.class, StringLiteral.class, TypeLiteral.class,
+                    CharacterLiteral.class, BooleanLiteral.class,
+                    NullLiteral.class, ClassInstanceCreation.class,
+                    ArrayCreation.class, ArrayInitializer.class,
+                    PrefixExpression.class, PostfixExpression.class,
+                    InfixExpression.class, QualifiedName.class};
 
     public boolean is(final ASTNode node, final Class<?> clz) {
         return node.getClass().isAssignableFrom(clz);

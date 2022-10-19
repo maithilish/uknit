@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.codetab.uknit.core.make.model.Field;
-import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.zap.make.model.Field;
+import org.codetab.uknit.core.zap.make.model.IVar;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**

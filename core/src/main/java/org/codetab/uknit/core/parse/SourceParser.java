@@ -19,10 +19,10 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
-import org.codetab.uknit.core.make.model.Cu;
-import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.util.IOUtils;
+import org.codetab.uknit.core.zap.make.model.Cu;
+import org.codetab.uknit.core.zap.make.model.ModelFactory;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 

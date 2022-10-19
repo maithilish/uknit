@@ -8,7 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
-import org.codetab.uknit.core.make.model.ExpReturnType;
+import org.codetab.uknit.core.zap.make.model.ExpReturnType;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;

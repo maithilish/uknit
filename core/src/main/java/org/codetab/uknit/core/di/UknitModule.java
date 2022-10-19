@@ -3,15 +3,15 @@ package org.codetab.uknit.core.di;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.uknit.core.make.model.ExpVar;
-import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.Insert;
-import org.codetab.uknit.core.make.model.Invoke;
-import org.codetab.uknit.core.make.model.ModelFactory;
-import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.make.model.Verify;
-import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.tree.TreeFactory;
+import org.codetab.uknit.core.zap.make.model.ExpVar;
+import org.codetab.uknit.core.zap.make.model.IVar;
+import org.codetab.uknit.core.zap.make.model.Insert;
+import org.codetab.uknit.core.zap.make.model.Invoke;
+import org.codetab.uknit.core.zap.make.model.ModelFactory;
+import org.codetab.uknit.core.zap.make.model.Patch;
+import org.codetab.uknit.core.zap.make.model.Verify;
+import org.codetab.uknit.core.zap.make.model.When;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

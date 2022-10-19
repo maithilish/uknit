@@ -9,9 +9,9 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
+import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.zap.make.model.Field;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;

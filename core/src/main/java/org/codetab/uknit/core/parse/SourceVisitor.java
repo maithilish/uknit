@@ -18,13 +18,13 @@ import org.codetab.uknit.core.dump.EndDumper;
 import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
+import org.codetab.uknit.core.make.method.MethodMaker;
+import org.codetab.uknit.core.make.method.visit.PathFinder;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.output.Console;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.tree.Trees;
-import org.codetab.uknit.core.zap.make.method.MethodMaker;
 import org.codetab.uknit.core.zap.make.method.detect.getter.GetterSetter;
-import org.codetab.uknit.core.zap.make.method.visit.PathFinder;
-import org.codetab.uknit.core.zap.make.model.Heap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -35,6 +35,13 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+/**
+ * Visitor to visit pkg, import, and clz of source class. The method block is
+ * visited by make.method.visit.Visitor.
+ *
+ * @author m
+ *
+ */
 public class SourceVisitor extends ASTVisitor {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -60,6 +67,11 @@ public class SourceVisitor extends ASTVisitor {
 
     private boolean testable;
 
+    /**
+     * Preprocess, check errors in source. Dump method visit if dump is enabled.
+     * Dumps visit.log and endvisit.log are useful to understand the visit
+     * sequence.
+     */
     public void preProcess() {
         testable = true;
         CompilationUnit srcCu = ctl.getSrcCompilationUnit();
@@ -68,8 +80,10 @@ public class SourceVisitor extends ASTVisitor {
             for (IProblem problem : problems) {
                 LOG.error("{}", problem);
             }
-            // throw new CriticalException(
-            // "source has errors, unable to generate test case.");
+            throw new CriticalException(
+                    "source has errors, unable to generate test case.");
+        } else {
+            LOG.info("no errors found in source cu");
         }
 
         clzMaker = ctl.getClzMaker();
@@ -77,6 +91,7 @@ public class SourceVisitor extends ASTVisitor {
         methodDumper.setEnable(configs.getConfig("uknit.dump.method", false));
         methodEndDumper.setEnable(methodDumper.isEnable());
         try {
+            LOG.info("open method dumpers");
             methodDumper.open("logs/visit.log");
             methodEndDumper.open("logs/endvisit.log");
         } catch (IOException e) {
@@ -87,7 +102,8 @@ public class SourceVisitor extends ASTVisitor {
     }
 
     /**
-     * Post process after visit of all nodes in the source.
+     * Post process after visit of all nodes in the source. Check for errors in
+     * generated test class.
      */
     public void postProcess() {
         clzMaker.annotateFields(configs);
@@ -112,11 +128,14 @@ public class SourceVisitor extends ASTVisitor {
             }
             throw new CriticalException(
                     "generated test class has errors, unable to write.");
+        } else {
+            LOG.info("test class generated, no errors found");
         }
     }
 
     public void closeDumpers() {
         try {
+            LOG.info("close method dumpers");
             methodDumper.close();
             methodEndDumper.close();
         } catch (IOException e) {
@@ -124,20 +143,30 @@ public class SourceVisitor extends ASTVisitor {
         }
     }
 
+    /**
+     * Visit pkgDecl and add pkg to test class.
+     */
     @Override
     public boolean visit(final PackageDeclaration node) {
-        clzMaker.addPackage(node);
+        LOG.debug("add package declaration to test class");
         return true;
     }
 
+    /**
+     * Visit importDecl and add imports to test class.
+     */
     @Override
     public boolean visit(final ImportDeclaration node) {
         clzMaker.addImport(node);
         return true;
     }
 
+    /**
+     * Visit classDecl and add test class.
+     */
     @Override
     public boolean visit(final TypeDeclaration node) {
+        LOG.debug("add class declaration to test class");
         if (node.isInterface()) {
             LOG.warn("{} is an interface, no test generated", node.getName());
             testable = false;
@@ -167,6 +196,10 @@ public class SourceVisitor extends ASTVisitor {
         return true;
     }
 
+    /**
+     * Visit methodDecl and find ctl flow paths. For each path stage test
+     * method.
+     */
     @Override
     public boolean visit(final MethodDeclaration node) {
         if (methodDumper.isEnable()) {
@@ -179,9 +212,6 @@ public class SourceVisitor extends ASTVisitor {
          * don't process method if interface
          */
         if (!testable) {
-            return true;
-        }
-        if (testable) {
             return true;
         }
         MethodMaker methodMaker = di.instance(MethodMaker.class);
@@ -208,6 +238,9 @@ public class SourceVisitor extends ASTVisitor {
                 List<TreeNode<ASTNode>> leaves =
                         trees.findEnabledLeaves(ctlFlowVisitor.getTree());
 
+                LOG.info("method {}, ctl flow paths {}", node.getName(),
+                        leaves.size());
+
                 // for each control path create a test method
                 for (int i = 0; i < leaves.size(); i++) {
 
@@ -225,21 +258,24 @@ public class SourceVisitor extends ASTVisitor {
                             ctlFlowVisitor.getTree());
 
                     Heap heap = di.instance(Heap.class);
-                    heap.setSelfFieldName(clzMaker.getSelfFieldName()); // SUT
+                    // class under test - CUT
+                    heap.setCutName(clzMaker.getCutName());
 
                     // finally stage and generate the test method.
                     if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
                         methodMaker.generateTestMethod(heap);
-                    }
 
+                    }
                 }
             } else {
-                // ignore control flow path, single test method
+                LOG.debug(
+                        "ctl flow path disabled, generate single test method");
                 @SuppressWarnings("unchecked")
                 List<TreeNode<ASTNode>> ctlPath = di.instance(ArrayList.class);
                 String suffix = "";
                 Heap heap = di.instance(Heap.class);
-                heap.setSelfFieldName(clzMaker.getSelfFieldName()); // SUT
+                // set class under test name
+                heap.setCutName(clzMaker.getCutName());
                 if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
                     methodMaker.generateTestMethod(heap);
                 }

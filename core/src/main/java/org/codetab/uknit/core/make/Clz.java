@@ -3,7 +3,7 @@ package org.codetab.uknit.core.make;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.uknit.core.zap.make.model.Field;
+import org.codetab.uknit.core.make.model.Field;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;

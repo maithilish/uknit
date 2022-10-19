@@ -16,17 +16,27 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
+import org.codetab.uknit.core.make.model.Cu;
+import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.util.IOUtils;
-import org.codetab.uknit.core.zap.make.model.Cu;
-import org.codetab.uknit.core.zap.make.model.ModelFactory;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+/**
+ * Parse source and its super classes.
+ *
+ * @author m
+ *
+ */
 public class SourceParser {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -43,6 +53,10 @@ public class SourceParser {
     @Inject
     private Controller ctl;
 
+    /**
+     * Parse source, create and cache compilation unit.
+     * @return
+     */
     public boolean parseClass() {
         try {
             String srcBase = configs.getConfig("uknit.source.base");
@@ -58,9 +72,17 @@ public class SourceParser {
             String unitName =
                     String.join("/", srcDir, srcPkg.replace(".", "/"), srcClz);
 
+            LOG.info("parse class under test");
+            LOG.info("source.base {}", srcBase);
+            LOG.info("source.dir {}", srcDir);
+            LOG.info("source.package {}", srcPkg);
+            LOG.info("source.clz {}", srcClz);
+            LOG.info("srcPath {}", srcPathStr);
+            LOG.info("unitName {}", unitName);
+
             /*
-             * to avoid scrolling in package explorer, we can place Alpha.java
-             * in test dir itself.
+             * to avoid scrolling in package explorer, place Alpha.java in test
+             * dir itself.
              */
             String validSrcPath = null;
             if (Files.exists(Paths.get(srcPathStr))) {
@@ -108,16 +130,16 @@ public class SourceParser {
                     .filter(h -> h.getSourcePath().equals(srcPathStr))
                     .findFirst();
             if (cu.isPresent()) {
+                LOG.debug("cu present in cache, update");
                 cu.get().getClzNames().add(srcClz);
                 cu.get().setCu(srcCu);
             } else {
-                Cu c = modelFactory.createCuMap(srcPkg, srcClz, srcPathStr);
+                LOG.debug("cu not present in cache, add");
+                Cu c = modelFactory.createCu(srcPkg, srcClz, srcPathStr);
                 c.setCu(srcCu);
                 cuCache.add(c);
             }
-        } catch (
-
-        Exception e) {
+        } catch (Exception e) {
             sourceVisitor.closeDumpers();
             throw e;
         }
@@ -125,6 +147,7 @@ public class SourceParser {
     }
 
     public void parseSuperClasses() {
+        LOG.info("parse super classes");
         Map<AbstractTypeDeclaration, List<Entry<String, String>>> map =
                 superParser.getSuperClassNames();
         ctl.setSuperClassMap(map);
@@ -135,6 +158,7 @@ public class SourceParser {
     }
 
     public boolean process() {
+        LOG.info("process source cu");
         try {
             sourceVisitor.preProcess();
 

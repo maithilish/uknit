@@ -4,11 +4,15 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class CuFactory {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private CompilerOptions compilerOptions;
@@ -21,7 +25,13 @@ public class CuFactory {
         Map<String, String> options = compilerOptions.getOptions();
         parser.setCompilerOptions(options);
 
+        LOG.info("create non resolvable CU, no unit name");
+        LOG.info("Compilance Level: {} Source Level: {}",
+                compilerOptions.getComplianceLevel(),
+                compilerOptions.getSourceLevel());
+
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+
         return cu;
     }
 
@@ -42,6 +52,11 @@ public class CuFactory {
 
         Map<String, String> options = compilerOptions.getOptions();
         parser.setCompilerOptions(options);
+
+        LOG.info("create resolvable CU, unitName: {}", unitName);
+        LOG.info("Compilance Level: {} Source Level: {}",
+                compilerOptions.getComplianceLevel(),
+                compilerOptions.getSourceLevel());
 
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         return cu;

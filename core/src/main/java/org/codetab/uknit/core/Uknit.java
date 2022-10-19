@@ -33,9 +33,10 @@ public class Uknit {
             ctl.setup();
 
             SourceParser sourceParser = di.instance(SourceParser.class);
-
             sourceParser.parseClass();
             sourceParser.parseSuperClasses();
+            LOG.debug("cu cache size {}", ctl.getCuCache().size());
+
             sourceParser.process();
 
             TestWriter testWriter = di.instance(TestWriter.class);

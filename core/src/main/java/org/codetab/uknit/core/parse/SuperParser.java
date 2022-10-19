@@ -20,15 +20,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.Controller;
+import org.codetab.uknit.core.make.model.Cu;
+import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.util.IOUtils;
-import org.codetab.uknit.core.zap.make.model.Cu;
-import org.codetab.uknit.core.zap.make.model.ModelFactory;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
+/**
+ * Parse Super class.
+ *
+ * @author m
+ *
+ */
 public class SuperParser {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -76,6 +82,8 @@ public class SuperParser {
                 Entry<String, String> entry =
                         new SimpleEntry<>(clzPkg, clzName);
                 superClassNames.add(entry);
+                LOG.info("super class pkg: {} clz: {}", entry.getKey(),
+                        entry.getValue());
                 typeBind = typeBind.getSuperclass();
             }
             map.put(typeDecl, superClassNames);
@@ -102,14 +110,17 @@ public class SuperParser {
                 String searchDir = searchPath.toString();
                 // source may not be available for external libraries
                 if (ioUtils.dirExists(searchDir)) {
+
                     String srcPath = sourceFinder.find(searchDir, clzName);
+                    LOG.info("super clz: {}, src path: {}", clzName, srcPath);
+
                     Optional<Cu> cu = cuCache.stream()
                             .filter(h -> h.getSourcePath().equals(srcPath))
                             .findFirst();
                     if (cu.isPresent()) {
                         cu.get().getClzNames().add(clzName);
                     } else {
-                        cuCache.add(modelFactory.createCuMap(clzPkg, clzName,
+                        cuCache.add(modelFactory.createCu(clzPkg, clzName,
                                 srcPath));
                     }
                 }
@@ -129,10 +140,8 @@ public class SuperParser {
                 String srcDir = configs.getConfig("uknit.source.dir");
                 String srcPkg = cu.getPkg();
                 String srcFile = cu.getSourcePath();
-
                 String unitName = String.join("/", srcDir,
                         srcPkg.replace(".", "/"), cu.getClzNames().get(0));
-
                 try {
                     char[] src;
                     try {

@@ -8,17 +8,21 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.make.clz.ClzMaker;
+import org.codetab.uknit.core.make.method.VarNames;
+import org.codetab.uknit.core.make.model.Cu;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.zap.make.method.VarNames;
-import org.codetab.uknit.core.zap.make.model.Cu;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 @Singleton
 public class Controller {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ClzMaker clzMaker;
@@ -37,14 +41,17 @@ public class Controller {
     private CompilationUnit srcCompilationUnit;
 
     /*
-     * cache of class and super class cus.
+     * cache of class and super class CU(s).
      */
     private List<Cu> cuCache;
 
     private Map<AbstractTypeDeclaration, List<Entry<String, String>>> superClassMap;
 
     public void setup() {
-        char[] src = new String("").toCharArray(); // blank cu
+        LOG.info("setup controller");
+        LOG.info("create empty CU for test class");
+
+        char[] src = new String("").toCharArray();
         testCompilationUnit = cuFactory.createCompilationUnit(src);
 
         clzMaker.setCu(testCompilationUnit);
@@ -52,6 +59,8 @@ public class Controller {
         clzNodeFactory.setAst(testCompilationUnit.getAST());
 
         varNames.setup();
+        LOG.info("var names initialized");
+
         cuCache = new ArrayList<>();
     }
 

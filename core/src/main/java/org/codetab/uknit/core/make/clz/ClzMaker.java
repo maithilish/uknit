@@ -11,12 +11,12 @@ import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
+import org.codetab.uknit.core.make.model.Cu;
+import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
-import org.codetab.uknit.core.zap.make.model.Cu;
-import org.codetab.uknit.core.zap.make.model.Field;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -47,7 +47,8 @@ public class ClzMaker {
     // test class cu
     private CompilationUnit cu;
 
-    private String selfFieldName;
+    // class under test - CUT
+    private String cutName;
 
     public void addPackage(final ASTNode packageDecl) {
         cu.setPackage(clzNodeFactory.createPackageDecl(packageDecl));
@@ -94,7 +95,7 @@ public class ClzMaker {
         String fieldName = classes.getClzAsFieldName(srcClz);
 
         fieldMaker.addSelfField(srcClzName, testClz, fieldName);
-        selfFieldName = fieldName;
+        cutName = fieldName;
     }
 
     public void addFields(final TypeDeclaration srcClz) {
@@ -179,7 +180,12 @@ public class ClzMaker {
         this.cu = cu;
     }
 
-    public String getSelfFieldName() {
-        return selfFieldName;
+    /**
+     * Get name of class under test.
+     *
+     * @return
+     */
+    public String getCutName() {
+        return cutName;
     }
 }

@@ -2,10 +2,13 @@ package org.codetab.uknit.core.make.model;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.codetab.uknit.core.zap.make.model.Call;
 
 public class Heap {
 
+    @Inject
     private List<Pack> packs;
 
     // name of class under test
@@ -43,5 +46,9 @@ public class Heap {
 
     public List<Pack> getPacks() {
         return packs;
+    }
+
+    public void addPack(final Pack pack) {
+        packs.add(pack);
     }
 }

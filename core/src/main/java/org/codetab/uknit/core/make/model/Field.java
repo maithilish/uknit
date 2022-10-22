@@ -20,13 +20,9 @@ public class Field extends Var {
             @Assisted final boolean mock,
             @Assisted("fieldDecl") final FieldDeclaration fieldDecl,
             @Assisted("srcFieldDecl") final FieldDeclaration srcFieldDecl) {
-        super();
-        this.kind = Kind.FIELD;
-        this.name = name;
-        this.type = type;
+        super(Kind.FIELD, name, type, mock);
         this.fieldDecl = fieldDecl;
         this.srcFieldDecl = srcFieldDecl;
-        this.mock = mock;
     }
 
     @Override

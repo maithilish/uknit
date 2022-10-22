@@ -159,7 +159,7 @@ public class Types {
         }
 
         throw new CodeException(
-                nodes.codeExceptionMessage("unable to derive type name", type));
+                nodes.exMessage("unable to derive type name", type));
     }
 
     public boolean isBoolean(final Type retType) {

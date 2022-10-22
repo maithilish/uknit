@@ -3,7 +3,12 @@ package org.codetab.uknit.core.make.model;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import org.eclipse.jdt.core.dom.Type;
+
+import com.google.inject.assistedinject.Assisted;
 
 public class Var implements IVar {
 
@@ -16,8 +21,9 @@ public class Var implements IVar {
     protected Optional<Boolean> enforce;
     protected boolean deepStub;
 
-    public Var(final Kind kind, final String name, final Type type,
-            final boolean mock) {
+    @Inject
+    public Var(@Assisted final Kind kind, @Assisted @Nullable final String name,
+            @Assisted final Type type, @Assisted final boolean mock) {
         this.kind = kind;
         this.name = name;
         this.type = type;
@@ -26,9 +32,6 @@ public class Var implements IVar {
         this.enforce = Optional.empty();
         this.deepStub = false;
         this.created = false;
-    }
-
-    public Var() {
     }
 
     @Override
@@ -44,6 +47,11 @@ public class Var implements IVar {
     @Override
     public boolean is(final Kind pkind) {
         return this.kind.equals(pkind);
+    }
+
+    @Override
+    public Kind getKind() {
+        return kind;
     }
 
     @Override
@@ -129,5 +137,11 @@ public class Var implements IVar {
     @Override
     public int hashCode() {
         return Objects.hash(name, type, mock, created, enable, deepStub);
+    }
+
+    @Override
+    public String toString() {
+        return "Var [name=" + name + ", type=" + type + ", kind=" + kind
+                + ", mock=" + mock + ", created=" + created + "]";
     }
 }

@@ -43,6 +43,7 @@ public class Nodes {
         return clz.cast(o);
     }
 
+    // FIXME - move this to variables
     public String getVariableName(final VariableDeclaration vd) {
         return vd.getName().getFullyQualifiedName();
     }
@@ -68,10 +69,12 @@ public class Nodes {
                 || node.getNodeType() == ASTNode.QUALIFIED_NAME;
     }
 
+    // FIXME PACK - moved to expressions, remove
     public boolean isClassInstanceCreation(final Expression exp) {
         return is(exp, ClassInstanceCreation.class);
     }
 
+    // FIXME PACK - moved to expressions, remove
     public boolean isCreation(final Expression exp) {
         for (Class<?> clz : creationNodes) {
             if (exp.getClass().isAssignableFrom(clz)) {
@@ -81,6 +84,7 @@ public class Nodes {
         return false;
     }
 
+    // FIXME PACK - moved to expressions, remove
     public boolean isAnonOrLambda(final Expression exp) {
         if (is(exp, ClassInstanceCreation.class)) {
             ClassInstanceCreation cic = as(exp, ClassInstanceCreation.class);
@@ -139,6 +143,9 @@ public class Nodes {
         case ASTNode.ARRAY_CREATION:
             label = "instanceOf";
             break;
+        case ASTNode.NULL_LITERAL:
+            label = "null literal";
+            break;
         default:
             throw new CodeException(spaceit("label undefined for node:",
                     node.getClass().getSimpleName()));
@@ -161,7 +168,7 @@ public class Nodes {
      * @param node
      * @return
      */
-    public String codeExceptionMessage(final String message,
+    public String exMessage(final String message,
             final ASTNode node) {
         return spaceit(message, node.getClass().getSimpleName(),
                 node.toString());

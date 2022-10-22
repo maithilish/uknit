@@ -8,7 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
-import org.codetab.uknit.core.zap.make.model.ExpReturnType;
+import org.codetab.uknit.core.make.model.ExpReturnType;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -56,6 +56,11 @@ public class Resolver {
         return Optional.ofNullable(methodReturnType);
     }
 
+    public Type getReturnType(final Expression exp) {
+        ITypeBinding typeBinding = exp.resolveTypeBinding();
+        return types.getType(typeBinding, exp.getAST());
+    }
+
     public Optional<Type> getVarClass(final Expression exp) {
         ITypeBinding typeBinding = exp.resolveTypeBinding();
         try {
@@ -81,7 +86,7 @@ public class Resolver {
             exp.getClass().getMethod("resolveTypeBinding");
             return exp.resolveTypeBinding();
         } catch (NoSuchMethodException | SecurityException e) {
-            String msg = nodes.codeExceptionMessage(
+            String msg = nodes.exMessage(
                     "no resolveTypeBinding method in node type: ", exp);
             throw new CodeException(msg);
         }

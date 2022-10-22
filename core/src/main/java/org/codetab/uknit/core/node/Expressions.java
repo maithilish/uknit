@@ -14,16 +14,26 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.zap.make.model.Heap;
 import org.codetab.uknit.core.zap.make.model.IVar;
+import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.NullLiteral;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 
 public class Expressions {
 
@@ -31,6 +41,37 @@ public class Expressions {
 
     @Inject
     private Nodes nodes;
+
+    private Class<?>[] creationNodes =
+            {NumberLiteral.class, StringLiteral.class, TypeLiteral.class,
+                    CharacterLiteral.class, BooleanLiteral.class,
+                    NullLiteral.class, ClassInstanceCreation.class,
+                    ArrayCreation.class, ArrayInitializer.class,
+                    PrefixExpression.class, PostfixExpression.class,
+                    InfixExpression.class, QualifiedName.class};
+
+    public boolean isClassInstanceCreation(final Expression exp) {
+        return nodes.is(exp, ClassInstanceCreation.class);
+    }
+
+    public boolean isCreation(final Expression exp) {
+        for (Class<?> clz : creationNodes) {
+            if (exp.getClass().isAssignableFrom(clz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAnonOrLambda(final Expression exp) {
+        if (nodes.is(exp, ClassInstanceCreation.class)) {
+            ClassInstanceCreation cic =
+                    nodes.as(exp, ClassInstanceCreation.class);
+            return nonNull(cic.getAnonymousClassDeclaration());
+        } else {
+            return nodes.is(exp, LambdaExpression.class);
+        }
+    }
 
     /**
      * Get name from various types of expression. InfixExpression is not handled
@@ -136,5 +177,15 @@ public class Expressions {
                 }
             }
         }
+    }
+
+    public Expression stripWraperExpression(final Expression exp) {
+        Expression eExp = exp;
+        if (nodes.is(exp, CastExpression.class)) {
+            eExp = nodes.as(exp, CastExpression.class).getExpression();
+        } else if (nodes.is(exp, ParenthesizedExpression.class)) {
+            eExp = nodes.as(exp, ParenthesizedExpression.class).getExpression();
+        }
+        return eExp;
     }
 }

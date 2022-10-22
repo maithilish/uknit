@@ -10,6 +10,8 @@ public interface IVar {
         FIELD, PARAMETER, LOCAL, INFER, RETURN
     }
 
+    Kind getKind();
+
     boolean is(Kind kind);
 
     String getName();

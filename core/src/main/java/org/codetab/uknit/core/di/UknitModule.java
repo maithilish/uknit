@@ -3,10 +3,11 @@ package org.codetab.uknit.core.di;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.tree.TreeFactory;
 import org.codetab.uknit.core.zap.make.model.ExpVar;
-import org.codetab.uknit.core.zap.make.model.IVar;
 import org.codetab.uknit.core.zap.make.model.Insert;
 import org.codetab.uknit.core.zap.make.model.Invoke;
 import org.codetab.uknit.core.zap.make.model.Patch;
@@ -31,6 +32,12 @@ public class UknitModule extends AbstractModule {
                 .build(TreeFactory.class));
     }
 
+    @Provides
+    public List<Pack> newPacks() {
+        return new ArrayList<>();
+    }
+
+    // FIXME - pack branch remove any old items
     @Provides
     public List<IVar> newVars() {
         return new ArrayList<>();
@@ -70,4 +77,5 @@ public class UknitModule extends AbstractModule {
     public List<Insert> newInsert() {
         return new ArrayList<>();
     }
+
 }

@@ -10,7 +10,6 @@
 	<modules>
 		<module>core</module>
 		<module>itest</module>
-		<module>jtest</module>
 	</modules>
 
 	<properties>

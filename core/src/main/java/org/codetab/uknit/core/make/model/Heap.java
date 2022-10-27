@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.zap.make.model.Call;
-
 public class Heap {
 
     @Inject
@@ -19,6 +17,9 @@ public class Heap {
 
     // any MI in CUT throws exception
     private boolean testThrowsException;
+
+    // is assert stmt created in test method
+    private boolean asserted;
 
     public void setCutName(final String cutName) {
         this.cutName = cutName;
@@ -50,5 +51,13 @@ public class Heap {
 
     public void addPack(final Pack pack) {
         packs.add(pack);
+    }
+
+    public void setAsserted(final boolean asserted) {
+        this.asserted = asserted;
+    }
+
+    public boolean isAsserted() {
+        return asserted;
     }
 }

@@ -303,4 +303,20 @@ public class Types {
         }
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
+
+    /**
+     * Whether type is capable of returning any value. The void type can't
+     * return value.
+     *
+     * @param type
+     * @return
+     */
+    public boolean capableToReturnValue(final Type type) {
+        boolean returnsValue = true;
+        if (type.isPrimitiveType() && ((PrimitiveType) type)
+                .getPrimitiveTypeCode().equals(PrimitiveType.VOID)) {
+            returnsValue = false;
+        }
+        return returnsValue;
+    }
 }

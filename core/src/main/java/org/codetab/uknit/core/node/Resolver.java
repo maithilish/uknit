@@ -8,7 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
-import org.codetab.uknit.core.make.model.ExpReturnType;
+import org.codetab.uknit.core.make.model.ReturnType;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -26,7 +26,7 @@ public class Resolver {
     @Inject
     private Nodes nodes;
 
-    public Optional<ExpReturnType> getExpReturnType(final Expression exp) {
+    public Optional<ReturnType> getExpReturnType(final Expression exp) {
         IMethodBinding methodBinding = null;
         if (nodes.is(exp, MethodInvocation.class)) {
             methodBinding = nodes.as(exp, MethodInvocation.class)
@@ -35,7 +35,7 @@ public class Resolver {
             methodBinding = nodes.as(exp, SuperMethodInvocation.class)
                     .resolveMethodBinding();
         }
-        ExpReturnType methodReturnType = null;
+        ReturnType methodReturnType = null;
         if (nonNull(methodBinding)) {
             ITypeBinding typeBinding = methodBinding.getReturnType();
             try {
@@ -48,7 +48,7 @@ public class Resolver {
                     }
                     // TODO - move to model factory
                     methodReturnType =
-                            new ExpReturnType(type.get(), mock, typeBinding);
+                            new ReturnType(type.get(), mock, typeBinding);
                 }
             } catch (Exception e) {
             }

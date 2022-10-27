@@ -3,16 +3,13 @@ package org.codetab.uknit.core.di;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Patch;
+import org.codetab.uknit.core.make.model.Verify;
+import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.tree.TreeFactory;
-import org.codetab.uknit.core.zap.make.model.ExpVar;
 import org.codetab.uknit.core.zap.make.model.Insert;
-import org.codetab.uknit.core.zap.make.model.Invoke;
-import org.codetab.uknit.core.zap.make.model.Patch;
-import org.codetab.uknit.core.zap.make.model.Verify;
-import org.codetab.uknit.core.zap.make.model.When;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -33,48 +30,32 @@ public class UknitModule extends AbstractModule {
     }
 
     @Provides
-    public List<Pack> newPacks() {
-        return new ArrayList<>();
-    }
-
-    // FIXME - pack branch remove any old items
-    @Provides
-    public List<IVar> newVars() {
+    public List<Pack> createPacks() {
         return new ArrayList<>();
     }
 
     @Provides
-    public List<Invoke> newMethodInvokes() {
+    public List<Patch> createPatches() {
         return new ArrayList<>();
     }
 
     @Provides
-    public List<ExpVar> newExpVar() {
+    public List<When> createWhens() {
         return new ArrayList<>();
     }
 
     @Provides
-    public List<Patch> newPatches() {
+    public List<Verify> createVerify() {
         return new ArrayList<>();
     }
 
     @Provides
-    public List<When> newWhens() {
+    public List<String> createStringList() {
         return new ArrayList<>();
     }
 
     @Provides
-    public List<Verify> newVerify() {
-        return new ArrayList<>();
-    }
-
-    @Provides
-    public List<String> newStringList() {
-        return new ArrayList<>();
-    }
-
-    @Provides
-    public List<Insert> newInsert() {
+    public List<Insert> createInsert() {
         return new ArrayList<>();
     }
 

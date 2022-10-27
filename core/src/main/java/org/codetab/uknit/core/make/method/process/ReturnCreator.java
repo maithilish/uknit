@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.processor;
+package org.codetab.uknit.core.make.method.process;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
 
-public class ReturnProcessor {
+public class ReturnCreator {
 
     @Inject
     private Packs packs;
@@ -31,21 +31,42 @@ public class ReturnProcessor {
     @Inject
     private ModelFactory modelFactory;
 
+    /**
+     * Creates return var for the return statement expression and sets it to the
+     * existing pack which is already created by some other visit such as method
+     * invocation, literal etc.,
+     *
+     * The return var name is set as "return" (yes java keyword!) which ensures
+     * that the var name is unique as any other variable can't legally use this
+     * name. It makes it easy to find the return pack.
+     *
+     * @param rs
+     * @param methodReturnType
+     * @param heap
+     */
     public void createReturnVar(final ReturnStatement rs,
             final Type methodReturnType, final Heap heap) {
 
-        // strip any outer exp such as Cast, Parentheses etc.,
+        /*
+         * strip any outer exp such as Cast, Parentheses etc., Ex: return
+         * (String) obj;
+         */
         Expression exp = expressions.stripWraperExpression(rs.getExpression());
 
         if (nodes.is(exp, SimpleName.class)) {
+            /*
+             * Exp maps to var. Pack for var already exists, create new return
+             * var and pack for it. Ex: return paramA; return localVarB; etc.,
+             */
             String name = nodes.getName(exp);
-            Optional<Pack> packO = packs.findByVarName(heap.getPacks(), name);
+            Optional<Pack> packO = packs.findByVarName(name, heap.getPacks());
             if (packO.isPresent()) {
                 String retVarName = "return";
                 boolean isMock = mocks.isMockable(methodReturnType);
                 IVar var = modelFactory.createVar(Kind.RETURN, retVarName,
                         methodReturnType, isMock);
-                Pack pack = modelFactory.createPack(var, exp);
+                Pack pack = modelFactory.createPack(var, exp,
+                        packO.get().isInCtlPath());
                 heap.addPack(pack);
             } else {
                 throw new IllegalStateException(
@@ -53,9 +74,14 @@ public class ReturnProcessor {
             }
         } else {
             /*
-             * exp doesn't map to var (simple name).
+             * Exp doesn't map to var (simple name). The retStmt exp is visited
+             * before visit of retStmt itself. Search for the pack created in
+             * exp visit and then create var and set it to the pack. The infer
+             * var for the exp is created later by the Processor and pack exp is
+             * replaced with infer var name. Ex: return "foo"; return
+             * bar.methodA(); etc.,
              */
-            Optional<Pack> packO = packs.findByExp(heap.getPacks(), exp);
+            Optional<Pack> packO = packs.findByExp(exp, heap.getPacks());
             if (packO.isPresent()) {
                 String name = "return";
                 boolean isMock = mocks.isMockable(methodReturnType);

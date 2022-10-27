@@ -13,8 +13,8 @@ import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
-import org.codetab.uknit.core.make.method.processor.Processor;
-import org.codetab.uknit.core.make.method.stage.CallStager;
+import org.codetab.uknit.core.make.method.process.Processor;
+import org.codetab.uknit.core.make.method.visit.CallCreator;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.node.Classes;
@@ -43,7 +43,7 @@ public class MethodMaker {
     @Inject
     private Processor processor;
     @Inject
-    private CallStager callStager;
+    private CallCreator callCreator;
     @Inject
     private Methods methods;
     @Inject
@@ -91,8 +91,8 @@ public class MethodMaker {
 
         // FIXME Pack - enable this
         // if (configs.getConfig("uknit.detect.getterSetter", true)) {
-            // getterSetter.detect(clz, method, testMethod,
-            // clzMap.getFieldsCopy(testClzName));
+        // getterSetter.detect(clz, method, testMethod,
+        // clzMap.getFieldsCopy(testClzName));
         // }
 
         Visitor visitor = di.instance(Visitor.class);
@@ -104,14 +104,14 @@ public class MethodMaker {
         visitor.setMethodReturnType(method.getReturnType2());
 
         // add method under test call
-        callStager.stageCall(method, heap);
+        callCreator.createCall(method, heap);
 
         // to set deep stub, create field packs
         heap.getPacks().addAll(methodMakers
                 .createFieldPacks(clzMap.getFieldsCopy(testClzName)));
         method.accept(visitor);
 
-        processor.processInfers(heap);
+        processor.process(heap);
 
         /*
          * varEnabler.checkEnableState(heap);
@@ -133,6 +133,7 @@ public class MethodMaker {
          * variables.checkVarConsistency(heap.getVars());
          *
          */
+        // FIXME Pack - sanity checks return is mapped to var
 
         return true;
     }
@@ -140,16 +141,15 @@ public class MethodMaker {
     public void generateTestMethod(final Heap heap) {
         // generate parameters, infer and local vars
         bodyMaker.generateVarStmts(testMethod, heap);
-        // FIXME Pack - enable this
+
         // bodyMaker.generateReturnVarStmt(testMethod, heap);
-
+        // FIXME Pack - enable this
         // bodyMaker.generateInserts(testMethod, heap);
-        // bodyMaker.generateWhenStmts(testMethod, heap);
-        // bodyMaker.generateCallStmt(testMethod, heap);
-        // bodyMaker.generateAssertStmt(testMethod, heap);
+        bodyMaker.generateWhenStmts(testMethod, heap);
+        bodyMaker.generateCallStmt(testMethod, heap);
+        bodyMaker.generateAssertStmt(testMethod, heap);
         // bodyMaker.generateArgCaptureStmts(testMethod, heap);
-        // bodyMaker.generateVerifyStmts(testMethod, heap);
-
+        bodyMaker.generateVerifyStmts(testMethod, heap);
 
         // if (!getterSetter.isGetter(clz, testMethod)
         // && !getterSetter.isSetter(clz, testMethod)) {

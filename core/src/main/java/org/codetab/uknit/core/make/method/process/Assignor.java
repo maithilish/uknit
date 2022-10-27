@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.processor;
+package org.codetab.uknit.core.make.method.process;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
 
-public class AssignProcessor {
+public class Assignor {
 
     @Inject
     private Packs packs;
@@ -45,10 +45,10 @@ public class AssignProcessor {
          * <code>array[0] = "foo"</code> results in two packs. Set LHS array[0]
          * to leftExp of foo pack and remove array[0] pack.
          */
-        Optional<Pack> packO = packs.findByExp(heap.getPacks(), rhs);
+        Optional<Pack> packO = packs.findByExp(rhs, heap.getPacks());
         if (packO.isPresent()) {
             packO.get().setLeftExp(Optional.of(lhs));
-            Optional<Pack> leftPackO = packs.findByExp(heap.getPacks(), lhs);
+            Optional<Pack> leftPackO = packs.findByExp(lhs, heap.getPacks());
             if (leftPackO.isPresent()) {
                 heap.getPacks().remove(leftPackO.get());
             }

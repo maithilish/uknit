@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.codetab.uknit.core.make.model.Heap;
@@ -21,7 +22,7 @@ public class Heaps {
      */
     public List<IVar> getVars(final Heap heap) {
         return heap.getPacks().stream().map(Pack::getVar)
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**
@@ -70,4 +71,12 @@ public class Heaps {
         }
         return varName;
     }
+
+    // FIXME Pack - remove this
+    // public Optional<When> findWhen(final String methodSignature,
+    // final List<When> whens) {
+    // return whens.stream()
+    // .filter(w -> w.getMethodSignature().equals(methodSignature))
+    // .findAny();
+    // }
 }

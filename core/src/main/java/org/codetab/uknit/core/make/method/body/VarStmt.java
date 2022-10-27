@@ -24,6 +24,8 @@ public class VarStmt {
     private Types types;
     @Inject
     private Heaps heaps;
+    @Inject
+    private Initializers initializers;
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
@@ -39,8 +41,7 @@ public class VarStmt {
                 createStmt = true;
             }
             if (createStmt) {
-                // String initializer = initializers.getInitializer(var, heap);
-                String initializer = "\"fix me\"";
+                String initializer = initializers.getInitializer(var, heap);
                 Type type = var.getType();
                 String typeLiteral;
                 if (type.isParameterizedType()) {

@@ -1,16 +1,16 @@
-package org.codetab.uknit.core.make.method.stage;
+package org.codetab.uknit.core.make.method.visit;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.model.Call;
 import org.codetab.uknit.core.make.model.Heap;
-import org.codetab.uknit.core.zap.make.model.Call;
-import org.codetab.uknit.core.zap.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.ModelFactory;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-public class CallStager {
+public class CallCreator {
 
     @Inject
     private ModelFactory modelFactory;
@@ -19,8 +19,10 @@ public class CallStager {
      * Stage method under test call.
      * @param methodDecl
      * @param heap
+     * @return
      */
-    public void stageCall(final MethodDeclaration methodDecl, final Heap heap) {
+    public void createCall(final MethodDeclaration methodDecl,
+            final Heap heap) {
         Type returnType = methodDecl.getReturnType2();
         SimpleName name = methodDecl.getName();
         TypeDeclaration clz = (TypeDeclaration) methodDecl.getParent();

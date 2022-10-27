@@ -1,0 +1,137 @@
+package org.codetab.uknit.core.make.method.patch;
+
+import static java.util.Objects.nonNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Invoke;
+import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Patch;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
+
+/**
+ * Direct modification to src node affects the subsequent internal calls
+ * (private calls). Instead, keep the source node unmodified and create patch,
+ * in visit, for later replacement and collect them in heap. Defer actual
+ * patching to statements generate phase.
+ * <p>
+ * To generate statements - when, verify and initializer - the copyAndPatch()
+ * method creates copy of the source node and patch its infer expressions and
+ * copy is used.
+ * @author Maithilish
+ *
+ */
+public class Patcher {
+
+    @Inject
+    private Packs packs;
+    @Inject
+    private ModelFactory modelFactory;
+    @Inject
+    private Patchers patchers;
+
+    /**
+     * When inner expressions such as MethodInvocation returns InferVar then in
+     * outer node replace it with infer var. Patches map expression to
+     * corresponding var.
+     *
+     * <code>
+     *   sb.append(file.getName().toLowerCase())
+     *   emits
+     *   when(file.getName()).thenReturn(apple);
+     *   when(sb.append(apple.toLowerCase())).thenReturn(stringBuilder);
+     * </code>
+     *
+     * For outer MI stage patch to replace file.getName() with apple.
+     *
+     * @param node
+     * @param exps
+     * @param heap
+     * @return
+     */
+    public List<Patch> creatInvokePatches(final ASTNode node,
+            final List<Expression> exps, final Heap heap) {
+        List<Patch> patches = new ArrayList<>();
+
+        final Map<Expression, Invoke> patchables = new HashMap<>();
+        for (Expression exp : exps) {
+            /*
+             * Ex: sb.append(file.getName().toLowerCase()), if file.getName()
+             * returns inferVar apple then when should be
+             * when(sb.append(apple.toLowerCase())).thenReturn(...). Create a
+             * patch for exp file.getName() to apple.
+             */
+            Optional<Invoke> invokeO =
+                    packs.findInvokeByExp(exp, heap.getPacks());
+            if (invokeO.isPresent() && nonNull(invokeO.get().getVar())) {
+                if (patchers.patchable(invokeO.get())) {
+                    patchables.put(exp, invokeO.get());
+                }
+            }
+        }
+
+        for (Expression exp : patchables.keySet()) {
+            /*
+             * Ex: sb.append(file.getName().toLowerCase()), if file.getName()
+             * returns inferVar apple then when should be
+             * when(sb.append(apple.toLowerCase())).thenReturn(...). Create a
+             * patch for exp file.getName() to apple.
+             */
+            Invoke invoke = patchables.get(exp);
+            // if when returns inferVar, then replace
+            String name = invoke.getVar().getName();
+            int expIndex = patchers.getExpIndex(node, exp);
+            Patch patch = modelFactory.createPatch(node, invoke.getExp(), name,
+                    expIndex);
+            patches.add(patch);
+        }
+        return patches;
+    }
+
+    /**
+     * Direct modification messes the src node and subsequent internal calls
+     * (private calls). To generate statements - when, verify and initializer -
+     * create copy of the source node, patch its infer expressions and return
+     * patched copy. The copy is not resolvable!
+     *
+     * @param <T>
+     * @param node
+     * @param heap
+     * @return copy of node.
+     */
+    public <T extends ASTNode> T copyAndPatch(final T node, final Heap heap) {
+        @SuppressWarnings("unchecked")
+        T nodeCopy = (T) ASTNode.copySubtree(node.getAST(), node);
+        List<Expression> exps = patchers.getExps(node);
+        List<Expression> expCopies = patchers.getExps(nodeCopy);
+        for (int i = 0; i < exps.size(); i++) {
+            /*
+             * for groups.size() in new String[groups.size()][groups.size()]
+             */
+            Expression exp = exps.get(i);
+            Optional<Patch> patch = packs.findPatch(node, exp, heap.getPacks());
+            if (patch.isPresent()) {
+                patchers.patchExpWithVar(nodeCopy, patch.get());
+            }
+
+            /*
+             * for file.getName().toLowerCase() in
+             * s2.append(file.getName().toLowerCase());
+             */
+            Expression expCopy = expCopies.get(i);
+            List<Patch> replacerList = packs.findPatches(exp, heap.getPacks());
+            replacerList.forEach(r -> patchers.patchExpWithVar(expCopy, r));
+        }
+        return nodeCopy;
+    }
+
+}

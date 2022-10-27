@@ -279,9 +279,9 @@ public class MethodMakers {
 
     public Collection<? extends Pack> createFieldPacks(
             final List<Field> fieldsCopy) {
-        List<Pack> fieldPacks =
-                fieldsCopy.stream().map(f -> modelFactory.createPack(f, null))
-                        .collect(Collectors.toList());
+        List<Pack> fieldPacks = fieldsCopy.stream()
+                .map(f -> modelFactory.createPack(f, null, true))
+                .collect(Collectors.toList());
         return fieldPacks;
     }
 }

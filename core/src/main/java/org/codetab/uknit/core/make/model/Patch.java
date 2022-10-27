@@ -42,6 +42,8 @@ public class Patch {
 
     @Override
     public String toString() {
-        return "Patch [name=" + name + "]";
+        return "Patch [patch exp=" + exp + ", to name=" + name + ", in node="
+                + node + ", expIndex=" + expIndex + "]";
     }
+
 }

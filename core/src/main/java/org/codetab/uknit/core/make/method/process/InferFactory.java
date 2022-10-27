@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.processor;
+package org.codetab.uknit.core.make.method.process;
 
 import java.util.Optional;
 
@@ -11,8 +11,6 @@ import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Var;
 import org.codetab.uknit.core.node.Mocks;
-import org.codetab.uknit.core.node.Nodes;
-import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -25,11 +23,7 @@ public class InferFactory {
     @Inject
     private Types types;
     @Inject
-    private Nodes nodes;
-    @Inject
     private Mocks mocks;
-    @Inject
-    private Resolver resolver;
 
     /**
      * Create infer var for MI.

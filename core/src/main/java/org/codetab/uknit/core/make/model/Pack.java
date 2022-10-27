@@ -22,6 +22,7 @@ public class Pack {
     private IVar var;
     private Expression exp;
     private List<Patch> patches;
+    private boolean inCtlPath;
 
     /*
      * LHS of assignment, apart from var, may be array access (array[0]), field
@@ -31,11 +32,13 @@ public class Pack {
 
     @Inject
     public Pack(@Assisted @Nullable final IVar var,
-            @Assisted @Nullable final Expression exp) {
+            @Assisted @Nullable final Expression exp,
+            @Assisted final boolean inCtlPath) {
         this.var = var;
         this.exp = exp;
         patches = new ArrayList<>();
         leftExp = Optional.empty();
+        this.inCtlPath = inCtlPath;
     }
 
     public IVar getVar() {
@@ -64,6 +67,10 @@ public class Pack {
 
     public List<Patch> getPatches() {
         return patches;
+    }
+
+    public boolean isInCtlPath() {
+        return inCtlPath;
     }
 
     @Override

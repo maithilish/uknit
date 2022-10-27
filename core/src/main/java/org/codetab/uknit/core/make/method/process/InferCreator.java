@@ -1,9 +1,8 @@
-package org.codetab.uknit.core.make.method.processor;
+package org.codetab.uknit.core.make.method.process;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -13,12 +12,15 @@ import org.codetab.uknit.core.exception.TypeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.ReturnType;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
-import org.codetab.uknit.core.node.Resolver;
+import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -26,14 +28,14 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
 
-public class InferProcessor {
+public class InferCreator {
 
     @Inject
     private Nodes nodes;
     @Inject
     private Packs packs;
     @Inject
-    private Resolver resolver;
+    private Types types;
     @Inject
     private Expressions expressions;
     @Inject
@@ -50,22 +52,29 @@ public class InferProcessor {
      * @param inferPacks
      * @param heap
      */
-    public void createInfers(final List<Pack> inferPacks, final Heap heap) {
-        for (Pack pack : inferPacks) {
-            if (nonNull(pack.getVar())) {
+    public void createInfer(final Pack pack, final Heap heap) {
+        if (nonNull(pack.getVar())) {
+            if (pack.getVar().is(Kind.RETURN)) {
+                return;
+            } else {
                 throw new IllegalStateException(nodes.exMessage(
                         "unable to create infer var, var exists for",
                         pack.getExp()));
             }
+        }
 
-            resolver.getExpReturnType(pack.getExp()).ifPresentOrElse(ert -> {
-                Type type = ert.getType();
+        Optional<ReturnType> returnTypeO = ((Invoke) pack).getReturnType();
+        if (returnTypeO.isPresent()) {
+
+            Type type = returnTypeO.get().getType();
+
+            if (types.capableToReturnValue(type)) {
                 IVar inferVar = inferFactory.createInfer(type, heap);
                 pack.setVar(inferVar);
-            }, () -> {
-                throw new TypeException(
-                        "unable to get exp return type for: " + pack.getExp());
-            });
+            }
+        } else {
+            throw new TypeException(
+                    "unable to get exp return type for: " + pack.getExp());
         }
     }
 
@@ -76,7 +85,8 @@ public class InferProcessor {
      * @param returnPack
      * @param heap
      */
-    public void createInferForReturn(final Pack returnPack, final Heap heap) {
+    public void createInferForReturn(final Pack returnPack,
+            final boolean inCtlPath, final Heap heap) {
 
         Expression exp = returnPack.getExp();
         if (nodes.is(exp, SimpleName.class)) {
@@ -85,23 +95,18 @@ public class InferProcessor {
 
         Type type = returnPack.getVar().getType();
         IVar inferVar = null;
-        if (nodes.is(exp, MethodInvocation.class)) {
+        if (nodes.is(exp, MethodInvocation.class, ArrayAccess.class)) {
             inferVar = inferFactory.createInfer(type, heap);
-        }
-
-        // Instance creation new Foo(), Array creation, Literals "foo", 5
-        if (expressions.isCreation(exp)) {
-            inferVar = inferFactory.createInfer(type, heap);
-        }
-
-        if (nodes.is(exp, ArrayAccess.class)) {
+        } else if (expressions.isCreation(exp)) {
+            // Instance creation new Foo(), Array creation, Literals "foo", 5
             inferVar = inferFactory.createInfer(type, heap);
         }
 
         if (nonNull(inferVar)) {
             Optional<Pack> packO =
-                    packs.findLastByLeftExp(heap.getPacks(), exp);
+                    packs.findLastByLeftExp(exp, heap.getPacks());
             Pack inferPack = null;
+            // FIXME Pack - write example for this
             if (packO.isPresent()) {
                 if (isNull(packO.get().getVar())) {
                     packO.get().setVar(inferVar);
@@ -110,13 +115,36 @@ public class InferProcessor {
                             nodes.exMessage("var exists for", exp));
                 }
             } else {
-                inferPack = modelFactory.createPack(inferVar, exp);
+                Name varName = nodeFactory.createName(inferVar.getName());
+                if (returnPack instanceof Invoke) {
+                    /*
+                     * Ex: return foo.bar(); then returnPack is instance of
+                     * Invoke. Create a new return pack with returnPack var and
+                     * exp as inferVar name. Set inferVar to returnPack so that
+                     * all details of invoke are available to inferVar. This
+                     * effectively flips returnPack as inferPack and new pack as
+                     * returnPack.
+                     */
+
+                    // var: returnVar exp: apple, morphed as returnPack
+                    inferPack = modelFactory.createPack(returnPack.getVar(),
+                            varName, inCtlPath);
+                    // var: apple exp: foo.bar(), morphed as inferPack
+                    returnPack.setVar(inferVar);
+
+                } else {
+                    /*
+                     * normal returnPack, create new pack for infer var and set
+                     * returnPack exp to inferVar name.
+                     */
+                    // var: apple, exp: new Foo()
+                    inferPack =
+                            modelFactory.createPack(inferVar, exp, inCtlPath);
+                    // var: return, exp: apple
+                    returnPack.setExp(varName);
+                }
                 heap.addPack(inferPack);
             }
-
-            // replace return pack exp with infer var name
-            Name varName = nodeFactory.createName(inferPack.getVar().getName());
-            returnPack.setExp(varName);
         } else {
             throw new CodeException(nodes.noImplmentationMessage(exp));
         }

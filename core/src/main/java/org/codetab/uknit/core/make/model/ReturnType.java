@@ -3,13 +3,13 @@ package org.codetab.uknit.core.make.model;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 
-public class ExpReturnType {
+public class ReturnType {
 
     private Type type;
     private boolean mock;
     private ITypeBinding typeBinding;
 
-    public ExpReturnType(final Type type, final boolean mock,
+    public ReturnType(final Type type, final boolean mock,
             final ITypeBinding typeBinding) {
         this.type = type;
         this.mock = mock;

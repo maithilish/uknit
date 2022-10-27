@@ -19,7 +19,6 @@ import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
 import org.codetab.uknit.core.make.method.MethodMaker;
-import org.codetab.uknit.core.make.method.visit.PathFinder;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.output.Console;
 import org.codetab.uknit.core.tree.TreeNode;

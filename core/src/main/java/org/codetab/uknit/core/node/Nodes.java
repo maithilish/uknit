@@ -39,6 +39,15 @@ public class Nodes {
         return node.getClass().isAssignableFrom(clz);
     }
 
+    public boolean is(final ASTNode node, final Class<?>... clzs) {
+        for (Class<?> clz : clzs) {
+            if (node.getClass().isAssignableFrom(clz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public <T> T as(final Object o, final Class<T> clz) {
         return clz.cast(o);
     }
@@ -168,8 +177,7 @@ public class Nodes {
      * @param node
      * @return
      */
-    public String exMessage(final String message,
-            final ASTNode node) {
+    public String exMessage(final String message, final ASTNode node) {
         return spaceit(message, node.getClass().getSimpleName(),
                 node.toString());
     }

@@ -3,14 +3,15 @@ package org.codetab.uknit.core.make.method.visit;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.method.processor.AssignProcessor;
-import org.codetab.uknit.core.make.method.processor.ReturnProcessor;
-import org.codetab.uknit.core.make.method.stage.Packer;
+import org.codetab.uknit.core.make.method.process.Assignor;
+import org.codetab.uknit.core.make.method.process.ReturnCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Variables;
@@ -20,6 +21,8 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -48,9 +51,9 @@ public class Visitor extends ASTVisitor {
     @Inject
     private Packer packer;
     @Inject
-    private ReturnProcessor returnProcessor;
+    private ReturnCreator returnCreator;
     @Inject
-    private AssignProcessor assignProcessor;
+    private Assignor assignor;
     @Inject
     private Variables variables;
 
@@ -72,6 +75,7 @@ public class Visitor extends ASTVisitor {
      */
     private List<TreeNode<ASTNode>> ctlPath;
     private Deque<Boolean> inCtlFlowPathState = new ArrayDeque<>();
+    private boolean inCtlPath;
 
     /*
      * return type of method under test
@@ -86,7 +90,7 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final VariableDeclarationStatement node) {
         Type type = node.getType();
         List<VariableDeclaration> vdList = variables.getFragments(node);
-        packer.packVars(Kind.LOCAL, type, vdList, heap);
+        packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
     }
 
     /**
@@ -103,12 +107,12 @@ public class Visitor extends ASTVisitor {
         if (nodes.is(node.getParent(), MethodDeclaration.class)) {
             if (imc) {
                 // stage internal method parameters as local vars
-                packer.packVars(Kind.LOCAL, type, vdList, heap);
+                packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
             } else {
-                packer.packVars(Kind.PARAMETER, type, vdList, heap);
+                packer.packVars(Kind.PARAMETER, type, vdList, inCtlPath, heap);
             }
         } else {
-            packer.packVars(Kind.LOCAL, type, vdList, heap);
+            packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
         }
     }
 
@@ -121,17 +125,19 @@ public class Visitor extends ASTVisitor {
     public void endVisit(final VariableDeclarationExpression node) {
         Type type = node.getType();
         List<VariableDeclaration> vdList = variables.getFragments(node);
-        packer.packVars(Kind.LOCAL, type, vdList, heap);
+        packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final MethodInvocation node) {
-        packer.packExp(node, heap);
+        Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
+        packer.setupInvokes(invoke, heap);
+        heap.addPack(invoke);
     }
 
     @Override
     public void endVisit(final ReturnStatement node) {
-        returnProcessor.createReturnVar(node, methodReturnType, heap);
+        returnCreator.createReturnVar(node, methodReturnType, heap);
     }
 
     /**
@@ -140,70 +146,114 @@ public class Visitor extends ASTVisitor {
      */
     @Override
     public void endVisit(final Assignment node) {
-        assignProcessor.process(node, heap);
+        assignor.process(node, heap);
     }
 
     @Override
     public void endVisit(final ClassInstanceCreation node) {
-        packer.packExp(node, heap);
+        packer.packExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final ArrayCreation node) {
-        packer.packExp(node, heap);
+        packer.packExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final InfixExpression node) {
-        packer.packExp(node, heap);
+        packer.packExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final PrefixExpression node) {
-        packer.packExp(node, heap);
+        packer.packExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final PostfixExpression node) {
-        packer.packExp(node, heap);
+        packer.packExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final ArrayAccess node) {
-        packer.packExp(node, heap);
+        packer.packExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final StringLiteral node) {
-        packer.packLiteralExp(node, heap);
+        packer.packLiteralExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final NumberLiteral node) {
-        packer.packLiteralExp(node, heap);
+        packer.packLiteralExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final CharacterLiteral node) {
-        packer.packLiteralExp(node, heap);
+        packer.packLiteralExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final NullLiteral node) {
-        packer.packLiteralExp(node, heap);
+        packer.packLiteralExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final TypeLiteral node) {
-        packer.packLiteralExp(node, heap);
+        packer.packLiteralExp(node, inCtlPath, heap);
+    }
+
+    @Override
+    public void endVisit(final BooleanLiteral node) {
+        packer.packLiteralExp(node, inCtlPath, heap);
     }
 
     @Override
     public void endVisit(final QualifiedName node) {
-        packer.packLiteralExp(node, heap);
+        packer.packLiteralExp(node, inCtlPath, heap);
     }
 
+    /**
+     * Decides how blocks are processed based on Control Flow Path.
+     * <p>
+     * Returns true for blocks that are in ctlPath which ensures that child
+     * nodes of blocks are processed and added to test method. Returns false for
+     * the blocks that are not in ctlPath and the block's statements are
+     * ignored.
+     */
+    @Override
+    public boolean visit(final Block node) {
+        // ctl flow for internal method call is not yet implemented
+        if (imc) {
+            inCtlPath = true;
+            return true;
+        }
+        if (splitOnControlFlow) {
+            // save the enclosing block state and set new state
+            inCtlFlowPathState.push(inCtlPath);
+            inCtlPath = ctlPath.stream()
+                    .anyMatch(treeNode -> treeNode.getObject().equals(node)
+                            && treeNode.isEnable());
+            return true;
+        } else {
+            // for combined test method process all blocks.
+            inCtlPath = true;
+            return true;
+        }
+    }
 
+    @Override
+    public void endVisit(final Block node) {
+        boolean state;
+        try {
+            // restore previous state - enclosing block state
+            state = inCtlFlowPathState.pop();
+        } catch (NoSuchElementException e) {
+            state = true;
+        }
+        inCtlPath = state;
+    }
 
     /*
      * setters

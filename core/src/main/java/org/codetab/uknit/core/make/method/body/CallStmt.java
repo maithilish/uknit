@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
-import org.codetab.uknit.core.make.method.Heaps;
+import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Call;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -26,7 +26,7 @@ public class CallStmt {
     @Inject
     private Types types;
     @Inject
-    private Heaps heaps;
+    private Vars vars;
     @Inject
     private Methods methods;
     @Inject
@@ -39,7 +39,8 @@ public class CallStmt {
 
         String methodName = call.getName().getFullyQualifiedName();
 
-        List<IVar> parameters = heaps.getVarsOfKind(heap, Kind.PARAMETER);
+        List<IVar> parameters =
+                vars.getVarsOfKind(heap.getPacks(), Kind.PARAMETER);
         String args = parameters.stream().map(p -> p.getName())
                 .collect(Collectors.joining(","));
 

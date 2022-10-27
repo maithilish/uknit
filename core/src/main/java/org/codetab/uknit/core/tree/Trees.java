@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * Utility methods to access tree nodes.
- * @author m
+ * @author Maithilish
  *
  */
 public class Trees {

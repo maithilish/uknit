@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.Patches;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
@@ -34,6 +35,8 @@ public class Patcher {
 
     @Inject
     private Packs packs;
+    @Inject
+    private Patches patches;
     @Inject
     private ModelFactory modelFactory;
     @Inject
@@ -60,7 +63,7 @@ public class Patcher {
      */
     public List<Patch> creatInvokePatches(final ASTNode node,
             final List<Expression> exps, final Heap heap) {
-        List<Patch> patches = new ArrayList<>();
+        List<Patch> patchList = new ArrayList<>();
 
         final Map<Expression, Invoke> patchables = new HashMap<>();
         for (Expression exp : exps) {
@@ -92,9 +95,9 @@ public class Patcher {
             int expIndex = patchers.getExpIndex(node, exp);
             Patch patch = modelFactory.createPatch(node, invoke.getExp(), name,
                     expIndex);
-            patches.add(patch);
+            patchList.add(patch);
         }
-        return patches;
+        return patchList;
     }
 
     /**
@@ -118,7 +121,8 @@ public class Patcher {
              * for groups.size() in new String[groups.size()][groups.size()]
              */
             Expression exp = exps.get(i);
-            Optional<Patch> patch = packs.findPatch(node, exp, heap.getPacks());
+            Optional<Patch> patch =
+                    patches.findPatch(node, exp, heap.getPacks());
             if (patch.isPresent()) {
                 patchers.patchExpWithVar(nodeCopy, patch.get());
             }
@@ -128,7 +132,8 @@ public class Patcher {
              * s2.append(file.getName().toLowerCase());
              */
             Expression expCopy = expCopies.get(i);
-            List<Patch> replacerList = packs.findPatches(exp, heap.getPacks());
+            List<Patch> replacerList =
+                    patches.findPatches(exp, heap.getPacks());
             replacerList.forEach(r -> patchers.patchExpWithVar(expCopy, r));
         }
         return nodeCopy;

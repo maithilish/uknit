@@ -32,7 +32,7 @@ import org.eclipse.jdt.core.dom.Type;
  * vars. They are mapped to vars while processing invokes just to create
  * inserts. Unlike normal infer vars, the patches are not staged for these vars
  * and mi is not patched i.e. "foo" is not patched to var.
- * @author m
+ * @author Maithilish
  *
  */
 public class InsertVars {

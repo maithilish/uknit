@@ -13,7 +13,7 @@ import org.codetab.uknit.core.util.IOUtils;
 /**
  * Find java source file that defines class.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class SourceFinder {

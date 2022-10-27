@@ -30,7 +30,7 @@ public class VarNames {
     @Inject
     private Validator validator;
     @Inject
-    private Heaps heaps;
+    private Vars vars;
 
     private int msIndex;
     private String[] metaSyntantics;
@@ -85,7 +85,8 @@ public class VarNames {
                 configKey = String.join(".", "uknit.inferVar.name.alias",
                         typeName.get());
                 typeCamelName = configs.getConfig(configKey, typeCamelName);
-                name = heaps.getIndexedVar(typeCamelName, heaps.getVars(heap));
+                name = vars.getIndexedVar(typeCamelName,
+                        vars.getVars(heap.getPacks()));
 
                 // if name is not valid identifier then discard it
                 if (!validator.isValidIdentifier(name)) {
@@ -121,11 +122,11 @@ public class VarNames {
         }
     }
 
-    public void checkVarConsistency(final List<IVar> vars) {
-        for (IVar var : vars) {
+    public void checkVarConsistency(final List<IVar> varList) {
+        for (IVar var : varList) {
             String name = var.getName();
             List<IVar> matchedNameVars =
-                    vars.stream().filter(v -> v.getName().equals(name))
+                    varList.stream().filter(v -> v.getName().equals(name))
                             .collect(Collectors.toList());
             long rvCount =
                     matchedNameVars.stream().filter(IVar::isReturnVar).count();

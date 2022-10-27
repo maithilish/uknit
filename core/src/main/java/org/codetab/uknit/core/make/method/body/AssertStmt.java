@@ -5,8 +5,10 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
@@ -20,10 +22,15 @@ public class AssertStmt {
     private Asserts asserts;
     @Inject
     private Packs packs;
+    @Inject
+    private Vars vars;
 
     public Optional<Statement> createStmt(final Heap heap) {
         Optional<Statement> stmt = Optional.empty();
-        Optional<IVar> expected = packs.getExpectedVar(heap);
+        Optional<Pack> returnPackO =
+                packs.findByVarName("return", heap.getPacks());
+        Optional<IVar> expected =
+                vars.getExpectedVar(returnPackO, heap.getPacks());
         if (expected.isPresent()) {
             Type retType = heap.getCall().getReturnType();
             String key = asserts.getAssertKey(retType, expected.get().isMock());

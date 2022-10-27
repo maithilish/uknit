@@ -23,7 +23,7 @@ import com.google.inject.assistedinject.Assisted;
 
 /**
  * Generic Tree.
- * @author m
+ * @author Maithilish
  *
  * @param <T>
  */

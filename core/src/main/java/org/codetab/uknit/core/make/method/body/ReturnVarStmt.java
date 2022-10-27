@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.dom.Type;
 /**
  * FIXME Pack - whether is statement is required.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class ReturnVarStmt {

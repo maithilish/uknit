@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
  * Creates inserts and collect in heap. Inserts are used to generate list.add(.)
  * and map.put(..) statements.
  *
- * @author m
+ * @author Maithilish
  *
  */
 @Singleton

@@ -14,7 +14,7 @@ import com.google.inject.assistedinject.Assisted;
 /**
  * Pack of Var, Expression and its patches.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class Pack {

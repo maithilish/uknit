@@ -56,7 +56,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 /**
  * Visitor to create test methods.
- * @author m
+ * @author Maithilish
  *
  */
 public class Visitor extends ASTVisitor {

@@ -38,7 +38,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * Visitor to visit pkg, import, and clz of source class. The method block is
  * visited by make.method.visit.Visitor.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class SourceVisitor extends ASTVisitor {

@@ -37,7 +37,7 @@ import org.eclipse.jdt.core.dom.Type;
  * interesting statements and blocks are added to the tree skipping statements
  * such as ForStatement etc., At present control paths for only If and Try
  * constructs are implemented.
- * @author m
+ * @author Maithilish
  *
  */
 public class PathFinder extends ASTVisitor {

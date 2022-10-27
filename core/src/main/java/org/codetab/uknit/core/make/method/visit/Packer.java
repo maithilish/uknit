@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -30,6 +31,8 @@ public class Packer {
 
     @Inject
     private Packs packs;
+    @Inject
+    private Vars vars;
     @Inject
     private Variables variables;
     @Inject
@@ -106,7 +109,7 @@ public class Packer {
         if (nonNull(patchedExp)) {
             try {
                 String name = expressions.getName(patchedExp);
-                callVar = packs.findVarByName(name, heap.getPacks());
+                callVar = vars.findVarByName(name, heap.getPacks());
             } catch (IllegalStateException e) {
             }
         }

@@ -44,7 +44,7 @@ import com.google.common.graph.Traverser;
  * This runner is not for the users and it is mainly to test the uknit against
  * arbitrary projects.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class BulkGenerator {

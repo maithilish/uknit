@@ -32,7 +32,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 /**
  * Parse Super class.
  *
- * @author m
+ * @author Maithilish
  *
  */
 public class SuperParser {

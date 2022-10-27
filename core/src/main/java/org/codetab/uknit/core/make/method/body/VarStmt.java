@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.method.Heaps;
+import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -23,15 +23,15 @@ public class VarStmt {
     @Inject
     private Types types;
     @Inject
-    private Heaps heaps;
+    private Vars vars;
     @Inject
     private Initializers initializers;
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
-        List<IVar> vars = heaps.getVarsOfKind(heap, Kind.PARAMETER, Kind.INFER,
-                Kind.LOCAL);
-        for (IVar var : vars) {
+        List<IVar> varList = vars.getVarsOfKind(heap.getPacks(), Kind.PARAMETER,
+                Kind.INFER, Kind.LOCAL);
+        for (IVar var : varList) {
             boolean createStmt = false;
             if (var.is(Kind.PARAMETER)) {
                 createStmt = true;

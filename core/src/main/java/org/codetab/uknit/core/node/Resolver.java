@@ -46,7 +46,7 @@ public class Resolver {
                     if (typeBinding.isEnum()) {
                         mock = false;
                     }
-                    // TODO - move to model factory
+                    // FIXME - move to model factory
                     methodReturnType =
                             new ReturnType(type.get(), mock, typeBinding);
                 }

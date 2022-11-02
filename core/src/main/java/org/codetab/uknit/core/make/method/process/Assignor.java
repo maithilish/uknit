@@ -1,15 +1,21 @@
 package org.codetab.uknit.core.make.method.process;
 
+import static java.util.Objects.isNull;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 public class Assignor {
@@ -36,21 +42,41 @@ public class Assignor {
         Expression lhs = node.getLeftHandSide();
         Expression rhs = node.getRightHandSide();
 
-        // LHS is var, do nothing.
-        if (nodes.is(lhs, SimpleName.class)) {
-            return;
-        }
-
         /**
-         * <code>array[0] = "foo"</code> results in two packs. Set LHS array[0]
-         * to leftExp of foo pack and remove array[0] pack.
+         * Some constructs results in two packs. Assign left pack to right pack
+         * and remove left pack.
          */
         Optional<Pack> packO = packs.findByExp(rhs, heap.getPacks());
         if (packO.isPresent()) {
-            packO.get().setLeftExp(Optional.of(lhs));
-            Optional<Pack> leftPackO = packs.findByExp(lhs, heap.getPacks());
-            if (leftPackO.isPresent()) {
-                heap.getPacks().remove(leftPackO.get());
+            Pack pack = packO.get();
+            if (nodes.is(lhs, SimpleName.class)) {
+                /*
+                 * Date foo; foo = bar(); results in two packs, search for foo
+                 * pack, assign its var to bar pack and remove bar pack.
+                 */
+                if (isNull(pack.getVar())) {
+                    Optional<Pack> leftPackO = packs
+                            .findByVarName(nodes.getName(lhs), heap.getPacks());
+                    if (leftPackO.isPresent()) {
+                        IVar leftVar = leftPackO.get().getVar();
+                        pack.setVar(leftVar);
+                        heap.removePack(leftPackO.get());
+                    }
+                }
+            } else if (nodes.is(lhs, ArrayAccess.class, FieldAccess.class)) {
+                /*
+                 * array[0] = "foo", set LHS array[0] to leftExp of foo pack (
+                 * it is exp and not var, so to leftExp) and remove array[0]
+                 * pack.
+                 */
+                pack.setLeftExp(Optional.of(lhs));
+                Optional<Pack> leftPackO =
+                        packs.findByExp(lhs, heap.getPacks());
+                if (leftPackO.isPresent()) {
+                    heap.removePack(leftPackO.get());
+                }
+            } else {
+                throw new CodeException(nodes.noImplmentationMessage(node));
             }
         }
     }

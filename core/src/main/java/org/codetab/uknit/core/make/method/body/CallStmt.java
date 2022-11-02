@@ -39,8 +39,7 @@ public class CallStmt {
 
         String methodName = call.getName().getFullyQualifiedName();
 
-        List<IVar> parameters =
-                vars.getVarsOfKind(heap.getPacks(), Kind.PARAMETER);
+        List<IVar> parameters = vars.getVarsOfKind(heap, Kind.PARAMETER);
         String args = parameters.stream().map(p -> p.getName())
                 .collect(Collectors.joining(","));
 

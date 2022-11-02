@@ -1,6 +1,5 @@
 package org.codetab.uknit.core.make.method;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.model.Field;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Methods;
@@ -18,7 +18,6 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.util.StringUtils;
-import org.codetab.uknit.core.zap.make.model.Heap;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -277,8 +276,7 @@ public class MethodMakers {
         }
     }
 
-    public Collection<? extends Pack> createFieldPacks(
-            final List<Field> fieldsCopy) {
+    public List<Pack> createFieldPacks(final List<Field> fieldsCopy) {
         List<Pack> fieldPacks = fieldsCopy.stream()
                 .map(f -> modelFactory.createPack(f, null, true))
                 .collect(Collectors.toList());

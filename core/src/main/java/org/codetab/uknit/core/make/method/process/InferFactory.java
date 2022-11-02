@@ -25,38 +25,6 @@ public class InferFactory {
     @Inject
     private Mocks mocks;
 
-    /**
-     * Create infer var for MI.
-     *
-     * @param exp
-     * @param heap
-     * @return
-     */
-    // FIXME Pack - remove this
-    // public IVar createInferForInvoke(final Expression exp, final Heap heap) {
-    //
-    // checkState(nodes.is(exp, MethodInvocation.class));
-    //
-    // Optional<ExpReturnType> expRetTypeO = resolver.getExpReturnType(exp);
-    // if (expRetTypeO.isPresent()) {
-    // Type type = expRetTypeO.get().getType();
-    // boolean isMock = mocks.isMockable(type);
-    // Optional<String> typeName = Optional.empty();
-    // try {
-    // typeName = Optional.of(types.getTypeName(type));
-    // } catch (Exception e) {
-    // // ignore
-    // }
-    // String name = varNames.getInferVarName(typeName, heap);
-    // Var inferVar =
-    // modelFactory.createVar(Kind.INFER, name, type, isMock);
-    // return inferVar;
-    // } else {
-    // throw new TypeException(
-    // "unable to get exp return type for: " + exp);
-    // }
-    // }
-
     public IVar createInfer(final Type type, final Heap heap) {
         boolean isMock = mocks.isMockable(type);
         Optional<String> typeName = Optional.empty();

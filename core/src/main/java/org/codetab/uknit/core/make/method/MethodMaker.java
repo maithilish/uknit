@@ -13,10 +13,11 @@ import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
+import org.codetab.uknit.core.make.method.process.CallCreator;
 import org.codetab.uknit.core.make.method.process.Processor;
-import org.codetab.uknit.core.make.method.visit.CallCreator;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
@@ -61,6 +62,7 @@ public class MethodMaker {
 
     private TypeDeclaration clzDecl;
 
+    @SuppressWarnings("unused")
     private Clz clz;
 
     public boolean stageMethod(final MethodDeclaration method,
@@ -107,19 +109,18 @@ public class MethodMaker {
         callCreator.createCall(method, heap);
 
         // to set deep stub, create field packs
-        heap.getPacks().addAll(methodMakers
+        heap.addPacks(methodMakers
                 .createFieldPacks(clzMap.getFieldsCopy(testClzName)));
         method.accept(visitor);
 
         processor.process(heap);
+        processor.processInvokes(heap);
+        processor.processWhenVerify(heap);
+        processor.processVarState(heap);
+
+        heap.tracePacks("Packs after post visit processing");
 
         /*
-         * varEnabler.checkEnableState(heap);
-         *
-         * Set<String> usedNames = varEnabler.collectUsedVarNames(heap);
-         * varEnabler.updateVarEnableState(usedNames, heap);
-         * varEnabler.addLocalVarForDisabledField(usedNames, heap);
-         *
          * clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
          *
          * // create inserts for list.add() etc., List<IVar> insertableVars =
@@ -129,11 +130,66 @@ public class MethodMaker {
          *
          * methodMakers.addThrowsException(testMethod, heap);
          *
-         * // TODO - enable this after multi try exception fix //
+         * // FIXME Pack - enable this after multi try exception fix //
          * variables.checkVarConsistency(heap.getVars());
          *
          */
         // FIXME Pack - sanity checks return is mapped to var
+
+        return true;
+    }
+
+    /**
+     * Process IM without staging it. Use separate Visitor and newly initialized
+     * Heap to collect the IMC items. On completion, heap contents are merged
+     * with the main heap.
+     * <p>
+     * The InternalCallProcessor.process() explains the use of paramArgMap.
+     * @param method
+     * @param paramArgMap
+     * @param invoke
+     * @param internalMethod
+     * @param heap
+     * @param internalHeap2
+     * @return
+     */
+    public boolean processMethod(final MethodDeclaration method,
+            final Invoke invoke, final boolean internalMethod, final Heap heap,
+            final Heap internalHeap) {
+
+        checkNotNull(method);
+        checkNotNull(invoke);
+        checkNotNull(internalMethod);
+        checkNotNull(heap);
+        checkNotNull(internalHeap);
+
+        LOG.debug("= process method: {} =", methods.getMethodName(method));
+
+        Visitor visitor = di.instance(Visitor.class);
+        visitor.setHeap(internalHeap);
+        visitor.setImc(internalMethod);
+        visitor.setMethodReturnType(method.getReturnType2());
+
+        // stage call for this method
+        callCreator.createCall(method, internalHeap);
+
+        method.accept(visitor);
+
+        /*
+         * process infer, returnInfer, IMC etc., but not when, verify and var
+         * state which are processed only once in the end.
+         */
+        processor.process(internalHeap);
+
+        heap.tracePacks("Internal Packs after post visit processing");
+
+        // List<IVar> insertableVars =
+        // inserter.filterInsertableVars(internalHeap.getVars());
+        // inserter.processInsertableVars(insertableVars, internalHeap);
+
+        // heap.merge(internalHeap);
+
+        // variables.checkVarConsistency(heap.getVars());
 
         return true;
     }

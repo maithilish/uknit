@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.method;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,6 +123,22 @@ public class Packs {
             return p instanceof Invoke;
         }).map(p -> (Invoke) p).collect(Collectors.toList());
         return list;
+    }
+
+    /**
+     * Filter pack list based on var kinds.
+     *
+     * @param packs
+     * @param kinds
+     * @return
+     */
+    public List<Pack> filterByVarKinds(final List<Pack> packs,
+            final Kind... kinds) {
+        List<Kind> filterKinds = Arrays.asList(kinds);
+        return packs.stream()
+                .filter(p -> nonNull(p.getVar())
+                        && filterKinds.contains(p.getVar().getKind()))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -8,6 +8,16 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
+/**
+ * To find super class file place SuperAlpha.java in
+ * org.codetab.uknit.itest.alpha package in itest/src/main/java.
+ * <p>
+ * To output test method in console set VM argument -Duknit.alpha.run=true in
+ * Run configuration and not here in the test.
+ *
+ * @author Maithilish
+ *
+ */
 public class SuperAlphaIT extends ITBase {
 
     @Test
@@ -17,7 +27,7 @@ public class SuperAlphaIT extends ITBase {
         // uknit and itest uses 5
         System.setProperty("uknit.profile.test.framework", "junit5");
 
-        // don't run in cli
+        // don't run in cli - in cli system prop is not set so return
         String alphaRun = System.getProperty("uknit.alpha.run");
         if (isNull(alphaRun) || !alphaRun.equalsIgnoreCase("true")) {
             return;

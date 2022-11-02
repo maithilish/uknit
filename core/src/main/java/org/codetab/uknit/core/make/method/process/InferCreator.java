@@ -54,7 +54,14 @@ public class InferCreator {
      */
     public void createInfer(final Pack pack, final Heap heap) {
         if (nonNull(pack.getVar())) {
-            if (pack.getVar().is(Kind.RETURN)) {
+            /*
+             * For var of Kind.RETURN createInferForReturn() will create infer,
+             * for Kind.LOCAL the var is already created by var declaration
+             * visits.
+             *
+             * FIXME Pack - kinds FIELD, PARAMETER and infer for LOCAL reassign
+             */
+            if (pack.getVar().is(Kind.RETURN) || pack.getVar().is(Kind.LOCAL)) {
                 return;
             } else {
                 throw new IllegalStateException(nodes.exMessage(
@@ -131,7 +138,6 @@ public class InferCreator {
                             varName, inCtlPath);
                     // var: apple exp: foo.bar(), morphed as inferPack
                     returnPack.setVar(inferVar);
-
                 } else {
                     /*
                      * normal returnPack, create new pack for infer var and set

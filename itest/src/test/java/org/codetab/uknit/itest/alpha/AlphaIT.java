@@ -8,6 +8,16 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Place Alpha.java in org.codetab.uknit.itest.alpha package in
+ * itest/src/test/java to avoid scrolling in Package Explorer.
+ * <p>
+ * To output test method in console set VM argument -Duknit.alpha.run=true in
+ * Run configuration and not here in the test.
+ *
+ * @author Maithilish
+ *
+ */
 public class AlphaIT extends ITBase {
 
     @Test

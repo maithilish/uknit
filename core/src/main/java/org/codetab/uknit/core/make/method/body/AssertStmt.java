@@ -29,26 +29,15 @@ public class AssertStmt {
         Optional<Statement> stmt = Optional.empty();
         Optional<Pack> returnPackO =
                 packs.findByVarName("return", heap.getPacks());
-        Optional<IVar> expected =
-                vars.getExpectedVar(returnPackO, heap.getPacks());
-        if (expected.isPresent()) {
+        Optional<IVar> expectedVarO = vars.getExpectedVar(returnPackO, heap);
+        if (expectedVarO.isPresent()) {
+            IVar expectedVar = expectedVarO.get();
             Type retType = heap.getCall().getReturnType();
-            String key = asserts.getAssertKey(retType, expected.get().isMock());
-            String fmt = asserts.getAssertFormat(key, expected.get().getName());
+            String key = asserts.getAssertKey(retType, expectedVar.isMock(),
+                    expectedVar.isCreated());
+            String fmt = asserts.getAssertFormat(key, expectedVar.getName());
             stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
         }
-
-        // FIXME Pack - remove this later
-        // else {
-        // // expected is not present then may be boolean
-        // Type retType = heap.getCall().getReturnType();
-        // boolean mock = true;
-        // if (nonNull(retType) && types.isBoolean(retType)) {
-        // String key = asserts.getAssertKey(retType, mock);
-        // String fmt = asserts.getAssertFormat(key, "");
-        // stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
-        // }
-        // }
 
         stmt.ifPresent(s -> heap.setAsserted(true));
         return stmt;

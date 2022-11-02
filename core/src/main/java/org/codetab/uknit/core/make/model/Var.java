@@ -50,6 +50,11 @@ public class Var implements IVar {
     }
 
     @Override
+    public void setKind(final Kind kind) {
+        this.kind = kind;
+    }
+
+    @Override
     public Kind getKind() {
         return kind;
     }

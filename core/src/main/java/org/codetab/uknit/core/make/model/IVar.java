@@ -7,8 +7,10 @@ import org.eclipse.jdt.core.dom.Type;
 public interface IVar {
 
     enum Kind {
-        FIELD, PARAMETER, LOCAL, INFER, RETURN
+        FIELD, PARAMETER, LOCAL, RETURN, INFER
     }
+
+    void setKind(Kind kind);
 
     Kind getKind();
 
@@ -43,22 +45,22 @@ public interface IVar {
     void setDeepStub(boolean deepStub);
 
     default boolean isField() {
-        return false;
+        return is(Kind.FIELD);
     }
 
     default boolean isParameter() {
-        return false;
+        return is(Kind.PARAMETER);
     }
 
     default boolean isLocalVar() {
-        return false;
+        return is(Kind.LOCAL);
     }
 
     default boolean isInferVar() {
-        return false;
+        return is(Kind.INFER);
     }
 
     default boolean isReturnVar() {
-        return false;
+        return is(Kind.RETURN);
     }
 }

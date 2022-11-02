@@ -9,7 +9,6 @@ import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.tree.TreeFactory;
-import org.codetab.uknit.core.zap.make.model.Insert;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -21,8 +20,6 @@ public class UknitModule extends AbstractModule {
     protected void configure() {
         super.configure();
 
-        install(new FactoryModuleBuilder().implement(Object.class, Object.class)
-                .build(org.codetab.uknit.core.zap.make.model.ModelFactory.class));
         install(new FactoryModuleBuilder().implement(Object.class, Object.class)
                 .build(ModelFactory.class));
         install(new FactoryModuleBuilder().implement(Object.class, Object.class)
@@ -51,11 +48,6 @@ public class UknitModule extends AbstractModule {
 
     @Provides
     public List<String> createStringList() {
-        return new ArrayList<>();
-    }
-
-    @Provides
-    public List<Insert> createInsert() {
         return new ArrayList<>();
     }
 

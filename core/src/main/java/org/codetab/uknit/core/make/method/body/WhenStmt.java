@@ -2,6 +2,7 @@ package org.codetab.uknit.core.make.method.body;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -28,14 +29,38 @@ public class WhenStmt {
         String whenFormat = configs.getFormat("uknit.format.when");
         String returnFormat = configs.getFormat("uknit.format.when.return");
         List<Invoke> invokes = packs.filterInvokes(heap.getPacks());
+        List<When> whens = new ArrayList<>();
+        /*
+         * Returns of When such as when(foo).thenReturn(bar).thenReturn(baz);
+         * are held by multiple Invoke Packs. Collect return vars of Whens with
+         * same method signature in the first When ignoring others
+         */
         for (Invoke invoke : invokes) {
             if (invoke.getWhen().isPresent()) {
                 When when = invoke.getWhen().get();
-                Statement stmt = nodeFactory.createWhenStatement(
-                        when.getMethodSignature(), when.getReturnVars(),
-                        whenFormat, returnFormat);
-                stmts.add(stmt);
+                Optional<When> sameWhenO =
+                        whens.stream()
+                                .filter(w -> w.getMethodSignature()
+                                        .equals(when.getMethodSignature()))
+                                .findFirst();
+                /*
+                 * collect return var in the first When, ignoring the When
+                 * itself
+                 */
+                if (sameWhenO.isPresent()) {
+                    sameWhenO.get().getReturnVars()
+                            .addAll(when.getReturnVars());
+                } else {
+                    whens.add(when);
+                }
             }
+        }
+        // create stmts from DeDuplicated whens
+        for (When when : whens) {
+            Statement stmt =
+                    nodeFactory.createWhenStatement(when.getMethodSignature(),
+                            when.getReturnVars(), whenFormat, returnFormat);
+            stmts.add(stmt);
         }
         return stmts;
     }

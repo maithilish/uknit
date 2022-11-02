@@ -27,6 +27,7 @@ import org.codetab.uknit.core.node.CuFactory;
 import org.codetab.uknit.core.util.IOUtils;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 
 /**
  * Parse source and its super classes.
@@ -180,11 +181,12 @@ public class SourceParser {
      * @param clzName
      * @return {@link CompilationUnit} - optional
      */
-    public Optional<CompilationUnit> fetchCu(final String clzPkg,
-            final String clzName) {
+    public Optional<CompilationUnit> fetchCu(final ITypeBinding declClz) {
 
-        checkNotNull(clzPkg);
-        checkNotNull(clzName);
+        checkNotNull(declClz);
+
+        String clzName = declClz.getName();
+        String clzPkg = declClz.getPackage().getName();
 
         Optional<Cu> cu =
                 ctl.getCuCache().stream().filter(c -> c.getPkg().equals(clzPkg)

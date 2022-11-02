@@ -1,16 +1,15 @@
 package org.codetab.uknit.core.make.method;
 
-import static java.util.Objects.nonNull;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.VarNotFoundException;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Pack;
@@ -34,9 +33,8 @@ public class Vars {
      * @param heap
      * @return
      */
-    public List<IVar> getVars(final List<Pack> packs) {
-        return packs.stream().map(Pack::getVar).filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    public List<IVar> getVars(final Heap heap) {
+        return heap.getVars();
     }
 
     /**
@@ -46,11 +44,16 @@ public class Vars {
      * @param kinds
      * @return
      */
-    public List<IVar> getVarsOfKind(final List<Pack> packs,
-            final Kind... kinds) {
+    public List<IVar> getVarsOfKind(final Heap heap, final Kind... kinds) {
         List<Kind> filterKinds = Arrays.asList(kinds);
-        return packs.stream().map(Pack::getVar)
-                .filter(v -> nonNull(v) && filterKinds.contains(v.getKind()))
+        return heap.getVars().stream()
+                .filter(v -> filterKinds.contains(v.getKind()))
+                .collect(Collectors.toList());
+    }
+
+    public List<IVar> filterVars(final Heap heap,
+            final Predicate<IVar> predicate) {
+        return heap.getVars().stream().filter(predicate)
                 .collect(Collectors.toList());
     }
 
@@ -61,12 +64,11 @@ public class Vars {
      * @param name
      * @return
      */
-    public IVar findVarByName(final String name, final List<Pack> packs) {
-        Optional<Pack> packO = packs.stream().filter(p -> {
-            return nonNull(p.getVar()) && p.getVar().getName().equals(name);
-        }).findFirst();
-        if (packO.isPresent()) {
-            return packO.get().getVar();
+    public IVar findVarByName(final String name, final Heap heap) {
+        Optional<IVar> varO = heap.getVars().stream()
+                .filter(v -> v.getName().equals(name)).findFirst();
+        if (varO.isPresent()) {
+            return varO.get();
         } else {
             throw new VarNotFoundException(name);
         }
@@ -82,12 +84,12 @@ public class Vars {
      * @return
      */
     public Optional<IVar> getExpectedVar(final Optional<Pack> returnPack,
-            final List<Pack> packs) {
+            final Heap heap) {
         if (returnPack.isPresent()) {
             if (nodes.is(returnPack.get().getExp(), SimpleName.class)) {
                 String name = nodes.getName(
                         nodes.as(returnPack.get().getExp(), SimpleName.class));
-                return Optional.ofNullable(findVarByName(name, packs));
+                return Optional.ofNullable(findVarByName(name, heap));
             } else {
                 throw new IllegalStateException(nodes.exMessage(
                         "can't map return exp to var, expected SimpleName but found",
@@ -130,5 +132,4 @@ public class Vars {
         }
         return varName;
     }
-
 }

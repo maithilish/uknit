@@ -29,7 +29,7 @@ public class VarStmt {
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
-        List<IVar> varList = vars.getVarsOfKind(heap.getPacks(), Kind.PARAMETER,
+        List<IVar> varList = vars.getVarsOfKind(heap, Kind.PARAMETER,
                 Kind.INFER, Kind.LOCAL);
         for (IVar var : varList) {
             boolean createStmt = false;

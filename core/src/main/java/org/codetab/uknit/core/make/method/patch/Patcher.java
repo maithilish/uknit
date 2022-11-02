@@ -10,14 +10,18 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Patches;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Patch;
+import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 /**
  * Direct modification to src node affects the subsequent internal calls
@@ -35,6 +39,8 @@ public class Patcher {
 
     @Inject
     private Packs packs;
+    @Inject
+    private Nodes nodes;
     @Inject
     private Patches patches;
     @Inject
@@ -100,6 +106,44 @@ public class Patcher {
         return patchList;
     }
 
+    // public List<Pack> getVarOccurringPacks(final String name,
+    // final List<Pack> packs) {
+    //
+    // }
+
+    /**
+     * Copy and Patches MI or SMI and returns the calling exp.
+     * <p>
+     * foo.bar() - Optional.of(foo) (calling exp is foo and bar is method name)
+     *
+     * super.bar() - Optional.empty (IMC)
+     *
+     * this.bar() - Optional.empty (IMC)
+     *
+     * bar() - Optional.empty (IMC)
+     *
+     * @param invocationExp
+     * @param heap
+     * @return
+     */
+    public Optional<Expression> getPatchedCallExp(
+            final Expression invocationExp, final Heap heap) {
+
+        Optional<Expression> patchedExpO;
+        if (nodes.is(invocationExp, MethodInvocation.class)) {
+            // exp is null for IMC with or without super or this keyword
+            patchedExpO = Optional.ofNullable(copyAndPatch(
+                    nodes.as(invocationExp, MethodInvocation.class), heap)
+                            .getExpression());
+        } else if (nodes.is(invocationExp, SuperMethodInvocation.class)) {
+            patchedExpO = Optional.empty();
+        } else {
+            throw new CodeException(
+                    nodes.noImplmentationMessage(invocationExp));
+        }
+        return patchedExpO;
+    }
+
     /**
      * Direct modification messes the src node and subsequent internal calls
      * (private calls). To generate statements - when, verify and initializer -
@@ -120,9 +164,9 @@ public class Patcher {
             /*
              * for groups.size() in new String[groups.size()][groups.size()]
              */
-            Expression exp = exps.get(i);
+            Expression patchExp = exps.get(i);
             Optional<Patch> patch =
-                    patches.findPatch(node, exp, heap.getPacks());
+                    patches.findPatch(node, patchExp, heap.getPacks());
             if (patch.isPresent()) {
                 patchers.patchExpWithVar(nodeCopy, patch.get());
             }
@@ -133,10 +177,9 @@ public class Patcher {
              */
             Expression expCopy = expCopies.get(i);
             List<Patch> replacerList =
-                    patches.findPatches(exp, heap.getPacks());
+                    patches.findPatches(patchExp, heap.getPacks());
             replacerList.forEach(r -> patchers.patchExpWithVar(expCopy, r));
         }
         return nodeCopy;
     }
-
 }

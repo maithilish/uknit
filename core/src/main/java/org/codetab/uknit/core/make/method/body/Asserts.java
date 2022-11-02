@@ -15,7 +15,8 @@ public class Asserts {
     @Inject
     private Types types;
 
-    public String getAssertKey(final Type type, final boolean mock) {
+    public String getAssertKey(final Type type, final boolean mock,
+            final boolean created) {
         checkNotNull(type);
 
         if (type.isArrayType()) {
@@ -48,6 +49,9 @@ public class Asserts {
             return "equals";
         }
         if (!mock) {
+            return "equals";
+        }
+        if (created) {
             return "equals";
         }
         return "same";

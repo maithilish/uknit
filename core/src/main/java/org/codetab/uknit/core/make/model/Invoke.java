@@ -9,6 +9,13 @@ import org.eclipse.jdt.core.dom.Expression;
 
 import com.google.inject.assistedinject.Assisted;
 
+/**
+ * Normally the Invoke expression is MI but in case of IMC it may set to other
+ * types such as var name.
+ *
+ * @author Maithilish
+ *
+ */
 public class Invoke extends Pack {
 
     /*

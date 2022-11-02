@@ -1,39 +1,16 @@
 package org.codetab.uknit.core.node;
 
-import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ArrayCreation;
-import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.CharacterLiteral;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.LambdaExpression;
-import org.eclipse.jdt.core.dom.NullLiteral;
-import org.eclipse.jdt.core.dom.NumberLiteral;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 public class Nodes {
-
-    private Class<?>[] creationNodes =
-            {NumberLiteral.class, StringLiteral.class, TypeLiteral.class,
-                    CharacterLiteral.class, BooleanLiteral.class,
-                    NullLiteral.class, ClassInstanceCreation.class,
-                    ArrayCreation.class, ArrayInitializer.class,
-                    PrefixExpression.class, PostfixExpression.class,
-                    InfixExpression.class, QualifiedName.class};
 
     public boolean is(final ASTNode node, final Class<?> clz) {
         return node.getClass().isAssignableFrom(clz);
@@ -76,31 +53,6 @@ public class Nodes {
     public boolean isName(final ASTNode node) {
         return node.getNodeType() == ASTNode.SIMPLE_NAME
                 || node.getNodeType() == ASTNode.QUALIFIED_NAME;
-    }
-
-    // FIXME PACK - moved to expressions, remove
-    public boolean isClassInstanceCreation(final Expression exp) {
-        return is(exp, ClassInstanceCreation.class);
-    }
-
-    // FIXME PACK - moved to expressions, remove
-    public boolean isCreation(final Expression exp) {
-        for (Class<?> clz : creationNodes) {
-            if (exp.getClass().isAssignableFrom(clz)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // FIXME PACK - moved to expressions, remove
-    public boolean isAnonOrLambda(final Expression exp) {
-        if (is(exp, ClassInstanceCreation.class)) {
-            ClassInstanceCreation cic = as(exp, ClassInstanceCreation.class);
-            return nonNull(cic.getAnonymousClassDeclaration());
-        } else {
-            return is(exp, LambdaExpression.class);
-        }
     }
 
     public String label(final ASTNode node) {

@@ -12,14 +12,15 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
-import org.codetab.uknit.core.zap.make.model.Heap;
-import org.codetab.uknit.core.zap.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
@@ -42,13 +43,14 @@ public class Expressions {
     @Inject
     private Nodes nodes;
 
-    private Class<?>[] creationNodes =
-            {NumberLiteral.class, StringLiteral.class, TypeLiteral.class,
-                    CharacterLiteral.class, BooleanLiteral.class,
-                    NullLiteral.class, ClassInstanceCreation.class,
-                    ArrayCreation.class, ArrayInitializer.class,
-                    PrefixExpression.class, PostfixExpression.class,
-                    InfixExpression.class, QualifiedName.class};
+    // FIXME Pack - rename this as inferableNodes instead of creationNode
+    private Class<?>[] creationNodes = {NumberLiteral.class,
+            StringLiteral.class, TypeLiteral.class, CharacterLiteral.class,
+            BooleanLiteral.class, NullLiteral.class,
+            ClassInstanceCreation.class, ArrayCreation.class,
+            ArrayInitializer.class, PrefixExpression.class,
+            PostfixExpression.class, InfixExpression.class,
+            ConditionalExpression.class, QualifiedName.class};
 
     public boolean isClassInstanceCreation(final Expression exp) {
         return nodes.is(exp, ClassInstanceCreation.class);
@@ -116,17 +118,21 @@ public class Expressions {
     }
 
     public Optional<String> mapExpToName(final Expression arg,
-            final Heap heap) {
+            final List<Pack> packs) {
         String argName = null;
         if (nodes.is(arg, SimpleName.class)) {
             argName = nodes.getName(arg);
         } else if (nodes.is(arg, MethodInvocation.class)
                 || nodes.is(arg, SuperMethodInvocation.class)) {
-            Optional<IVar> var = heap.findLeftVarByRightExp(arg);
+
+            Optional<IVar> var = packs.stream().filter(p -> {
+                return nonNull(p.getExp()) && p.getExp().equals(arg);
+            }).findFirst().map(Pack::getVar);
+
             if (var.isPresent()) {
                 argName = var.get().getName();
             }
-        } else if (nodes.isCreation(arg)) {
+        } else if (isCreation(arg)) {
             LOG.debug("arg {} is creation node, ignore",
                     arg.getClass().getSimpleName());
         } else {

@@ -85,8 +85,7 @@ public class VarNames {
                 configKey = String.join(".", "uknit.inferVar.name.alias",
                         typeName.get());
                 typeCamelName = configs.getConfig(configKey, typeCamelName);
-                name = vars.getIndexedVar(typeCamelName,
-                        vars.getVars(heap.getPacks()));
+                name = vars.getIndexedVar(typeCamelName, vars.getVars(heap));
 
                 // if name is not valid identifier then discard it
                 if (!validator.isValidIdentifier(name)) {

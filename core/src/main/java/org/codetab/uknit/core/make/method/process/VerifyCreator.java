@@ -1,7 +1,5 @@
 package org.codetab.uknit.core.make.method.process;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +32,10 @@ public class VerifyCreator {
 
     public void createVerify(final Invoke invoke, final Heap heap) {
 
-        checkState(nodes.is(invoke.getExp(), MethodInvocation.class));
+        // IMC return may replace invoke exp MI with return var name
+        if (!nodes.is(invoke.getExp(), MethodInvocation.class)) {
+            return;
+        }
 
         if (excludes.exclude(invoke)) {
             return;

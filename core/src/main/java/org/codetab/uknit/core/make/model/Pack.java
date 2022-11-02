@@ -29,6 +29,10 @@ public class Pack {
      * access ((point).x) or qualified name (point.x)
      */
     private Optional<Expression> leftExp;
+    /*
+     * pack state change listener
+     */
+    private Listener listener;
 
     @Inject
     public Pack(@Assisted @Nullable final IVar var,
@@ -47,6 +51,7 @@ public class Pack {
 
     public void setVar(final IVar var) {
         this.var = var;
+        listener.packVarChanged();
     }
 
     public Expression getExp() {
@@ -71,6 +76,10 @@ public class Pack {
 
     public boolean isInCtlPath() {
         return inCtlPath;
+    }
+
+    public void setListener(final Listener listener) {
+        this.listener = listener;
     }
 
     @Override

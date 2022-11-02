@@ -19,11 +19,11 @@ import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
 import org.codetab.uknit.core.make.method.MethodMaker;
+import org.codetab.uknit.core.make.method.detect.GetterSetter;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.output.Console;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.tree.Trees;
-import org.codetab.uknit.core.zap.make.method.detect.getter.GetterSetter;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -148,6 +148,7 @@ public class SourceVisitor extends ASTVisitor {
     @Override
     public boolean visit(final PackageDeclaration node) {
         LOG.debug("add package declaration to test class");
+        clzMaker.addPackage(node);
         return true;
     }
 

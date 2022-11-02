@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -199,24 +200,27 @@ public class Methods {
         return Optional.ofNullable(varName);
     }
 
-    /**
-     * Get argument list of {@link MethodInvocation}
-     * @param mi
-     * @return list
-     */
     @SuppressWarnings("unchecked")
-    public List<Expression> getArguments(final MethodInvocation mi) {
-        return mi.arguments();
+    public List<Expression> getArguments(final Expression exp) {
+        List<Expression> args;
+        if (nodes.is(exp, MethodInvocation.class)) {
+            args = nodes.as(exp, MethodInvocation.class).arguments();
+        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
+            args = nodes.as(exp, SuperMethodInvocation.class).arguments();
+        } else {
+            throw new CodeException(nodes.noImplmentationMessage(exp));
+        }
+        return args;
     }
 
-    /**
-     * Get argument list of {@link SuperMethodInvocation}
-     * @param superMi
-     * @return list
-     */
-    @SuppressWarnings("unchecked")
-    public List<Expression> getArguments(final SuperMethodInvocation smi) {
-        return smi.arguments();
+    public boolean isInvokable(final Expression exp) {
+        boolean invokable = false;
+        if (nodes.is(exp, MethodInvocation.class)) {
+            invokable = true;
+        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
+            invokable = true;
+        }
+        return invokable;
     }
 
     /**
@@ -258,5 +262,17 @@ public class Methods {
         return returnType.isPrimitiveType()
                 && nodes.as(returnType, PrimitiveType.class)
                         .getPrimitiveTypeCode().equals(PrimitiveType.VOID);
+    }
+
+    public boolean isInternalCall(final Expression miOrSmi,
+            final Optional<Expression> patchedExpO) {
+        boolean internalCall = false;
+        if (patchedExpO.isEmpty()) {
+            internalCall = true;
+        }
+        if (!isStaticCall(miOrSmi)) {
+            internalCall = true;
+        }
+        return internalCall;
     }
 }

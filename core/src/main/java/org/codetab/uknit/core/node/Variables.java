@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.zap.make.model.Field;
-import org.codetab.uknit.core.zap.make.model.IVar;
+import org.codetab.uknit.core.make.model.Field;
+import org.codetab.uknit.core.make.model.IVar;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;

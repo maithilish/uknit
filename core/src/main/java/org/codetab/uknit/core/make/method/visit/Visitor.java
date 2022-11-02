@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -84,7 +86,9 @@ public class Visitor extends ASTVisitor {
 
     /**
      * VariableDeclarationStatement collects several VariableDeclarationFragment
-     * into a Statement. It is used for Local variable declaration.
+     * into a Statement. It is used for Local variable declaration. It holds
+     * type and fragments (vdf). The VariableDeclaration (super of vdf) holds
+     * name and initializer.
      */
     @Override
     public void endVisit(final VariableDeclarationStatement node) {
@@ -96,21 +100,17 @@ public class Visitor extends ASTVisitor {
     /**
      * SingleVariableDeclaration (svd) nodes are used in formal parameter lists
      * and catch clauses. They are not used for field and regular variable
-     * declaration statements.
+     * declaration statements. The VariableDeclaration (super of svd) holds name
+     * and initializer.
      */
     @Override
     public void endVisit(final SingleVariableDeclaration node) {
         List<VariableDeclaration> vdList = List.of(node);
         Type type = types.getType(node);
 
-        // svd may be parameter or local var
+        // svd may be parameter or local var (catch clause)
         if (nodes.is(node.getParent(), MethodDeclaration.class)) {
-            if (imc) {
-                // stage internal method parameters as local vars
-                packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
-            } else {
-                packer.packVars(Kind.PARAMETER, type, vdList, inCtlPath, heap);
-            }
+            packer.packVars(Kind.PARAMETER, type, vdList, inCtlPath, heap);
         } else {
             packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
         }
@@ -120,6 +120,7 @@ public class Visitor extends ASTVisitor {
      * VariableDeclarationExpression (vde) collects together several
      * VariableDeclarationFragment (vdf) into a single Expression. It can be
      * used as the initializer of a ForStatement or with ExpressionStatement.
+     * The VariableDeclaration (super of vdf) holds name and initializer.
      */
     @Override
     public void endVisit(final VariableDeclarationExpression node) {
@@ -130,6 +131,13 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final MethodInvocation node) {
+        Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
+        packer.setupInvokes(invoke, heap);
+        heap.addPack(invoke);
+    }
+
+    @Override
+    public void endVisit(final SuperMethodInvocation node) {
         Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
         packer.setupInvokes(invoke, heap);
         heap.addPack(invoke);
@@ -171,6 +179,11 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final PostfixExpression node) {
+        packer.packExp(node, inCtlPath, heap);
+    }
+
+    @Override
+    public void endVisit(final ConditionalExpression node) {
         packer.packExp(node, inCtlPath, heap);
     }
 

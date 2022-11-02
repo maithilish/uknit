@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.Type;
 
 /**
- * FIXME Pack - whether is statement is required.
+ * FIXME Pack - whether this stmt is required.
  *
  * @author Maithilish
  *

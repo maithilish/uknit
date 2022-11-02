@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.Type;
 
 public class ReturnType {
@@ -30,6 +31,15 @@ public class ReturnType {
 
     public boolean isMock() {
         return mock;
+    }
+
+    public boolean isVoid() {
+        if (type.isPrimitiveType()) {
+            return ((PrimitiveType) type).getPrimitiveTypeCode()
+                    .equals(PrimitiveType.VOID);
+        } else {
+            return false;
+        }
     }
 
     @Override

@@ -1,14 +1,14 @@
 package org.codetab.uknit.core.make.method.visit;
 
-import static java.util.Objects.nonNull;
-
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -22,8 +22,6 @@ import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Variables;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
@@ -41,6 +39,8 @@ public class Packer {
     private ModelFactory modelFactory;
     @Inject
     private Mocks mocks;
+    @Inject
+    private Patcher patcher;
     @Inject
     private Resolver resolver;
     @Inject
@@ -95,44 +95,53 @@ public class Packer {
         }
     }
 
+    public void packStandinVar(final IVar var, final boolean inCtlPath,
+            final Heap heap) {
+        Expression exp = null; // no exp
+        Pack pack = modelFactory.createPack(var, exp, inCtlPath);
+        heap.addPack(pack);
+    }
+
+    /**
+     * Setup fields of Invoke. Invoke exp can be MethodInvocation or
+     * SuperMethodInvocation.
+     *
+     * @param invoke
+     * @param heap
+     */
     public void setupInvokes(final Invoke invoke, final Heap heap) {
 
-        // FIXME Pack - Enable this
-        // MethodInvocation patchedMi = patcher.copyAndPatch(mi, heap);
-        // Expression patchedExp = patchedMi.getExpression();
-
-        MethodInvocation mi = (MethodInvocation) invoke.getExp();
-        MethodInvocation patchedMi = (MethodInvocation) invoke.getExp();
-        Expression patchedExp = patchedMi.getExpression();
-
-        IVar callVar = null;
-        if (nonNull(patchedExp)) {
-            try {
-                String name = expressions.getName(patchedExp);
-                callVar = vars.findVarByName(name, heap.getPacks());
-            } catch (IllegalStateException e) {
-            }
-        }
-        Optional<ReturnType> returnType = resolver.getExpReturnType(mi);
-        invoke.setCallVar(Optional.of(callVar));
-        invoke.setReturnType(returnType);
-
-        IMethodBinding methodBinding = resolver.resolveMethodBinding(mi);
-
-        if (methodBinding.getExceptionTypes().length > 0) {
-            heap.setTestThrowsException(true);
-        }
+        Expression miOrSmiExp = invoke.getExp();
 
         /*
-         * The MI foo.bar(zoo) is exp.name(exp). If leading exp is null then MI
-         * may be internal or static call.
+         * Find callVar of invoke. It is empty for all types of IMC - with
+         * keywords this and super or without keywords (plain call)
          */
-        // FIXME Pack - enable this
-        // if (isNull(patchedExp) && !methods.isStaticCall(mi)) {
-        // List<Expression> arguments = methods.getArguments(mi);
-        // Optional<IVar> retVar = internalCallProcessor.process(methodBinding,
-        // arguments, heap);
-        // invoke.setReturnVar(retVar);
-        // }
+        Optional<Expression> patchedExpO =
+                patcher.getPatchedCallExp(miOrSmiExp, heap);
+        Optional<IVar> callVarO = Optional.empty();
+        if (patchedExpO.isPresent()) {
+            try {
+                String name = expressions.getName(patchedExpO.get());
+                callVarO = Optional.of(vars.findVarByName(name, heap));
+            } catch (VarNotFoundException e) {
+            }
+        }
+
+        // find return type of invoke
+        Optional<ReturnType> returnTypeO =
+                resolver.getExpReturnType(miOrSmiExp);
+
+        invoke.setCallVar(callVarO);
+        invoke.setReturnType(returnTypeO);
+
+        /*
+         * if invokes throw exception set it in heap so that throws clause is
+         * added to test method declaration in the end.
+         */
+        if (resolver.resolveMethodBinding(miOrSmiExp)
+                .getExceptionTypes().length > 0) {
+            heap.setTestThrowsException(true);
+        }
     }
 }

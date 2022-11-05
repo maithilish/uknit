@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.node;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -26,7 +28,16 @@ public class Resolver {
     @Inject
     private Nodes nodes;
 
+    /**
+     * Get return type for MI, SMI and CastExpression.
+     * @param exp
+     * @return
+     */
     public Optional<ReturnType> getExpReturnType(final Expression exp) {
+
+        checkState(nodes.is(exp, MethodInvocation.class,
+                SuperMethodInvocation.class, CastExpression.class));
+
         IMethodBinding methodBinding = null;
         if (nodes.is(exp, MethodInvocation.class)) {
             methodBinding = nodes.as(exp, MethodInvocation.class)
@@ -35,9 +46,17 @@ public class Resolver {
             methodBinding = nodes.as(exp, SuperMethodInvocation.class)
                     .resolveMethodBinding();
         }
-        ReturnType methodReturnType = null;
+
+        ITypeBinding typeBinding = null;
         if (nonNull(methodBinding)) {
-            ITypeBinding typeBinding = methodBinding.getReturnType();
+            typeBinding = methodBinding.getReturnType();
+        } else if (nodes.is(exp, CastExpression.class)) {
+            typeBinding =
+                    nodes.as(exp, CastExpression.class).resolveTypeBinding();
+        }
+
+        ReturnType methodReturnType = null;
+        if (nonNull(typeBinding)) {
             try {
                 Optional<Type> type =
                         Optional.of(types.getType(typeBinding, exp.getAST()));
@@ -46,11 +65,11 @@ public class Resolver {
                     if (typeBinding.isEnum()) {
                         mock = false;
                     }
-                    // FIXME - move to model factory
                     methodReturnType =
                             new ReturnType(type.get(), mock, typeBinding);
                 }
             } catch (Exception e) {
+
             }
         }
         return Optional.ofNullable(methodReturnType);

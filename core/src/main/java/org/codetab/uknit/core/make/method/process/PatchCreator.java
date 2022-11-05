@@ -9,16 +9,8 @@ import org.codetab.uknit.core.make.method.patch.Patchers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.eclipse.jdt.core.dom.ArrayAccess;
-import org.eclipse.jdt.core.dom.ArrayCreation;
-import org.eclipse.jdt.core.dom.ArrayInitializer;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.codetab.uknit.core.node.NodeGroups;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 
 public class PatchCreator {
 
@@ -26,6 +18,8 @@ public class PatchCreator {
     private Patcher patcher;
     @Inject
     private Patchers patchers;
+    @Inject
+    private NodeGroups nodeGroups;
 
     /**
      * Patch to replace MIs in exp such as MI, ArrayAccess,
@@ -52,13 +46,8 @@ public class PatchCreator {
      *
      * @return
      */
-    public Class<?>[] canHaveInvokes() {
-        Class<?>[] classes = {MethodInvocation.class,
-                ClassInstanceCreation.class, ArrayCreation.class,
-                ArrayAccess.class, ArrayInitializer.class,
-                InfixExpression.class, PostfixExpression.class,
-                PrefixExpression.class, ConditionalExpression.class};
-        return classes;
+    public List<Class<?>> canHaveInvokes() {
+        return nodeGroups.nodesWithInvoke();
     }
 
     /**

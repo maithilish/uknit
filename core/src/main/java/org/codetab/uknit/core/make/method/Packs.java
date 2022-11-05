@@ -104,6 +104,21 @@ public class Packs {
      * @return
      */
     public List<Pack> filterPacks(final List<Pack> packs,
+            final List<Class<?>> classes) {
+        List<Pack> list = packs.stream().filter(p -> {
+            Expression exp = p.getExp();
+            return nonNull(exp) && nodes.is(exp, classes);
+        }).collect(Collectors.toList());
+        return list;
+    }
+
+    /**
+     * Filter pack list where exp is any of classes type.
+     *
+     * @param packs
+     * @return
+     */
+    public List<Pack> filterPacks(final List<Pack> packs,
             final Class<?>... classes) {
         List<Pack> list = packs.stream().filter(p -> {
             Expression exp = p.getExp();

@@ -2,13 +2,13 @@ package org.codetab.uknit.core.node;
 
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
+import java.util.List;
+
 import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 public class Nodes {
 
@@ -25,17 +25,17 @@ public class Nodes {
         return false;
     }
 
+    public boolean is(final ASTNode node, final List<Class<?>> clzs) {
+        for (Class<?> clz : clzs) {
+            if (node.getClass().isAssignableFrom(clz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public <T> T as(final Object o, final Class<T> clz) {
         return clz.cast(o);
-    }
-
-    // FIXME - move this to variables
-    public String getVariableName(final VariableDeclaration vd) {
-        return vd.getName().getFullyQualifiedName();
-    }
-
-    public boolean isPrimitiveType(final FieldDeclaration fieldDecl) {
-        return fieldDecl.getType().isPrimitiveType();
     }
 
     public String getName(final ASTNode node) {

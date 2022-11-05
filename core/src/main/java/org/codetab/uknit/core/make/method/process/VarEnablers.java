@@ -20,6 +20,7 @@ import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -89,7 +90,13 @@ public class VarEnablers {
             final Heap heap) {
         for (Expression exp : exps) {
             List<String> names = new ArrayList<>();
-            if (nodes.is(exp, PrefixExpression.class)) {
+            if (nodes.is(exp, CastExpression.class)) {
+                Expression e =
+                        nodes.as(exp, CastExpression.class).getExpression();
+                if (nodes.is(e, SimpleName.class)) {
+                    names.add(nodes.getName(e));
+                }
+            } else if (nodes.is(exp, PrefixExpression.class)) {
                 Expression e =
                         nodes.as(exp, PrefixExpression.class).getOperand();
                 if (nodes.is(e, SimpleName.class)) {
@@ -169,4 +176,5 @@ public class VarEnablers {
         var.setEnforce(Optional.of(false));
         return var;
     }
+
 }

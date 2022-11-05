@@ -19,8 +19,11 @@ import org.codetab.uknit.core.make.model.ReturnType;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Literals;
 import org.codetab.uknit.core.node.Mocks;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
+import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Variables;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -32,7 +35,11 @@ public class Packer {
     @Inject
     private Vars vars;
     @Inject
+    private Nodes nodes;
+    @Inject
     private Variables variables;
+    @Inject
+    private Types types;
     @Inject
     private Literals literals;
     @Inject
@@ -53,7 +60,24 @@ public class Packer {
             String name = variables.getVariableName(vd);
             boolean isMock = mocks.isMockable(type);
             IVar var = modelFactory.createVar(kind, name, type, isMock);
+
             Expression initializer = vd.getInitializer();
+
+            /*
+             * The initializer, if exists, then its type overrides the var
+             * declaration type. Ex: Object obj = new Date(); obj's type is
+             * upgraded from Object to Date
+             *
+             * FIXME Pack - similar to invoke returnType, check is it possible
+             * to simplify the invoke
+             */
+            Optional<Type> initializerTypeO = types.getType(initializer);
+            initializerTypeO.ifPresent(var::setType);
+
+            /*
+             * if initializer pack is present assign var to it otherwise create
+             * new pack
+             */
             Optional<Pack> packO =
                     packs.findByExp(initializer, heap.getPacks());
             if (packO.isPresent()) {
@@ -111,14 +135,13 @@ public class Packer {
      */
     public void setupInvokes(final Invoke invoke, final Heap heap) {
 
-        Expression miOrSmiExp = invoke.getExp();
+        Expression exp = invoke.getExp(); // MI, SMI
 
         /*
          * Find callVar of invoke. It is empty for all types of IMC - with
          * keywords this and super or without keywords (plain call)
          */
-        Optional<Expression> patchedExpO =
-                patcher.getPatchedCallExp(miOrSmiExp, heap);
+        Optional<Expression> patchedExpO = patcher.getPatchedCallExp(exp, heap);
         Optional<IVar> callVarO = Optional.empty();
         if (patchedExpO.isPresent()) {
             try {
@@ -129,8 +152,21 @@ public class Packer {
         }
 
         // find return type of invoke
-        Optional<ReturnType> returnTypeO =
-                resolver.getExpReturnType(miOrSmiExp);
+        Optional<ReturnType> returnTypeO = resolver.getExpReturnType(exp);
+        if (nodes.is(exp.getParent(), CastExpression.class)) {
+            /*
+             * Ex: Foo foo = (Foo) bar.obj(); Casted MI results in a Pack for
+             * CastExp and an Invoke for MI. Even though return type of
+             * bar.obj() is Object, it is safe to change the type to cast type
+             * so that when infer var is created for Invoke, type is set to Foo
+             * instead of Object.
+             */
+            returnTypeO = resolver.getExpReturnType(
+                    nodes.as(exp.getParent(), CastExpression.class));
+        } else {
+            // Ex: Foo foo = bar.foo();
+            resolver.getExpReturnType(exp);
+        }
 
         invoke.setCallVar(callVarO);
         invoke.setReturnType(returnTypeO);
@@ -139,8 +175,7 @@ public class Packer {
          * if invokes throw exception set it in heap so that throws clause is
          * added to test method declaration in the end.
          */
-        if (resolver.resolveMethodBinding(miOrSmiExp)
-                .getExceptionTypes().length > 0) {
+        if (resolver.resolveMethodBinding(exp).getExceptionTypes().length > 0) {
             heap.setTestThrowsException(true);
         }
     }

@@ -14,27 +14,18 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
-import org.eclipse.jdt.core.dom.ArrayCreation;
-import org.eclipse.jdt.core.dom.ArrayInitializer;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
-import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.NullLiteral;
-import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 
 public class Expressions {
 
@@ -42,22 +33,26 @@ public class Expressions {
 
     @Inject
     private Nodes nodes;
-
-    // FIXME Pack - rename this as inferableNodes instead of creationNode
-    private Class<?>[] creationNodes = {NumberLiteral.class,
-            StringLiteral.class, TypeLiteral.class, CharacterLiteral.class,
-            BooleanLiteral.class, NullLiteral.class,
-            ClassInstanceCreation.class, ArrayCreation.class,
-            ArrayInitializer.class, PrefixExpression.class,
-            PostfixExpression.class, InfixExpression.class,
-            ConditionalExpression.class, QualifiedName.class};
+    @Inject
+    private NodeGroups nodeGroups;
 
     public boolean isClassInstanceCreation(final Expression exp) {
         return nodes.is(exp, ClassInstanceCreation.class);
     }
 
+    // FIXME Pack - can we use list.contains() instead of isAssignableFrom
+    // in all similar usage of nodeGroups lists
     public boolean isCreation(final Expression exp) {
-        for (Class<?> clz : creationNodes) {
+        for (Class<?> clz : nodeGroups.creationNodes()) {
+            if (exp.getClass().isAssignableFrom(clz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isInferable(final Expression exp) {
+        for (Class<?> clz : nodeGroups.inferableNodes()) {
             if (exp.getClass().isAssignableFrom(clz)) {
                 return true;
             }

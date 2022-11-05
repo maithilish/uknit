@@ -21,9 +21,7 @@ import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
-import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
@@ -102,10 +100,12 @@ public class InferCreator {
 
         Type type = returnPack.getVar().getType();
         IVar inferVar = null;
-        if (nodes.is(exp, MethodInvocation.class, ArrayAccess.class)) {
-            inferVar = inferFactory.createInfer(type, heap);
-        } else if (expressions.isCreation(exp)) {
-            // Instance creation new Foo(), Array creation, Literals "foo", 5
+
+        /*
+         * Inferable: MI, Instance creation new Foo(), Array creation, Literals
+         * "foo", 5 etc.,
+         */
+        if (expressions.isInferable(exp)) {
             inferVar = inferFactory.createInfer(type, heap);
         }
 

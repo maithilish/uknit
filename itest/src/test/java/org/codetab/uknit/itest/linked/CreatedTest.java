@@ -1,0 +1,76 @@
+package org.codetab.uknit.itest.linked;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.when;
+
+import java.util.Locale;
+
+import org.codetab.uknit.itest.linked.Model.Foo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+public class CreatedTest {
+    @InjectMocks
+    private Created created;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testIsCreated() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = new Locale("");
+        Object obj2 = obj;
+        Object obj3 = obj2;
+
+        Object actual = created.isCreated(foo);
+
+        assertEquals(obj3, actual);
+    }
+
+    @Test
+    public void testIsCreated2() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = new Locale("");
+        Object obj2 = obj;
+        Object obj3 = obj2;
+
+        Object actual = created.isCreated2(foo);
+
+        assertEquals(obj3, actual);
+    }
+
+    @Test
+    public void testIsInferred() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = Mockito.mock(Object.class);
+        Object obj2 = obj;
+        Object obj3 = obj2;
+
+        when(foo.obj()).thenReturn(obj);
+
+        Object actual = created.isInferred(foo);
+
+        assertSame(obj3, actual);
+    }
+
+    @Test
+    public void testIsInferred2() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = Mockito.mock(Locale.class);
+        Object obj2 = obj;
+        Object obj3 = obj2;
+
+        when(foo.obj()).thenReturn(obj);
+
+        Object actual = created.isInferred2(foo);
+
+        assertSame(obj3, actual);
+    }
+}

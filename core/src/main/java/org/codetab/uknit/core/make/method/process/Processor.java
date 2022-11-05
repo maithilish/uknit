@@ -122,6 +122,14 @@ class VarStateProcessor {
 
         Set<String> usedNames = varEnabler.collectUsedVarNames(heap);
         varEnabler.updateVarEnableState(usedNames, heap);
+
+        varEnabler.enableVarsUsedInInitializers(heap);
+
+        Set<String> linkedNames = varEnabler.collectLinkedVarNames(heap);
+        varEnabler.enableVars(linkedNames, heap);
+
+        varEnabler.enableFromEnforce(heap);
+
         varEnabler.addLocalVarForDisabledField(usedNames, heap);
     }
 }
@@ -182,7 +190,8 @@ class VarProcessor {
     private VarMarker varMarker;
 
     public void markCreation(final Heap heap) {
-        heap.getPacks().forEach(pack -> varMarker.markCreation(pack));
+        heap.getPacks()
+                .forEach(pack -> varMarker.markCreation(pack, heap.getPacks()));
     }
 }
 

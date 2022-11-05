@@ -29,6 +29,10 @@ public class Variables {
         return vd.getName().getFullyQualifiedName();
     }
 
+    public boolean isPrimitiveType(final FieldDeclaration fieldDecl) {
+        return fieldDecl.getType().isPrimitiveType();
+    }
+
     public List<VariableDeclaration> getFragments(
             final VariableDeclarationExpression vde) {
         @SuppressWarnings("unchecked")

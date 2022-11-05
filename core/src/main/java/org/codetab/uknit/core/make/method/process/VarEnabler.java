@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.process;
 
+import static java.util.Objects.nonNull;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.visit.Packer;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.Expression;
 
 public class VarEnabler {
@@ -28,6 +31,8 @@ public class VarEnabler {
     private Vars vars;
     @Inject
     private Packer packer;
+    @Inject
+    private LinkedPack linkedPack;
 
     /**
      * Update enable field of vars.
@@ -37,6 +42,10 @@ public class VarEnabler {
      * collects the initializer expressions assigned to enabled vars and marks
      * the vars used by such expression also as enabled. Finally, it overrides
      * enable state with state - true or false - of enforce field.
+     *
+     * Note: when this method is called all vars are enabled by default and this
+     * method disables the var that are not used.
+     *
      * @param names
      * @param heap
      */
@@ -44,11 +53,27 @@ public class VarEnabler {
 
         // disable vars that are not used in when, verify and return
         varEnablers.disableVars(names, heap);
+    }
 
+    /**
+     * Enable named vars.
+     *
+     * @param names
+     * @param heap
+     */
+    public void enableVars(final Set<String> names, final Heap heap) {
+        List<IVar> varList = heap.getVars();
+        varList.stream().filter(v -> names.contains(v.getName()))
+                .forEach(v -> v.setEnable(true));
+    }
+
+    public void enableVarsUsedInInitializers(final Heap heap) {
         // enable vars used in initializer assigned to vars enabled above
         List<Expression> exps = varEnablers.getInitializers(heap);
         varEnablers.enableVarsUsedInInitializers(exps, heap);
+    }
 
+    public void enableFromEnforce(final Heap heap) {
         // finally, override enable with enforce (enables or disables)
         varEnablers.setEnableFromEnforce(heap);
     }
@@ -91,6 +116,9 @@ public class VarEnabler {
 
     /**
      * Add stand-in local var for disabled but used field.
+     *
+     * FIXME N - review this later and add tests
+     *
      * @param names
      * @param heap
      */
@@ -115,6 +143,34 @@ public class VarEnabler {
         varEnablers.collectVarNamesOfWhens(names, heap);
         varEnablers.collectVarNamesOfVerifies(names, heap);
         varEnablers.collectVarNamesOfReturn(names, heap);
+        return names;
+    }
+
+    /**
+     * The var assigned in Pack and is enabled then collect names of other vars
+     * that are used to define the var.
+     *
+     * Ex: Foo foo1 = new Foo(); foo2 = foo1; then i foo2 is enabled then foo1
+     * always be enabled so add foo1 to names.
+     *
+     * @param heap
+     * @return
+     */
+    public Set<String> collectLinkedVarNames(final Heap heap) {
+        Set<String> names = new HashSet<>();
+        // list packs with enabled var
+        List<Pack> enabledPacks = heap.getPacks().stream().filter(p -> {
+            return nonNull(p.getVar()) && p.getVar().isEnable();
+        }).collect(Collectors.toList());
+
+        for (Pack enabledPack : enabledPacks) {
+            // get linked vars packs and enable the vars
+            List<Pack> linkPacks =
+                    linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
+            linkPacks.stream().filter(p -> nonNull(p.getVar())).forEach(p -> {
+                names.add(p.getVar().getName());
+            });
+        }
         return names;
     }
 }

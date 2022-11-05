@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.method.body;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -17,28 +18,17 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
-import org.eclipse.jdt.core.dom.ArrayAccess;
-import org.eclipse.jdt.core.dom.ArrayCreation;
-import org.eclipse.jdt.core.dom.ArrayInitializer;
-import org.eclipse.jdt.core.dom.CharacterLiteral;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.NullLiteral;
-import org.eclipse.jdt.core.dom.NumberLiteral;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 
 public class Initializers {
 
@@ -95,19 +85,15 @@ class DefinedInitialzer {
     @Inject
     private Nodes nodes;
     @Inject
+    private Packs packs;
+    @Inject
     private Methods methods;
     @Inject
-    private Packs packs;
-
-    private Class<?>[] allowed = {NumberLiteral.class, StringLiteral.class,
-            TypeLiteral.class, CharacterLiteral.class, NullLiteral.class,
-            ClassInstanceCreation.class, ArrayCreation.class,
-            ArrayInitializer.class, PrefixExpression.class,
-            PostfixExpression.class, InfixExpression.class, QualifiedName.class,
-            ArrayAccess.class};
+    private NodeGroups nodeGroups;
 
     public boolean isAllowed(final Expression exp) {
-        for (Class<?> clz : allowed) {
+        List<Class<?>> clzs = nodeGroups.allowedAsInitializer();
+        for (Class<?> clz : clzs) {
             if (nodes.is(exp, clz)) {
                 return true;
             }
@@ -139,8 +125,21 @@ class DefinedInitialzer {
             final Heap heap) {
         Optional<Pack> pack =
                 packs.findByVarName(var.getName(), heap.getPacks());
-        Expression initializerExp = pack.get().getExp();
-        return Optional.ofNullable(initializerExp);
+        Expression iniExp = pack.get().getExp();
+        /**
+         * Casted initializer var type is already changed in Packer.packVars(),
+         * so discard the cast from initializer. <code>
+         * Object o = new Foo();
+         * Foo foo = (Foo) o;
+         * </code> the type o is set to Foo instead of Object.
+         */
+        if (nonNull(iniExp) && nodes.is(iniExp, CastExpression.class)) {
+            CastExpression ce = nodes.as(iniExp, CastExpression.class);
+            if (nodes.is(ce.getExpression(), SimpleName.class)) {
+                iniExp = ce.getExpression();
+            }
+        }
+        return Optional.ofNullable(iniExp);
     }
 }
 

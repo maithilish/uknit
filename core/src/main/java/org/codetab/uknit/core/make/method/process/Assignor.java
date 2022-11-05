@@ -35,6 +35,10 @@ public class Assignor {
      * This method sets LHS exp to leftExp of right pack and remove the left
      * pack.
      *
+     * Bare assignment such as foo = factory.foo() happens here. The
+     * VariableDeclarationStatement var definition and assignment happens in
+     * Packer.packVars(), not here. Ex: Foo foo = factory.foo().
+     *
      * @param node
      * @param heap
      */
@@ -50,9 +54,12 @@ public class Assignor {
         if (packO.isPresent()) {
             Pack pack = packO.get();
             if (nodes.is(lhs, SimpleName.class)) {
-                /*
-                 * Date foo; foo = bar(); results in two packs, search for foo
-                 * pack, assign its var to bar pack and remove bar pack.
+                /**
+                 * <code>Date foo; foo = bar();</code> results in two packs,
+                 * search for foo pack, assign its var to bar pack and remove
+                 * bar pack. Another example,
+                 * <code>Locale locale = foo.locale(); locale = new Locale();</code>
+                 * the first pack is removed once second pack is assigned.
                  */
                 if (isNull(pack.getVar())) {
                     Optional<Pack> leftPackO = packs

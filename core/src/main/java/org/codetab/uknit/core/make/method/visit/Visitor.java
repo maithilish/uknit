@@ -85,23 +85,11 @@ public class Visitor extends ASTVisitor {
     private Type methodReturnType;
 
     /**
-     * VariableDeclarationStatement collects several VariableDeclarationFragment
-     * into a Statement. It is used for Local variable declaration. It holds
-     * type and fragments (vdf). The VariableDeclaration (super of vdf) holds
-     * name and initializer.
-     */
-    @Override
-    public void endVisit(final VariableDeclarationStatement node) {
-        Type type = node.getType();
-        List<VariableDeclaration> vdList = variables.getFragments(node);
-        packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
-    }
-
-    /**
-     * SingleVariableDeclaration (svd) nodes are used in formal parameter lists
-     * and catch clauses. They are not used for field and regular variable
-     * declaration statements. The VariableDeclaration (super of svd) holds name
-     * and initializer.
+     * Used for formal Parameter. SingleVariableDeclaration (svd) nodes are used
+     * in formal parameter lists and catch clauses. They are not used for field
+     * (FieldDeclaration is used for fields) and regular variable declaration
+     * statements. The VariableDeclaration (super of svd) defines name and
+     * initializer.
      */
     @Override
     public void endVisit(final SingleVariableDeclaration node) {
@@ -117,10 +105,24 @@ public class Visitor extends ASTVisitor {
     }
 
     /**
-     * VariableDeclarationExpression (vde) collects together several
-     * VariableDeclarationFragment (vdf) into a single Expression. It can be
-     * used as the initializer of a ForStatement or with ExpressionStatement.
-     * The VariableDeclaration (super of vdf) holds name and initializer.
+     * Used for local vars. VariableDeclarationStatement collects several
+     * VariableDeclarationFragment into a Statement. It is used for Local
+     * variable declaration. It holds type and fragments (vdf). The
+     * VariableDeclaration (super of fragment) defines name and initializer.
+     */
+    @Override
+    public void endVisit(final VariableDeclarationStatement node) {
+        Type type = node.getType();
+        List<VariableDeclaration> vdList = variables.getFragments(node);
+        packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
+    }
+
+    /**
+     * Used for For stmt. VariableDeclarationExpression (vde) collects together
+     * several VariableDeclarationFragment (vdf) into a single Expression. It
+     * can be used as the initializer of a ForStatement or with
+     * ExpressionStatement. The VariableDeclaration (super of fragment) defines
+     * name and initializer.
      */
     @Override
     public void endVisit(final VariableDeclarationExpression node) {

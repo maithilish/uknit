@@ -21,6 +21,8 @@ import org.codetab.uknit.core.exception.TypeNameException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.CastExpression;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IntersectionType;
 import org.eclipse.jdt.core.dom.ModuleQualifiedName;
@@ -165,6 +167,22 @@ public class Types {
     public boolean isBoolean(final Type retType) {
         return retType.isPrimitiveType()
                 && getTypeName(retType).equals("boolean");
+    }
+
+    /**
+     * Convenient method to get type from exp including null exp
+     *
+     * @param exp
+     * @param ast
+     * @return optional type
+     */
+    public Optional<Type> getType(final Expression exp) {
+        Optional<Type> type = Optional.empty();
+        if (nonNull(exp)) {
+            type = Optional.ofNullable(
+                    getType(exp.resolveTypeBinding(), exp.getAST()));
+        }
+        return type;
     }
 
     public Type getType(final ITypeBinding typeBinding, final AST ast) {
@@ -318,5 +336,23 @@ public class Types {
             returnsValue = false;
         }
         return returnsValue;
+    }
+
+    /**
+     * The effective type of a node. If node's parent is CastExpression then
+     * cast type is returned else the input type is returned.
+     *
+     * @param node
+     * @param type
+     * @return
+     */
+    public Type getEffectiveType(final ASTNode node, final Type type) {
+        Type effectiveType = type;
+        if (nodes.is(node.getParent(), CastExpression.class)) {
+            CastExpression ce =
+                    nodes.as(node.getParent(), CastExpression.class);
+            effectiveType = ce.getType();
+        }
+        return effectiveType;
     }
 }

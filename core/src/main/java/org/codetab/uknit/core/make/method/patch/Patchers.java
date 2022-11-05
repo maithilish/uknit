@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
@@ -134,7 +135,14 @@ public class Patchers {
                         assignment.getAST().newSimpleName(name));
             }
             return true;
+        } else if (nodes.is(node, CastExpression.class)) {
+            CastExpression ce = nodes.as(node, CastExpression.class);
+            if (patch.getExpIndex() == 0) {
+                ce.setExpression(ce.getAST().newSimpleName(name));
+            }
+            return true;
         }
+
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
@@ -235,7 +243,15 @@ public class Patchers {
             } else {
                 return -1;
             }
+        } else if (nodes.is(node, CastExpression.class)) {
+            CastExpression ce = nodes.as(node, CastExpression.class);
+            if (ce.getExpression().equals(exp)) {
+                return 0;
+            } else {
+                return -1;
+            }
         }
+
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
@@ -277,6 +293,9 @@ public class Patchers {
             Assignment assignment = nodes.as(node, Assignment.class);
             exps.add(assignment.getLeftHandSide());
             exps.add(assignment.getRightHandSide());
+        } else if (nodes.is(node, CastExpression.class)) {
+            CastExpression ce = nodes.as(node, CastExpression.class);
+            exps.add(ce.getExpression());
         } else if (nodes.is(node, InfixExpression.class)) {
             InfixExpression infix = nodes.as(node, InfixExpression.class);
             exps.add(infix.getLeftOperand());

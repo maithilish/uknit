@@ -15,6 +15,7 @@ import org.codetab.uknit.core.node.Modifiers;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.codetab.uknit.core.node.Variables;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -39,6 +40,8 @@ public class FieldMakers {
     @Inject
     private Nodes nodes;
     @Inject
+    private Variables variables;
+    @Inject
     private Mocks mocks;
 
     public List<Field> createSrcFields(
@@ -47,7 +50,7 @@ public class FieldMakers {
         for (FieldDeclaration fieldDecl : fieldDecls) {
             VariableDeclarationFragment vdf =
                     (VariableDeclarationFragment) fieldDecl.fragments().get(0);
-            String name = nodes.getVariableName(vdf);
+            String name = variables.getVariableName(vdf);
             Type type = fieldDecl.getType();
             boolean mock = mocks.isMockable(type);
 
@@ -66,7 +69,7 @@ public class FieldMakers {
             final FieldDeclaration srcFieldDecl) {
         VariableDeclarationFragment vdf =
                 (VariableDeclarationFragment) fieldDecl.fragments().get(0);
-        String name = nodes.getVariableName(vdf);
+        String name = variables.getVariableName(vdf);
         Type type = fieldDecl.getType();
         boolean mock = mocks.isMockable(type);
         Field field = modelFactory.createField(name, type, mock, fieldDecl,
@@ -110,7 +113,7 @@ public class FieldMakers {
         if (modifiers.isStatic(modifiers.getModifiers(fieldDecl))) {
             return false;
         }
-        if (nodes.isPrimitiveType(fieldDecl)) {
+        if (variables.isPrimitiveType(fieldDecl)) {
             return false;
         }
         String typeName = types.getTypeName(fieldDecl.getType());

@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.linked;
 
-import java.util.Date;
+import java.util.Locale;
 import org.codetab.uknit.itest.linked.Model.Foo;
 
 public class CastTest {
@@ -14,46 +14,46 @@ public class CastTest {
 
     @Test
     public void testCastCreated() {
-        Date date = new Date();
+        Locale locale = new Locale("en");
 
-        Date actual = cast.castCreated();
+        Locale actual = cast.castCreated();
 
-        assertEquals(date, actual);
+        assertEquals(locale, actual);
     }
 
     @Test
     public void testCastTwiceCreated() {
-        Date date = new Date();
-        Date date2 = date;
+        Locale locale = new Locale("en");
+        Locale locale2 = locale;
 
-        Date actual = cast.castTwiceCreated();
+        Locale actual = cast.castTwiceCreated();
 
-        assertEquals(date2, actual);
+        assertEquals(locale2, actual);
     }
 
     @Test
     public void testCastThriceCreated() {
-        Date date = new Date();
-        Date date2 = date;
-        Date date3 = date2;
+        Locale locale = new Locale("en");
+        Locale locale2 = locale;
+        Locale locale3 = locale2;
 
-        Date actual = cast.castThriceCreated();
+        Locale actual = cast.castThriceCreated();
 
-        assertEquals(date3, actual);
+        assertEquals(locale3, actual);
     }
 
     @Test
     public void testCastInvoke() {
         Foo foo = Mockito.mock(Foo.class);
-        Date date = Mockito.mock(Date.class);
-        Date date2 = date;
-        Date date3 = date2;
+        Locale locale = Mockito.mock(Locale.class);
+        Locale locale2 = locale;
+        Locale locale3 = locale2;
 
-        when(foo.date()).thenReturn(date);
+        when(foo.locale()).thenReturn(locale);
 
-        Date actual = cast.castInvoke(foo);
+        Locale actual = cast.castInvoke(foo);
 
-        assertSame(date3, actual);
+        assertSame(locale3, actual);
     }
 
     @Test
@@ -78,5 +78,51 @@ public class CastTest {
         String actual = cast.castArrayAccess(names);
 
         assertEquals(name3, actual);
+    }
+
+    @Test
+    public void testCreateAssignCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = new Locale("");
+        Locale locale = obj;
+
+        Locale actual = cast.createAssignCast(foo);
+
+        assertEquals(locale, actual);
+    }
+
+    @Test
+    public void testCreateReturnCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = new Locale("");
+
+        Locale actual = cast.createReturnCast(foo);
+
+        assertEquals(obj, actual);
+    }
+
+    @Test
+    public void testInvokeAssignCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = Mockito.mock(Locale.class);
+        Locale locale = obj;
+
+        when(foo.obj()).thenReturn(obj);
+
+        Locale actual = cast.invokeAssignCast(foo);
+
+        assertSame(locale, actual);
+    }
+
+    @Test
+    public void testInvokeReturnCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = Mockito.mock(Locale.class);
+
+        when(foo.obj()).thenReturn(obj);
+
+        Locale actual = cast.invokeReturnCast(foo);
+
+        assertSame(obj, actual);
     }
 }

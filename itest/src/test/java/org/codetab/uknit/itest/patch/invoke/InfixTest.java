@@ -1,0 +1,213 @@
+package org.codetab.uknit.itest.patch.invoke;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.util.Locale;
+
+import org.codetab.uknit.itest.patch.invoke.Model.Bar;
+import org.codetab.uknit.itest.patch.invoke.Model.Foo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+public class InfixTest {
+    @InjectMocks
+    private Infix infix;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        Locale locale = Mockito.mock(Locale.class);
+        String str = apple + " " + locale;
+
+        when(foo.lang()).thenReturn(apple).thenReturn(grape);
+        when(bar.locale(grape)).thenReturn(locale);
+
+        String actual = infix.assignInfix(foo, bar);
+
+        assertEquals(str, actual);
+    }
+
+    @Test
+    public void testReturnInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        Locale locale = Mockito.mock(Locale.class);
+        String orange = apple + " " + locale;
+
+        when(foo.lang()).thenReturn(apple).thenReturn(grape);
+        when(bar.locale(grape)).thenReturn(locale);
+
+        String actual = infix.returnInfix(foo, bar);
+
+        assertEquals(orange, actual);
+    }
+
+    @Test
+    public void testAssignCreationInfix() {
+        String foo = new String("foo" + "bar");
+
+        String actual = infix.assignCreationInfix();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testReturnCreationInfix() {
+        String apple = new String("foo" + "bar");
+
+        String actual = infix.returnCreationInfix();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignConditionalInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String grape = "Foo";
+        String orange = "Bar";
+        String str = apple > 1 ? "foo" + grape : orange + "foo";
+
+        when(foo.size()).thenReturn(apple);
+        when(foo.cntry()).thenReturn(grape);
+        when(foo.lang()).thenReturn(orange);
+
+        String actual = infix.assignConditionalInfix(foo);
+
+        assertEquals(str, actual);
+    }
+
+    @Test
+    public void testReturnConditionalInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String grape = "Foo";
+        String orange = "Bar";
+        String kiwi = apple > 1 ? "foo" + grape : orange + "foo";
+
+        when(foo.size()).thenReturn(apple);
+        when(foo.cntry()).thenReturn(grape);
+        when(foo.lang()).thenReturn(orange);
+
+        String actual = infix.returnConditionalInfix(foo);
+
+        assertEquals(kiwi, actual);
+    }
+
+    @Test
+    public void testAssignCastInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String obj = (Object) "foo" + "bar";
+
+        String actual = infix.assignCastInfix(foo);
+
+        assertEquals(obj, actual);
+    }
+
+    @Test
+    public void testReturnCastInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object apple = (Object) "foo" + "bar";
+
+        Object actual = infix.returnCastInfix(foo);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignArrayCreationInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String[] names = new String[apple + 1];
+
+        when(foo.size()).thenReturn(apple);
+
+        String[] actual = infix.assignArrayCreationInfix(foo);
+
+        assertArrayEquals(names, actual);
+    }
+
+    @Test
+    public void testReturnArrayCreationInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String[] grape = new String[apple + 1];
+
+        when(foo.size()).thenReturn(apple);
+
+        String[] actual = infix.returnArrayCreationInfix(foo);
+
+        assertArrayEquals(grape, actual);
+    }
+
+    @Test
+    public void testAssignArrayAccessInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String[] names = {"foo"};
+        int apple = -1;
+        String name = names[apple + 1];
+
+        when(foo.size()).thenReturn(apple);
+
+        String actual = infix.assignArrayAccessInfix(foo, names);
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testReturnArrayAccessInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String[] names = {"foo"};
+        int apple = -1;
+        String grape = names[apple + 1];
+
+        when(foo.size()).thenReturn(apple);
+
+        String actual = infix.returnArrayAccessInfix(foo, names);
+
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testAssignInvokeInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "Foo";
+        String lang = "Bar";
+
+        when(foo.cntry()).thenReturn(apple);
+        when(foo.lang("en_" + apple)).thenReturn(lang);
+
+        String actual = infix.assignInvokeInfix(foo);
+
+        assertEquals(lang, actual);
+    }
+
+    @Test
+    public void testReturnInvokeInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "Foo";
+        String grape = "Bar";
+
+        when(foo.cntry()).thenReturn(apple);
+        when(foo.lang("en_" + apple)).thenReturn(grape);
+
+        String actual = infix.returnInvokeInfix(foo);
+
+        assertEquals(grape, actual);
+    }
+}

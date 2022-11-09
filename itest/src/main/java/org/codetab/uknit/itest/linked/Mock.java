@@ -34,4 +34,5 @@ public class Mock {
         Locale locale2 = locale;
         return locale2;
     }
+
 }

@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.linked;
 
-import java.util.Date;
+import java.util.Locale;
 
 import org.codetab.uknit.itest.linked.Model.Foo;
 
@@ -13,29 +13,29 @@ import org.codetab.uknit.itest.linked.Model.Foo;
  */
 public class Cast {
 
-    public Date castCreated() {
-        Object date = new Date();
-        return (Date) date;
+    public Locale castCreated() {
+        Object locale = new Locale("en");
+        return (Locale) locale;
     }
 
-    public Date castTwiceCreated() {
-        Object date = new Date();
-        Date date2 = (Date) date;
-        return date2;
+    public Locale castTwiceCreated() {
+        Object locale = new Locale("en");
+        Locale locale2 = (Locale) locale;
+        return locale2;
     }
 
-    public Date castThriceCreated() {
-        Object date = new Date();
-        Date date2 = (Date) date;
-        Date date3 = date2;
-        return date3;
+    public Locale castThriceCreated() {
+        Object locale = new Locale("en");
+        Locale locale2 = (Locale) locale;
+        Locale locale3 = locale2;
+        return locale3;
     }
 
-    public Date castInvoke(final Foo foo) {
-        Object date = foo.date();
-        Date date2 = (Date) date;
-        Date date3 = date2;
-        return date3;
+    public Locale castInvoke(final Foo foo) {
+        Object locale = foo.locale();
+        Locale locale2 = (Locale) locale;
+        Locale locale3 = locale2;
+        return locale3;
     }
 
     public String castLiteral(final Foo foo) {
@@ -62,4 +62,26 @@ public class Cast {
     // String[] names3 = names2;
     // return names3;
     // }
+
+    public Locale createAssignCast(final Foo foo) {
+        Object obj = new Locale("");
+        Locale locale = (Locale) obj;
+        return locale;
+    }
+
+    public Locale createReturnCast(final Foo foo) {
+        Object obj = new Locale("");
+        return (Locale) obj;
+    }
+
+    public Locale invokeAssignCast(final Foo foo) {
+        Object obj = foo.obj();
+        Locale locale = (Locale) obj;
+        return locale;
+    }
+
+    public Locale invokeReturnCast(final Foo foo) {
+        Object obj = foo.obj();
+        return (Locale) obj;
+    }
 }

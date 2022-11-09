@@ -24,5 +24,7 @@ public class Model {
         Locale locale(String lang, String cntry);
 
         int size();
+
+        String key(String cntry);
     }
 }

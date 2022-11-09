@@ -61,6 +61,7 @@ public class Processor {
         imcProcessor.process(heap);
 
         varProcessor.markCreation(heap);
+        varProcessor.processCastType(heap);
     }
 
     public void processInvokes(final Heap heap) {
@@ -187,11 +188,26 @@ class PatchProcessor {
 class VarProcessor {
 
     @Inject
-    private VarMarker varMarker;
+    private LinkedVarProcessor linkedVarProcessor;
 
+    /**
+     * Propagate create to all linked packs.
+     *
+     * @param heap
+     */
     public void markCreation(final Heap heap) {
         heap.getPacks()
-                .forEach(pack -> varMarker.markCreation(pack, heap.getPacks()));
+                .forEach(pack -> linkedVarProcessor.markAndPropagateCreation(pack, heap.getPacks()));
+    }
+
+    /**
+     * Propagate cast type to all linked packs.
+     *
+     * @param heap
+     */
+    public void processCastType(final Heap heap) {
+        heap.getPacks().forEach(
+                pack -> linkedVarProcessor.propogateCastType(pack, heap.getPacks()));
     }
 }
 

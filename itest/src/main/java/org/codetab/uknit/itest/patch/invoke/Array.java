@@ -6,7 +6,9 @@ import org.codetab.uknit.itest.patch.invoke.Model.Foo;
 
 /**
  *
- * TODO Normal - fix the Class name (Array) and var name (array) conflict.
+ * TODO Normal - Fix the Class name (Array) and var name (array) conflict. Add
+ * one obj to array initializer in assignCastInArrayAccess and
+ * returnCastInArrayAccess.
  *
  * @author Maithilish
  *
@@ -29,6 +31,17 @@ public class Array {
 
     public Locale returnArrayAccess(final Foo foo, final Locale[] locales) {
         return locales[foo.index()];
+    }
+
+    public Locale assignCastInArrayAccess(final Foo foo,
+            final Locale[] locales) {
+        Locale locale = locales[(int) foo.obj()];
+        return locale;
+    }
+
+    public Locale returnCastInArrayAccess(final Foo foo,
+            final Locale[] locales) {
+        return locales[(int) foo.obj()];
     }
 
     /*

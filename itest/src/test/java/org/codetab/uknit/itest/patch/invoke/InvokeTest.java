@@ -129,8 +129,8 @@ public class InvokeTest {
         Bar bar = Mockito.mock(Bar.class);
         String apple = "en";
         String grape = "en";
-        Locale locale = new Locale("en");
-        String displayName = "English";
+        Locale locale = Mockito.mock(Locale.class);
+        String displayName = "Baz";
 
         when(foo.lang()).thenReturn(apple).thenReturn(grape);
         when(bar.locale(grape)).thenReturn(locale);
@@ -144,15 +144,49 @@ public class InvokeTest {
     public void testReturnInvokeOnExpression() {
         Foo foo = Mockito.mock(Foo.class);
         Bar bar = Mockito.mock(Bar.class);
-        String apple = "en";
-        String grape = "en";
-        Locale locale = new Locale("en");
-        String orange = "English";
+        String apple = "Foo";
+        String grape = "Bar";
+        Locale locale = Mockito.mock(Locale.class);
+        String orange = "Baz";
 
         when(foo.lang()).thenReturn(apple).thenReturn(grape);
         when(bar.locale(grape)).thenReturn(locale);
 
         String actual = invoke.returnInvokeOnExpression(foo, bar);
+
+        assertEquals(orange, actual);
+    }
+
+    @Test
+    public void testAssginInvokeOnExpressionParenthesized() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        Locale locale = Mockito.mock(Locale.class);
+        String displayName = "Baz";
+
+        when(foo.lang()).thenReturn(apple).thenReturn(grape);
+        when(bar.locale(grape)).thenReturn(locale);
+
+        String actual = invoke.assginInvokeOnExpressionParenthesized(foo, bar);
+
+        assertEquals(displayName, actual);
+    }
+
+    @Test
+    public void testReturnInvokeOnExpressionParenthesized() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        Locale locale = Mockito.mock(Locale.class);
+        String orange = "Baz";
+
+        when(foo.lang()).thenReturn(apple).thenReturn(grape);
+        when(bar.locale(grape)).thenReturn(locale);
+
+        String actual = invoke.returnInvokeOnExpressionParenthesized(foo, bar);
 
         assertEquals(orange, actual);
     }

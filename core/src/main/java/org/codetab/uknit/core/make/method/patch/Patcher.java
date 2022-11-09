@@ -17,6 +17,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Patch;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
@@ -47,6 +48,8 @@ public class Patcher {
     private ModelFactory modelFactory;
     @Inject
     private Patchers patchers;
+    @Inject
+    private Expressions expressions;
 
     /**
      * When inner expressions such as MethodInvocation returns InferVar then in
@@ -78,9 +81,12 @@ public class Patcher {
              * returns inferVar apple then when should be
              * when(sb.append(apple.toLowerCase())).thenReturn(...). Create a
              * patch for exp file.getName() to apple.
+             *
+             * When exp is CastExp strip it to find invoke. Ex: a[(int)foo.obj];
+             * the exp is (int) foo.obj() and find invoke for foo.obj().
              */
-            Optional<Invoke> invokeO =
-                    packs.findInvokeByExp(exp, heap.getPacks());
+            Optional<Invoke> invokeO = packs.findInvokeByExp(
+                    expressions.stripWraperExpression(exp), heap.getPacks());
             if (invokeO.isPresent() && nonNull(invokeO.get().getVar())) {
                 if (patchers.patchable(invokeO.get())) {
                     patchables.put(exp, invokeO.get());
@@ -105,11 +111,6 @@ public class Patcher {
         }
         return patchList;
     }
-
-    // public List<Pack> getVarOccurringPacks(final String name,
-    // final List<Pack> packs) {
-    //
-    // }
 
     /**
      * Copy and Patches MI or SMI and returns the calling exp.
@@ -163,8 +164,12 @@ public class Patcher {
         for (int i = 0; i < exps.size(); i++) {
             /*
              * for groups.size() in new String[groups.size()][groups.size()]
+             *
+             * When exp is CastExp strip it to find invoke. Ex: a[(int)foo.obj];
+             * the exp is (int) foo.obj() and find invoke for foo.obj().
              */
-            Expression patchExp = exps.get(i);
+            Expression patchExp =
+                    expressions.stripWraperExpression(exps.get(i));
             Optional<Patch> patch =
                     patches.findPatch(node, patchExp, heap.getPacks());
             if (patch.isPresent()) {

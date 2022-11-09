@@ -68,5 +68,4 @@ public class Enabled {
         Object obj3 = obj;
         return obj3;
     }
-
 }

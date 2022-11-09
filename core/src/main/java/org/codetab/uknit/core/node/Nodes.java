@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.node;
 
+import static java.util.Objects.isNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
@@ -13,10 +14,17 @@ import org.eclipse.jdt.core.dom.SimpleName;
 public class Nodes {
 
     public boolean is(final ASTNode node, final Class<?> clz) {
-        return node.getClass().isAssignableFrom(clz);
+        if (isNull(node)) {
+            return false;
+        } else {
+            return node.getClass().isAssignableFrom(clz);
+        }
     }
 
     public boolean is(final ASTNode node, final Class<?>... clzs) {
+        if (isNull(node)) {
+            return false;
+        }
         for (Class<?> clz : clzs) {
             if (node.getClass().isAssignableFrom(clz)) {
                 return true;
@@ -26,6 +34,9 @@ public class Nodes {
     }
 
     public boolean is(final ASTNode node, final List<Class<?>> clzs) {
+        if (isNull(node)) {
+            return false;
+        }
         for (Class<?> clz : clzs) {
             if (node.getClass().isAssignableFrom(clz)) {
                 return true;

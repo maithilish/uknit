@@ -43,12 +43,24 @@ public class Invoke {
     }
 
     public String assginInvokeOnExpression(final Foo foo, final Bar bar) {
+        String unicode =
+                new Locale(foo.lang()).getDisplayName(bar.locale(foo.lang()));
+        return unicode;
+    }
+
+    public String returnInvokeOnExpression(final Foo foo, final Bar bar) {
+        return new Locale(foo.lang()).getDisplayName(bar.locale(foo.lang()));
+    }
+
+    public String assginInvokeOnExpressionParenthesized(final Foo foo,
+            final Bar bar) {
         String displayName =
                 (new Locale(foo.lang())).getDisplayName(bar.locale(foo.lang()));
         return displayName;
     }
 
-    public String returnInvokeOnExpression(final Foo foo, final Bar bar) {
+    public String returnInvokeOnExpressionParenthesized(final Foo foo,
+            final Bar bar) {
         return (new Locale(foo.lang())).getDisplayName(bar.locale(foo.lang()));
     }
 }

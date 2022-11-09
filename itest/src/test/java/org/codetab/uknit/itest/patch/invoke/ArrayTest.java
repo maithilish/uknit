@@ -77,6 +77,34 @@ public class ArrayTest {
     }
 
     @Test
+    public void testAssignCastInArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale[] locales = {new Locale("foo")};
+        int apple = 0;
+        Locale locale = locales[apple];
+
+        when(foo.obj()).thenReturn(apple);
+
+        Locale actual = array.assignCastInArrayAccess(foo, locales);
+
+        assertSame(locale, actual);
+    }
+
+    @Test
+    public void testReturnCastInArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale[] locales = {new Locale("foo")};
+        int apple = 0;
+        Locale locale = locales[apple];
+
+        when(foo.obj()).thenReturn(apple);
+
+        Locale actual = array.returnCastInArrayAccess(foo, locales);
+
+        assertSame(locale, actual);
+    }
+
+    @Test
     public void testAssignArrayInitializer() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "Foo";

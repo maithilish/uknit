@@ -23,10 +23,12 @@ import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -41,114 +43,83 @@ public class Patchers {
     private Methods methods;
 
     /**
-     * Patch expression with var - arg expressions in MethodInvocation,
-     * ClassInstanceCreation and ArrayCreation and expression in
-     * MethodInvocation and ReturnStatement.
-     * <p>
-     * Use expIndex in the same logic as returned by getExpIndex().
-     * <p>
-     * foo.x().bar(baz.x()) - apple.bar(orange)
-     * <p>
-     * return foo.bar() - return apple
-     * <p>
-     * new String[group.size()] - new String[apple]
-     * <p>
-     * new Date(person.getDob()) - new Date(apple)
+     * Returns list of expressions in an expression.
      *
-     * <p>
-     *
-     * Following three methods - patchExpWithVar(), getExpIndex(), getExps() -
-     * works in tandem. While adding any new node type add in all three.
+     * The three methods - patchExpWithVar(), getExpIndex(), getExps() - works
+     * in tandem. While adding any new node type add in all three.
      *
      * @param node
-     * @param exp
-     * @param name
      * @return
      */
-    public boolean patchExpWithVar(final ASTNode node, final Patch patch) {
+    public List<Expression> getExps(final ASTNode node) {
         checkNotNull(node);
-        checkNotNull(patch);
 
-        String name = patch.getName();
+        List<Expression> exps = new ArrayList<>();
         if (nodes.is(node, ReturnStatement.class)) {
             ReturnStatement rs = nodes.as(node, ReturnStatement.class);
-            rs.setExpression(rs.getAST().newSimpleName(name));
-            return true;
+            if (nonNull(rs.getExpression())) {
+                exps.add(rs.getExpression());
+            }
         } else if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
-            if (patch.getExpIndex() == 0) {
-                mi.setExpression(mi.getAST().newSimpleName(name));
-            } else if (patch.getExpIndex() > 0) {
-                @SuppressWarnings("unchecked")
-                List<Expression> args = mi.arguments();
-                argPatcher.patch(args, patch.getExpIndex() - 1, patch);
-            }
-            return true;
+            exps.add(mi.getExpression());
+            @SuppressWarnings("unchecked")
+            List<Expression> args = mi.arguments();
+            exps.addAll(args);
         } else if (nodes.is(node, ClassInstanceCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ClassInstanceCreation.class).arguments();
-            argPatcher.patch(args, patch.getExpIndex(), patch);
-            return true;
+            exps.addAll(args);
         } else if (nodes.is(node, ArrayCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ArrayCreation.class).dimensions();
-            argPatcher.patch(args, patch.getExpIndex(), patch);
-            return true;
+            exps.addAll(args);
         } else if (nodes.is(node, ArrayInitializer.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ArrayInitializer.class).expressions();
-            argPatcher.patch(args, patch.getExpIndex(), patch);
-            return true;
+            exps.addAll(args);
         } else if (nodes.is(node, ArrayAccess.class)) {
             ArrayAccess aa = nodes.as(node, ArrayAccess.class);
-            if (patch.getExpIndex() == 0) {
-                aa.setArray(aa.getAST().newSimpleName(name));
-            } else if (patch.getExpIndex() == 1) {
-                aa.setIndex(aa.getAST().newSimpleName(name));
-            }
-            return true;
-        } else if (nodes.is(node, InfixExpression.class)) {
-            InfixExpression infix = nodes.as(node, InfixExpression.class);
-            if (patch.getExpIndex() == 0) {
-                infix.setLeftOperand(infix.getAST().newSimpleName(name));
-            } else if (patch.getExpIndex() == 1) {
-                infix.setRightOperand(infix.getAST().newSimpleName(name));
-            } else if (patch.getExpIndex() > 1) {
-                final int offset = 2;
-                @SuppressWarnings("unchecked")
-                List<Expression> extOperands = infix.extendedOperands();
-                int index = patch.getExpIndex() - offset;
-                extOperands.remove(index);
-                extOperands.add(index, infix.getAST().newSimpleName(name));
-            }
-            return true;
+            exps.add(aa.getArray());
+            exps.add(aa.getIndex());
         } else if (nodes.is(node, Assignment.class)) {
             Assignment assignment = nodes.as(node, Assignment.class);
-            if (patch.getExpIndex() == 0) {
-                assignment.setLeftHandSide(
-                        assignment.getAST().newSimpleName(name));
-            } else if (patch.getExpIndex() == 1) {
-                assignment.setRightHandSide(
-                        assignment.getAST().newSimpleName(name));
-            }
-            return true;
+            exps.add(assignment.getLeftHandSide());
+            exps.add(assignment.getRightHandSide());
         } else if (nodes.is(node, CastExpression.class)) {
             CastExpression ce = nodes.as(node, CastExpression.class);
-            if (patch.getExpIndex() == 0) {
-                ce.setExpression(ce.getAST().newSimpleName(name));
-            }
-            return true;
+            exps.add(ce.getExpression());
+        } else if (nodes.is(node, ParenthesizedExpression.class)) {
+            ParenthesizedExpression pe =
+                    nodes.as(node, ParenthesizedExpression.class);
+            exps.add(pe.getExpression());
+        } else if (nodes.is(node, InfixExpression.class)) {
+            InfixExpression infix = nodes.as(node, InfixExpression.class);
+            exps.add(infix.getLeftOperand());
+            exps.add(infix.getRightOperand());
+            @SuppressWarnings("unchecked")
+            List<Expression> extOperands = infix.extendedOperands();
+            exps.addAll(extOperands);
+        } else if (nodes.is(node, ConditionalExpression.class)) {
+            ConditionalExpression cond =
+                    nodes.as(node, ConditionalExpression.class);
+            exps.add(cond.getExpression());
+            exps.add(cond.getThenExpression());
+            exps.add(cond.getElseExpression());
         }
-
-        throw new CodeException(nodes.noImplmentationMessage(node));
+        return exps;
     }
 
     /**
      * Returns index of exp in node. For example, MI exp it is 0 and args starts
      * from 1 whereas for SMI there is no exp and args start from 0.
+     *
+     * The three methods - patchExpWithVar(), getExpIndex(), getExps() - works
+     * in tandem. While adding any new node type add in all three.
+     *
      * @param node
      * @param exp
      * @return
@@ -250,61 +221,152 @@ public class Patchers {
             } else {
                 return -1;
             }
+        } else if (nodes.is(node, ParenthesizedExpression.class)) {
+            ParenthesizedExpression pe =
+                    nodes.as(node, ParenthesizedExpression.class);
+            if (pe.getExpression().equals(exp)) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if (nodes.is(node, ConditionalExpression.class)) {
+            ConditionalExpression cond =
+                    nodes.as(node, ConditionalExpression.class);
+            if (cond.getExpression().equals(exp)) {
+                return 0;
+            } else if (cond.getThenExpression().equals(exp)) {
+                return 1;
+            } else if (cond.getElseExpression().equals(exp)) {
+                return 2;
+            } else {
+                return -1;
+            }
         }
-
         throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
-    public List<Expression> getExps(final ASTNode node) {
+    /**
+     * Patch expression with var - arg expressions in MethodInvocation,
+     * ClassInstanceCreation and ArrayCreation and expression in
+     * MethodInvocation and ReturnStatement.
+     * <p>
+     * Use expIndex in the same logic as returned by getExpIndex().
+     * <p>
+     * foo.x().bar(baz.x()) - apple.bar(orange)
+     * <p>
+     * return foo.bar() - return apple
+     * <p>
+     * new String[group.size()] - new String[apple]
+     * <p>
+     * new Date(person.getDob()) - new Date(apple)
+     *
+     * <p>
+     *
+     * The three methods - patchExpWithVar(), getExpIndex(), getExps() - works
+     * in tandem. While adding any new node type add in all three.
+     *
+     * @param node
+     * @param exp
+     * @param name
+     * @return
+     */
+    public boolean patchExpWithVar(final ASTNode node, final Patch patch) {
         checkNotNull(node);
+        checkNotNull(patch);
 
-        List<Expression> exps = new ArrayList<>();
+        String name = patch.getName();
         if (nodes.is(node, ReturnStatement.class)) {
             ReturnStatement rs = nodes.as(node, ReturnStatement.class);
-            if (nonNull(rs.getExpression())) {
-                exps.add(rs.getExpression());
-            }
+            rs.setExpression(rs.getAST().newSimpleName(name));
+            return true;
         } else if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
-            exps.add(mi.getExpression());
-            @SuppressWarnings("unchecked")
-            List<Expression> args = mi.arguments();
-            exps.addAll(args);
+            if (patch.getExpIndex() == 0) {
+                mi.setExpression(mi.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() > 0) {
+                @SuppressWarnings("unchecked")
+                List<Expression> args = mi.arguments();
+                argPatcher.patch(args, patch.getExpIndex() - 1, patch);
+            }
+            return true;
         } else if (nodes.is(node, ClassInstanceCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ClassInstanceCreation.class).arguments();
-            exps.addAll(args);
+            argPatcher.patch(args, patch.getExpIndex(), patch);
+            return true;
         } else if (nodes.is(node, ArrayCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ArrayCreation.class).dimensions();
-            exps.addAll(args);
+            argPatcher.patch(args, patch.getExpIndex(), patch);
+            return true;
         } else if (nodes.is(node, ArrayInitializer.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ArrayInitializer.class).expressions();
-            exps.addAll(args);
+            argPatcher.patch(args, patch.getExpIndex(), patch);
+            return true;
         } else if (nodes.is(node, ArrayAccess.class)) {
             ArrayAccess aa = nodes.as(node, ArrayAccess.class);
-            exps.add(aa.getArray());
-            exps.add(aa.getIndex());
-        } else if (nodes.is(node, Assignment.class)) {
-            Assignment assignment = nodes.as(node, Assignment.class);
-            exps.add(assignment.getLeftHandSide());
-            exps.add(assignment.getRightHandSide());
-        } else if (nodes.is(node, CastExpression.class)) {
-            CastExpression ce = nodes.as(node, CastExpression.class);
-            exps.add(ce.getExpression());
+            if (patch.getExpIndex() == 0) {
+                aa.setArray(aa.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 1) {
+                aa.setIndex(aa.getAST().newSimpleName(name));
+            }
+            return true;
         } else if (nodes.is(node, InfixExpression.class)) {
             InfixExpression infix = nodes.as(node, InfixExpression.class);
-            exps.add(infix.getLeftOperand());
-            exps.add(infix.getRightOperand());
-            @SuppressWarnings("unchecked")
-            List<Expression> extOperands = infix.extendedOperands();
-            exps.addAll(extOperands);
+            if (patch.getExpIndex() == 0) {
+                infix.setLeftOperand(infix.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 1) {
+                infix.setRightOperand(infix.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() > 1) {
+                final int offset = 2;
+                @SuppressWarnings("unchecked")
+                List<Expression> extOperands = infix.extendedOperands();
+                int index = patch.getExpIndex() - offset;
+                extOperands.remove(index);
+                extOperands.add(index, infix.getAST().newSimpleName(name));
+            }
+            return true;
+        } else if (nodes.is(node, Assignment.class)) {
+            Assignment assignment = nodes.as(node, Assignment.class);
+            if (patch.getExpIndex() == 0) {
+                assignment.setLeftHandSide(
+                        assignment.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 1) {
+                assignment.setRightHandSide(
+                        assignment.getAST().newSimpleName(name));
+            }
+            return true;
+        } else if (nodes.is(node, CastExpression.class)) {
+            CastExpression ce = nodes.as(node, CastExpression.class);
+            if (patch.getExpIndex() == 0) {
+                ce.setExpression(ce.getAST().newSimpleName(name));
+            }
+            return true;
+        } else if (nodes.is(node, ParenthesizedExpression.class)) {
+            ParenthesizedExpression pe =
+                    nodes.as(node, ParenthesizedExpression.class);
+            if (patch.getExpIndex() == 0) {
+                pe.setExpression(pe.getAST().newSimpleName(name));
+            }
+            return true;
+        } else if (nodes.is(node, ConditionalExpression.class)) {
+            ConditionalExpression cond =
+                    nodes.as(node, ConditionalExpression.class);
+            if (patch.getExpIndex() == 0) {
+                cond.setExpression(cond.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 1) {
+                cond.setThenExpression(cond.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() == 2) {
+                cond.setElseExpression(cond.getAST().newSimpleName(name));
+            }
+            return true;
         }
-        return exps;
+
+        throw new CodeException(nodes.noImplmentationMessage(node));
     }
 
     public boolean patchable(final Invoke invoke) {

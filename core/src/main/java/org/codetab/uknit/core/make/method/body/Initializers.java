@@ -126,6 +126,9 @@ class DefinedInitialzer {
         Optional<Pack> pack =
                 packs.findByVarName(var.getName(), heap.getPacks());
         Expression iniExp = pack.get().getExp();
+        if (isNull(iniExp)) {
+            return Optional.empty();
+        }
         /**
          * Casted initializer var type is already changed in Packer.packVars(),
          * so discard the cast from initializer. <code>
@@ -133,7 +136,7 @@ class DefinedInitialzer {
          * Foo foo = (Foo) o;
          * </code> the type o is set to Foo instead of Object.
          */
-        if (nonNull(iniExp) && nodes.is(iniExp, CastExpression.class)) {
+        if (nodes.is(iniExp, CastExpression.class)) {
             CastExpression ce = nodes.as(iniExp, CastExpression.class);
             if (nodes.is(ce.getExpression(), SimpleName.class)) {
                 iniExp = ce.getExpression();

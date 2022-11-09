@@ -40,6 +40,15 @@ public class Expressions {
         return nodes.is(exp, ClassInstanceCreation.class);
     }
 
+    public boolean isEvalExp(final Expression exp) {
+        for (Class<?> clz : nodeGroups.evalNodes()) {
+            if (exp.getClass().isAssignableFrom(clz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // FIXME Pack - can we use list.contains() instead of isAssignableFrom
     // in all similar usage of nodeGroups lists
     public boolean isCreation(final Expression exp) {
@@ -180,6 +189,12 @@ public class Expressions {
         }
     }
 
+    /**
+     * To find invoke we need exp nested in another exp such as CastExp. Returns
+     * the nested exp.
+     * @param exp
+     * @return
+     */
     public Expression stripWraperExpression(final Expression exp) {
         Expression eExp = exp;
         if (nodes.is(exp, CastExpression.class)) {

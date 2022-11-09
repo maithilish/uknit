@@ -84,6 +84,11 @@ public class NodeGroups {
             BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
             NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
 
+    /**
+     * Initializer expression that needs evaluation. Nothing at present.
+     */
+    private List<Class<?>> evalNodes = List.of();
+
     public List<Class<?>> nodesWithInvoke() {
         return nodesWithInvoke;
     }
@@ -102,5 +107,9 @@ public class NodeGroups {
 
     public List<Class<?>> creationNodes() {
         return creationNodes;
+    }
+
+    public List<Class<?>> evalNodes() {
+        return evalNodes;
     }
 }

@@ -263,4 +263,9 @@ public class NodeFactory {
         Statement stmt = snippetParser.parseStatement(assertStmt);
         return (Statement) ASTNode.copySubtree(ast, stmt);
     }
+
+    public Statement createBreakAnnotationStatement(final String breakStmt) {
+        Statement stmt = snippetParser.parseStatement(breakStmt);
+        return (Statement) ASTNode.copySubtree(ast, stmt);
+    }
 }

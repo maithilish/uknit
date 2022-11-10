@@ -42,6 +42,12 @@ public class Invoke {
         return bar.locale(foo.lang(foo.cntry()), foo.cntry());
     }
 
+    /*
+     * TODO H - args of invoke on real or created should be real
+     *
+     * It is bit complicated, collections may be real but it can hold mocks and
+     * the arg of collection methods can be mock or real.
+     */
     public String assginInvokeOnExpression(final Foo foo, final Bar bar) {
         String unicode =
                 new Locale(foo.lang()).getDisplayName(bar.locale(foo.lang()));

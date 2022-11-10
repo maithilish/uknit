@@ -120,14 +120,14 @@ public class InvokeTest {
         String apple = "Foo";
         String grape = "Bar";
         Locale locale = Mockito.mock(Locale.class);
-        String displayName = "Baz";
+        String unicode = "Baz";
 
         when(foo.lang()).thenReturn(apple).thenReturn(grape);
         when(bar.locale(grape)).thenReturn(locale);
 
         String actual = invoke.assginInvokeOnExpression(foo, bar);
 
-        assertEquals(displayName, actual);
+        assertEquals(unicode, actual);
     }
 
     @Test

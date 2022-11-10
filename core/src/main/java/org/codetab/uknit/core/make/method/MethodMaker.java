@@ -127,9 +127,11 @@ public class MethodMaker {
          * inserter.filterInsertableVars(heap.getVars());
          * inserter.processInsertableVars(insertableVars, heap);
          * inserter.enableInserts(heap);
-         *
-         * methodMakers.addThrowsException(testMethod, heap);
-         *
+         */
+
+        methodMakers.addThrowsException(testMethod, heap);
+
+        /*
          * // FIXME Pack - enable this after multi try exception fix //
          * variables.checkVarConsistency(heap.getVars());
          *

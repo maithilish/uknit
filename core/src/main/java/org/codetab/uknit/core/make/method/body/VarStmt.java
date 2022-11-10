@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Vars;
+import org.codetab.uknit.core.make.method.body.initializer.Initializers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;

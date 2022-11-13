@@ -24,8 +24,6 @@ public class InternalCallProcessor {
     @Inject
     private InternalCalls internalCalls;
     @Inject
-    private Merger merger;
-    @Inject
     private DInjector di;
     @Inject
     private Resolver resolver;
@@ -101,8 +99,6 @@ public class InternalCallProcessor {
 
             methodMaker.processMethod(methodDecl, invoke, internalMethod, heap,
                     internalHeap);
-
-            merger.merge(invoke, heap, internalHeap);
 
             return true;
         }

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
@@ -154,6 +155,20 @@ public class Packs {
                 .filter(p -> nonNull(p.getVar())
                         && filterKinds.contains(p.getVar().getKind()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Filter pack list where var name is changed.
+     *
+     * @param packs
+     * @return
+     */
+    public List<Pack> filterIsVarNameChanged(final List<Pack> packs) {
+        List<Pack> list = packs.stream().filter(p -> {
+            IVar var = p.getVar();
+            return nonNull(var) && !var.getName().equals(var.getRealName());
+        }).collect(Collectors.toList());
+        return list;
     }
 
     /**

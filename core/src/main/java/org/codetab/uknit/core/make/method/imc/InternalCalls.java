@@ -31,7 +31,7 @@ public class InternalCalls {
             if (methods.isInvokable(invoke.getExp())) {
                 Expression miOrSmiExp = invoke.getExp();
                 Optional<Expression> patchedCallExpO =
-                        patcher.getPatchedCallExp(miOrSmiExp, heap);
+                        patcher.getPatchedCallExp(invoke, heap);
 
                 if (methods.isInternalCall(miOrSmiExp, patchedCallExpO)) {
                     internalInvokes.add(invoke);

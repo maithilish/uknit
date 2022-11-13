@@ -141,7 +141,8 @@ public class Packer {
          * Find callVar of invoke. It is empty for all types of IMC - with
          * keywords this and super or without keywords (plain call)
          */
-        Optional<Expression> patchedExpO = patcher.getPatchedCallExp(exp, heap);
+        Optional<Expression> patchedExpO =
+                patcher.getPatchedCallExp(invoke, heap);
         Optional<IVar> callVarO = Optional.empty();
         if (patchedExpO.isPresent()) {
             try {

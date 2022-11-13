@@ -28,7 +28,8 @@ public interface ModelFactory {
 
     Invoke createInvoke(IVar var, Expression exp, boolean inCtlPath);
 
-    Patch createPatch(ASTNode node, Expression exp, String name, int expIndex);
+    Patch createPatch(org.codetab.uknit.core.make.model.Patch.Kind kind,
+            ASTNode node, Expression exp, String name, int expIndex);
 
     Call createCall(TypeDeclaration clz, SimpleName name, Type returnType,
             MethodDeclaration methodDecl);

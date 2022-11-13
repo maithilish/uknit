@@ -3,7 +3,6 @@ package org.codetab.uknit.core.make.model;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.eclipse.jdt.core.dom.Type;
@@ -13,7 +12,13 @@ import com.google.inject.assistedinject.Assisted;
 public class Var implements IVar {
 
     protected Kind kind;
+
+    // present name
     protected String name;
+
+    // original name before any name change
+    protected String realName;
+
     protected Type type;
     protected boolean mock;
     protected boolean created;
@@ -22,10 +27,11 @@ public class Var implements IVar {
     protected boolean deepStub;
 
     @Inject
-    public Var(@Assisted final Kind kind, @Assisted @Nullable final String name,
+    public Var(@Assisted final Kind kind, @Assisted final String name,
             @Assisted final Type type, @Assisted final boolean mock) {
         this.kind = kind;
         this.name = name;
+        this.realName = name;
         this.type = type;
         this.mock = mock;
         this.enable = true; // enable by default
@@ -42,6 +48,14 @@ public class Var implements IVar {
     @Override
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(final String realName) {
+        this.realName = realName;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.method.process;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.imc.InternalCallProcessor;
 import org.codetab.uknit.core.make.method.imc.InternalCalls;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
@@ -56,7 +58,7 @@ public class Processor {
         inferProcessor.createInfers(heap);
         inferProcessor.createInferForReturn(heap);
 
-        patchProcessor.createPatches(heap);
+        patchProcessor.createInvokePatches(heap);
 
         imcProcessor.process(heap);
 
@@ -87,6 +89,21 @@ public class Processor {
      */
     public void processVarState(final Heap heap) {
         varStateProcessor.process(heap);
+    }
+
+    /**
+     * On conflict if var name is changed, then create patch of Kind.VAR to
+     * patch occurrences of var name in exp and its expressions.
+     *
+     * The invokes patches holds the original name as they are created in
+     * process() before processVarNameChange(). Set the patch name to new name
+     * if any patch uses that name.
+     *
+     * @param heap
+     */
+    public void processVarNameChange(final Heap internalHeap) {
+        patchProcessor.createVarPatches(internalHeap);
+        patchProcessor.updateNamesInPatches(internalHeap);
     }
 }
 
@@ -177,11 +194,43 @@ class PatchProcessor {
     private PatchCreator patchCreator;
     @Inject
     private Packs packs;
+    @Inject
+    private Patcher patcher;
 
-    public void createPatches(final Heap heap) {
+    /**
+     * Create patch of Kind.INVOKE to patch invoke exp with infer var.
+     *
+     * @param heap
+     */
+    public void createInvokePatches(final Heap heap) {
         List<Pack> packList = packs.filterPacks(heap.getPacks(),
                 patchCreator.canHaveInvokes());
         packList.forEach(pack -> patchCreator.createInvokePatch(pack, heap));
+    }
+
+    /**
+     * On conflict if var name is changed, then create patch of Kind.VAR to
+     * patch occurrences of var name in exp and its expressions.
+     *
+     * @param heap
+     */
+    public void createVarPatches(final Heap heap) {
+        Map<String, String> namesMap = patchCreator.getNamesMap(heap);
+        heap.getPacks().forEach(
+                pack -> patchCreator.createVarPatch(pack, namesMap, heap));
+    }
+
+    /**
+     * On conflict if var name is changed, then set the patch name to new name
+     * if any patch uses that name. The invokes patches holds the original name
+     * as they are created in process() before processVarNameChange().
+     *
+     * @param heap
+     */
+    public void updateNamesInPatches(final Heap heap) {
+        Map<String, String> namesMap = patchCreator.getNamesMap(heap);
+        heap.getPacks()
+                .forEach(pack -> patcher.updatePatchName(pack, namesMap, heap));
     }
 }
 
@@ -196,8 +245,8 @@ class VarProcessor {
      * @param heap
      */
     public void markCreation(final Heap heap) {
-        heap.getPacks()
-                .forEach(pack -> linkedVarProcessor.markAndPropagateCreation(pack, heap.getPacks()));
+        heap.getPacks().forEach(pack -> linkedVarProcessor
+                .markAndPropagateCreation(pack, heap.getPacks()));
     }
 
     /**
@@ -206,8 +255,8 @@ class VarProcessor {
      * @param heap
      */
     public void processCastType(final Heap heap) {
-        heap.getPacks().forEach(
-                pack -> linkedVarProcessor.propogateCastType(pack, heap.getPacks()));
+        heap.getPacks().forEach(pack -> linkedVarProcessor
+                .propogateCastType(pack, heap.getPacks()));
     }
 }
 

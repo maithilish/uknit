@@ -13,6 +13,7 @@ import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
+import org.codetab.uknit.core.make.method.imc.Merger;
 import org.codetab.uknit.core.make.method.process.CallCreator;
 import org.codetab.uknit.core.make.method.process.Processor;
 import org.codetab.uknit.core.make.method.visit.Visitor;
@@ -55,6 +56,8 @@ public class MethodMaker {
     private Classes classes;
     @Inject
     private VarNames varNames;
+    @Inject
+    private Merger merger;
 
     private ClzMap clzMap;
 
@@ -178,12 +181,18 @@ public class MethodMaker {
         method.accept(visitor);
 
         /*
-         * process infer, returnInfer, IMC etc., but not when, verify and var
-         * state which are processed only once in the end.
+         * process infer, returnInfer, IMC etc., but when, verify and var state
+         * are not processed here and these are later processed by caller.
          */
         processor.process(internalHeap);
 
-        heap.tracePacks("Internal Packs after post visit processing");
+        // merge packs of internal heap to the caller heap.
+        merger.merge(invoke, heap, internalHeap);
+
+        // after merge, resolve any var name conflict
+        processor.processVarNameChange(internalHeap);
+
+        heap.tracePacks("Internal Packs after post visit process");
 
         // List<IVar> insertableVars =
         // inserter.filterInsertableVars(internalHeap.getVars());

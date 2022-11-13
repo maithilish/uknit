@@ -20,6 +20,10 @@ public interface IVar {
 
     void setName(String name);
 
+    String getRealName();
+
+    void setRealName(String name);
+
     Type getType();
 
     void setType(Type type);

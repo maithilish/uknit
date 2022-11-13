@@ -6,8 +6,8 @@ import org.codetab.uknit.itest.patch.invoke.Model.Foo;
 
 /**
  *
- * TODO Normal - Fix the Class name (Array) and var name (array) conflict. Add
- * one obj to array initializer in assignCastInArrayAccess and
+ * TODO N - Fix the Class name (Array) and var name (array) conflict. Add one
+ * obj to array initializer in assignCastInArrayAccess and
  * returnCastInArrayAccess.
  *
  * @author Maithilish

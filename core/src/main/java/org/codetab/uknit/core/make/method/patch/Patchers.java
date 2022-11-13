@@ -55,6 +55,7 @@ public class Patchers {
         checkNotNull(node);
 
         List<Expression> exps = new ArrayList<>();
+
         if (nodes.is(node, ReturnStatement.class)) {
             ReturnStatement rs = nodes.as(node, ReturnStatement.class);
             if (nonNull(rs.getExpression())) {

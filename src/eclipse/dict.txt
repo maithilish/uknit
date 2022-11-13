@@ -257,3 +257,5 @@ vde
 stmts
 patchable
 inferable
+exps
+locales

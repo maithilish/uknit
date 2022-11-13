@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.dom.IntersectionType;
 import org.eclipse.jdt.core.dom.ModuleQualifiedName;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NameQualifiedType;
+import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
@@ -179,8 +180,10 @@ public class Types {
     public Optional<Type> getType(final Expression exp) {
         Optional<Type> type = Optional.empty();
         if (nonNull(exp)) {
-            type = Optional.ofNullable(
-                    getType(exp.resolveTypeBinding(), exp.getAST()));
+            if (!nodes.is(exp, NullLiteral.class)) {
+                type = Optional.ofNullable(
+                        getType(exp.resolveTypeBinding(), exp.getAST()));
+            }
         }
         return type;
     }

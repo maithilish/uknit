@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 
 /**
@@ -20,35 +19,34 @@ import org.eclipse.jdt.core.dom.Expression;
 public class Patches {
 
     /**
-     * Get patch for a node and expression.
+     * Find patch from list of patches which matches node and patchExp.
+     *
      * @param node
-     * @param exp
+     * @param patchExp
+     * @param patches
      * @return
      */
-    public Optional<Patch> findPatch(final ASTNode node, final Expression exp,
-            final List<Pack> packs) {
-        // node is pack.exp, exp is patch.exp
-        Optional<Pack> packO = packs.stream().filter(p -> {
-            return nonNull(p.getExp()) && p.getExp().equals(node);
-        }).findFirst();
-        if (packO.isPresent()) {
-            return packO.get().getPatches().stream()
-                    .filter(pch -> pch.getExp().equals(exp)).findFirst();
-        } else {
-            return Optional.empty();
-        }
+    public Optional<Patch> findPatch(final Expression node,
+            final Expression patchExp, final List<Patch> patches) {
+        return patches.stream().filter(
+                p -> p.getNode().equals(node) && p.getExp().equals(patchExp))
+                .findFirst();
     }
 
     /**
-     * Get list of patches for a node.
+     * Find the pack for the node and return the patches of the pack.
+     *
      * @param node
+     * @param packs
      * @return
      */
-    public List<Patch> findPatches(final ASTNode node, final List<Pack> packs) {
+    public List<Patch> findPatches(final Expression node,
+            final List<Pack> packs) {
         // node is pack.exp
         Optional<Pack> packO = packs.stream().filter(p -> {
             return nonNull(p.getExp()) && p.getExp().equals(node);
         }).findFirst();
+
         if (packO.isPresent()) {
             return packO.get().getPatches();
         } else {

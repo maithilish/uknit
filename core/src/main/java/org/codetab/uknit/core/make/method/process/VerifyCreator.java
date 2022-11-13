@@ -42,7 +42,8 @@ public class VerifyCreator {
         }
 
         MethodInvocation mi = nodes.as(invoke.getExp(), MethodInvocation.class);
-        MethodInvocation patchedMi = patcher.copyAndPatch(mi, heap);
+        MethodInvocation patchedMi =
+                (MethodInvocation) patcher.copyAndPatch(invoke, heap);
 
         boolean inCtlPath = invoke.isInCtlPath();
 

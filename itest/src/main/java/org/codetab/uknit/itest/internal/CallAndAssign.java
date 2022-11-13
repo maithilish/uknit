@@ -11,7 +11,7 @@ public class CallAndAssign {
 
     public WebClient callAndAssignToSameName() {
         WebClient webClient;
-        webClient = conf();
+        webClient = configure();
         return webClient;
     }
 
@@ -19,26 +19,26 @@ public class CallAndAssign {
         @SuppressWarnings("unused")
         WebClient webClient;
         WebClient otherWebClient;
-        otherWebClient = conf();
+        otherWebClient = configure();
         return otherWebClient;
     }
 
     public void callAndAssignToSameNameReturnVoid() {
         @SuppressWarnings("unused")
         WebClient webClient;
-        webClient = conf();
+        webClient = configure();
     }
 
     @SuppressWarnings("unused")
     public void callAndAssignToDifferentNameReturnVoid() {
         WebClient webClient = factory.getWebClient();
         WebClient otherWebClient;
-        otherWebClient = conf();
+        otherWebClient = configure();
     }
 
     public WebClient callAndAssignToSameNameNullInitialized() {
         WebClient webClient = null;
-        webClient = conf();
+        webClient = configure();
         return webClient;
     }
 
@@ -46,7 +46,7 @@ public class CallAndAssign {
         @SuppressWarnings("unused")
         WebClient webClient = factory.getWebClient();
         WebClient otherWebClient;
-        otherWebClient = conf();
+        otherWebClient = configure();
         return otherWebClient;
     }
 
@@ -54,17 +54,17 @@ public class CallAndAssign {
         @SuppressWarnings("unused")
         WebClient webClient = null;
         WebClient otherWebClient;
-        otherWebClient = conf();
+        otherWebClient = configure();
         return otherWebClient;
     }
 
     public WebClient callAndAssignToSameNameMultipleCalls() {
         WebClient webClient;
-        webClient = conf();
+        webClient = configure();
 
         @SuppressWarnings("unused")
         WebClient webClient1;
-        webClient1 = conf();
+        webClient1 = configure();
 
         return webClient;
     }
@@ -73,17 +73,17 @@ public class CallAndAssign {
     public WebClient callAndAssignToDifferentNameMultipleCalls() {
         WebClient webClient;
         WebClient otherWebClient;
-        otherWebClient = conf();
+        otherWebClient = configure();
 
         WebClient webClient1;
         WebClient otherWebClient1;
-        otherWebClient1 = conf();
+        otherWebClient1 = configure();
 
         return otherWebClient;
     }
 
-    // IMC - internal method
-    private WebClient conf() {
+    // Internal Method (IM)
+    private WebClient configure() {
         WebClient webClient = factory.getWebClient();
         webClient.getOptions().setJavaScriptEnabled(false);
         return webClient;

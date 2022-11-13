@@ -28,7 +28,7 @@ public class Vars {
     private Nodes nodes;
 
     /**
-     * Get list of vars from packs.
+     * Get unmodifiable list of vars from packs.
      *
      * @param heap
      * @return

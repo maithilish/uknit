@@ -1,5 +1,16 @@
 package org.codetab.uknit.itest.internal;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
 public class CallAndAssignTest {
     @InjectMocks
     private CallAndAssign callAndAssign;
@@ -60,7 +71,8 @@ public class CallAndAssignTest {
         WebClient webClient2 = Mockito.mock(WebClient.class);
         Options options = Mockito.mock(Options.class);
 
-        when(factory.getWebClient()).thenReturn(webClient).thenReturn(webClient2);
+        when(factory.getWebClient()).thenReturn(webClient)
+                .thenReturn(webClient2);
         when(webClient2.getOptions()).thenReturn(options);
         callAndAssign.callAndAssignToDifferentNameReturnVoid();
 
@@ -76,7 +88,8 @@ public class CallAndAssignTest {
         when(factory.getWebClient()).thenReturn(webClient2);
         when(webClient2.getOptions()).thenReturn(options);
 
-        WebClient actual = callAndAssign.callAndAssignToSameNameNullInitialized();
+        WebClient actual =
+                callAndAssign.callAndAssignToSameNameNullInitialized();
 
         assertSame(webClient, actual);
         verify(options).setJavaScriptEnabled(false);
@@ -89,10 +102,12 @@ public class CallAndAssignTest {
         Options options = Mockito.mock(Options.class);
         WebClient otherWebClient = webClient2;
 
-        when(factory.getWebClient()).thenReturn(webClient).thenReturn(webClient2);
+        when(factory.getWebClient()).thenReturn(webClient)
+                .thenReturn(webClient2);
         when(webClient2.getOptions()).thenReturn(options);
 
-        WebClient actual = callAndAssign.callAndAssignToDifferentNameInitialized();
+        WebClient actual =
+                callAndAssign.callAndAssignToDifferentNameInitialized();
 
         assertSame(otherWebClient, actual);
         verify(options).setJavaScriptEnabled(false);
@@ -107,7 +122,8 @@ public class CallAndAssignTest {
         when(factory.getWebClient()).thenReturn(webClient2);
         when(webClient2.getOptions()).thenReturn(options);
 
-        WebClient actual = callAndAssign.callAndAssignToDifferentNameNullInitialized();
+        WebClient actual =
+                callAndAssign.callAndAssignToDifferentNameNullInitialized();
 
         assertSame(otherWebClient, actual);
         verify(options).setJavaScriptEnabled(false);
@@ -121,7 +137,8 @@ public class CallAndAssignTest {
         WebClient webClient3 = Mockito.mock(WebClient.class);
         Options options2 = Mockito.mock(Options.class);
 
-        when(factory.getWebClient()).thenReturn(webClient2).thenReturn(webClient3);
+        when(factory.getWebClient()).thenReturn(webClient2)
+                .thenReturn(webClient3);
         when(webClient2.getOptions()).thenReturn(options);
         when(webClient3.getOptions()).thenReturn(options2);
 
@@ -140,11 +157,13 @@ public class CallAndAssignTest {
         WebClient webClient3 = Mockito.mock(WebClient.class);
         Options options2 = Mockito.mock(Options.class);
 
-        when(factory.getWebClient()).thenReturn(webClient2).thenReturn(webClient3);
+        when(factory.getWebClient()).thenReturn(webClient2)
+                .thenReturn(webClient3);
         when(webClient2.getOptions()).thenReturn(options);
         when(webClient3.getOptions()).thenReturn(options2);
 
-        WebClient actual = callAndAssign.callAndAssignToDifferentNameMultipleCalls();
+        WebClient actual =
+                callAndAssign.callAndAssignToDifferentNameMultipleCalls();
 
         assertSame(otherWebClient, actual);
         verify(options).setJavaScriptEnabled(false);

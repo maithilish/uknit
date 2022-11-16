@@ -50,10 +50,12 @@ public class Var implements IVar {
         this.name = name;
     }
 
+    @Override
     public String getRealName() {
         return realName;
     }
 
+    @Override
     public void setRealName(final String realName) {
         this.realName = realName;
     }
@@ -131,6 +133,19 @@ public class Var implements IVar {
     @Override
     public void setDeepStub(final boolean deepStub) {
         this.deepStub = deepStub;
+    }
+
+    @Override
+    public IVar clone() {
+        Var clone = new Var(kind, name, type, mock);
+        clone.setCreated(created);
+        clone.setDeepStub(deepStub);
+        clone.setEnable(enable);
+        if (enforce.isPresent()) {
+            clone.setEnforce(Optional.ofNullable(enforce.get()));
+        }
+        clone.setRealName(realName);
+        return clone;
     }
 
     @Override

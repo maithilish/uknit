@@ -125,7 +125,9 @@ public class Vars {
             final String n = varName;
             if (varList.stream().anyMatch(v -> v.getName().equals(n))) {
                 index++;
-                varName = name.concat(String.valueOf(index));
+                // remove trailing index and concat new index
+                varName = name.replaceAll("\\d*$", "")
+                        .concat(String.valueOf(index));
             } else {
                 break;
             }

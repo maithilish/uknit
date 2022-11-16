@@ -53,6 +53,16 @@ public class Packer {
     @Inject
     private Expressions expressions;
 
+    /**
+     * Creates packs for VarDecl list. If initializer exists then its pack is
+     * used else new pack is created. Newly created var is set to the pack.
+     *
+     * @param kind
+     * @param type
+     * @param vdList
+     * @param inCtlPath
+     * @param heap
+     */
     public void packVars(final Kind kind, final Type type,
             final List<VariableDeclaration> vdList, final boolean inCtlPath,
             final Heap heap) {

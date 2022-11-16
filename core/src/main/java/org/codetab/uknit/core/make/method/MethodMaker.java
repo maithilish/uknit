@@ -121,7 +121,7 @@ public class MethodMaker {
         processor.processWhenVerify(heap);
         processor.processVarState(heap);
 
-        heap.tracePacks("Packs after post visit processing");
+        heap.tracePacks("Heap after MUT processing");
 
         /*
          * clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
@@ -192,7 +192,7 @@ public class MethodMaker {
         // after merge, resolve any var name conflict
         processor.processVarNameChange(internalHeap);
 
-        heap.tracePacks("Internal Packs after post visit process");
+        heap.tracePacks("Heap after IM processing");
 
         // List<IVar> insertableVars =
         // inserter.filterInsertableVars(internalHeap.getVars());

@@ -105,7 +105,7 @@ public class Packs {
      * @return
      */
     public List<Pack> filterPacks(final List<Pack> packs,
-            final List<Class<?>> classes) {
+            final List<Class<? extends Expression>> classes) {
         List<Pack> list = packs.stream().filter(p -> {
             Expression exp = p.getExp();
             return nonNull(exp) && nodes.is(exp, classes);

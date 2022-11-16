@@ -195,6 +195,11 @@ public class Visitor extends ASTVisitor {
     }
 
     @Override
+    public void endVisit(final QualifiedName node) {
+        packer.packExp(node, inCtlPath, heap);
+    }
+
+    @Override
     public void endVisit(final StringLiteral node) {
         packer.packLiteralExp(node, inCtlPath, heap);
     }
@@ -221,11 +226,6 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final BooleanLiteral node) {
-        packer.packLiteralExp(node, inCtlPath, heap);
-    }
-
-    @Override
-    public void endVisit(final QualifiedName node) {
         packer.packLiteralExp(node, inCtlPath, heap);
     }
 

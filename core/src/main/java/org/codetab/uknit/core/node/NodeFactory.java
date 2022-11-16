@@ -74,20 +74,24 @@ public class NodeFactory {
     }
 
     public Name createName(final String name) {
+        return createName(name, this.ast);
+    }
+
+    public Name createName(final String name, final AST aAst) {
         if (name.contains(".")) {
             String[] parts = name.split("\\.");
             Name pName = null;
             for (int c = 0; c < parts.length; c++) {
-                SimpleName sName = ast.newSimpleName(parts[c]);
+                SimpleName sName = aAst.newSimpleName(parts[c]);
                 if (isNull(pName)) {
                     pName = sName;
                 } else {
-                    pName = ast.newQualifiedName(pName, sName);
+                    pName = aAst.newQualifiedName(pName, sName);
                 }
             }
             return pName;
         } else {
-            return ast.newSimpleName(name);
+            return aAst.newSimpleName(name);
         }
     }
 
@@ -268,4 +272,5 @@ public class NodeFactory {
         Statement stmt = snippetParser.parseStatement(breakStmt);
         return (Statement) ASTNode.copySubtree(ast, stmt);
     }
+
 }

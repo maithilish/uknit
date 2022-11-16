@@ -57,11 +57,11 @@ public class PatchCreator {
      * @param heap
      */
     public void createVarPatch(final Pack pack,
-            final Map<String, String> namesMap, final Heap heap) {
+            final Map<String, String> namesMap) {
         Expression exp = pack.getExp();
         if (nonNull(exp)) {
             List<Patch> patches = patcher.creatVarPatches(exp,
-                    patchers.getExps(exp), namesMap, heap);
+                    patchers.getExps(exp), namesMap);
             pack.getPatches().addAll(patches);
         }
     }
@@ -77,7 +77,7 @@ public class PatchCreator {
      *
      * @return
      */
-    public List<Class<?>> canHaveInvokes() {
+    public List<Class<? extends Expression>> canHaveInvokes() {
         return nodeGroups.nodesWithInvoke();
     }
 

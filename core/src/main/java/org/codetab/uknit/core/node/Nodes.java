@@ -5,13 +5,19 @@ import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 public class Nodes {
+
+    @Inject
+    private NodeGroups nodeGroups;
 
     public boolean is(final ASTNode node, final Class<?> clz) {
         if (isNull(node)) {
@@ -33,7 +39,8 @@ public class Nodes {
         return false;
     }
 
-    public boolean is(final ASTNode node, final List<Class<?>> clzs) {
+    public boolean is(final ASTNode node,
+            final List<Class<? extends Expression>> clzs) {
         if (isNull(node)) {
             return false;
         }
@@ -45,16 +52,52 @@ public class Nodes {
         return false;
     }
 
+    public boolean isLiteral(final ASTNode node) {
+        if (isNull(node)) {
+            return false;
+        }
+        for (Class<?> clz : nodeGroups.literalNodes()) {
+            if (node.getClass().isAssignableFrom(clz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public <T> T as(final Object o, final Class<T> clz) {
         return clz.cast(o);
     }
 
+    /**
+     * Returns name part of the name.
+     *
+     * @param node
+     * @return
+     */
     public String getName(final ASTNode node) {
         if (node.getNodeType() == ASTNode.SIMPLE_NAME) {
             return ((SimpleName) node).getFullyQualifiedName();
         }
         if (node.getNodeType() == ASTNode.QUALIFIED_NAME) {
             return ((QualifiedName) node).getName().getFullyQualifiedName();
+        }
+        throw new CodeException(
+                spaceit("node should be Simple or QualifiedName, but was:",
+                        node.getClass().getSimpleName()));
+    }
+
+    /**
+     * Returns qualified name.
+     *
+     * @param node
+     * @return
+     */
+    public String getQualifiedName(final ASTNode node) {
+        if (node.getNodeType() == ASTNode.SIMPLE_NAME) {
+            return ((SimpleName) node).getFullyQualifiedName();
+        }
+        if (node.getNodeType() == ASTNode.QUALIFIED_NAME) {
+            return ((QualifiedName) node).getFullyQualifiedName();
         }
         throw new CodeException(
                 spaceit("node should be Simple or QualifiedName, but was:",
@@ -155,4 +198,5 @@ public class Nodes {
         return spaceit("no implmentation for node type:",
                 node.getClass().getSimpleName(), "-", node.toString());
     }
+
 }

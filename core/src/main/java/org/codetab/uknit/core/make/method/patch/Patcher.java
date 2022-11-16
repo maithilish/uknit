@@ -21,6 +21,8 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Patch.Kind;
 import org.codetab.uknit.core.node.Expressions;
+import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
@@ -53,6 +55,10 @@ public class Patcher {
     private Patchers patchers;
     @Inject
     private Expressions expressions;
+    @Inject
+    private NodeGroups nodeGroups;
+    @Inject
+    private Methods methods;
 
     /**
      * When inner expressions such as MethodInvocation returns InferVar then in
@@ -125,8 +131,7 @@ public class Patcher {
      * @return
      */
     public List<Patch> creatVarPatches(final ASTNode node,
-            final List<Expression> exps, final Map<String, String> namesMap,
-            final Heap heap) {
+            final List<Expression> exps, final Map<String, String> namesMap) {
         List<Patch> patchList = new ArrayList<>();
         if (nodes.isName(node)) {
             /*
@@ -286,5 +291,41 @@ public class Patcher {
             replacerList.forEach(r -> patchers.patchExpWithVar(expCopy, r));
         }
         return nodeCopy;
+    }
+
+    /**
+     * Filters list of packs to contains only the exp nodes which can contains
+     * MI and SMI; then filter any IMC calls from it.
+     *
+     * IMC collapses to its return var so there nothing to patch. Ex: int x =
+     * foo(y) collapses to int x = apple;
+     *
+     * @param heap
+     * @return
+     */
+    public List<Pack> getInvokePatchables(final Heap heap) {
+
+        // get list of packs whose exp can contain invoke exp
+        List<Pack> packList = packs.filterPacks(heap.getPacks(),
+                nodeGroups.nodesWithInvoke());
+
+        /*
+         * Exclude IMC calls. Even though IMC is invoke it is replaced with a
+         * return var so don't create patches for it. Ex: internal(foo,
+         * foo.size())
+         */
+        List<Pack> invokePatchables = new ArrayList<>();
+        for (Pack pack : packList) {
+            if (methods.isInvokable(pack.getExp()) && pack instanceof Invoke) {
+                // add all packs other than internal invoke
+                if (!methods.isInternalCall(pack.getExp(),
+                        getPatchedCallExp((Invoke) pack, heap))) {
+                    invokePatchables.add(pack);
+                }
+            } else {
+                invokePatchables.add(pack);
+            }
+        }
+        return invokePatchables;
     }
 }

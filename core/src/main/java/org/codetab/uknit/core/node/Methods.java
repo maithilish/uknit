@@ -264,14 +264,23 @@ public class Methods {
                         .getPrimitiveTypeCode().equals(PrimitiveType.VOID);
     }
 
+    /**
+     * If call exp of MI or SMI is empty then it is internal call provided it is
+     * not static call as the call exp of static call (of static import type) is
+     * empty.
+     *
+     * @param miOrSmi
+     * @param callExpO
+     * @return
+     */
     public boolean isInternalCall(final Expression miOrSmi,
-            final Optional<Expression> patchedExpO) {
+            final Optional<Expression> callExpO) {
         boolean internalCall = false;
-        if (patchedExpO.isEmpty()) {
+        if (callExpO.isEmpty()) {
             internalCall = true;
-        }
-        if (!isStaticCall(miOrSmi)) {
-            internalCall = true;
+            if (isStaticCall(miOrSmi)) {
+                internalCall = false;
+            }
         }
         return internalCall;
     }

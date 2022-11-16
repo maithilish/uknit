@@ -12,6 +12,8 @@ import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
@@ -35,50 +37,58 @@ public class NodeGroups {
     /*
      * List of Expression classes which can have MI or SMI.
      */
-    private List<Class<?>> nodesWithInvoke = List.of(MethodInvocation.class,
-            SuperMethodInvocation.class, ClassInstanceCreation.class,
-            ArrayCreation.class, ArrayAccess.class, ArrayInitializer.class,
-            InfixExpression.class, PostfixExpression.class,
-            PrefixExpression.class, ConditionalExpression.class,
-            CastExpression.class);
+    private List<Class<? extends Expression>> nodesWithInvoke = List.of(
+            MethodInvocation.class, SuperMethodInvocation.class,
+            ClassInstanceCreation.class, ArrayCreation.class, ArrayAccess.class,
+            ArrayInitializer.class, InfixExpression.class,
+            PostfixExpression.class, PrefixExpression.class,
+            ConditionalExpression.class, CastExpression.class);
 
     /*
      * Literal Nodes.
      */
-    private List<Class<?>> literalNodes = List.of(BooleanLiteral.class,
-            CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
-            StringLiteral.class, TypeLiteral.class);
+    private List<Class<? extends Expression>> literalNodes = List.of(
+            BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
+            NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
 
     /**
      * Expressions those can be used as initializer. The MI and SMI can't be
      * directly used as initialiser but they are patched to var name which is
      * used as initializer.
+     *
+     * QualifiedName as initializer. Ex: int id = foo.id; Actually this is
+     * FieldAccess but AST treats this as QName. Don't know the full impact by
+     * allowing it as initializer.
+     *
      */
-    private List<Class<?>> allowedAsInitializer = List.of(
+    private List<Class<? extends Expression>> allowedAsInitializer = List.of(
             ClassInstanceCreation.class, ArrayCreation.class, ArrayAccess.class,
             ArrayInitializer.class, InfixExpression.class,
             PostfixExpression.class, PrefixExpression.class,
             ConditionalExpression.class, CastExpression.class,
-            BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
-            NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
+            FieldAccess.class, QualifiedName.class, BooleanLiteral.class,
+            CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
+            StringLiteral.class, TypeLiteral.class);
 
     /**
      * Nodes for which infer vars can be created. SMI is not included as as it
      * is replaced by IMC packs and infer is not created.
      */
-    private List<Class<?>> inferableNodes = List.of(ClassInstanceCreation.class,
-            MethodInvocation.class, ArrayCreation.class, ArrayAccess.class,
-            ArrayInitializer.class, InfixExpression.class,
-            PostfixExpression.class, PrefixExpression.class,
-            ConditionalExpression.class, QualifiedName.class,
-            BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
-            NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
+    private List<Class<? extends Expression>> inferableNodes = List.of(
+            ClassInstanceCreation.class, MethodInvocation.class,
+            ArrayCreation.class, ArrayAccess.class, ArrayInitializer.class,
+            InfixExpression.class, PostfixExpression.class,
+            PrefixExpression.class, ConditionalExpression.class,
+            QualifiedName.class, BooleanLiteral.class, CharacterLiteral.class,
+            NullLiteral.class, NumberLiteral.class, StringLiteral.class,
+            TypeLiteral.class);
 
     /**
      * Instance creation new Foo(), Array creation, Literals "foo", 5 etc.,
      */
-    private List<Class<?>> creationNodes = List.of(ClassInstanceCreation.class,
-            ArrayCreation.class, ArrayInitializer.class, InfixExpression.class,
+    private List<Class<? extends Expression>> creationNodes = List.of(
+            ClassInstanceCreation.class, ArrayCreation.class,
+            ArrayInitializer.class, InfixExpression.class,
             PostfixExpression.class, PrefixExpression.class,
             ConditionalExpression.class, QualifiedName.class,
             BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
@@ -89,23 +99,23 @@ public class NodeGroups {
      */
     private List<Class<?>> evalNodes = List.of();
 
-    public List<Class<?>> nodesWithInvoke() {
+    public List<Class<? extends Expression>> nodesWithInvoke() {
         return nodesWithInvoke;
     }
 
-    public List<Class<?>> literalNodes() {
+    public List<Class<? extends Expression>> literalNodes() {
         return literalNodes;
     }
 
-    public List<Class<?>> allowedAsInitializer() {
+    public List<Class<? extends Expression>> allowedAsInitializer() {
         return allowedAsInitializer;
     }
 
-    public List<Class<?>> inferableNodes() {
+    public List<Class<? extends Expression>> inferableNodes() {
         return inferableNodes;
     }
 
-    public List<Class<?>> creationNodes() {
+    public List<Class<? extends Expression>> creationNodes() {
         return creationNodes;
     }
 

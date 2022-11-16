@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.codetab.uknit.itest.internal.Model.Factory;
+import org.codetab.uknit.itest.internal.Model.Options;
+import org.codetab.uknit.itest.internal.Model.WebClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

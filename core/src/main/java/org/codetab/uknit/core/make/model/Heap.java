@@ -117,5 +117,6 @@ public class Heap implements Listener {
         for (Pack pack : getPacks()) {
             LOG.trace("{} {}", pack, pack.getPatches());
         }
+        LOG.trace("");
     }
 }

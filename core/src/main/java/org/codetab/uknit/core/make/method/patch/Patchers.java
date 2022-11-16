@@ -15,7 +15,9 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
@@ -407,12 +409,15 @@ public class Patchers {
 
 class ArgPatcher {
 
+    @Inject
+    private NodeFactory nodeFactory;
+
     public void patch(final List<Expression> args, final int expIndex,
             final Patch patch) {
         if (expIndex >= 0) {
+            AST ast = args.get(expIndex).getAST();
             args.remove(expIndex);
-            args.add(expIndex,
-                    patch.getExp().getAST().newSimpleName(patch.getName()));
+            args.add(expIndex, nodeFactory.createName(patch.getName(), ast));
         }
     }
 }

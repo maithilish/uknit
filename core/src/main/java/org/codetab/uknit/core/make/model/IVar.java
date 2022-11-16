@@ -48,6 +48,8 @@ public interface IVar {
 
     void setDeepStub(boolean deepStub);
 
+    IVar clone();
+
     default boolean isField() {
         return is(Kind.FIELD);
     }

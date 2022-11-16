@@ -193,8 +193,6 @@ class PatchProcessor {
     @Inject
     private PatchCreator patchCreator;
     @Inject
-    private Packs packs;
-    @Inject
     private Patcher patcher;
 
     /**
@@ -203,8 +201,7 @@ class PatchProcessor {
      * @param heap
      */
     public void createInvokePatches(final Heap heap) {
-        List<Pack> packList = packs.filterPacks(heap.getPacks(),
-                patchCreator.canHaveInvokes());
+        List<Pack> packList = patcher.getInvokePatchables(heap);
         packList.forEach(pack -> patchCreator.createInvokePatch(pack, heap));
     }
 
@@ -216,8 +213,8 @@ class PatchProcessor {
      */
     public void createVarPatches(final Heap heap) {
         Map<String, String> namesMap = patchCreator.getNamesMap(heap);
-        heap.getPacks().forEach(
-                pack -> patchCreator.createVarPatch(pack, namesMap, heap));
+        heap.getPacks()
+                .forEach(pack -> patchCreator.createVarPatch(pack, namesMap));
     }
 
     /**

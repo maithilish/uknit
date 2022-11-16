@@ -1,5 +1,8 @@
 package org.codetab.uknit.itest.internal;
 
+import org.codetab.uknit.itest.internal.Model.Factory;
+import org.codetab.uknit.itest.internal.Model.WebClient;
+
 /**
  * Internal Method Call and assign to same or different var names.
  * @author m
@@ -88,16 +91,4 @@ public class CallAndAssign {
         webClient.getOptions().setJavaScriptEnabled(false);
         return webClient;
     }
-}
-
-interface Factory {
-    WebClient getWebClient();
-}
-
-interface WebClient {
-    Options getOptions();
-}
-
-interface Options {
-    void setJavaScriptEnabled(boolean b);
 }

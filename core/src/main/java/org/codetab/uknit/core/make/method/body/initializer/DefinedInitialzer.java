@@ -36,7 +36,8 @@ class DefinedInitialzer {
     private NodeGroups nodeGroups;
 
     public boolean isAllowed(final Expression exp) {
-        List<Class<?>> clzs = nodeGroups.allowedAsInitializer();
+        List<Class<? extends Expression>> clzs =
+                nodeGroups.allowedAsInitializer();
         for (Class<?> clz : clzs) {
             if (nodes.is(exp, clz)) {
                 return true;

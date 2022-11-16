@@ -162,7 +162,8 @@ public class VarNames {
         } else {
             suffix = stringUtils.generateString(RANDOM_STR_LEN);
         }
-        return name + StringUtils.capitalize(suffix);
+        String newName = name + StringUtils.capitalize(suffix);
+        return newName;
     }
 }
 

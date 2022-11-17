@@ -264,7 +264,6 @@ public class SourceVisitor extends ASTVisitor {
                     // finally stage and generate the test method.
                     if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
                         methodMaker.generateTestMethod(heap);
-
                     }
                 }
             } else {

@@ -79,9 +79,9 @@ public class NodeGroups {
             ArrayCreation.class, ArrayAccess.class, ArrayInitializer.class,
             InfixExpression.class, PostfixExpression.class,
             PrefixExpression.class, ConditionalExpression.class,
-            QualifiedName.class, BooleanLiteral.class, CharacterLiteral.class,
-            NullLiteral.class, NumberLiteral.class, StringLiteral.class,
-            TypeLiteral.class);
+            QualifiedName.class, FieldAccess.class, BooleanLiteral.class,
+            CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
+            StringLiteral.class, TypeLiteral.class);
 
     /**
      * Instance creation new Foo(), Array creation, Literals "foo", 5 etc.,

@@ -123,4 +123,11 @@ ExpressionMethodReference
         setWriter(Logger::setLogWriter, writer, logger);
         }
 
+## FieldAccess vs QualifiedName
+
+foo.id is QName and (foo).id is FieldAccess.
+
+An expression like "foo.bar" can be represented either as a qualified name (QualifiedName) or as a field access expression (FieldAccess) containing simple names. Either is acceptable, and there is no way to choose between them without information about what the names resolve to (ASTParser may return either).
+
+
 

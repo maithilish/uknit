@@ -12,6 +12,7 @@ import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
+import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.imc.Merger;
 import org.codetab.uknit.core.make.method.process.CallCreator;
@@ -40,6 +41,8 @@ public class MethodMaker {
     private DInjector di;
     @Inject
     private Configs configs;
+    @Inject
+    private Controller ctl;
     @Inject
     private MethodMakers methodMakers;
     @Inject
@@ -86,8 +89,9 @@ public class MethodMaker {
         String testMethodName =
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
 
-        LOG.debug("Method: {}", methods.getMethodSignature(method),
-                testMethodName);
+        String mutSignature = methods.getMethodSignature(method);
+        ctl.setMUTSignature(mutSignature);
+        LOG.debug("Method: {}", mutSignature);
         LOG.debug("Test Method: {}", testMethodName);
 
         testMethod = methodMakers.constructTestMethod(method, testMethodName);

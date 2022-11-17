@@ -1,5 +1,7 @@
 package org.codetab.uknit.core;
 
+import static java.util.Objects.nonNull;
+
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +30,9 @@ public class Uknit {
     public void run() {
         Configs configs = di.instance(Configs.class);
 
+        Controller ctl = null;
         try {
-            Controller ctl = di.instance(Controller.class);
+            ctl = di.instance(Controller.class);
             ctl.setup();
 
             SourceParser sourceParser = di.instance(SourceParser.class);
@@ -44,6 +47,9 @@ public class Uknit {
 
         } catch (Exception e) {
             String message = "uKnit terminated with error";
+            if (nonNull(ctl) && nonNull(ctl.getMutSignature())) {
+                LOG.error("method under test: {}", ctl.getMutSignature());
+            }
             LOG.error("{}", e.getMessage());
             LOG.error(String.join(", ", message, "see log."));
             if (configs.getConfig("uknit.mode.dev", false)) {

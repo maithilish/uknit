@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -196,6 +197,11 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final QualifiedName node) {
+        packer.packExp(node, inCtlPath, heap);
+    }
+
+    @Override
+    public void endVisit(final FieldAccess node) {
         packer.packExp(node, inCtlPath, heap);
     }
 

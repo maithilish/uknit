@@ -47,6 +47,9 @@ public class Controller {
 
     private Map<AbstractTypeDeclaration, List<Entry<String, String>>> superClassMap;
 
+    // method under test signature
+    private String mutSignature;
+
     public void setup() {
         LOG.info("setup controller");
         LOG.info("create empty CU for test class");
@@ -93,4 +96,11 @@ public class Controller {
         return superClassMap;
     }
 
+    public void setMUTSignature(final String mutSign) {
+        this.mutSignature = mutSign;
+    }
+
+    public String getMutSignature() {
+        return mutSignature;
+    }
 }

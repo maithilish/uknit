@@ -81,7 +81,9 @@ public class Expressions {
 
     /**
      * Get name from various types of expression. InfixExpression is not handled
-     * as it has left and right exp.
+     * as it has left and right exp. For QualifiedName dot qualified name is
+     * returned.
+     *
      * @param exp
      * @return name or null if not found
      */
@@ -92,7 +94,7 @@ public class Expressions {
         if (nodes.is(exp, SimpleName.class)) {
             name = nodes.getName(exp);
         } else if (nodes.is(exp, QualifiedName.class)) {
-            name = nodes.getName(exp);
+            name = nodes.getQualifiedName(exp);
         } else if (nodes.is(exp, CastExpression.class)) {
             Expression castExp =
                     nodes.as(exp, CastExpression.class).getExpression();
@@ -190,8 +192,8 @@ public class Expressions {
     }
 
     /**
-     * To find invoke we need exp nested in another exp such as CastExp. Returns
-     * the nested exp.
+     * Recursively strip cast and parenthesise from an expression.
+     *
      * @param exp
      * @return
      */
@@ -201,6 +203,10 @@ public class Expressions {
             eExp = nodes.as(exp, CastExpression.class).getExpression();
         } else if (nodes.is(exp, ParenthesizedExpression.class)) {
             eExp = nodes.as(exp, ParenthesizedExpression.class).getExpression();
+        }
+        if (nodes.is(eExp, CastExpression.class,
+                ParenthesizedExpression.class)) {
+            eExp = stripWraperExpression(eExp);
         }
         return eExp;
     }

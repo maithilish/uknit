@@ -1,0 +1,212 @@
+package org.codetab.uknit.itest.qname;
+
+import org.codetab.uknit.itest.qname.Model.Foo;
+import org.codetab.uknit.itest.qname.Model.Person;
+
+public class CastQNameTest {
+    @InjectMocks
+    private CastQName castQName;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignQName() {
+        Person person = Mockito.mock(Person.class);
+        int lid = (int) person.lid;
+
+        int actual = castQName.assignQName(person);
+
+        assertEquals(lid, actual);
+    }
+
+    @Test
+    public void testReturnQName() {
+        Person person = Mockito.mock(Person.class);
+        int apple = person.lid;
+
+        int actual = castQName.returnQName(person);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignQNameInInvokeArg() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        String name = "Foo";
+
+        when(foo.get((int) person.lid)).thenReturn(name);
+
+        String actual = castQName.assignQNameInInvokeArg(foo, person);
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testReturnQNameInInvokeArg() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        String apple = "Foo";
+
+        when(foo.get((int) person.lid)).thenReturn(apple);
+
+        String actual = castQName.returnQNameInInvokeArg(foo, person);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignInfixQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person1 = Mockito.mock(Person.class);
+        Person person2 = Mockito.mock(Person.class);
+        int lid = (int) (person1.lid + person2.lid);
+
+        int actual = castQName.assignInfixQName(foo, person1, person2);
+
+        assertEquals(lid, actual);
+    }
+
+    @Test
+    public void testReturnInfixQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person1 = Mockito.mock(Person.class);
+        Person person2 = Mockito.mock(Person.class);
+        int apple = person1.lid + person2.lid;
+
+        int actual = castQName.returnInfixQName(foo, person1, person2);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignConditionalQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        int lid = (int) person.lid > 1 ? 1 : 0;
+
+        int actual = castQName.assignConditionalQName(foo, person);
+
+        assertEquals(lid, actual);
+    }
+
+    @Test
+    public void testReturnConditionalQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        int apple = (int) person.lid > 1 ? 1 : 0;
+
+        int actual = castQName.returnConditionalQName(foo, person);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignPostfixQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        int lid = (int) person.lid++;
+
+        int actual = castQName.assignPostfixQName(foo, person);
+
+        assertEquals(lid, actual);
+    }
+
+    @Test
+    public void testReturnPostfixQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        int apple = person.lid--;
+
+        int actual = castQName.returnPostfixQName(foo, person);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignPrefixQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        int lid = (int) ++person.lid;
+
+        int actual = castQName.assignPrefixQName(foo, person);
+
+        assertEquals(lid, actual);
+    }
+
+    @Test
+    public void testReturnPrefixQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = Mockito.mock(Person.class);
+        int apple = --person.lid;
+
+        int actual = castQName.returnPrefixQName(foo, person);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignQNameInCreation() {
+        Person person = Mockito.mock(Person.class);
+        Person clone = new Person((int) person.lid);
+
+        Person actual = castQName.assignQNameInCreation(person);
+
+        assertEquals(clone, actual);
+    }
+
+    @Test
+    public void testReturnQNameInCreation() {
+        Person person = Mockito.mock(Person.class);
+        Person person2 = new Person((int) person.lid);
+
+        Person actual = castQName.returnQNameInCreation(person);
+
+        assertEquals(person2, actual);
+    }
+
+    @Test
+    public void testAssignQNameInArrayCreation() {
+        Person person = Mockito.mock(Person.class);
+        String[] names = new String[(int) person.lid];
+
+        String[] actual = castQName.assignQNameInArrayCreation(person);
+
+        assertArrayEquals(names, actual);
+    }
+
+    @Test
+    public void testReturnQNameInArrayCreation() {
+        Person person = Mockito.mock(Person.class);
+        String[] apple = new String[(int) person.lid];
+
+        String[] actual = castQName.returnQNameInArrayCreation(person);
+
+        assertArrayEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignQNameInArrayAccess() {
+        String[] names = {};
+        Person person = Mockito.mock(Person.class);
+        String name = names[(int) person.lid];
+
+        String actual = castQName.assignQNameInArrayAccess(names, person);
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testReturnQNameInArrayAccess() {
+        String[] names = {};
+        Person person = Mockito.mock(Person.class);
+        String apple = names[(int) person.lid];
+
+        String actual = castQName.returnQNameInArrayAccess(names, person);
+
+        assertEquals(apple, actual);
+    }
+}

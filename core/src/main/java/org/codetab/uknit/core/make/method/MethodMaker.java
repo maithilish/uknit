@@ -61,6 +61,8 @@ public class MethodMaker {
     private VarNames varNames;
     @Inject
     private Merger merger;
+    @Inject
+    private Heaps heaps;
 
     private ClzMap clzMap;
 
@@ -125,7 +127,7 @@ public class MethodMaker {
         processor.processWhenVerify(heap);
         processor.processVarState(heap);
 
-        heap.tracePacks("Heap after MUT processing");
+        heaps.debugPacks("[ Heap after MUT processing ]", heap);
 
         /*
          * clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
@@ -172,7 +174,8 @@ public class MethodMaker {
         checkNotNull(heap);
         checkNotNull(internalHeap);
 
-        LOG.debug("= process method: {} =", methods.getMethodName(method));
+        LOG.debug("= process internal method: {} =",
+                methods.getMethodName(method));
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(internalHeap);
@@ -196,7 +199,7 @@ public class MethodMaker {
         // after merge, resolve any var name conflict
         processor.processVarNameChange(internalHeap);
 
-        heap.tracePacks("Heap after IM processing");
+        heaps.debugPacks("[ Heap after IM processing ]", heap);
 
         // List<IVar> insertableVars =
         // inserter.filterInsertableVars(internalHeap.getVars());

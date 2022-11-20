@@ -139,7 +139,10 @@ public class Patchers {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
             @SuppressWarnings("unchecked")
             List<Expression> args = mi.arguments();
-            if (mi.getExpression().equals(exp)) {
+            /*
+             * If IMC or static import call is arg for invoke then exp is null
+             */
+            if (nonNull(mi.getExpression()) && mi.getExpression().equals(exp)) {
                 return 0;
             } else if (args.contains(exp)) {
                 // starts with 1

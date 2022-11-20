@@ -21,7 +21,6 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Patch.Kind;
 import org.codetab.uknit.core.node.Expressions;
-import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -57,8 +56,6 @@ public class Patcher {
     private Expressions expressions;
     @Inject
     private NodeGroups nodeGroups;
-    @Inject
-    private Methods methods;
 
     /**
      * When inner expressions such as MethodInvocation returns InferVar then in
@@ -122,7 +119,7 @@ public class Patcher {
     }
 
     /**
-     * Creates patch for var if namesMap contains entry for name change.
+     * Creates patch if renamedVar is used in node (pack.exp) or its exps.
      *
      * @param node
      * @param exps
@@ -130,35 +127,41 @@ public class Patcher {
      * @param heap
      * @return
      */
-    public List<Patch> creatVarPatches(final ASTNode node,
-            final List<Expression> exps, final Map<String, String> namesMap) {
+    public List<Patch> creatVarPatches(final Expression node,
+            final List<Expression> exps, final Pack renamedPack) {
         List<Patch> patchList = new ArrayList<>();
         if (nodes.isName(node)) {
             /*
-             * Ex: return foo; if namesMap contains an entry foo -> foo2 then
-             * create a patch for node to rename it as foo2.
+             * The node (pack.exp) is name and equals to renamedVar oldName then
+             * create patch with new name from renamedPack's name. Ex: return
+             * foo; if renamedPack is [name: foo2, oldName: foo], then create
+             * patch [node: foo, exp: foo, name: foo2]
              */
-            String name = nodes.getName(node);
-            if (namesMap.containsKey(name)) {
-                String toName = namesMap.get(name);
+            if (nodes.getName(node).equals(renamedPack.getVar().getOldName())) {
+                String newName = renamedPack.getVar().getName();
                 int expIndex = 0;
-                Patch patch = modelFactory.createPatch(Kind.VAR, node,
-                        (Expression) node, toName, expIndex);
+                Patch patch = modelFactory.createPatch(Kind.VAR, node, node,
+                        newName, expIndex);
                 patchList.add(patch);
             }
         } else {
             /*
-             * Ex: foo.bar().baz(); if namesMap contains an entry foo -> foo2
-             * then create a patch for node to rename its exp foo as foo2.
+             * if node is not name then create patch for its exps. Ex:
+             * instant.compare(other); if renamedPack is [name: instant,
+             * oldName: instant2], then create patch [node:
+             * instant.compare(other), exp: instant, name: instant2]. Then in
+             * another iteration if renamedPack is [name: other, oldName:
+             * other2], then create patch [node: instant.compare(other), exp:
+             * other, name: other2].
              */
             for (Expression exp : exps) {
                 if (nodes.isName(exp)) {
-                    String name = nodes.getName(exp);
-                    if (namesMap.containsKey(name)) {
-                        String toName = namesMap.get(name);
+                    if (nodes.getName(exp)
+                            .equals(renamedPack.getVar().getOldName())) {
+                        String newName = renamedPack.getVar().getName();
                         int expIndex = patchers.getExpIndex(node, exp);
                         Patch patch = modelFactory.createPatch(Kind.VAR, node,
-                                exp, toName, expIndex);
+                                exp, newName, expIndex);
                         patchList.add(patch);
                     }
                 }
@@ -202,9 +205,17 @@ public class Patcher {
     }
 
     /**
-     * Updates patch name to new name. The namesMap holds changed var names. For
-     * example if map has an entry [option : option2], then all patches where
-     * name is option are updated to option2.
+     * Updates patch name to new name. For example if var is renamed as [name:
+     * option, oldName: option2], then the patches with name as option are
+     * updated to option2.
+     *
+     * If patch exp is name and patch is already updated to reflect the name
+     * change then don't update it again. Ex: pack [name: instantX, oldName:
+     * instant] and another pack [name: instant, oldName: instant3]. If a patch
+     * exists to rename instantX as instant then don't create another patch for
+     * that pack to update instant as instant3 otherwise instantX is wrongly
+     * patched to instant3 instead of instant. Ref itest:
+     * internal.InternalNestedArg.mockDiffNameC().
      *
      * Another way to do this is to create a var patch and apply it after
      * applying the invoke patch. As the final result is same, we directly
@@ -214,12 +225,44 @@ public class Patcher {
      * @param namesMap
      * @param heap
      */
-    public void updatePatchName(final Pack pack,
-            final Map<String, String> namesMap, final Heap heap) {
+    public void updatePatchName(final Pack pack, final Pack renamedPack,
+            final Heap heap) {
+
         for (Patch patch : pack.getPatches()) {
-            String newName = namesMap.get(patch.getName());
+
+            String oldName = renamedPack.getVar().getOldName();
+            String newName = renamedPack.getVar().getName();
+            String patchName = patch.getName();
+
             if (nonNull(newName)) {
-                patch.setName(newName);
+                if (nodes.isName(patch.getExp())) {
+                    /*
+                     * If a var pack is renamed, then the patches that refers
+                     * renamed var may or may not have updated to new name.
+                     * Update the patch name only if not updated.
+                     *
+                     * Ex: Patch [name foo3, node: foo.bar(), exp: foo] exists
+                     * for Pack [exp foo.bar()] and the patch updates foo.bar()
+                     * to foo3.bar(). Suppose the Pack [var foo] is renamed to
+                     * foo3 then patch is updated as patch name is already set
+                     * to renamed name. However patch name is foo2 then patch is
+                     * not updated as name is yet to be updated. The
+                     * patchExpName is compared with oldName to ensure only the
+                     * applicable patch is touched.
+                     *
+                     */
+                    String patchExpName = nodes.getName(patch.getExp());
+                    if (patchExpName.equals(oldName)
+                            && !patchName.equals(newName)) {
+                        patch.setName(newName);
+                    }
+                } else if (patchName.equals(oldName)) {
+                    /*
+                     * set new name if patch exp is not name as there is no
+                     * other way to compare the patch with renamedPack.
+                     */
+                    patch.setName(newName);
+                }
             }
         }
     }
@@ -310,22 +353,15 @@ public class Patcher {
                 nodeGroups.nodesWithInvoke());
 
         /*
-         * Exclude IMC calls. Even though IMC is invoke it is replaced with a
-         * return var so don't create patches for it. Ex: internal(foo,
-         * foo.size())
+         * The list also includes IM calls. The IMC is replaced with a return
+         * var and strictly patches as not required for it. Ex: internal(foo,
+         * foo.size()).
+         *
+         * However when IM is arg of an Invoke then we need to patch the invoke
+         * arg with IM return and patch is required for it which may be used in
+         * intermediate processing. Ex: internal1(internal2(foo))
+         *
          */
-        List<Pack> invokePatchables = new ArrayList<>();
-        for (Pack pack : packList) {
-            if (methods.isInvokable(pack.getExp()) && pack instanceof Invoke) {
-                // add all packs other than internal invoke
-                if (!methods.isInternalCall(pack.getExp(),
-                        getPatchedCallExp((Invoke) pack, heap))) {
-                    invokePatchables.add(pack);
-                }
-            } else {
-                invokePatchables.add(pack);
-            }
-        }
-        return invokePatchables;
+        return packList;
     }
 }

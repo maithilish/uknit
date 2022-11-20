@@ -163,7 +163,7 @@ class ArgParams {
                     String newName =
                             vars.getIndexedVar(name, callingMethodVars);
                     if (!name.equals(newName)) {
-                        aVar.setRealName(name);
+                        aVar.setOldName(name);
                         aVar.setName(newName);
                     }
                 }
@@ -201,7 +201,7 @@ class ArgParams {
 
                 // if arg and param names differ, use param as arg
                 if (!aVar.getName().equals(pVar.getName())) {
-                    pVar.setRealName(pVar.getName());
+                    pVar.setOldName(pVar.getName());
                     pVar.setName(aVar.getName());
                 }
             }

@@ -31,3 +31,8 @@ Explain this
     }
     
 IM the arg overrides the parameter. If arg and param name are named same then arg pack is retained and param pack is discarded in merge(). If name differs then again arg pack is retained and param pack var name is set to arg name so that var patch is created. On multicall new arg is created. See ArgParam.java
+
+## Java classes for Test
+
+Some of the suitable classes to use in itests - Instant, LocalDate, Locale 
+Date compare may fail randomly.

@@ -17,7 +17,7 @@ public class Var implements IVar {
     protected String name;
 
     // original name before any name change
-    protected String realName;
+    protected String oldName;
 
     protected Type type;
     protected boolean mock;
@@ -31,7 +31,7 @@ public class Var implements IVar {
             @Assisted final Type type, @Assisted final boolean mock) {
         this.kind = kind;
         this.name = name;
-        this.realName = name;
+        this.oldName = name;
         this.type = type;
         this.mock = mock;
         this.enable = true; // enable by default
@@ -51,13 +51,13 @@ public class Var implements IVar {
     }
 
     @Override
-    public String getRealName() {
-        return realName;
+    public String getOldName() {
+        return oldName;
     }
 
     @Override
-    public void setRealName(final String realName) {
-        this.realName = realName;
+    public void setOldName(final String oldName) {
+        this.oldName = oldName;
     }
 
     @Override
@@ -144,33 +144,34 @@ public class Var implements IVar {
         if (enforce.isPresent()) {
             clone.setEnforce(Optional.ofNullable(enforce.get()));
         }
-        clone.setRealName(realName);
+        clone.setOldName(oldName);
         return clone;
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(created, deepStub, enable, enforce, kind, mock,
+                name, oldName, type);
+    }
+
+    @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
+        if (this == obj) {
             return true;
         }
         if (obj == null) {
             return false;
         }
-        if (obj.getClass() != getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         Var other = (Var) obj;
-        return Objects.equals(name, other.name)
-                && Objects.equals(type, other.type)
-                && Objects.equals(mock, other.mock)
-                && Objects.equals(created, other.created)
-                && Objects.equals(enable, other.enable)
-                && Objects.equals(deepStub, other.deepStub);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, type, mock, created, enable, deepStub);
+        return created == other.created && deepStub == other.deepStub
+                && enable == other.enable
+                && Objects.equals(enforce, other.enforce) && kind == other.kind
+                && mock == other.mock && Objects.equals(name, other.name)
+                && Objects.equals(oldName, other.oldName)
+                && Objects.equals(type, other.type);
     }
 
     @Override

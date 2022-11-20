@@ -117,17 +117,17 @@ public class Vars {
          * with 1 but 1 itself is ignored
          */
         int index = 1;
-        List<IVar> varList =
-                vars.stream().filter(v -> v.getName().startsWith(name))
-                        .collect(Collectors.toList());
+        String nameWithoutIndex = name.replaceAll("\\d*$", "");
+        List<IVar> varList = vars.stream()
+                .filter(v -> v.getName().startsWith(nameWithoutIndex))
+                .collect(Collectors.toList());
         String varName = name;
         while (true) {
             final String n = varName;
             if (varList.stream().anyMatch(v -> v.getName().equals(n))) {
                 index++;
                 // remove trailing index and concat new index
-                varName = name.replaceAll("\\d*$", "")
-                        .concat(String.valueOf(index));
+                varName = nameWithoutIndex.concat(String.valueOf(index));
             } else {
                 break;
             }

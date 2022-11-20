@@ -1,5 +1,6 @@
 package org.codetab.uknit.itest.internal;
 
+import java.time.Instant;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 
@@ -75,6 +76,36 @@ public class Model {
     class QFactory {
         public BlockingQueue<Person> getQ(final int size) {
             return null;
+        }
+    }
+
+    interface Payload {
+        JobInfo getJobInfo();
+
+        JobInfo getJobInfo(JobInfo jobInfo);
+    }
+
+    interface JobInfo {
+        void check();
+
+        boolean isValid();
+    }
+
+    interface Provider {
+        Holder getHolder();
+    }
+
+    class Holder {
+
+        private Instant instant;
+        private Locale locale;
+
+        public Instant getInstant() {
+            return instant;
+        }
+
+        public Locale getLocale() {
+            return locale;
         }
     }
 }

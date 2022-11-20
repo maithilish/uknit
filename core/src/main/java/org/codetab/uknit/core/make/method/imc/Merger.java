@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
+import org.codetab.uknit.core.make.method.Heaps;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -32,17 +33,20 @@ public class Merger {
     private Vars vars;
     @Inject
     private DInjector di;
+    @Inject
+    private Heaps heaps;
 
     public void merge(final Invoke invoke, final Heap heap,
             final Heap internalHeap) {
 
-        LOG.trace("Merge IM Heap {}", invoke);
-        heap.tracePacks("Heap");
-        internalHeap.tracePacks("IM Heap");
+        LOG.debug("Merge IM Heap {}", invoke);
+        heaps.debugPacks("[ Heap Packs ]", heap);
+        heaps.debugPacks("[ IM Heap Packs ]", internalHeap);
 
         // save states
         InternalReturns internalReturns = di.instance(InternalReturns.class);
         internalReturns.init(internalHeap);
+
         ArgParams argParams = di.instance(ArgParams.class);
         argParams.init(invoke, heap, internalHeap);
 
@@ -134,6 +138,6 @@ public class Merger {
         // add packs created in internal method before invoke index
         heap.addPacks(invokeIndex, internalPacks);
 
-        heap.tracePacks("Heap after merge");
+        heaps.debugPacks("[ Heap Packs after merge ]", heap);
     }
 }

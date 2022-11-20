@@ -105,6 +105,9 @@ public class Nodes {
     }
 
     public boolean isName(final ASTNode node) {
+        if (isNull(node)) {
+            return false;
+        }
         return node.getNodeType() == ASTNode.SIMPLE_NAME
                 || node.getNodeType() == ASTNode.QUALIFIED_NAME;
     }

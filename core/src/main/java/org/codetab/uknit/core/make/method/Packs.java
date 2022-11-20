@@ -72,6 +72,20 @@ public class Packs {
         }).findFirst();
     }
 
+    /**
+     * Find the pack whose var's oldName matches the name.
+     *
+     * @param name
+     * @param packs
+     * @return
+     */
+    public Optional<Pack> findByVarOldName(final String name,
+            final List<Pack> packs) {
+        return packs.stream().filter(p -> {
+            return nonNull(p.getVar()) && p.getVar().getOldName().equals(name);
+        }).findFirst();
+    }
+
     public Optional<Invoke> findInvokeByName(final String name,
             final List<Pack> packs) {
         List<Invoke> invokes = filterInvokes(packs);
@@ -158,17 +172,30 @@ public class Packs {
     }
 
     /**
-     * Filter pack list where var name is changed.
+     * Filter pack list where var is renamed.
      *
      * @param packs
      * @return
      */
-    public List<Pack> filterIsVarNameChanged(final List<Pack> packs) {
+    public List<Pack> filterIsVarRenamed(final List<Pack> packs) {
         List<Pack> list = packs.stream().filter(p -> {
             IVar var = p.getVar();
-            return nonNull(var) && !var.getName().equals(var.getRealName());
+            return nonNull(var) && !var.getName().equals(var.getOldName());
         }).collect(Collectors.toList());
         return list;
+    }
+
+    /**
+     * Return the sublist of packs starting from the pack to the end of packs.
+     *
+     * @param pack
+     * @param packs
+     * @return
+     */
+    public List<Pack> tailList(final Pack pack, final List<Pack> packs) {
+        int start = packs.indexOf(pack);
+        int end = packs.size();
+        return packs.subList(start, end);
     }
 
     /**
@@ -194,4 +221,5 @@ public class Packs {
             }
         }).reduce((f, s) -> s);
     }
+
 }

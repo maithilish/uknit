@@ -20,9 +20,9 @@ public interface IVar {
 
     void setName(String name);
 
-    String getRealName();
+    String getOldName();
 
-    void setRealName(String name);
+    void setOldName(String name);
 
     Type getType();
 

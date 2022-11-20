@@ -7,12 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Heap implements Listener {
-
-    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private List<Pack> packs;
@@ -110,13 +105,5 @@ public class Heap implements Listener {
 
     public boolean isAsserted() {
         return asserted;
-    }
-
-    public void tracePacks(final String message) {
-        LOG.trace("{}", message);
-        for (Pack pack : getPacks()) {
-            LOG.trace("{} {}", pack, pack.getPatches());
-        }
-        LOG.trace("");
     }
 }

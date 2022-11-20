@@ -1,7 +1,6 @@
 package org.codetab.uknit.core.make.method.process;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -194,6 +193,8 @@ class PatchProcessor {
     private PatchCreator patchCreator;
     @Inject
     private Patcher patcher;
+    @Inject
+    private Packs packs;
 
     /**
      * Create patch of Kind.INVOKE to patch invoke exp with infer var.
@@ -206,15 +207,24 @@ class PatchProcessor {
     }
 
     /**
-     * On conflict if var name is changed, then create patch of Kind.VAR to
-     * patch occurrences of var name in exp and its expressions.
+     * If var is renamed on conflict, then create patch (Kind.VAR) to patch
+     * occurrences of var name in exp and its expressions. Create patch only for
+     * packs that come after the renamedPack in heap pack list.
      *
      * @param heap
      */
     public void createVarPatches(final Heap heap) {
-        Map<String, String> namesMap = patchCreator.getNamesMap(heap);
-        heap.getPacks()
-                .forEach(pack -> patchCreator.createVarPatch(pack, namesMap));
+        List<Pack> renamedPacks = packs.filterIsVarRenamed(heap.getPacks());
+        /*
+         * for each renamedPack create patches for packs (if the renamed var is
+         * used in packs exp) that come after it.
+         */
+        for (Pack renamedPack : renamedPacks) {
+            // packs that comes after renamedPack
+            List<Pack> tailList = packs.tailList(renamedPack, heap.getPacks());
+            tailList.forEach(
+                    pack -> patchCreator.createVarPatch(pack, renamedPack));
+        }
     }
 
     /**
@@ -225,9 +235,12 @@ class PatchProcessor {
      * @param heap
      */
     public void updateNamesInPatches(final Heap heap) {
-        Map<String, String> namesMap = patchCreator.getNamesMap(heap);
-        heap.getPacks()
-                .forEach(pack -> patcher.updatePatchName(pack, namesMap, heap));
+        List<Pack> renamedPacks = packs.filterIsVarRenamed(heap.getPacks());
+        for (Pack renamedPack : renamedPacks) {
+            List<Pack> tailList = packs.tailList(renamedPack, heap.getPacks());
+            tailList.forEach(
+                    pack -> patcher.updatePatchName(pack, renamedPack, heap));
+        }
     }
 }
 

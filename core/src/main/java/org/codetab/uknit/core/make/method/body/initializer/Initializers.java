@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.body.initializer;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.Optional;
@@ -34,30 +35,48 @@ public class Initializers {
     private Packs packs;
 
     public String getInitializer(final IVar var, final Heap heap) {
+
         String initializer = null;
-        Optional<Expression> iniExp =
+
+        Optional<Expression> initExp =
                 definedInitialzer.getInitializer(var, heap);
-        Optional<String> enumIni = enumInitializer.getInitializer(var, heap);
 
-        Optional<Pack> packO =
-                packs.findByVarName(var.getName(), heap.getPacks());
-
-        if (iniExp.isPresent() && definedInitialzer.isAllowed(iniExp.get())) {
-            Expression exp = patcher.copyAndPatch(packO.get(), heap);
-            initializer = exp.toString();
-        } else if (iniExp.isPresent()
-                && definedInitialzer.isMIAllowed(var, iniExp.get(), heap)) {
-            Expression exp = patcher.copyAndPatch(packO.get(), heap);
-            initializer = exp.toString();
-        } else if (iniExp.isPresent()
-                && nodes.is(iniExp.get(), SimpleName.class)) {
-            initializer = nodes.getName(iniExp.get());
-        } else if (enumIni.isPresent()) {
-            initializer = enumIni.get();
+        /*
+         * If present try to get initializer from initExp else try from
+         * initEnum.
+         */
+        if (initExp.isPresent()) {
+            Optional<Pack> packO =
+                    packs.findByExp(initExp.get(), heap.getPacks());
+            if (nodes.is(initExp.get(), SimpleName.class)) {
+                initializer = nodes.getName(initExp.get());
+            } else if (definedInitialzer.isAllowed(initExp.get())) {
+                Expression exp = patcher.copyAndPatch(packO.get(), heap);
+                initializer = exp.toString();
+            } else if (definedInitialzer.isMIAllowed(var, initExp.get(),
+                    heap)) {
+                Expression exp = patcher.copyAndPatch(packO.get(), heap);
+                initializer = exp.toString();
+            }
         } else {
+            Optional<String> initEnum =
+                    enumInitializer.getInitializer(var, heap);
+            if (initEnum.isPresent()) {
+                initializer = initEnum.get();
+            }
+        }
+
+        /*
+         * if initializer is still null assign derived initializer.
+         */
+        if (isNull(initializer)) {
             initializer = derivedInitialzer.deriveInitializer(var, heap);
         }
 
+        /*
+         * if initializer, such as String initializer, has ${metasyntatic}
+         * replace it with metasyntatic such as Foo, Bar etc.,
+         */
         if (nonNull(initializer) && initializer.contains("${metasyntatic}")) {
             initializer = initializer.replace("${metasyntatic}",
                     varNames.getMetaSyntantics());

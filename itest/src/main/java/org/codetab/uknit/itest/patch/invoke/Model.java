@@ -16,6 +16,8 @@ public class Model {
         int index();
 
         Object obj();
+
+        String name();
     }
 
     interface Bar {
@@ -26,5 +28,7 @@ public class Model {
         int size();
 
         String key(String cntry);
+
+        String name();
     }
 }

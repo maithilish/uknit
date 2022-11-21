@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Locale;
 
+import org.codetab.uknit.itest.patch.invoke.Model.Bar;
 import org.codetab.uknit.itest.patch.invoke.Model.Foo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class ArrayTest {
     @Test
     public void testAssignArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale[] locales = {new Locale("foo")};
+        Locale[] locales = {new Locale("en")};
         int apple = 0;
         Locale locale = locales[apple];
 
@@ -65,7 +66,7 @@ public class ArrayTest {
     @Test
     public void testReturnArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale[] locales = {new Locale("foo")};
+        Locale[] locales = {new Locale("en")};
         int apple = 0;
         Locale locale = locales[apple];
 
@@ -79,7 +80,7 @@ public class ArrayTest {
     @Test
     public void testAssignCastInArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale[] locales = {new Locale("foo")};
+        Locale[] locales = {new Locale("en")};
         int apple = 0;
         Locale locale = locales[apple];
 
@@ -93,7 +94,7 @@ public class ArrayTest {
     @Test
     public void testReturnCastInArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale[] locales = {new Locale("foo")};
+        Locale[] locales = {new Locale("en")};
         int apple = 0;
         Locale locale = locales[apple];
 
@@ -102,6 +103,38 @@ public class ArrayTest {
         Locale actual = array.returnCastInArrayAccess(foo, locales);
 
         assertSame(locale, actual);
+    }
+
+    @Test
+    public void testAssignNewInitializer() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        String[] names = new String[] {apple, grape};
+
+        when(foo.name()).thenReturn(apple);
+        when(bar.name()).thenReturn(grape);
+
+        String[] actual = array.assignNewInitializer(foo, bar);
+
+        assertArrayEquals(names, actual);
+    }
+
+    @Test
+    public void testReturnNewInitializer() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        String[] orange = new String[] {apple, grape};
+
+        when(foo.name()).thenReturn(apple);
+        when(bar.name()).thenReturn(grape);
+
+        String[] actual = array.returnNewInitializer(foo, bar);
+
+        assertArrayEquals(orange, actual);
     }
 
     @Test

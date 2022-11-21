@@ -38,7 +38,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 public class Patchers {
 
     @Inject
-    private ArgPatcher argPatcher;
+    private ListPatcher listPatcher;
     @Inject
     private Nodes nodes;
     @Inject
@@ -75,10 +75,20 @@ public class Patchers {
                     nodes.as(node, ClassInstanceCreation.class).arguments();
             exps.addAll(args);
         } else if (nodes.is(node, ArrayCreation.class)) {
+            /*
+             * The exp list is combined list of dimensions and initializer exps.
+             */
+            ArrayCreation ac = nodes.as(node, ArrayCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args =
-                    nodes.as(node, ArrayCreation.class).dimensions();
+            List<Expression> args = ac.dimensions();
             exps.addAll(args);
+            // combine initializer exps
+            ArrayInitializer initializer = ac.getInitializer();
+            if (nonNull(initializer)) {
+                @SuppressWarnings("unchecked")
+                List<Expression> initArgs = initializer.expressions();
+                exps.addAll(initArgs);
+            }
         } else if (nodes.is(node, ArrayInitializer.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
@@ -145,7 +155,7 @@ public class Patchers {
             if (nonNull(mi.getExpression()) && mi.getExpression().equals(exp)) {
                 return 0;
             } else if (args.contains(exp)) {
-                // starts with 1
+                // starts from 1
                 return args.indexOf(exp) + 1;
             } else {
                 return -1;
@@ -172,11 +182,22 @@ public class Patchers {
                 return -1;
             }
         } else if (nodes.is(node, ArrayCreation.class)) {
+            /*
+             * The exp index is obtained from combined list of dimensions and
+             * initializer exps.
+             */
+            ArrayCreation ac = nodes.as(node, ArrayCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args =
-                    nodes.as(node, ArrayCreation.class).dimensions();
+            List<Expression> dims = ac.dimensions();
+            List<Expression> args = new ArrayList<>(dims);
+            // combine initializer expressions
+            if (nonNull(ac.getInitializer())) {
+                @SuppressWarnings("unchecked")
+                List<Expression> initArgs = ac.getInitializer().expressions();
+                args.addAll(initArgs);
+            }
             if (args.contains(exp)) {
-                // zero indexed
+                // starts from 0
                 return args.indexOf(exp);
             } else {
                 return -1;
@@ -292,26 +313,43 @@ public class Patchers {
             } else if (patch.getExpIndex() > 0) {
                 @SuppressWarnings("unchecked")
                 List<Expression> args = mi.arguments();
-                argPatcher.patch(args, patch.getExpIndex() - 1, patch);
+                listPatcher.patch(args, patch.getExpIndex() - 1, patch);
             }
             return true;
         } else if (nodes.is(node, ClassInstanceCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ClassInstanceCreation.class).arguments();
-            argPatcher.patch(args, patch.getExpIndex(), patch);
+            listPatcher.patch(args, patch.getExpIndex(), patch);
             return true;
         } else if (nodes.is(node, ArrayCreation.class)) {
+            /*
+             * The ArrayCreation can have two args type lists - dimension list
+             * and optional initializers list. If expIndex is less than dim list
+             * size then patch dim list else the initializers list. Don't merge
+             * or create new list then changes will not reflect in the node as
+             * ListPatcher.patch() requires the list obtained from the node. Ex:
+             * new String[] {foo.name(), bar.name()} the [] part is dimension
+             * and {foo.name()..} part is the initializer list.
+             */
+            int expIndex = patch.getExpIndex();
+            ArrayCreation ac = nodes.as(node, ArrayCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args =
-                    nodes.as(node, ArrayCreation.class).dimensions();
-            argPatcher.patch(args, patch.getExpIndex(), patch);
+            List<Expression> dims = ac.dimensions();
+            if (expIndex < dims.size()) {
+                listPatcher.patch(dims, expIndex, patch);
+            } else if (nonNull(ac.getInitializer())) {
+                @SuppressWarnings("unchecked")
+                List<Expression> initialierArgs =
+                        ac.getInitializer().expressions();
+                listPatcher.patch(initialierArgs, expIndex, patch);
+            }
             return true;
         } else if (nodes.is(node, ArrayInitializer.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
                     nodes.as(node, ArrayInitializer.class).expressions();
-            argPatcher.patch(args, patch.getExpIndex(), patch);
+            listPatcher.patch(args, patch.getExpIndex(), patch);
             return true;
         } else if (nodes.is(node, ArrayAccess.class)) {
             ArrayAccess aa = nodes.as(node, ArrayAccess.class);
@@ -410,17 +448,40 @@ public class Patchers {
     }
 }
 
-class ArgPatcher {
+/**
+ * Patches exp in the list to patch name.
+ *
+ * @author Maithilish
+ *
+ */
+class ListPatcher {
 
     @Inject
     private NodeFactory nodeFactory;
 
-    public void patch(final List<Expression> args, final int expIndex,
+    /**
+     * From exp list replaces exp at expIndex with a newly created Name
+     * expression from patch name.
+     *
+     * Ensure that the exp list is obtained from the node to which patch is
+     * being applied. By replacing in the list the changes are reflected in the
+     * node. Don't create a new list from the original list as any updates to
+     * the list will not reflect in the node.
+     *
+     * Ex: Pack [exp: new String[] {foo.name()}], Patch [name: apple, exp:
+     * foo.name(), expIndex: 0] and the list obtained from the node {foo.name}.
+     * In the list item foo.name at index 0 is replaced with apple.
+     *
+     * @param exps
+     * @param expIndex
+     * @param patch
+     */
+    public void patch(final List<Expression> exps, final int expIndex,
             final Patch patch) {
         if (expIndex >= 0) {
-            AST ast = args.get(expIndex).getAST();
-            args.remove(expIndex);
-            args.add(expIndex, nodeFactory.createName(patch.getName(), ast));
+            AST ast = exps.get(expIndex).getAST();
+            exps.remove(expIndex);
+            exps.add(expIndex, nodeFactory.createName(patch.getName(), ast));
         }
     }
 }

@@ -2,6 +2,7 @@ package org.codetab.uknit.itest.patch.invoke;
 
 import java.util.Locale;
 
+import org.codetab.uknit.itest.patch.invoke.Model.Bar;
 import org.codetab.uknit.itest.patch.invoke.Model.Foo;
 
 /**
@@ -42,6 +43,15 @@ public class Array {
     public Locale returnCastInArrayAccess(final Foo foo,
             final Locale[] locales) {
         return locales[(int) foo.obj()];
+    }
+
+    public String[] assignNewInitializer(final Foo foo, final Bar bar) {
+        final String[] names = new String[] {foo.name(), bar.name()};
+        return names;
+    }
+
+    public String[] returnNewInitializer(final Foo foo, final Bar bar) {
+        return new String[] {foo.name(), bar.name()};
     }
 
     /*

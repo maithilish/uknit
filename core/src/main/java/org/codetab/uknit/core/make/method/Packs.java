@@ -186,7 +186,8 @@ public class Packs {
     }
 
     /**
-     * Return the sublist of packs starting from the pack to the end of packs.
+     * Return the sublist of packs starting from the pack (including the pack)
+     * to the end of packs.
      *
      * @param pack
      * @param packs
@@ -197,6 +198,20 @@ public class Packs {
         int end = packs.size();
         return packs.subList(start, end);
     }
+
+    /**
+     * Return the sublist of packs up to the pack (excluding the pack itself).
+     *
+     * @param pack
+     * @param packs
+     * @return
+     */
+    public List<Pack> headList(final Pack pack, final List<Pack> packs) {
+        int start = 0;
+        int end = packs.indexOf(pack);
+        return packs.subList(start, end);
+    }
+
 
     /**
      * Get the pack which has var of Kind.RETURN.

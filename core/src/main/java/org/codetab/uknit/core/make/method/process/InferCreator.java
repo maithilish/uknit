@@ -12,7 +12,6 @@ import org.codetab.uknit.core.exception.TypeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
@@ -59,7 +58,8 @@ public class InferCreator {
              *
              * FIXME Pack - kinds FIELD, PARAMETER and infer for LOCAL reassign
              */
-            if (pack.getVar().is(Kind.RETURN) || pack.getVar().is(Kind.LOCAL)) {
+            IVar var = pack.getVar();
+            if (var.isReturnVar() || var.isLocalVar() || var.isField()) {
                 return;
             } else {
                 throw new IllegalStateException(nodes.exMessage(

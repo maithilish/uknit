@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.method.body.initializer;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -127,10 +128,10 @@ class DefinedInitialzer {
      */
     public Optional<Expression> getInitializer(final IVar var,
             final Heap heap) {
-        Optional<Pack> pack =
+        Optional<Pack> packO =
                 packs.findByVarName(var.getName(), heap.getPacks());
-        Expression iniExp = pack.get().getExp();
-        if (isNull(iniExp)) {
+        Expression exp = packO.get().getExp();
+        if (isNull(exp)) {
             return Optional.empty();
         }
         /**
@@ -140,12 +141,45 @@ class DefinedInitialzer {
          * Foo foo = (Foo) o;
          * </code> the type o is set to Foo instead of Object.
          */
-        if (nodes.is(iniExp, CastExpression.class)) {
-            CastExpression ce = nodes.as(iniExp, CastExpression.class);
+        if (nodes.is(exp, CastExpression.class)) {
+            CastExpression ce = nodes.as(exp, CastExpression.class);
             if (nodes.is(ce.getExpression(), SimpleName.class)) {
-                iniExp = ce.getExpression();
+                exp = ce.getExpression();
             }
         }
-        return Optional.ofNullable(iniExp);
+        /**
+         * from the packs (headList) that comes before the pack find the last
+         * pack whose leftExp matches the pack's exp. The exp from different
+         * stmt are not equal so as a workaround compare their string
+         * representation. Ex: <code>
+         * int[] array = new int[1];
+         * array[0] = 10;
+         * int foo = array[0];
+         * </code> initializer for foo is set to 10 as leftExpPack is [leftExp:
+         * array[0], exp: 10]. Ref itest: array.Access.assignAccessPrimitive().
+         */
+        List<Pack> headList = packs.headList(packO.get(), heap.getPacks());
+        final String expString = exp.toString();
+        Optional<Pack> leftExpPackO = headList.stream().filter(p -> {
+            return p.getLeftExp().isPresent()
+                    && p.getLeftExp().get().toString().equals(expString);
+        }).reduce((f, s) -> s);
+
+        // REVIEW
+        if (leftExpPackO.isPresent()) {
+            IVar prevVar = leftExpPackO.get().getVar();
+            /*
+             * if var exists in leftExpPack recursively find its initializer
+             * else use leftExpPack's exp
+             */
+            if (nonNull(prevVar)) {
+                exp = getInitializer(prevVar, heap).get();
+            } else {
+                exp = leftExpPackO.get().getExp();
+
+            }
+        }
+
+        return Optional.ofNullable(exp);
     }
 }

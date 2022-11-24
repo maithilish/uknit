@@ -53,7 +53,6 @@ public class Infer {
         return list.toArray(new String[0]);
     }
 
-
     public String[] inferInInitialize(final Foo foo, final Bar bar) {
         final String[] array = new String[] {foo.name(), bar.name()};
         return array;

@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.body.initializer;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -36,6 +37,108 @@ class DefinedInitialzer {
     @Inject
     private NodeGroups nodeGroups;
 
+    public Optional<Expression> getInitializer(final IVar var,
+            final Heap heap) {
+        return getInitializer(var, null, heap);
+    }
+
+    /**
+     * The ExpVar maps Expression to an IVar, IVar to Expression or Expression
+     * to Expression. This method gets initializer for following combinations.
+     *
+     * var = var, example: x = y
+     *
+     * var = exp, example: x = a[0]
+     *
+     * exp = var, example: a[0] = i;
+     *
+     * exp = exp, example: a[0] = a[1]
+     *
+     * @param var
+     * @param heap
+     * @return
+     */
+    private Optional<Expression> getInitializer(final IVar var,
+            final Expression initExp, final Heap heap) {
+
+        checkState(nonNull(var) || nonNull(initExp));
+
+        Optional<Pack> packO;
+        if (isNull(var)) {
+            packO = packs.findByExp(initExp, heap.getPacks());
+        } else {
+            packO = packs.findByVarName(var.getName(), heap.getPacks());
+        }
+
+        // by default, the pack's exp is initializer
+        Expression exp = packO.get().getExp();
+        if (isNull(exp)) {
+            return Optional.empty();
+        }
+        /**
+         * Casted initializer var type is already changed in Packer.packVars(),
+         * so discard the cast from initializer. <code>
+         * Object o = new Foo();
+         * Foo foo = (Foo) o;
+         * </code> the type o is set to Foo instead of Object.
+         */
+        if (nodes.is(exp, CastExpression.class)) {
+            CastExpression ce = nodes.as(exp, CastExpression.class);
+            if (nodes.is(ce.getExpression(), SimpleName.class)) {
+                exp = ce.getExpression();
+            }
+        }
+
+        /**
+         * The default initializer is pack.exp but pack's exp may refer some
+         * other pack before it. Ex: <code>
+         * int[] array = new int[1];
+         * array[0] = 10;
+         * int foo = array[0];
+         * </code>. Pack [var:foo, exp: array[0]] refers Pack [exp: 10, leftExp:
+         * array[10]]. The effective initializer is 10.
+         *
+         * From the packs (headList) that comes before the pack, find the last
+         * pack (stream reduce) whose leftExp matches the pack's exp. The exp
+         * from different stmt are not equal so as a workaround compare their
+         * string representation. The initializer for foo is set to 10 as
+         * leftExpPack is [leftExp: array[0], exp: 10]. Ref itest:
+         * array.Access.assignAccessPrimitive().
+         */
+        List<Pack> headList = packs.headList(packO.get(), heap.getPacks());
+        final String expString = exp.toString();
+        Optional<Pack> leftExpPackO = headList.stream().filter(p -> {
+            return p.getLeftExp().isPresent()
+                    && p.getLeftExp().get().toString().equals(expString);
+        }).reduce((f, s) -> s);
+
+        if (leftExpPackO.isPresent()) {
+
+            exp = leftExpPackO.get().getExp();
+
+            /**
+             * Again exp may refer earlier pack, try to recursively find
+             * initializer if found use its exp as initializer else fall back to
+             * the exp. Ex: <code>
+             * array[0] = 10;
+             * array[0] = array[1];
+             * int foo = array[0];</code>
+             */
+            Optional<Expression> expO = getInitializer(null, exp, heap);
+            if (expO.isPresent()) {
+                exp = expO.get();
+            }
+        }
+
+        return Optional.ofNullable(exp);
+    }
+
+    /**
+     * Whether exp is allowed as initializer.
+     *
+     * @param exp
+     * @return
+     */
     public boolean isAllowed(final Expression exp) {
         List<Class<? extends Expression>> clzs =
                 nodeGroups.allowedAsInitializer();
@@ -53,6 +156,7 @@ class DefinedInitialzer {
 
     /**
      * Whether MI is allowed as initializer.
+     *
      * <p>
      * mock returns mock - false
      * <p>
@@ -110,76 +214,4 @@ class DefinedInitialzer {
         return miAllowedAsInitializer;
     }
 
-    /**
-     * The ExpVar maps Expression to an IVar, IVar to Expression or Expression
-     * to Expression. This method gets initializer for following combinations.
-     *
-     * var = var, example: x = y
-     *
-     * var = exp, example: x = a[0]
-     *
-     * exp = var, example: a[0] = i;
-     *
-     * exp = exp, example: a[0] = a[1]
-     *
-     * @param var
-     * @param heap
-     * @return
-     */
-    public Optional<Expression> getInitializer(final IVar var,
-            final Heap heap) {
-        Optional<Pack> packO =
-                packs.findByVarName(var.getName(), heap.getPacks());
-        Expression exp = packO.get().getExp();
-        if (isNull(exp)) {
-            return Optional.empty();
-        }
-        /**
-         * Casted initializer var type is already changed in Packer.packVars(),
-         * so discard the cast from initializer. <code>
-         * Object o = new Foo();
-         * Foo foo = (Foo) o;
-         * </code> the type o is set to Foo instead of Object.
-         */
-        if (nodes.is(exp, CastExpression.class)) {
-            CastExpression ce = nodes.as(exp, CastExpression.class);
-            if (nodes.is(ce.getExpression(), SimpleName.class)) {
-                exp = ce.getExpression();
-            }
-        }
-        /**
-         * from the packs (headList) that comes before the pack find the last
-         * pack whose leftExp matches the pack's exp. The exp from different
-         * stmt are not equal so as a workaround compare their string
-         * representation. Ex: <code>
-         * int[] array = new int[1];
-         * array[0] = 10;
-         * int foo = array[0];
-         * </code> initializer for foo is set to 10 as leftExpPack is [leftExp:
-         * array[0], exp: 10]. Ref itest: array.Access.assignAccessPrimitive().
-         */
-        List<Pack> headList = packs.headList(packO.get(), heap.getPacks());
-        final String expString = exp.toString();
-        Optional<Pack> leftExpPackO = headList.stream().filter(p -> {
-            return p.getLeftExp().isPresent()
-                    && p.getLeftExp().get().toString().equals(expString);
-        }).reduce((f, s) -> s);
-
-        // REVIEW
-        if (leftExpPackO.isPresent()) {
-            IVar prevVar = leftExpPackO.get().getVar();
-            /*
-             * if var exists in leftExpPack recursively find its initializer
-             * else use leftExpPack's exp
-             */
-            if (nonNull(prevVar)) {
-                exp = getInitializer(prevVar, heap).get();
-            } else {
-                exp = leftExpPackO.get().getExp();
-
-            }
-        }
-
-        return Optional.ofNullable(exp);
-    }
 }

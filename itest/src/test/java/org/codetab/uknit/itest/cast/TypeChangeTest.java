@@ -1,6 +1,13 @@
 package org.codetab.uknit.itest.cast;
 
-import org.codetab.uknit.itest.cast.Model.Metric;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class TypeChangeTest {
     @InjectMocks
@@ -13,7 +20,7 @@ public class TypeChangeTest {
 
     @Test
     public void testGetCount() {
-        long count = 1L;
+        long count = 0L;
 
         long actual = typeChange.getCount();
 
@@ -25,7 +32,7 @@ public class TypeChangeTest {
         TypeChange other = Mockito.mock(TypeChange.class);
         long count = 1L;
 
-        when(((TypeChange) other).getCount()).thenReturn(count);
+        when(other.getCount()).thenReturn(count);
         typeChange.aggregate(other);
     }
 }

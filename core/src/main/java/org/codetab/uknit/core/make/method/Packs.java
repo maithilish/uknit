@@ -6,10 +6,12 @@ import static java.util.Objects.nonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -128,6 +130,19 @@ public class Packs {
     }
 
     /**
+     * Filter packs by predicate.
+     *
+     * @param heap
+     * @param predicate
+     * @return
+     */
+    public List<Pack> filterPacks(final Heap heap,
+            final Predicate<Pack> predicate) {
+        return heap.getPacks().stream().filter(predicate)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Filter pack list where exp is any of classes type.
      *
      * @param packs
@@ -212,7 +227,6 @@ public class Packs {
         return packs.subList(start, end);
     }
 
-
     /**
      * Get the pack which has var of Kind.RETURN.
      *
@@ -236,5 +250,4 @@ public class Packs {
             }
         }).reduce((f, s) -> s);
     }
-
 }

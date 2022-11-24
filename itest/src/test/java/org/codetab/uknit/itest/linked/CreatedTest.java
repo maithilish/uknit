@@ -37,9 +37,12 @@ public class CreatedTest {
     @Test
     public void testIsCreated2() {
         Foo foo = Mockito.mock(Foo.class);
-        Object obj = new Locale("");
-        Object obj2 = obj;
+        Object obj = Mockito.mock(Object.class);
+        Object obj4 = new Locale("");
+        Object obj2 = obj4;
         Object obj3 = obj2;
+
+        when(foo.obj()).thenReturn(obj);
 
         Object actual = created.isCreated2(foo);
 
@@ -63,11 +66,11 @@ public class CreatedTest {
     @Test
     public void testIsInferred2() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale obj = Mockito.mock(Locale.class);
-        Object obj2 = obj;
+        Locale obj4 = Mockito.mock(Locale.class);
+        Object obj2 = obj4;
         Object obj3 = obj2;
 
-        when(foo.obj()).thenReturn(obj);
+        when(foo.obj()).thenReturn(obj4);
 
         Object actual = created.isInferred2(foo);
 

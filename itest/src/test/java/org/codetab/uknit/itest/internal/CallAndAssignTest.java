@@ -84,17 +84,17 @@ public class CallAndAssignTest {
 
     @Test
     public void testCallAndAssignToSameNameNullInitialized() {
-        WebClient webClient2 = Mockito.mock(WebClient.class);
+        WebClient webClient3 = Mockito.mock(WebClient.class);
         Options options = Mockito.mock(Options.class);
-        WebClient webClient = webClient2;
+        WebClient webClient2 = webClient3;
 
-        when(factory.getWebClient()).thenReturn(webClient2);
-        when(webClient2.getOptions()).thenReturn(options);
+        when(factory.getWebClient()).thenReturn(webClient3);
+        when(webClient3.getOptions()).thenReturn(options);
 
         WebClient actual =
                 callAndAssign.callAndAssignToSameNameNullInitialized();
 
-        assertSame(webClient, actual);
+        assertSame(webClient2, actual);
         verify(options).setJavaScriptEnabled(false);
     }
 

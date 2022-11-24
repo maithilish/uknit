@@ -54,9 +54,14 @@ public class Patchers {
      * @return
      */
     public List<Expression> getExps(final ASTNode node) {
+
         checkNotNull(node);
 
         List<Expression> exps = new ArrayList<>();
+
+        if (nodes.isName(node)) {
+            return exps;
+        }
 
         if (nodes.is(node, ReturnStatement.class)) {
             ReturnStatement rs = nodes.as(node, ReturnStatement.class);
@@ -141,9 +146,9 @@ public class Patchers {
         checkNotNull(node);
         checkNotNull(exp);
 
-        if (nodes.is(node, ReturnStatement.class)
-                || nodes.is(node, VariableDeclarationFragment.class)
-                || nodes.is(node, EnhancedForStatement.class)) {
+        if (nodes.is(node, ReturnStatement.class,
+                VariableDeclarationFragment.class,
+                EnhancedForStatement.class)) {
             return 0;
         } else if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
@@ -300,6 +305,10 @@ public class Patchers {
     public boolean patchExpWithVar(final ASTNode node, final Patch patch) {
         checkNotNull(node);
         checkNotNull(patch);
+
+        if (nodes.isName(node)) {
+            return false;
+        }
 
         String name = patch.getName();
         if (nodes.is(node, ReturnStatement.class)) {

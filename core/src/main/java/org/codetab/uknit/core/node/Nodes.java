@@ -19,6 +19,14 @@ public class Nodes {
     @Inject
     private NodeGroups nodeGroups;
 
+    /**
+     * Ex: if node SimpleName and clz is SimpleName then return true else if clz
+     * Name or QualifedName then returns false.
+     *
+     * @param node
+     * @param clz
+     * @return
+     */
     public boolean is(final ASTNode node, final Class<?> clz) {
         if (isNull(node)) {
             return false;

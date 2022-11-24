@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.process;
 
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -8,10 +10,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.imc.InternalCallProcessor;
 import org.codetab.uknit.core.make.method.imc.InternalCalls;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Methods;
@@ -52,15 +56,17 @@ public class Processor {
      *
      * @param heap
      */
-    public void process(final Heap heap) {
-
+    public void processInfers(final Heap heap) {
         inferProcessor.createInfers(heap);
         inferProcessor.createInferForReturn(heap);
-
         patchProcessor.createInvokePatches(heap);
+    }
 
+    public void processIM(final Heap heap) {
         imcProcessor.process(heap);
+    }
 
+    public void postProcessIM(final Heap heap) {
         varProcessor.markCreation(heap);
         varProcessor.processCastType(heap);
     }
@@ -104,6 +110,10 @@ public class Processor {
         patchProcessor.createVarPatches(internalHeap);
         patchProcessor.updateNamesInPatches(internalHeap);
     }
+
+    public void processVarReassign(final Heap heap) {
+        varProcessor.processReassign(heap);
+    }
 }
 
 class InvokeProcessor {
@@ -115,13 +125,20 @@ class InvokeProcessor {
     @Inject
     private Methods methods;
 
+    /**
+     * Set call var. The call var of MI is expression and its var is known only
+     * after infer var and patch is created for it in visit post process.
+     *
+     * @param heap
+     */
     public void process(final Heap heap) {
-        // process empty callVar
-        List<Invoke> invokeList = packs.filterInvokes(heap.getPacks());
-        invokeList = invokeList.stream()
+
+        // process all invokes where callVar is not yet set
+        List<Invoke> invokeList = packs.filterInvokes(heap.getPacks()).stream()
                 .filter(i -> i.getCallVar().isEmpty()
                         && methods.isInvokable(i.getExp()))
                 .collect(Collectors.toList());
+
         for (Invoke invoke : invokeList) {
             invokes.setCallVar(invoke, heap);
         }
@@ -137,6 +154,9 @@ class VarStateProcessor {
     public void process(final Heap heap) {
         varEnabler.checkEnableState(heap);
 
+        /*
+         * disable vars that are not used in when, verify and return
+         */
         Set<String> usedNames = varEnabler.collectUsedVarNames(heap);
         varEnabler.updateVarEnableState(usedNames, heap);
 
@@ -248,6 +268,10 @@ class VarProcessor {
 
     @Inject
     private LinkedVarProcessor linkedVarProcessor;
+    @Inject
+    private VarAssignor varAssignor;
+    @Inject
+    private Vars vars;
 
     /**
      * Propagate create to all linked packs.
@@ -257,6 +281,20 @@ class VarProcessor {
     public void markCreation(final Heap heap) {
         heap.getPacks().forEach(pack -> linkedVarProcessor
                 .markAndPropagateCreation(pack, heap.getPacks()));
+    }
+
+    /**
+     * Renames reassigned vars and update any reference.
+     *
+     * @param heap
+     */
+    public void processReassign(final Heap heap) {
+        List<IVar> reassignedVars = vars.filterVars(heap,
+                v -> nonNull(v) && v.getName().endsWith("-reassigned"));
+        reassignedVars.stream()
+                .forEach(v -> varAssignor.renameAssigns(v, heap));
+        reassignedVars.stream()
+                .forEach(v -> varAssignor.updateAssigns(v, heap));
     }
 
     /**

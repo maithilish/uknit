@@ -53,10 +53,10 @@ public class EnabledTest {
     public void testEnableUnusedVarsButWhenExists() {
         Foo foo = Mockito.mock(Foo.class);
         Locale obj = new Locale("");
-        Object obj2 = Mockito.mock(Object.class);
+        Object obj4 = Mockito.mock(Object.class);
         Object obj3 = obj;
 
-        when(foo.obj()).thenReturn(obj2);
+        when(foo.obj()).thenReturn(obj4);
 
         Object actual = enabled.enableUnusedVarsButWhenExists(foo);
 

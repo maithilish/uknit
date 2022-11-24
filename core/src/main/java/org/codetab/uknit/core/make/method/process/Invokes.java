@@ -28,8 +28,8 @@ public class Invokes {
     private Patcher patcher;
 
     /**
-     * Set call var. The call var of MI is expression. The var for it is known
-     * only after infer var and patch is created for it in visit post process
+     * Set call var. The call var of MI is expression and its var is known only
+     * after infer var and patch is created for it in visit post process.
      *
      * @param invoke
      * @param heap

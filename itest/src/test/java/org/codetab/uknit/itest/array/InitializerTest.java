@@ -69,4 +69,3 @@ public class InitializerTest {
         assertArrayEquals(array, actual);
     }
 }
-

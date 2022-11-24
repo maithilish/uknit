@@ -54,20 +54,45 @@ public class Assignor {
         if (packO.isPresent()) {
             Pack pack = packO.get();
             if (nodes.is(lhs, SimpleName.class)) {
-                /**
-                 * <code>Date foo; foo = bar();</code> results in two packs,
-                 * search for foo pack, assign its var to bar pack and remove
-                 * bar pack. Another example,
-                 * <code>Locale locale = foo.locale(); locale = new Locale();</code>
-                 * the first pack is removed once second pack is assigned.
-                 */
                 if (isNull(pack.getVar())) {
-                    Optional<Pack> leftPackO = packs
+                    Optional<Pack> varPackO = packs
                             .findByVarName(nodes.getName(lhs), heap.getPacks());
-                    if (leftPackO.isPresent()) {
-                        IVar leftVar = leftPackO.get().getVar();
-                        pack.setVar(leftVar);
-                        heap.removePack(leftPackO.get());
+                    if (varPackO.isPresent()) {
+                        if (isNull(varPackO.get().getExp())) {
+                            /*
+                             * Var definition and assign are done in different
+                             * stmts. Ex: Date foo; foo = bar(); results in two
+                             * packs, search for foo pack, assign its var to bar
+                             * pack and remove bar pack. Another example, Locale
+                             * locale = foo.locale(); locale = new Locale(); the
+                             * first pack is removed once second pack is
+                             * assigned.
+                             */
+                            IVar leftVar = varPackO.get().getVar();
+                            pack.setVar(leftVar);
+                            heap.removePack(varPackO.get());
+                        } else {
+                            /*
+                             * Var is defined and value assigned to var and then
+                             * var is reassigned with new value. Create new var
+                             * for the pack so that both old and new value gets
+                             * their own packs. Ex: int i = 5; foo.get(i); i =
+                             * 7; foo.get(i); two packs are created for first
+                             * and third stmts Pack [var=i, exp=5] and Pack
+                             * [var:null, exp=7]. Create new var and assign it
+                             * the second pack. The new var is clone of var i
+                             * with name changed as i-reassigned and the name
+                             * will be changed to i2 by
+                             * Processor.processVarReassign(). Illegal token
+                             * dash in the name ensures that it doesn't clash
+                             * with any legal var in MUT.
+                             */
+                            IVar newVar = varPackO.get().getVar().clone();
+                            String newVarName =
+                                    newVar.getName() + "-reassigned";
+                            newVar.setName(newVarName);
+                            pack.setVar(newVar);
+                        }
                     }
                 }
             } else if (nodes.is(lhs, ArrayAccess.class, FieldAccess.class)) {

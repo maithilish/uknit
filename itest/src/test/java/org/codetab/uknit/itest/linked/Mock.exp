@@ -15,8 +15,11 @@ public class MockTest {
     @Test
     public void testAssignCreationToMock() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale locale = new Locale("en");
-        Locale locale2 = locale;
+        Locale locale = Mockito.mock(Locale.class);
+        Locale locale3 = new Locale("en");
+        Locale locale2 = locale3;
+
+        when(foo.locale()).thenReturn(locale);
 
         Locale actual = mock.assignCreationToMock(foo);
 
@@ -26,10 +29,10 @@ public class MockTest {
     @Test
     public void testAssignCreationAndMockToMock() {
         Foo foo = Mockito.mock(Foo.class);
-        Locale locale = Mockito.mock(Locale.class);
-        Locale locale2 = locale;
+        Locale locale3 = Mockito.mock(Locale.class);
+        Locale locale2 = locale3;
 
-        when(foo.locale()).thenReturn(locale);
+        when(foo.locale()).thenReturn(locale3);
 
         Locale actual = mock.assignCreationAndMockToMock(foo);
 

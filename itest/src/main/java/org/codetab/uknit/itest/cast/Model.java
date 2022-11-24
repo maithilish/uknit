@@ -17,4 +17,3 @@ public class Model {
         void aggregate(Metric other);
     }
 }
-

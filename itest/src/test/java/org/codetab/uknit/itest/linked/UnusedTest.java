@@ -30,6 +30,9 @@ public class UnusedTest {
     @Test
     public void testUnusedButInovkedAndCreated() {
         Foo foo = Mockito.mock(Foo.class);
+        Object unObj = Mockito.mock(Object.class);
+
+        when(foo.obj()).thenReturn(unObj);
         unused.unusedButInovkedAndCreated(foo);
     }
 }

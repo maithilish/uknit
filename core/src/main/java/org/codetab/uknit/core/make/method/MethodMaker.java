@@ -122,8 +122,15 @@ public class MethodMaker {
                 .createFieldPacks(clzMap.getFieldsCopy(testClzName)));
         method.accept(visitor);
 
-        processor.process(heap);
+        processor.processInfers(heap);
+        processor.processVarReassign(heap);
+        processor.processVarNameChange(heap);
+
+        processor.processIM(heap);
+        processor.postProcessIM(heap);
+
         processor.processInvokes(heap);
+
         processor.processWhenVerify(heap);
         processor.processVarState(heap);
 
@@ -191,7 +198,9 @@ public class MethodMaker {
          * process infer, returnInfer, IMC etc., but when, verify and var state
          * are not processed here and these are later processed by caller.
          */
-        processor.process(internalHeap);
+        processor.processInfers(internalHeap);
+        processor.processIM(internalHeap);
+        processor.postProcessIM(internalHeap);
 
         // merge packs of internal heap to the caller heap.
         merger.merge(invoke, heap, internalHeap);

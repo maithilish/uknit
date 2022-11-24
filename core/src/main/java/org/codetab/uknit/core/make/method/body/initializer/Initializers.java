@@ -28,6 +28,8 @@ public class Initializers {
     @Inject
     private DerivedInitialzer derivedInitialzer;
     @Inject
+    private Stepins stepins;
+    @Inject
     private Patcher patcher;
     @Inject
     private Nodes nodes;
@@ -38,26 +40,31 @@ public class Initializers {
 
         String initializer = null;
 
-        Optional<Expression> initExp =
+        Optional<Expression> initExpO =
                 definedInitialzer.getInitializer(var, heap);
 
         /*
          * If present try to get initializer from initExp else try from
          * initEnum.
          */
-        if (initExp.isPresent()) {
+        if (initExpO.isPresent()) {
+
             Optional<Pack> packO =
-                    packs.findByExp(initExp.get(), heap.getPacks());
-            if (nodes.is(initExp.get(), SimpleName.class)) {
-                initializer = nodes.getName(initExp.get());
-            } else if (definedInitialzer.isAllowed(initExp.get())) {
+                    packs.findByExp(initExpO.get(), heap.getPacks());
+
+            if (stepins.isStepin(initExpO.get(), heap)) {
+                initializer = "STEPIN";
+            } else if (nodes.is(initExpO.get(), SimpleName.class)) {
+                initializer = nodes.getName(initExpO.get());
+            } else if (definedInitialzer.isAllowed(initExpO.get())) {
                 Expression exp = patcher.copyAndPatch(packO.get(), heap);
                 initializer = exp.toString();
-            } else if (definedInitialzer.isMIAllowed(var, initExp.get(),
+            } else if (definedInitialzer.isMIAllowed(var, initExpO.get(),
                     heap)) {
                 Expression exp = patcher.copyAndPatch(packO.get(), heap);
                 initializer = exp.toString();
             }
+
         } else {
             Optional<String> initEnum =
                     enumInitializer.getInitializer(var, heap);

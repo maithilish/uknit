@@ -2,28 +2,37 @@ package org.codetab.uknit.itest.reassign;
 
 import org.codetab.uknit.itest.reassign.Model.Foo;
 
-public class Var {
+public class Internal {
 
     public String defineAndAssign(final Foo foo) {
         int index = 1;
-        String x = foo.get(index);
+        String x = getName(foo, index);
         return x;
     }
 
     public String reassignBeforeVarUse(final Foo foo) {
         int index = 1;
         index = 2;
-        String y = foo.get(index);
+        String y = getName(foo, index);
         return y;
     }
 
     public String reassignAfterVarUse(final Foo foo) {
         int index = 1;
-        String x = foo.get(index);
+        String x = getName(foo, index);
 
         index = 2;
-        String y = foo.get(index);
+        String y = getName(foo, index);
         return x + y;
+    }
+
+    public String reassignAfterVarUse2(final Foo foo) {
+        int index = 1;
+        getName(foo, index);
+
+        index = 2;
+        String y = getName(foo, index);
+        return y;
     }
 
     /**
@@ -35,12 +44,18 @@ public class Var {
      */
     public String reassignNameVarConflicts(final Foo foo) {
         int index = 1;
-        String x = foo.get(index);
+        String x = getName(foo, index);
 
         @SuppressWarnings("unused")
         int index2 = 0;
         index = 2;
-        String y = foo.get(index);
+        String y = getName(foo, index);
         return x + y;
+    }
+
+    // internal method
+    private String getName(final Foo foo, final int index) {
+        String y = foo.get(index);
+        return y;
     }
 }

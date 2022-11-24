@@ -5,15 +5,19 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.When;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -43,7 +47,7 @@ public class WhenCreator {
             return;
         }
 
-        if (excludes.exclude(invoke)) {
+        if (excludes.exclude(invoke, heap)) {
             return;
         }
 
@@ -98,9 +102,17 @@ public class WhenCreator {
     static class Excludes {
 
         @Inject
+        private Expressions expressions;
+        @Inject
+        private Packs packs;
+        @Inject
         private Types types;
+        @Inject
+        private Methods methods;
+        @Inject
+        private Patcher patcher;
 
-        public boolean exclude(final Invoke invoke) {
+        public boolean exclude(final Invoke invoke, final Heap heap) {
             Optional<IVar> callVarO = invoke.getCallVar();
             if (callVarO.isEmpty()) {
                 return true;
@@ -115,7 +127,6 @@ public class WhenCreator {
             if (!callVar.isMock()) {
                 return true;
             }
-
             // returnType void, exclude
             if (invoke.getReturnType().isPresent()) {
                 Type type = invoke.getReturnType().get().getType();
@@ -123,7 +134,42 @@ public class WhenCreator {
                     return true;
                 }
             }
+
+            /*
+             * Exclude if method is invoked on real object. If var is renamed
+             * then use renamed var to known whether method invoked on created
+             * var. Ref itest: internal.CallAndAssign.
+             * callAndAssignToDifferentNameNullInitialized() where
+             * webClient.getOptions() in configure() is invoked on renamed var
+             * webClient2.
+             */
+            Optional<Pack> callVarPackO = findCallVarPack(invoke, heap);
+            if (callVarPackO.isPresent()
+                    && callVarPackO.get().getVar().isCreated()) {
+                return true;
+            }
+
             return false;
+        }
+
+        /**
+         * Get pack for the method invoke call var. Ex: Foo foo; foo.bar(); for
+         * MI foo.bar() the call var is foo and first stmt is its pack.
+         *
+         * @param invoke
+         * @param heap
+         * @return
+         */
+        private Optional<Pack> findCallVarPack(final Invoke invoke,
+                final Heap heap) {
+            Optional<Pack> callVarPackO = Optional.empty();
+            Optional<Expression> patchedExpO =
+                    patcher.getPatchedCallExp(invoke, heap);
+            if (!methods.isInternalCall(invoke.getExp(), patchedExpO)) {
+                String name = expressions.getName(patchedExpO.get());
+                callVarPackO = packs.findByVarName(name, heap.getPacks());
+            }
+            return callVarPackO;
         }
     }
 }

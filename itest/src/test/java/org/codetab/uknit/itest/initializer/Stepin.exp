@@ -1,0 +1,61 @@
+package org.codetab.uknit.itest.initializer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+public class StepinTest {
+    @InjectMocks
+    private Stepin stepin;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAccessArrayCreation() {
+        int foo = STEPIN;
+
+        int actual = stepin.accessArrayCreation();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testAccessArrayInitializer() {
+        int foo = STEPIN;
+
+        int actual = stepin.accessArrayInitializer();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testAccessArrayNewInitializer() {
+        int foo = STEPIN;
+
+        int actual = stepin.accessArrayNewInitializer();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testInvokeReal() {
+        String foo = STEPIN;
+
+        String actual = stepin.invokeReal();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testInvokeRealOfMockType() {
+        Set<String> attr = STEPIN;
+
+        Set<String> actual = stepin.invokeRealOfMockType();
+
+        assertEquals(attr, actual);
+    }
+}

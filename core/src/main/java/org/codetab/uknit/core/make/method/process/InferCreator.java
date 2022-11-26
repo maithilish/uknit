@@ -21,6 +21,7 @@ import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
@@ -72,9 +73,11 @@ public class InferCreator {
         if (returnTypeO.isPresent()) {
 
             Type type = returnTypeO.get().getType();
+            ITypeBinding typeBinding = returnTypeO.get().getTypeBinding();
 
             if (types.capableToReturnValue(type)) {
-                IVar inferVar = inferFactory.createInfer(type, heap);
+                IVar inferVar =
+                        inferFactory.createInfer(type, typeBinding, heap);
                 pack.setVar(inferVar);
             }
         } else {
@@ -106,7 +109,8 @@ public class InferCreator {
          * "foo", 5 etc.,
          */
         if (expressions.isInferable(exp)) {
-            inferVar = inferFactory.createInfer(type, heap);
+            inferVar = inferFactory.createInfer(type, exp.resolveTypeBinding(),
+                    heap);
         }
 
         if (nonNull(inferVar)) {

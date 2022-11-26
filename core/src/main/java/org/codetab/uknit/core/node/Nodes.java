@@ -10,7 +10,9 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
@@ -208,6 +210,16 @@ public class Nodes {
     public String noImplmentationMessage(final ASTNode node) {
         return spaceit("no implmentation for node type:",
                 node.getClass().getSimpleName(), "-", node.toString());
+    }
+
+    // REVIEW
+    public boolean isCastedExp(final Expression exp) {
+        Expression e = exp;
+        if (is(exp, ParenthesizedExpression.class)) {
+            e = as(exp, ParenthesizedExpression.class).getExpression();
+        }
+        return is(e, CastExpression.class)
+                || is(e.getParent(), CastExpression.class);
     }
 
 }

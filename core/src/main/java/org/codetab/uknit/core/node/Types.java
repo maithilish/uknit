@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.node;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
@@ -20,8 +21,11 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.TypeNameException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CastExpression;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.CreationReference;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IntersectionType;
@@ -36,7 +40,10 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.UnionType;
+import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.WildcardType;
 
 public class Types {
@@ -177,15 +184,35 @@ public class Types {
      * @param ast
      * @return optional type
      */
+    // REVIEW
     public Optional<Type> getType(final Expression exp) {
-        Optional<Type> type = Optional.empty();
-        if (nonNull(exp)) {
-            if (!nodes.is(exp, NullLiteral.class)) {
-                type = Optional.ofNullable(
-                        getType(exp.resolveTypeBinding(), exp.getAST()));
-            }
+        Type type = null;
+        if (isNull(exp) || (nonNull(exp) && nodes.is(exp, NullLiteral.class))) {
+            return Optional.empty();
         }
-        return type;
+
+        if (nodes.is(exp, ArrayCreation.class)) {
+            type = ((ArrayCreation) exp).getType();
+        } else if (nodes.is(exp, CastExpression.class)) {
+            type = ((CastExpression) exp).getType();
+        } else if (nodes.is(exp, ClassInstanceCreation.class)) {
+            type = ((ClassInstanceCreation) exp).getType();
+        } else if (nodes.is(exp, CreationReference.class)) {
+            type = ((CreationReference) exp).getType();
+        } else if (nodes.is(exp, TypeLiteral.class)) {
+            type = ((TypeLiteral) exp).getType();
+        } else if (nodes.is(exp, TypeMethodReference.class)) {
+            type = ((TypeMethodReference) exp).getType();
+        } else if (nodes.is(exp, VariableDeclarationExpression.class)) {
+            type = ((VariableDeclarationExpression) exp).getType();
+        }
+
+        if (isNull(type)) {
+            ITypeBinding typeBinding = exp.resolveTypeBinding();
+            type = getType(typeBinding, exp.getAST());
+        }
+
+        return Optional.ofNullable(type);
     }
 
     public Type getType(final ITypeBinding typeBinding, final AST ast) {

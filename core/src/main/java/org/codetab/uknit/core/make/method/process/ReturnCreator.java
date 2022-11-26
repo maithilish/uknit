@@ -65,6 +65,7 @@ public class ReturnCreator {
                 boolean isMock = mocks.isMockable(methodReturnType);
                 IVar var = modelFactory.createVar(Kind.RETURN, retVarName,
                         methodReturnType, isMock);
+                var.setTypeBinding(exp.resolveTypeBinding());
                 Pack pack = modelFactory.createPack(var, exp,
                         packO.get().isInCtlPath());
                 heap.addPack(pack);
@@ -87,6 +88,7 @@ public class ReturnCreator {
                 boolean isMock = mocks.isMockable(methodReturnType);
                 IVar var = modelFactory.createVar(Kind.RETURN, name,
                         methodReturnType, isMock);
+                var.setTypeBinding(exp.resolveTypeBinding());
                 packO.get().setVar(var);
             } else {
                 throw new IllegalStateException(

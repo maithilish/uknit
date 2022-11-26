@@ -13,4 +13,16 @@ public class Model {
 
         Object obj();
     }
+
+    interface Pet {
+        String sex();
+    }
+
+    interface Dog extends Pet {
+        String breed();
+    }
+
+    interface Pitbull extends Dog {
+        String name();
+    }
 }

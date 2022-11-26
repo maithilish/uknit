@@ -2,6 +2,7 @@ package org.codetab.uknit.core.make.model;
 
 import java.util.Optional;
 
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 
 public interface IVar {
@@ -49,6 +50,10 @@ public interface IVar {
     void setDeepStub(boolean deepStub);
 
     IVar clone();
+
+    ITypeBinding getTypeBinding();
+
+    void setTypeBinding(ITypeBinding typeBinding);
 
     default boolean isField() {
         return is(Kind.FIELD);

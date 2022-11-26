@@ -7,10 +7,15 @@ public class Model {
     }
 
     interface Pet {
+        String sex();
     }
 
     interface Dog extends Pet {
+        String breed();
+    }
 
+    interface Pitbull extends Dog {
+        String name();
     }
 
     interface Metric {

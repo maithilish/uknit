@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 
 import com.google.inject.assistedinject.Assisted;
@@ -20,6 +21,7 @@ public class Var implements IVar {
     protected String oldName;
 
     protected Type type;
+    protected ITypeBinding typeBinding;
     protected boolean mock;
     protected boolean created;
     protected boolean enable;
@@ -83,6 +85,16 @@ public class Var implements IVar {
     @Override
     public void setType(final Type type) {
         this.type = type;
+    }
+
+    @Override
+    public ITypeBinding getTypeBinding() {
+        return typeBinding;
+    }
+
+    @Override
+    public void setTypeBinding(final ITypeBinding typeBinding) {
+        this.typeBinding = typeBinding;
     }
 
     @Override
@@ -179,4 +191,5 @@ public class Var implements IVar {
         return "Var [name=" + name + ", type=" + type + ", kind=" + kind
                 + ", mock=" + mock + ", created=" + created + "]";
     }
+
 }

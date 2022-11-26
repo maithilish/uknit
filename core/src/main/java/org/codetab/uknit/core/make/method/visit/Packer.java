@@ -70,7 +70,7 @@ public class Packer {
             String name = variables.getVariableName(vd);
             boolean isMock = mocks.isMockable(type);
             IVar var = modelFactory.createVar(kind, name, type, isMock);
-
+            var.setTypeBinding(type.resolveBinding());
             Expression initializer = vd.getInitializer();
 
             /*
@@ -82,7 +82,10 @@ public class Packer {
              * to simplify the invoke
              */
             Optional<Type> initializerTypeO = types.getType(initializer);
-            initializerTypeO.ifPresent(var::setType);
+            initializerTypeO.ifPresent(t -> {
+                var.setType(t);
+                var.setTypeBinding(initializer.resolveTypeBinding());
+            });
 
             /*
              * if initializer pack is present assign var to it otherwise create

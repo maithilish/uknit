@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.cast;
 
-public class Model {
+class Model {
 
     interface Pets {
         Pet getPet(String type);

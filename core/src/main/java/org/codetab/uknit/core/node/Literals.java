@@ -11,6 +11,8 @@ public class Literals {
 
     @Inject
     private Nodes nodes;
+    @Inject
+    private Braces braces;
 
     /**
      * Whether literal is used by uknit. Literals may appear in MI, Annotation,
@@ -23,10 +25,10 @@ public class Literals {
      * @param exp
      * @return
      */
+    // REVIEW
     public boolean ofInterest(final Expression exp) {
         boolean ofInterest = false;
-        ASTNode parent = exp.getParent();
-
+        ASTNode parent = braces.stripAndGetParent(exp);
         if (nodes.is(parent, ReturnStatement.class)) {
             ofInterest = true;
         }

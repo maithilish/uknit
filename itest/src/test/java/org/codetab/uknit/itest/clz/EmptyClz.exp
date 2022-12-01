@@ -1,0 +1,11 @@
+package org.codetab.uknit.itest.clz;
+
+public class EmptyClzTest {
+    @InjectMocks
+    private EmptyClz emptyClz;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+}

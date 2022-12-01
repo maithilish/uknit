@@ -10,7 +10,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Expressions;
+import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
@@ -23,13 +23,13 @@ public class ReturnCreator {
     @Inject
     private Packs packs;
     @Inject
-    private Expressions expressions;
-    @Inject
     private Nodes nodes;
     @Inject
     private Mocks mocks;
     @Inject
     private ModelFactory modelFactory;
+    @Inject
+    private Braces braces;
 
     /**
      * Creates return var for the return statement expression and sets it to the
@@ -51,7 +51,7 @@ public class ReturnCreator {
          * strip any outer exp such as Cast, Parentheses etc., Ex: return
          * (String) obj;
          */
-        Expression exp = expressions.stripWraperExpression(rs.getExpression());
+        Expression exp = braces.stripWraper(rs.getExpression());
 
         if (nodes.is(exp, SimpleName.class)) {
             /*

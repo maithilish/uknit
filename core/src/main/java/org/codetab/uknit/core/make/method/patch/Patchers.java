@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.ReturnType;
+import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
@@ -43,6 +44,8 @@ public class Patchers {
     private Nodes nodes;
     @Inject
     private Methods methods;
+    @Inject
+    private Braces braces;
 
     /**
      * Returns list of expressions in an expression.
@@ -59,7 +62,7 @@ public class Patchers {
 
         List<Expression> exps = new ArrayList<>();
 
-        if (nodes.isName(node)) {
+        if (node instanceof Expression && nodes.isName((Expression) node)) {
             return exps;
         }
 
@@ -128,7 +131,7 @@ public class Patchers {
             exps.add(cond.getThenExpression());
             exps.add(cond.getElseExpression());
         }
-        return exps;
+        return braces.strip(exps);
     }
 
     /**
@@ -142,6 +145,7 @@ public class Patchers {
      * @param exp
      * @return
      */
+    // REVIEW - strip braces
     public int getExpIndex(final ASTNode node, final Expression exp) {
         checkNotNull(node);
         checkNotNull(exp);
@@ -153,11 +157,12 @@ public class Patchers {
         } else if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args = mi.arguments();
+            List<Expression> args = braces.strip(mi.arguments());
             /*
              * If IMC or static import call is arg for invoke then exp is null
              */
-            if (nonNull(mi.getExpression()) && mi.getExpression().equals(exp)) {
+            if (nonNull(mi.getExpression())
+                    && braces.strip(mi.getExpression()).equals(exp)) {
                 return 0;
             } else if (args.contains(exp)) {
                 // starts from 1
@@ -169,7 +174,7 @@ public class Patchers {
             SuperMethodInvocation smi =
                     nodes.as(node, SuperMethodInvocation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args = smi.arguments();
+            List<Expression> args = braces.strip(smi.arguments());
             if (args.contains(exp)) {
                 // zero indexed
                 return args.indexOf(exp);
@@ -177,9 +182,10 @@ public class Patchers {
                 return -1;
             }
         } else if (nodes.is(node, ClassInstanceCreation.class)) {
+            ClassInstanceCreation cic =
+                    nodes.as(node, ClassInstanceCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args =
-                    nodes.as(node, ClassInstanceCreation.class).arguments();
+            List<Expression> args = braces.strip(cic.arguments());
             if (args.contains(exp)) {
                 // zero indexed
                 return args.indexOf(exp);
@@ -193,12 +199,13 @@ public class Patchers {
              */
             ArrayCreation ac = nodes.as(node, ArrayCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> dims = ac.dimensions();
+            List<Expression> dims = braces.strip(ac.dimensions());
             List<Expression> args = new ArrayList<>(dims);
             // combine initializer expressions
             if (nonNull(ac.getInitializer())) {
                 @SuppressWarnings("unchecked")
-                List<Expression> initArgs = ac.getInitializer().expressions();
+                List<Expression> initArgs =
+                        braces.strip(ac.getInitializer().expressions());
                 args.addAll(initArgs);
             }
             if (args.contains(exp)) {
@@ -208,9 +215,9 @@ public class Patchers {
                 return -1;
             }
         } else if (nodes.is(node, ArrayInitializer.class)) {
+            ArrayInitializer ai = nodes.as(node, ArrayInitializer.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args =
-                    nodes.as(node, ArrayInitializer.class).expressions();
+            List<Expression> args = braces.strip(ai.expressions());
             if (args.contains(exp)) {
                 // zero indexed
                 return args.indexOf(exp);
@@ -219,36 +226,38 @@ public class Patchers {
             }
         } else if (nodes.is(node, ArrayAccess.class)) {
             ArrayAccess aa = nodes.as(node, ArrayAccess.class);
-            if (aa.getArray().equals(exp)) {
+            if (braces.strip(aa.getArray()).equals(exp)) {
                 return 0;
-            } else if (aa.getIndex().equals(exp)) {
+            } else if (braces.strip(aa.getIndex()).equals(exp)) {
                 return 1;
             } else {
                 return -1;
             }
         } else if (nodes.is(node, InfixExpression.class)) {
             InfixExpression infix = nodes.as(node, InfixExpression.class);
-            if (infix.getLeftOperand().equals(exp)) {
+            if (braces.strip(infix.getLeftOperand()).equals(exp)) {
                 return 0;
-            } else if (infix.getRightOperand().equals(exp)) {
+            } else if (braces.strip(infix.getRightOperand()).equals(exp)) {
                 return 1;
             } else {
+                @SuppressWarnings("unchecked")
+                List<Expression> extOps = infix.extendedOperands();
                 final int operandOffset = 2;
-                int index = infix.extendedOperands().indexOf(exp);
+                int index = braces.strip(extOps).indexOf(exp);
                 return operandOffset + index;
             }
         } else if (nodes.is(node, Assignment.class)) {
             Assignment assign = nodes.as(node, Assignment.class);
-            if (assign.getLeftHandSide().equals(exp)) {
+            if (braces.strip(assign.getLeftHandSide()).equals(exp)) {
                 return 0;
-            } else if (assign.getRightHandSide().equals(exp)) {
+            } else if (braces.strip(assign.getRightHandSide()).equals(exp)) {
                 return 1;
             } else {
                 return -1;
             }
         } else if (nodes.is(node, CastExpression.class)) {
             CastExpression ce = nodes.as(node, CastExpression.class);
-            if (ce.getExpression().equals(exp)) {
+            if (braces.strip(ce.getExpression()).equals(exp)) {
                 return 0;
             } else {
                 return -1;
@@ -264,11 +273,11 @@ public class Patchers {
         } else if (nodes.is(node, ConditionalExpression.class)) {
             ConditionalExpression cond =
                     nodes.as(node, ConditionalExpression.class);
-            if (cond.getExpression().equals(exp)) {
+            if (braces.strip(cond.getExpression()).equals(exp)) {
                 return 0;
-            } else if (cond.getThenExpression().equals(exp)) {
+            } else if (braces.strip(cond.getThenExpression()).equals(exp)) {
                 return 1;
-            } else if (cond.getElseExpression().equals(exp)) {
+            } else if (braces.strip(cond.getElseExpression()).equals(exp)) {
                 return 2;
             } else {
                 return -1;
@@ -306,7 +315,7 @@ public class Patchers {
         checkNotNull(node);
         checkNotNull(patch);
 
-        if (nodes.isName(node)) {
+        if (node instanceof Expression && nodes.isName((Expression) node)) {
             return false;
         }
 

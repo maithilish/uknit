@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.SimpleName;
 
 public class VarEnablers {
 
@@ -93,32 +92,32 @@ public class VarEnablers {
             if (nodes.is(exp, CastExpression.class)) {
                 Expression e =
                         nodes.as(exp, CastExpression.class).getExpression();
-                if (nodes.is(e, SimpleName.class)) {
+                if (nodes.isSimpleName(e)) {
                     names.add(nodes.getName(e));
                 }
             } else if (nodes.is(exp, PrefixExpression.class)) {
                 Expression e =
                         nodes.as(exp, PrefixExpression.class).getOperand();
-                if (nodes.is(e, SimpleName.class)) {
+                if (nodes.isSimpleName(e)) {
                     names.add(nodes.getName(e));
                 }
             } else if (nodes.is(exp, PostfixExpression.class)) {
                 Expression e =
                         nodes.as(exp, PostfixExpression.class).getOperand();
-                if (nodes.is(e, SimpleName.class)) {
+                if (nodes.isSimpleName(e)) {
                     names.add(nodes.getName(e));
                 }
             } else if (nodes.is(exp, InfixExpression.class)) {
                 Expression e =
                         nodes.as(exp, InfixExpression.class).getLeftOperand();
-                if (nodes.is(e, SimpleName.class)) {
+                if (nodes.isSimpleName(e)) {
                     names.add(nodes.getName(e));
                 }
                 e = nodes.as(exp, InfixExpression.class).getRightOperand();
-                if (nodes.is(e, SimpleName.class)) {
+                if (nodes.isSimpleName(e)) {
                     names.add(nodes.getName(e));
                 }
-            } else if (nodes.is(exp, SimpleName.class)) {
+            } else if (nodes.isSimpleName(exp)) {
                 names.add(nodes.getName(exp));
             }
             for (String name : names) {

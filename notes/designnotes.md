@@ -34,5 +34,5 @@ IM the arg overrides the parameter. If arg and param name are named same then ar
 
 ## Java classes for Test
 
-Some of the suitable classes to use in itests - Instant, LocalDate, Locale 
-Date compare may fail randomly.
+It is convenient to use custom interfaces defined in package private Model.java. Apart from it some of the suitable classes to use in itests - Instant, LocalDate, LocalDateTime, DateTimeFormatter, File, StringBuilder, Locale. Avoid Date as compare may randomly fail.
+

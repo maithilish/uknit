@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.fieldaccess;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Model {
+class Model {
 
     interface Foo {
         String lang();
@@ -32,9 +32,7 @@ public class Model {
     }
 
     interface Contacts {
-
         String getHome();
-
     }
 
     static class Person {

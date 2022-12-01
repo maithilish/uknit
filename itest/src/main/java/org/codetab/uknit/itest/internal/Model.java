@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 
-public class Model {
+class Model {
 
     interface Foo {
         String lang();

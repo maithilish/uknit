@@ -1,0 +1,83 @@
+package org.codetab.uknit.itest.array;
+
+public class CreateTest {
+    @InjectMocks
+    private Create create;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCreateIntArray() {
+        int[] anArray = new int[2];
+
+        int[] actual = create.createIntArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testCreateIntTwoDimArray() {
+        int[][] anArray = new int[2][3];
+
+        int[][] actual = create.createIntTwoDimArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testDeclareAndCreateIntArray() {
+        int[] anArray = new int[2];
+
+        int[] actual = create.declareAndCreateIntArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testDeclareAndCreateIntTwoDimArray() {
+        int[][] anArray = new int[2][4];
+
+        int[][] actual = create.declareAndCreateIntTwoDimArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testCreateAndAcessIntArray() {
+        int[] anArray = new int[2];
+
+        int[] actual = create.createAndAcessIntArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testCreateStringArray() {
+        String[] anArray = new String[1];
+
+        String[] actual = create.createStringArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testDeclareAndCreateStringArray() {
+        String[] anArray = new String[1];
+
+        String[] actual = create.declareAndCreateStringArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+
+    @Test
+    public void testCreateAndAcessStringArray() {
+        String[] anArray = new String[1];
+
+        String[] actual = create.createAndAcessStringArray();
+
+        assertArrayEquals(anArray, actual);
+    }
+}

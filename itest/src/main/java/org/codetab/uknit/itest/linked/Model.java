@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.linked;
 import java.util.Date;
 import java.util.Locale;
 
-public class Model {
+class Model {
 
     interface Foo {
 

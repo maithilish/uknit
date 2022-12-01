@@ -1,0 +1,69 @@
+package org.codetab.uknit.itest.brace.linked;
+
+import java.util.Locale;
+import org.codetab.uknit.itest.brace.linked.Model.Foo;
+
+public class CreatedTest {
+    @InjectMocks
+    private Created created;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testIsCreated() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj = new Locale((""));
+        Object obj2 = obj;
+        Object obj3 = obj2;
+
+        Object actual = created.isCreated(foo);
+
+        assertEquals(obj3, actual);
+    }
+
+    @Test
+    public void testIsCreated2() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = Mockito.mock(Object.class);
+        Object obj4 = new Locale((""));
+        Object obj2 = obj4;
+        Object obj3 = obj2;
+
+        when((foo).obj()).thenReturn(obj);
+
+        Object actual = created.isCreated2(foo);
+
+        assertEquals(obj3, actual);
+    }
+
+    @Test
+    public void testIsInferred() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = Mockito.mock(Object.class);
+        Object obj2 = obj;
+        Object obj3 = obj2;
+
+        when((foo).obj()).thenReturn(obj);
+
+        Object actual = created.isInferred(foo);
+
+        assertSame(obj3, actual);
+    }
+
+    @Test
+    public void testIsInferred2() {
+        Foo foo = Mockito.mock(Foo.class);
+        Locale obj4 = Mockito.mock(Locale.class);
+        Object obj2 = obj4;
+        Object obj3 = obj2;
+
+        when((foo).obj()).thenReturn(obj4);
+
+        Object actual = created.isInferred2(foo);
+
+        assertSame(obj3, actual);
+    }
+}

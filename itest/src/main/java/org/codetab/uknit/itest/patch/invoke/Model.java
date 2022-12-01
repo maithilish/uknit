@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.patch.invoke;
 
 import java.util.Locale;
 
-public class Model {
+class Model {
 
     interface Foo {
         String lang();

@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.qname;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Model {
+class Model {
 
     interface Foo {
         String lang();

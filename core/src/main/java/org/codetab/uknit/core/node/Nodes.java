@@ -10,9 +10,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
@@ -20,6 +18,8 @@ public class Nodes {
 
     @Inject
     private NodeGroups nodeGroups;
+    @Inject
+    private Braces braces;
 
     /**
      * Ex: if node SimpleName and clz is SimpleName then return true else if clz
@@ -81,45 +81,60 @@ public class Nodes {
     /**
      * Returns name part of the name.
      *
-     * @param node
+     * @param exp
      * @return
      */
-    public String getName(final ASTNode node) {
-        if (node.getNodeType() == ASTNode.SIMPLE_NAME) {
-            return ((SimpleName) node).getFullyQualifiedName();
+    // REVIEW
+    public String getName(final Expression expression) {
+        Expression exp = braces.strip(expression);
+        if (exp.getNodeType() == ASTNode.SIMPLE_NAME) {
+            return ((SimpleName) exp).getFullyQualifiedName();
         }
-        if (node.getNodeType() == ASTNode.QUALIFIED_NAME) {
-            return ((QualifiedName) node).getName().getFullyQualifiedName();
+        if (exp.getNodeType() == ASTNode.QUALIFIED_NAME) {
+            return ((QualifiedName) exp).getName().getFullyQualifiedName();
         }
         throw new CodeException(
                 spaceit("node should be Simple or QualifiedName, but was:",
-                        node.getClass().getSimpleName()));
+                        exp.getClass().getSimpleName()));
     }
 
     /**
      * Returns qualified name.
      *
-     * @param node
+     * @param exp
      * @return
      */
-    public String getQualifiedName(final ASTNode node) {
-        if (node.getNodeType() == ASTNode.SIMPLE_NAME) {
-            return ((SimpleName) node).getFullyQualifiedName();
+    // REVIEW
+    public String getQualifiedName(final Expression expression) {
+        Expression exp = braces.strip(expression);
+        if (exp.getNodeType() == ASTNode.SIMPLE_NAME) {
+            return ((SimpleName) exp).getFullyQualifiedName();
         }
-        if (node.getNodeType() == ASTNode.QUALIFIED_NAME) {
-            return ((QualifiedName) node).getFullyQualifiedName();
+        if (exp.getNodeType() == ASTNode.QUALIFIED_NAME) {
+            return ((QualifiedName) exp).getFullyQualifiedName();
         }
         throw new CodeException(
                 spaceit("node should be Simple or QualifiedName, but was:",
-                        node.getClass().getSimpleName()));
+                        exp.getClass().getSimpleName()));
     }
 
-    public boolean isName(final ASTNode node) {
-        if (isNull(node)) {
+    // REVIEW
+    public boolean isName(final Expression expression) {
+        if (isNull(expression)) {
             return false;
         }
-        return node.getNodeType() == ASTNode.SIMPLE_NAME
-                || node.getNodeType() == ASTNode.QUALIFIED_NAME;
+        Expression exp = braces.strip(expression);
+        return exp.getNodeType() == ASTNode.SIMPLE_NAME
+                || exp.getNodeType() == ASTNode.QUALIFIED_NAME;
+    }
+
+    // REVIEW
+    public boolean isSimpleName(final Expression expression) {
+        if (isNull(expression)) {
+            return false;
+        }
+        Expression exp = braces.strip(expression);
+        return exp.getNodeType() == ASTNode.SIMPLE_NAME;
     }
 
     public String label(final ASTNode node) {
@@ -211,15 +226,4 @@ public class Nodes {
         return spaceit("no implmentation for node type:",
                 node.getClass().getSimpleName(), "-", node.toString());
     }
-
-    // REVIEW
-    public boolean isCastedExp(final Expression exp) {
-        Expression e = exp;
-        if (is(exp, ParenthesizedExpression.class)) {
-            e = as(exp, ParenthesizedExpression.class).getExpression();
-        }
-        return is(e, CastExpression.class)
-                || is(e.getParent(), CastExpression.class);
-    }
-
 }

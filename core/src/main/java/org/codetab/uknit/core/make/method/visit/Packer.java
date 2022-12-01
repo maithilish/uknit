@@ -16,6 +16,7 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.ReturnType;
+import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Literals;
 import org.codetab.uknit.core.node.Mocks;
@@ -52,6 +53,8 @@ public class Packer {
     private Resolver resolver;
     @Inject
     private Expressions expressions;
+    @Inject
+    private Braces braces;
 
     /**
      * Creates packs for VarDecl list. If initializer exists then its pack is
@@ -71,7 +74,7 @@ public class Packer {
             boolean isMock = mocks.isMockable(type);
             IVar var = modelFactory.createVar(kind, name, type, isMock);
             var.setTypeBinding(type.resolveBinding());
-            Expression initializer = vd.getInitializer();
+            Expression initializer = braces.strip(vd.getInitializer());
 
             /*
              * The initializer, if exists, then its type overrides the var
@@ -166,8 +169,11 @@ public class Packer {
         }
 
         // find return type of invoke
+        // REVIEW - fix this extra in next if else block
         Optional<ReturnType> returnTypeO = resolver.getExpReturnType(exp);
-        if (nodes.is(exp.getParent(), CastExpression.class)) {
+        // REVIEW
+        Optional<Expression> castedExpO = expressions.getCastedExp(exp);
+        if (castedExpO.isPresent()) {
             /*
              * Ex: Foo foo = (Foo) bar.obj(); Casted MI results in a Pack for
              * CastExp and an Invoke for MI. Even though return type of
@@ -176,7 +182,7 @@ public class Packer {
              * instead of Object.
              */
             returnTypeO = resolver.getExpReturnType(
-                    nodes.as(exp.getParent(), CastExpression.class));
+                    nodes.as(castedExpO.get(), CastExpression.class));
         } else {
             // Ex: Foo foo = bar.foo();
             resolver.getExpReturnType(exp);

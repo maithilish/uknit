@@ -12,6 +12,7 @@ import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patchers;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
@@ -37,6 +38,8 @@ public class LinkedVarProcessor {
     private Resolver resolver;
     @Inject
     private CastPropagator castPropagator;
+    @Inject
+    private Braces braces;
 
     /**
      * Marks var as created when exp in any of the linkedPack of the pack is
@@ -99,7 +102,7 @@ public class LinkedVarProcessor {
             Expression exp = pack.getExp();
             IVar var = pack.getVar();
 
-            if (nonNull(var) && nonNull(exp) && nodes.isCastedExp(exp)) {
+            if (nonNull(var) && nonNull(exp) && expressions.isCastedExp(exp)) {
                 /*
                  * propagate exp cast type to linked vars.
                  */
@@ -112,9 +115,9 @@ public class LinkedVarProcessor {
                 List<Expression> exps = patchers.getExps(exp);
                 for (Expression eexp : exps) {
                     if (nonNull(var) && nonNull(eexp)
-                            && nodes.isCastedExp(eexp)) {
-                        Expression stripedExp =
-                                expressions.stripWraperExpression(eexp);
+                            && expressions.isCastedExp(eexp)) {
+                        // REVIEW - check can strip handle all extra braces
+                        Expression stripedExp = braces.stripWraper(eexp);
 
                         // find pack by exp else by var name
                         Optional<Pack> ePackO =

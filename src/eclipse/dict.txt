@@ -263,3 +263,5 @@ inline
 im
 assignability
 downgrading
+stash
+parenthesized

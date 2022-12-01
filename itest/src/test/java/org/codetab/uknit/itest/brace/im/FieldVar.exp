@@ -1,0 +1,28 @@
+package org.codetab.uknit.itest.brace.im;
+
+import java.util.Locale;
+
+public class FieldVarTest {
+    @InjectMocks
+    private FieldVar fieldVar;
+
+    @Mock
+    private Locale locale;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCallReturnsFieldInvoke() {
+        String grape = "Foo";
+        String apple = grape;
+
+        when((locale).getCountry()).thenReturn(grape);
+
+        String actual = fieldVar.callReturnsFieldInvoke();
+
+        assertEquals(apple, actual);
+    }
+}

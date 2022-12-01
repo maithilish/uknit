@@ -20,7 +20,7 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Patch.Kind;
-import org.codetab.uknit.core.node.Expressions;
+import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -53,7 +53,7 @@ public class Patcher {
     @Inject
     private Patchers patchers;
     @Inject
-    private Expressions expressions;
+    private Braces braces;
     @Inject
     private NodeGroups nodeGroups;
 
@@ -91,8 +91,8 @@ public class Patcher {
              * When exp is CastExp strip it to find invoke. Ex: a[(int)foo.obj];
              * the exp is (int) foo.obj() and find invoke for foo.obj().
              */
-            Optional<Invoke> invokeO = packs.findInvokeByExp(
-                    expressions.stripWraperExpression(exp), heap.getPacks());
+            Optional<Invoke> invokeO = packs
+                    .findInvokeByExp(braces.stripWraper(exp), heap.getPacks());
             if (invokeO.isPresent() && nonNull(invokeO.get().getVar())) {
                 if (patchers.patchable(invokeO.get())) {
                     patchables.put(exp, invokeO.get());
@@ -300,8 +300,7 @@ public class Patcher {
              * When exp is CastExp strip it to find invoke. Ex: a[(int)foo.obj];
              * the exp is (int) foo.obj() and find invoke for foo.obj().
              */
-            Expression patchExp =
-                    expressions.stripWraperExpression(exps.get(i));
+            Expression patchExp = braces.stripWraper(exps.get(i));
             /*
              * Find the pack for node and from its patch list get patch for
              * patchExp. Ex: for node - bar.locale(foo.lang()) and get patch for

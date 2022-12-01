@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
@@ -35,6 +36,8 @@ public class Expressions {
     private Nodes nodes;
     @Inject
     private NodeGroups nodeGroups;
+    @Inject
+    private Braces braces;
 
     public boolean isClassInstanceCreation(final Expression exp) {
         return nodes.is(exp, ClassInstanceCreation.class);
@@ -191,23 +194,21 @@ public class Expressions {
         }
     }
 
-    /**
-     * Recursively strip cast and parenthesise from an expression.
-     *
-     * @param exp
-     * @return
-     */
-    public Expression stripWraperExpression(final Expression exp) {
-        Expression eExp = exp;
-        if (nodes.is(exp, CastExpression.class)) {
-            eExp = nodes.as(exp, CastExpression.class).getExpression();
-        } else if (nodes.is(exp, ParenthesizedExpression.class)) {
-            eExp = nodes.as(exp, ParenthesizedExpression.class).getExpression();
+    // REVIEW
+    public boolean isCastedExp(final Expression exp) {
+        return getCastedExp(exp).isPresent();
+    }
+
+    // REVIEW
+    public Optional<Expression> getCastedExp(final Expression exp) {
+        Expression e = braces.strip(exp);
+        ASTNode ancesstor = braces.stripAndGetParent(exp);
+        if (nodes.is(e, CastExpression.class)) {
+            return Optional.of(e);
+        } else if (nodes.is(ancesstor, CastExpression.class)) {
+            return Optional.of((Expression) ancesstor);
+        } else {
+            return Optional.empty();
         }
-        if (nodes.is(eExp, CastExpression.class,
-                ParenthesizedExpression.class)) {
-            eExp = stripWraperExpression(eExp);
-        }
-        return eExp;
     }
 }

@@ -34,6 +34,8 @@ public class Methods {
     private Resolver resolver;
     @Inject
     private Types types;
+    @Inject
+    private Braces braces;
 
     public String getMethodName(final MethodDeclaration method) {
         return method.getName().getFullyQualifiedName();
@@ -210,7 +212,7 @@ public class Methods {
         } else {
             throw new CodeException(nodes.noImplmentationMessage(exp));
         }
-        return args;
+        return braces.strip(args);
     }
 
     public boolean isInvokable(final Expression exp) {
@@ -232,11 +234,11 @@ public class Methods {
     @SuppressWarnings("unchecked")
     public List<String> getNames(final MethodInvocation mi) {
         List<String> names = new ArrayList<>();
-        Expression exp = mi.getExpression();
+        Expression exp = braces.strip(mi.getExpression());
         if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
             names.add(nodes.getName(exp));
         }
-        List<Expression> args = mi.arguments();
+        List<Expression> args = braces.strip(mi.arguments());
         for (Expression arg : args) {
             if (nodes.is(arg, SimpleName.class)) {
                 names.add(nodes.getName(arg));

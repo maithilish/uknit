@@ -158,7 +158,7 @@ public class ITBase {
         }
     }
 
-    protected File getExpectedFile() {
+    protected File getExpectedFile() throws IOException {
         String ws = configs.getConfig("uknit.source.base");
         String srcDir = configs.getConfig("uknit.testDir");
 
@@ -166,8 +166,30 @@ public class ITBase {
         if (isNull(expectedFile)) {
             expectedFile = "Test.exp";
         }
+        String expFile = String.join("/", ws, srcDir, expectedFile);
 
-        return new File(String.join("/", ws, srcDir, expectedFile));
+        /*
+         * if exp file doesn't exists, copy the output file as exp file (on
+         * first run)
+         */
+        Path srcPath = Path.of(actualFilePath());
+        Path destPath = Path.of(expFile);
+        if (Files.notExists(destPath)) {
+            Files.copy(srcPath, destPath);
+        }
+
+        /*
+         * if test file doesn't exists, copy the output file as test file (on
+         * first run)
+         */
+        String testFile = String.join("/", ws, srcDir,
+                expectedFile.replace(".exp", "Test.java"));
+        destPath = Path.of(testFile);
+        if (Files.notExists(destPath)) {
+            Files.copy(srcPath, destPath);
+        }
+
+        return new File(expFile);
     }
 
     protected File getActualFile() {
@@ -178,6 +200,15 @@ public class ITBase {
 
         return new File(String.join("/", ws, outputDir, pkg.replace(".", "/"),
                 testClassName + ".java"));
+    }
+
+    protected String actualFilePath() {
+        String ws = configs.getConfig("uknit.source.base");
+        String outputDir = configs.getConfig("uknit.output.dir");
+        String pkg = configs.getConfig("uknit.source.package");
+        String testClassName = configs.getConfig("uknit.testClassName");
+        return String.join("/", ws, outputDir, pkg.replace(".", "/"),
+                testClassName + ".java");
     }
 
     protected void print(final File file) throws IOException {

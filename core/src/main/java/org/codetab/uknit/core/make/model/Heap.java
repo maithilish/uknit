@@ -11,6 +11,8 @@ public class Heap implements Listener {
 
     @Inject
     private List<Pack> packs;
+    @Inject
+    private List<Insert> inserts;
 
     /*
      * List of vars held by packs. The packsDirty field is set to true when ever
@@ -92,6 +94,10 @@ public class Heap implements Listener {
             packsDirty = false;
         }
         return Collections.unmodifiableList(varCache);
+    }
+
+    public List<Insert> getInserts() {
+        return inserts;
     }
 
     @Override

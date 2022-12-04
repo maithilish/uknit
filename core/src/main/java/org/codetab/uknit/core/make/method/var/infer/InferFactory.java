@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.process;
+package org.codetab.uknit.core.make.method.var.infer;
 
 import java.util.Optional;
 

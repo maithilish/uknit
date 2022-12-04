@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.process;
+package org.codetab.uknit.core.make.method.patch;
 
 import static java.util.Objects.nonNull;
 
@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.method.patch.Patcher;
-import org.codetab.uknit.core.make.method.patch.Patchers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;

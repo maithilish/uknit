@@ -7,8 +7,8 @@ import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.method.process.Assignor;
-import org.codetab.uknit.core.make.method.process.ReturnCreator;
+import org.codetab.uknit.core.make.method.insert.Inserter;
+import org.codetab.uknit.core.make.method.ret.ReturnCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -59,6 +60,8 @@ public class Visitor extends ASTVisitor {
     private Assignor assignor;
     @Inject
     private Variables variables;
+    @Inject
+    private Inserter inserter;
 
     private Heap heap;
 
@@ -233,6 +236,11 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final BooleanLiteral node) {
         packer.packLiteralExp(node, inCtlPath, heap);
+    }
+
+    @Override
+    public void endVisit(final EnhancedForStatement node) {
+        inserter.collectEnhancedFor(node, imc);
     }
 
     /**

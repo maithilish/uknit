@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.process;
+package org.codetab.uknit.core.make.method.var.linked;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -116,9 +116,8 @@ public class LinkedVarProcessor {
                 for (Expression eexp : exps) {
                     if (nonNull(var) && nonNull(eexp)
                             && expressions.isCastedExp(eexp)) {
-                        // REVIEW - check can strip handle all extra braces
-                        Expression stripedExp = braces.stripWraper(eexp);
 
+                        Expression stripedExp = braces.stripWraper(eexp);
                         // find pack by exp else by var name
                         Optional<Pack> ePackO =
                                 packs.findByExp(stripedExp, packList);

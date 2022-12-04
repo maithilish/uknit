@@ -184,13 +184,16 @@ public class Types {
      * @param ast
      * @return optional type
      */
-    // REVIEW
     public Optional<Type> getType(final Expression exp) {
         Type type = null;
         if (isNull(exp) || (nonNull(exp) && nodes.is(exp, NullLiteral.class))) {
             return Optional.empty();
         }
 
+        /*
+         * Get type using getType() method. Only following Expression Nodes have
+         * getType() method.
+         */
         if (nodes.is(exp, ArrayCreation.class)) {
             type = ((ArrayCreation) exp).getType();
         } else if (nodes.is(exp, CastExpression.class)) {
@@ -207,6 +210,10 @@ public class Types {
             type = ((VariableDeclarationExpression) exp).getType();
         }
 
+        /*
+         * for other expressions without getType() method, resolve binding and
+         * get type.
+         */
         if (isNull(type)) {
             ITypeBinding typeBinding = exp.resolveTypeBinding();
             type = getType(typeBinding, exp.getAST());

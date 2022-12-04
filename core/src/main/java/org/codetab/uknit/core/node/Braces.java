@@ -16,7 +16,8 @@ public class Braces {
     private Nodes nodes;
 
     /**
-     * Recursively strip cast and parenthesise from an expression.
+     * Recursively strip cast and parenthesise from an expression. Ex: for
+     * CastExpression '(Foo) ((obj))' returns 'obj'.
      *
      * @param exp
      * @return
@@ -35,7 +36,13 @@ public class Braces {
         return eExp;
     }
 
-    // REVIEW
+    /**
+     * Get exp that is wrapped in parenthesises. Ex: For ParenthesizedExpression
+     * (((foo))) returns foo.
+     *
+     * @param exp
+     * @return
+     */
     public Expression strip(final Expression exp) {
         Expression eExp = exp;
         if (nodes.is(exp, ParenthesizedExpression.class)) {
@@ -47,7 +54,14 @@ public class Braces {
         return eExp;
     }
 
-    // REVIEW
+    /**
+     * If exps list contains any ParenthesizedExpression then return new list of
+     * striped exps else return the original list. Ex: exps [((foo)), (index)]
+     * then return new list [foo, index].
+     *
+     * @param exps
+     * @return
+     */
     public List<Expression> strip(final List<Expression> exps) {
         boolean anyBraces = exps.stream()
                 .anyMatch(e -> nodes.is(e, ParenthesizedExpression.class));
@@ -60,7 +74,14 @@ public class Braces {
         }
     }
 
-    // REVIEW
+    /**
+     *
+     * Strip wrapper parenthesises and get parent. Ex: return (((foo))); For
+     * SimpleName exp 'foo' returns the ReturnStatement 'return (((foo)))'.
+     *
+     * @param exp
+     * @return
+     */
     public ASTNode stripAndGetParent(final Expression exp) {
         ASTNode parent = exp.getParent();
         while (true) {

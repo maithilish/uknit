@@ -13,10 +13,8 @@ public class BodyMaker {
 
     @Inject
     private VarStmt varStmt;
-
-    // @Inject
-    // private InsertStmt insertStmt;
-
+    @Inject
+    private InsertStmt insertStmt;
     @Inject
     private AssertStmt assertStmt;
     @Inject
@@ -36,13 +34,11 @@ public class BodyMaker {
         varStmt.addStmts(methodDecl, stmts);
     }
 
-    /*
-     * public void generateInserts(final MethodDeclaration methodDecl, final
-     * Heap heap) { List<Statement> stmts = insertStmt.createStmts(heap);
-     * varStmt.addStmts(methodDecl, stmts); }
-     *
-     *
-     */
+    public void generateInserts(final MethodDeclaration methodDecl,
+            final Heap heap) {
+        List<Statement> stmts = insertStmt.createStmts(heap);
+        varStmt.addStmts(methodDecl, stmts);
+    }
 
     /**
      * Generates call statement to invoke method under test.

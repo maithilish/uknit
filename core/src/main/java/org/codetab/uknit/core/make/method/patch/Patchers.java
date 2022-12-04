@@ -145,7 +145,6 @@ public class Patchers {
      * @param exp
      * @return
      */
-    // REVIEW - strip braces
     public int getExpIndex(final ASTNode node, final Expression exp) {
         checkNotNull(node);
         checkNotNull(exp);
@@ -241,9 +240,10 @@ public class Patchers {
                 return 1;
             } else {
                 @SuppressWarnings("unchecked")
-                List<Expression> extOps = infix.extendedOperands();
+                List<Expression> extOps =
+                        braces.strip(infix.extendedOperands());
                 final int operandOffset = 2;
-                int index = braces.strip(extOps).indexOf(exp);
+                int index = extOps.indexOf(exp);
                 return operandOffset + index;
             }
         } else if (nodes.is(node, Assignment.class)) {
@@ -265,7 +265,7 @@ public class Patchers {
         } else if (nodes.is(node, ParenthesizedExpression.class)) {
             ParenthesizedExpression pe =
                     nodes.as(node, ParenthesizedExpression.class);
-            if (pe.getExpression().equals(exp)) {
+            if (braces.strip(pe.getExpression()).equals(exp)) {
                 return 0;
             } else {
                 return -1;

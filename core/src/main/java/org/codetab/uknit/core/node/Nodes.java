@@ -79,18 +79,19 @@ public class Nodes {
     }
 
     /**
-     * Returns name part of the name.
+     * Strip the exp and if it is SimpleName or QName return simple name. Note:
+     * Returns simple name and not the qualified name.
      *
      * @param exp
      * @return
      */
-    // REVIEW
     public String getName(final Expression expression) {
         Expression exp = braces.strip(expression);
         if (exp.getNodeType() == ASTNode.SIMPLE_NAME) {
             return ((SimpleName) exp).getFullyQualifiedName();
         }
         if (exp.getNodeType() == ASTNode.QUALIFIED_NAME) {
+            // return name part of QName
             return ((QualifiedName) exp).getName().getFullyQualifiedName();
         }
         throw new CodeException(
@@ -99,12 +100,12 @@ public class Nodes {
     }
 
     /**
-     * Returns qualified name.
+     * Strip the exp and if it is SimpleName or QName return FQ name. Note:
+     * Returns simple name for SimpleName and qualified name for QualifiedName.
      *
      * @param exp
      * @return
      */
-    // REVIEW
     public String getQualifiedName(final Expression expression) {
         Expression exp = braces.strip(expression);
         if (exp.getNodeType() == ASTNode.SIMPLE_NAME) {
@@ -118,7 +119,12 @@ public class Nodes {
                         exp.getClass().getSimpleName()));
     }
 
-    // REVIEW
+    /**
+     * Is simple or qualified name.
+     *
+     * @param expression
+     * @return
+     */
     public boolean isName(final Expression expression) {
         if (isNull(expression)) {
             return false;
@@ -128,7 +134,12 @@ public class Nodes {
                 || exp.getNodeType() == ASTNode.QUALIFIED_NAME;
     }
 
-    // REVIEW
+    /**
+     * Is simple name.
+     *
+     * @param expression
+     * @return
+     */
     public boolean isSimpleName(final Expression expression) {
         if (isNull(expression)) {
             return false;

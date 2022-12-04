@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.process;
+package org.codetab.uknit.core.make.method.var;
 
 import static java.util.Objects.nonNull;
 
@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Vars;
+import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
 import org.codetab.uknit.core.make.method.visit.Packer;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;

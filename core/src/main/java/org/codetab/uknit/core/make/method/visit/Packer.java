@@ -168,10 +168,9 @@ public class Packer {
             }
         }
 
-        // find return type of invoke
-        // REVIEW - fix this extra in next if else block
+        // find return type of invoke Ex: Foo foo = bar.foo();
         Optional<ReturnType> returnTypeO = resolver.getExpReturnType(exp);
-        // REVIEW
+
         Optional<Expression> castedExpO = expressions.getCastedExp(exp);
         if (castedExpO.isPresent()) {
             /*
@@ -183,9 +182,6 @@ public class Packer {
              */
             returnTypeO = resolver.getExpReturnType(
                     nodes.as(castedExpO.get(), CastExpression.class));
-        } else {
-            // Ex: Foo foo = bar.foo();
-            resolver.getExpReturnType(exp);
         }
 
         invoke.setCallVar(callVarO);

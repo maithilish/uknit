@@ -15,7 +15,7 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.imc.Merger;
-import org.codetab.uknit.core.make.method.process.CallCreator;
+import org.codetab.uknit.core.make.method.insert.Inserter;
 import org.codetab.uknit.core.make.method.process.Processor;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
@@ -63,6 +63,8 @@ public class MethodMaker {
     private Merger merger;
     @Inject
     private Heaps heaps;
+    @Inject
+    private Inserter inserter;
 
     private ClzMap clzMap;
 
@@ -114,6 +116,8 @@ public class MethodMaker {
                 configs.getConfig("uknit.controlFlow.method.split", true));
         visitor.setMethodReturnType(method.getReturnType2());
 
+        inserter.setup();
+
         // add method under test call
         callCreator.createCall(method, heap);
 
@@ -130,20 +134,21 @@ public class MethodMaker {
         processor.postProcessIM(heap);
 
         processor.processInvokes(heap);
-
         processor.processWhenVerify(heap);
+        processor.processInserts(heap);
+
         processor.processVarState(heap);
 
         heaps.debugPacks("[ Heap after MUT processing ]", heap);
 
         /*
          * clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
-         *
-         * // create inserts for list.add() etc., List<IVar> insertableVars =
-         * inserter.filterInsertableVars(heap.getVars());
-         * inserter.processInsertableVars(insertableVars, heap);
-         * inserter.enableInserts(heap);
          */
+
+        // create inserts for list.add() etc., List<IVar> insertableVars =
+        // inserter.filterInsertableVars(heap.getVars());
+        // inserter.processInsertableVars(insertableVars, heap);
+        // inserter.enableInserts(heap);
 
         methodMakers.addThrowsException(testMethod, heap);
 
@@ -227,7 +232,7 @@ public class MethodMaker {
 
         // bodyMaker.generateReturnVarStmt(testMethod, heap);
         // FIXME Pack - enable this
-        // bodyMaker.generateInserts(testMethod, heap);
+        bodyMaker.generateInserts(testMethod, heap);
         bodyMaker.generateWhenStmts(testMethod, heap);
         bodyMaker.generateCallStmt(testMethod, heap);
         bodyMaker.generateAssertStmt(testMethod, heap);

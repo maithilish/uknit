@@ -194,12 +194,25 @@ public class Expressions {
         }
     }
 
-    // REVIEW
+    /**
+     * Whether exp has cast. Ex: Both of the following obj exp are cast. (Foo)
+     * obj; or (Foo) ((obj));
+     *
+     * @param exp
+     * @return
+     */
     public boolean isCastedExp(final Expression exp) {
         return getCastedExp(exp).isPresent();
     }
 
-    // REVIEW
+    /**
+     * If parent is CastExpression after stripping any wrapper parenthesises,
+     * then return the cast exp else empty. Ex: Both of following are
+     * CastExpression - (Foo) obj; or (Foo) ((obj));
+     *
+     * @param exp
+     * @return
+     */
     public Optional<Expression> getCastedExp(final Expression exp) {
         Expression e = braces.strip(exp);
         ASTNode ancesstor = braces.stripAndGetParent(exp);

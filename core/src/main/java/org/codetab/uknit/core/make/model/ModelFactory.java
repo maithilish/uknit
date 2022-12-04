@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.List;
+
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
@@ -39,4 +41,8 @@ public interface ModelFactory {
     Verify createVerify(MethodInvocation mi, boolean inCtlFlowPath);
 
     ArgCapture createArgCapture(String name, Type type);
+
+    Insert createInsert(IVar var, String call,
+            @Assisted("args") List<IVar> args,
+            @Assisted("usedVars") List<IVar> usedVars);
 }

@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.process;
+package org.codetab.uknit.core.make.method.when;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,10 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.lamda.AnonymousProcessor;
+import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
 import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;

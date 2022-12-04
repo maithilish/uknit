@@ -25,9 +25,12 @@ public class Literals {
      * @param exp
      * @return
      */
-    // REVIEW
     public boolean ofInterest(final Expression exp) {
         boolean ofInterest = false;
+        /*
+         * Strip wrapper parenthesises and get parent. Ex: return (((foo)));
+         * parent exp foo is ReturnStatement.
+         */
         ASTNode parent = braces.stripAndGetParent(exp);
         if (nodes.is(parent, ReturnStatement.class)) {
             ofInterest = true;

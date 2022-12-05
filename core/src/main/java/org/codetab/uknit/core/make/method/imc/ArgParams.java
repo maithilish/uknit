@@ -207,4 +207,20 @@ class ArgParams {
             }
         }
     }
+
+    /**
+     * Find corresponding arg for the param.
+     *
+     * @param param
+     * @return
+     */
+    public Optional<IVar> getArg(final IVar param) {
+        for (int i = 0; i < params.size(); i++) {
+            Pack paramPack = params.get(i);
+            if (paramPack.getVar().equals(param) && args.get(i).isPresent()) {
+                return Optional.of(args.get(i).get().getVar());
+            }
+        }
+        return Optional.empty();
+    }
 }

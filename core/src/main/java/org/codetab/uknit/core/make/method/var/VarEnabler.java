@@ -19,6 +19,7 @@ import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
 import org.codetab.uknit.core.make.method.visit.Packer;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.Expression;
 
@@ -112,7 +113,7 @@ public class VarEnabler {
     public void enforce(final String name, final Optional<Boolean> value,
             final Heap heap) {
         IVar var = vars.findVarByName(name, heap);
-        var.setEnforce(value);
+        var.setEnforce(value.get());
     }
 
     /**
@@ -157,6 +158,7 @@ public class VarEnabler {
      * @param heap
      * @return
      */
+    // REVIEW not fields
     public Set<String> collectLinkedVarNames(final Heap heap) {
         Set<String> names = new HashSet<>();
         // list packs with enabled var
@@ -168,7 +170,32 @@ public class VarEnabler {
             // get linked vars packs and enable the vars
             List<Pack> linkPacks =
                     linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
-            linkPacks.stream().filter(p -> nonNull(p.getVar())).forEach(p -> {
+            linkPacks.stream().filter(p -> {
+                return nonNull(p.getVar())
+                        && !p.getVar().getKind().equals(Kind.FIELD);
+            }).forEach(p -> {
+                names.add(p.getVar().getName());
+            });
+        }
+        return names;
+    }
+
+    // REVIEW only fields
+    public Set<String> collectLinkedFieldNames(final Heap heap) {
+        Set<String> names = new HashSet<>();
+        // list packs with enabled var
+        List<Pack> enabledPacks = heap.getPacks().stream().filter(p -> {
+            return nonNull(p.getVar()) && p.getVar().isEnable();
+        }).collect(Collectors.toList());
+
+        for (Pack enabledPack : enabledPacks) {
+            // get linked vars packs and enable the vars
+            List<Pack> linkPacks =
+                    linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
+            linkPacks.stream().filter(p -> {
+                return nonNull(p.getVar())
+                        && p.getVar().getKind().equals(Kind.FIELD);
+            }).forEach(p -> {
                 names.add(p.getVar().getName());
             });
         }

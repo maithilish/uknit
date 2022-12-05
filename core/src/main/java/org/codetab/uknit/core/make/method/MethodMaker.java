@@ -15,10 +15,10 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.imc.Merger;
-import org.codetab.uknit.core.make.method.insert.Inserter;
 import org.codetab.uknit.core.make.method.process.Processor;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
@@ -64,7 +64,7 @@ public class MethodMaker {
     @Inject
     private Heaps heaps;
     @Inject
-    private Inserter inserter;
+    private Vars vars;
 
     private ClzMap clzMap;
 
@@ -116,8 +116,6 @@ public class MethodMaker {
                 configs.getConfig("uknit.controlFlow.method.split", true));
         visitor.setMethodReturnType(method.getReturnType2());
 
-        inserter.setup();
-
         // add method under test call
         callCreator.createCall(method, heap);
 
@@ -135,20 +133,17 @@ public class MethodMaker {
 
         processor.processInvokes(heap);
         processor.processWhenVerify(heap);
-        processor.processInserts(heap);
+
+        processor.processEnhancedFor(heap);
+        processor.processLoads(heap);
 
         processor.processVarState(heap);
 
         heaps.debugPacks("[ Heap after MUT processing ]", heap);
 
-        /*
-         * clzMap.updateFieldState(testClzName, heap.getVars(IVar::isField));
-         */
-
-        // create inserts for list.add() etc., List<IVar> insertableVars =
-        // inserter.filterInsertableVars(heap.getVars());
-        // inserter.processInsertableVars(insertableVars, heap);
-        // inserter.enableInserts(heap);
+        // REVIEW
+        clzMap.updateFieldState(testClzName,
+                vars.getVarsOfKind(heap, Kind.FIELD));
 
         methodMakers.addThrowsException(testMethod, heap);
 
@@ -209,6 +204,10 @@ public class MethodMaker {
 
         // merge packs of internal heap to the caller heap.
         merger.merge(invoke, heap, internalHeap);
+
+        merger.processInvokes(internalHeap);
+        processor.processEnhancedFor(internalHeap);
+        merger.mergeLoader(heap, internalHeap);
 
         // after merge, resolve any var name conflict
         processor.processVarNameChange(internalHeap);

@@ -75,6 +75,24 @@ public class Vars {
     }
 
     /**
+     *
+     * Find first var matching the var old name.
+     *
+     * @param name
+     * @param heap
+     * @return
+     */
+    public IVar findVarByOldName(final String name, final Heap heap) {
+        Optional<IVar> varO = heap.getVars().stream()
+                .filter(v -> v.getOldName().equals(name)).findFirst();
+        if (varO.isPresent()) {
+            return varO.get();
+        } else {
+            throw new VarNotFoundException(name);
+        }
+    }
+
+    /**
      * Get var returned by return statement which is used as expected var in
      * assert statement.Throws IllegalStateException if return exp is not mapped
      * to var.

@@ -139,6 +139,7 @@ public class RealTest {
     public void testAssignRealCollectionReturnsMock() {
         List<File> files = new ArrayList<>();
         File file = Mockito.mock(File.class);
+        files.add(file);
 
         File actual = real.assignRealCollectionReturnsMock(files);
 
@@ -149,6 +150,7 @@ public class RealTest {
     public void testReturnRealCollectionReturnsMock() {
         List<File> files = new ArrayList<>();
         File file = Mockito.mock(File.class);
+        files.add(file);
 
         File actual = real.returnRealCollectionReturnsMock(files);
 

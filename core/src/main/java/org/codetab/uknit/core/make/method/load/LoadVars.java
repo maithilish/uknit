@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.insert;
+package org.codetab.uknit.core.make.method.load;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -14,24 +14,28 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
 
 /**
  * In method invokes, such as map.get("foo"), literals are not patched to infer
- * vars. They are mapped to vars while processing invokes just to create
- * inserts. Unlike normal infer vars, the patches are not staged for these vars
- * and mi is not patched i.e. "foo" is not patched to var.
+ * vars. They are mapped to vars while processing invokes just to create loads.
+ * Unlike normal infer vars, the patches are not staged for these vars and mi is
+ * not patched i.e. "foo" is not patched to var.
  * @author m
  *
  */
-public class InsertVars {
+public class LoadVars {
 
     @Inject
     private Mocks mocks;
@@ -51,41 +55,39 @@ public class InsertVars {
      * @param heap
      * @return
      */
-    // public InferVar createInsertVarForLiteral(final Expression exp,
-    // final Type type, final Heap heap) {
-    //
-    // checkNotNull(exp);
-    // checkNotNull(type);
-    // checkNotNull(heap);
-    //
-    // List<Class<?>> clzz = List.of(StringLiteral.class, NumberLiteral.class,
-    // CharacterLiteral.class);
-    // if (clzz.stream().noneMatch(c -> nodes.is(exp, c))) {
-    // throw new CodeException(nodes.noImplmentationMessage(exp));
-    // }
-    //
-    // String name = varNames.getInferVarName(Optional.empty(), heap);
-    // InferVar inferVar =
-    // modelFactory.createInferVar(name, type, mocks.isMockable(type));
-    // return inferVar;
-    // }
+    public IVar createLoadVarForLiteral(final Expression exp, final Type type,
+            final Heap heap) {
+
+        checkNotNull(exp);
+        checkNotNull(type);
+        checkNotNull(heap);
+
+        List<Class<?>> clzz = List.of(StringLiteral.class, NumberLiteral.class,
+                CharacterLiteral.class);
+        if (clzz.stream().noneMatch(c -> nodes.is(exp, c))) {
+            throw new CodeException(nodes.noImplmentationMessage(exp));
+        }
+
+        String name = varNames.getInferVarName(Optional.empty(), heap);
+        IVar inferVar = modelFactory.createVar(Kind.INFER, name, type,
+                mocks.isMockable(type));
+        return inferVar;
+    }
 
     /**
-     * Create exp var. Ex: apple (leftVar) = foo (right expression).
-     * @param rightExp
-     * @param leftVar
+     * Create pack. Ex: apple (var) = foo (exp).
+     *
+     * @param exp
+     * @param var
      * @return
      */
-    // public ExpVar createInsertExpVar(final Expression rightExp,
-    // final IVar leftVar) {
-    //
-    // checkNotNull(rightExp);
-    // checkNotNull(leftVar);
-    //
-    // ExpVar expVar = modelFactory.createVarExp(null, rightExp);
-    // expVar.setLeftVar(leftVar);
-    // return expVar;
-    // }
+    public Pack createLoadPack(final Expression exp, final IVar var) {
+
+        checkNotNull(exp);
+        checkNotNull(var);
+        Pack pack = modelFactory.createPack(var, exp, false);
+        return pack;
+    }
 
     /**
      * Return type arg from ParameterizedType or java.lang.Object for simple *

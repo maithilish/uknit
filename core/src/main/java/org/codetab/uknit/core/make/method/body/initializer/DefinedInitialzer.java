@@ -43,8 +43,8 @@ class DefinedInitialzer {
     }
 
     /**
-     * The ExpVar maps Expression to an IVar, IVar to Expression or Expression
-     * to Expression. This method gets initializer for following combinations.
+     * The Pack maps Expression to an IVar. This method gets initializer for
+     * following combinations.
      *
      * var = var, example: x = y
      *
@@ -191,21 +191,41 @@ class DefinedInitialzer {
                     packs.findInvokeByExp(miExp, heap.getPacks());
             if (invokeO.isPresent()
                     && invokeO.get().getReturnType().isPresent()) {
-                boolean varIsMock =
-                        invokeO.get().getReturnType().get().isMock();
-                boolean returnIsMock = !var.isMock();
+
+                /*
+                 * The varIsReal indicates whether var on which MI is called is
+                 * real and returnIsReal indicates whether the var returned by
+                 * the invoke is real. Ex: String foo = list.get(0), invoke var
+                 * is list and its return is assigned to var foo. The list (var)
+                 * is real and foo (its return var) is also real.
+                 */
+                boolean varIsReal =
+                        !invokeO.get().getReturnType().get().isMock();
+                boolean returnIsMock = var.isMock();
+                boolean returnIsReal = !var.isMock();
+
                 // real returns real - mi can be initializer
-                if (!varIsMock && !returnIsMock) {
+                if (varIsReal && returnIsReal) {
                     miAllowedAsInitializer = true;
                 }
-                /*
-                 * real returns mock - mi can be initializer
-                 *
-                 * TODO H - if collection type which holds and returns mock then
-                 * mi can't be initializer, enable this after inserter refactor.
-                 */
-                if (!varIsMock && returnIsMock) {
+
+                // real returns mock - mi can be initializer
+                if (varIsReal && returnIsMock) {
                     miAllowedAsInitializer = true;
+                }
+
+                /*
+                 * If invoke var is collection then mi can't be initializer. Ex:
+                 * String name = listHolder.getList().get(0); Invoke [var: list]
+                 * returned by getList() is a collection and list.get(0) can't
+                 * be initializer for the var name. Ref itest:
+                 * load.Lists.getAssign(listHolder).
+                 */
+                Object isCollection =
+                        invokeO.get().getVar().getProperty("isCollection");
+                if (varIsReal && nonNull(isCollection)
+                        && (boolean) isCollection) {
+                    miAllowedAsInitializer = false;
                 }
 
                 // mock returns mock - false, mock returns real - false

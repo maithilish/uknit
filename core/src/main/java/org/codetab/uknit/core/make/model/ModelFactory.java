@@ -42,7 +42,6 @@ public interface ModelFactory {
 
     ArgCapture createArgCapture(String name, Type type);
 
-    Insert createInsert(IVar var, String call,
-            @Assisted("args") List<IVar> args,
+    Load createLoad(IVar var, String call, @Assisted("args") List<IVar> args,
             @Assisted("usedVars") List<IVar> usedVars);
 }

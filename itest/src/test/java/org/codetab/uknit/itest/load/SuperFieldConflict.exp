@@ -1,0 +1,29 @@
+package org.codetab.uknit.itest.load;
+
+import java.util.Date;
+import java.util.List;
+
+public class SuperFieldConflictTest {
+    @InjectMocks
+    private SuperFieldConflict superFieldConflict;
+
+    @Mock
+    private Date date;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() {
+        List<Date> dates = new ArrayList<>();
+        Date selectedDate = null;
+        Date date = Mockito.mock(Date.class);
+        dates.add(date);
+
+        Date actual = superFieldConflict.foo(dates);
+
+        assertEquals(selectedDate, actual);
+    }
+}

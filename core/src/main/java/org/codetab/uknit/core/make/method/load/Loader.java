@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.insert;
+package org.codetab.uknit.core.make.method.load;
 
 import static java.util.Objects.nonNull;
 
@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.Insert;
 import org.codetab.uknit.core.make.model.Invoke;
+import org.codetab.uknit.core.make.model.Load;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Variables;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
@@ -25,8 +25,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
-@Singleton
-public class Inserter {
+public class Loader {
 
     @Inject
     private Variables variables;
@@ -37,31 +36,54 @@ public class Inserter {
     @Inject
     private Packs packs;
     @Inject
-    private Inserters inserters;
+    private Loaders loaders;
     @Inject
     private ForEachStrategy forEachStrategy;
+    @Inject
+    private InvokeStrategy invokeStrategy;
 
-    private List<EnhancedForStatement> enForNodes;
-    private Map<IVar, IVar> forEachVars;
+    private List<EnhancedForStatement> enForNodes = new ArrayList<>();;
+    private Map<IVar, IVar> forEachVars = new HashMap<>();
+    private List<Load> loads = new ArrayList<>();
 
-    // REVIEW
-    public void setup() {
-        enForNodes = new ArrayList<>();
-        forEachVars = new HashMap<>();
-    }
-
+    /**
+     * Collects EnhancedForStatement nodes in visit phase.
+     *
+     * @param node
+     * @param imc
+     */
     public void collectEnhancedFor(final EnhancedForStatement node,
             final boolean imc) {
-        // REVIEW
         node.setProperty("codetab.inImc", imc);
         enForNodes.add(node);
     }
 
+    /**
+     * Collects collection var and loop var of the EnhancedForStatement node in
+     * the forEachVars.
+     *
+     * Ex: for(String name : names), the names is collection var and name is
+     * loop var.
+     *
+     * @param node
+     * @param heap
+     */
     public void processEnhancedFor(final EnhancedForStatement node,
             final Heap heap) {
         Expression exp = node.getExpression();
         String loopVarName = variables.getVariableName(node.getParameter());
-        IVar loopVar = vars.findVarByName(loopVarName, heap);
+        IVar loopVar = null;
+        try {
+            loopVar = vars.findVarByName(loopVarName, heap);
+        } catch (VarNotFoundException e) {
+            loopVar = vars.findVarByOldName(loopVarName, heap);
+        }
+
+        /*
+         * for load vars use enforce instead of enable as processVarState()
+         * disables these vars.
+         */
+        loopVar.setEnforce(true);
 
         if (nodes.is(exp, SimpleName.class)) {
             /*
@@ -69,16 +91,6 @@ public class Inserter {
              * compiler will allow only Iterable in for each statement.
              */
             String name = nodes.getName(exp);
-
-            /*
-             * When IMC parameter is mapped to calling arg, then use arg instead
-             * of parameter.
-             */
-            // REVIEW
-            // if (internalMethod && heap.useArgVar(name)) {
-            // name = heap.getArgName(name);
-            // }
-
             IVar collectionVar = vars.findVarByName(name, heap);
             forEachVars.put(collectionVar, loopVar);
         }
@@ -90,28 +102,28 @@ public class Inserter {
                 IVar collectionVar = null;
                 Optional<IVar> callVarO = invokeO.get().getCallVar();
                 if (callVarO.isPresent()) {
-                    Optional<Class<?>> clz = inserters.getClz(callVarO.get());
-                    if (clz.isPresent() && inserters
-                            .isCollection(callVarO.get(), clz.get())) {
+                    Optional<Class<?>> clz = loaders.getClz(callVarO.get());
+                    if (clz.isPresent() && loaders.isCollection(callVarO.get(),
+                            clz.get())) {
                         /*
                          * callVar of invoke is the collection var. Ex:
                          * map.keySet(), here we are not considering the Set
-                         * returned by keySet() as we insert to the map.
+                         * returned by keySet() as we have to load to the map.
                          */
                         collectionVar = callVarO.get();
                     } else {
                         /*
                          * callVar is not collection var, may be the return var
                          * of invoke is the collection var. Ex:
-                         * holder.getList(), we are going to insert to the list
+                         * holder.getList(), we are going to load to the list
                          * not the holder.
                          */
                         IVar returnVar = invokeO.get().getVar();
                         if (nonNull(returnVar)) {
                             Optional<Class<?>> returnVarClz =
-                                    inserters.getClz(returnVar);
+                                    loaders.getClz(returnVar);
                             if (returnVarClz.isPresent()
-                                    && inserters.isCollection(returnVar,
+                                    && loaders.isCollection(returnVar,
                                             returnVarClz.get())) {
                                 collectionVar = returnVar;
                             }
@@ -126,89 +138,101 @@ public class Inserter {
     }
 
     /**
-     * Filter insertable vars from vars.
+     * Filter loadable vars from vars.
      *
      * @param varList
      * @return
      */
-    public List<IVar> filterInsertableVars(final List<IVar> varList) {
-        List<IVar> insertableVars = new ArrayList<>();
+    public List<IVar> filterLoadableVars(final List<IVar> varList) {
+        List<IVar> loadableVars = new ArrayList<>();
         for (IVar var : varList) {
-            Optional<Class<?>> clz = inserters.getClz(var);
-            if (clz.isPresent() && inserters.isCollection(var, clz.get())) {
-                insertableVars.add(var);
+            Optional<Class<?>> clz = loaders.getClz(var);
+            if (clz.isPresent() && loaders.isCollection(var, clz.get())) {
+                loadableVars.add(var);
             }
         }
-        return insertableVars;
+        return loadableVars;
     }
 
     /**
-     * Apply ForEach or Invoke strategy to each insertable var and create
-     * inserts. As list contains only the insertable var, no need to check
-     * whether it is insertable.
-     * @param insertableVars
+     * Apply ForEach or Invoke strategy to each loadable var and create loads.
+     * As list contains only the loadable var, no need to check whether it is
+     * loadable.
+     * @param loadableVars
      * @param heap
      */
-    public void processInsertableVars(final List<IVar> insertableVars,
+    public void processLoadableVars(final List<IVar> loadableVars,
             final Heap heap) {
-        for (IVar var : insertableVars) {
-            Optional<Class<?>> clz = inserters.getClz(var);
+        for (IVar var : loadableVars) {
+            Optional<Class<?>> clz = loaders.getClz(var);
             if (clz.isPresent()) {
-                Optional<Insert> insertO = Optional.empty();
+                var.setProperty("isCollection",
+                        loaders.isCollection(var, clz.get()));
+                Optional<Load> loadO = Optional.empty();
                 if (forEachVars.containsKey(var)) {
                     // strategy - forEach
                     IVar loopVar = forEachVars.get(var);
-                    insertO = forEachStrategy.process(var, clz.get(), loopVar,
+                    loadO = forEachStrategy.process(var, clz.get(), loopVar,
                             heap);
-                    System.out.println("forEachStrategy " + var);
                 } else {
                     // strategy - invoke
-                    // insertO = invokeStrategy.process(var, clz.get(), heap);
-                    System.out.println("invokeStrategy " + var);
+                    loadO = invokeStrategy.process(var, clz.get(), heap);
                 }
-                insertO.ifPresent(heap.getInserts()::add);
+                loadO.ifPresent(loads::add);
             }
         }
     }
 
     /**
-     * Inserts are disabled by default. Enable them selectively. First enable
-     * all vars used by the inserts. Next, if first arg is enabled then enable
-     * all inserts with matching first arg. Also, enable second arg if exists.
+     * Loads are disabled by default. Enable them selectively. First enable all
+     * vars used by the loads. Next, if first arg is enabled then enable all
+     * loads with matching first arg. Also, enable second arg if exists.
+     *
      * @param heap
      */
-    public void enableInserts(final Heap heap) {
-        List<Insert> inserts = heap.getInserts();
-
-        /**
+    public void enableLoads(final Heap heap) {
+        /*
          * For example, map.get(key); the var key may be enabled or disabled
-         * depending on other factors. But insert uses it to generate stmt
-         * map.put(key,value), so we safely enable it.
+         * depending on other factors. The processVarState() which is called
+         * after enabledLoads(), disables load vars as they are not used by
+         * when/verify. As load uses the vars to generate stmt
+         * map.put(key,value), set enforce as true instead of enable. *
          */
-        for (Insert insert : inserts) {
-            insert.getUsedVars().forEach(v -> v.setEnable(true));
+        for (Load load : loads) {
+            load.getUsedVars().forEach(v -> v.setEnforce(true));
         }
-        /**
-         * String key = list.get(0); String name = list.get(0); return key;
-         * <p>
-         * The returned var, key, is enabled so enable its insert
-         *
+        /*
+         * String key = list.get(0); String name = list.get(0); return key; The
+         * returned var, key, is enabled so enable its load
          */
-        for (Insert insert : inserts) {
-            List<IVar> args = insert.getArgs();
+        for (Load load : loads) {
+            List<IVar> args = load.getArgs();
             IVar arg1 = args.get(0);
             if (arg1.isEnable()) {
-                inserts.stream().filter(i -> i.getArgs().get(0).equals(arg1))
+                loads.stream().filter(i -> i.getArgs().get(0).equals(arg1))
                         .forEach(i -> i.setEnable(true));
                 // enable second args, if any.
                 if (args.size() > 1) {
-                    args.get(1).setEnable(true);
+                    args.get(1).setEnforce(true);
                 }
             }
         }
+    }
+
+    /**
+     * Merge all forEachVars of the other loader to this loader.
+     *
+     * @param other
+     */
+    public void merge(final Loader other) {
+        forEachVars.putAll(other.forEachVars);
     }
 
     public List<EnhancedForStatement> getEnhancedForNodes() {
         return enForNodes;
+    }
+
+    public List<Load> getLoads() {
+        return loads;
     }
 }

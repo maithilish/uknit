@@ -116,6 +116,8 @@ public class FieldMaker {
             if (!field.isMock()) {
                 FieldDeclaration fieldDecl = field.getFieldDecl();
                 testClz.bodyDeclarations().remove(fieldDecl);
+                // REVIEW
+                field.setEnable(false);
             }
         }
     }

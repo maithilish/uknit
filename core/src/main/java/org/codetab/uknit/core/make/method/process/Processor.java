@@ -3,8 +3,8 @@ package org.codetab.uknit.core.make.method.process;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.imc.IMCProcessor;
-import org.codetab.uknit.core.make.method.insert.InsertProcessor;
 import org.codetab.uknit.core.make.method.invoke.InvokeProcessor;
+import org.codetab.uknit.core.make.method.load.LoadProcessor;
 import org.codetab.uknit.core.make.method.patch.PatchProcessor;
 import org.codetab.uknit.core.make.method.var.VarProcessor;
 import org.codetab.uknit.core.make.method.var.VarStateProcessor;
@@ -38,7 +38,7 @@ public class Processor {
     @Inject
     private InvokeProcessor invokeProcessor;
     @Inject
-    private InsertProcessor insertProcessor;
+    private LoadProcessor loadProcessor;
 
     /**
      * Call after MUT and each IM visit. The ImcProcessor.process() call
@@ -110,7 +110,11 @@ public class Processor {
         varProcessor.processReassign(heap);
     }
 
-    public void processInserts(final Heap heap) {
-        insertProcessor.process(heap);
+    public void processEnhancedFor(final Heap heap) {
+        loadProcessor.processEnhancedFor(heap);
+    }
+
+    public void processLoads(final Heap heap) {
+        loadProcessor.processLoadableVars(heap);
     }
 }

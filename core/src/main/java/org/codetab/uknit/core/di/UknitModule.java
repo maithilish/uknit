@@ -3,7 +3,7 @@ package org.codetab.uknit.core.di;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.uknit.core.make.model.Insert;
+import org.codetab.uknit.core.make.model.Load;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
@@ -53,7 +53,7 @@ public class UknitModule extends AbstractModule {
     }
 
     @Provides
-    public List<Insert> createInserts() {
+    public List<Load> createInserts() {
         return new ArrayList<>();
     }
 }

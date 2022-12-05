@@ -1,7 +1,6 @@
 package org.codetab.uknit.core.make.model;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -47,7 +46,7 @@ public class Field extends Var {
         Field field = new Field(name, type, mock, fieldDecl, srcFieldDecl);
         field.setCreated(created);
         field.setEnable(enable);
-        enforce.ifPresent(e -> field.setEnforce(Optional.of(e)));
+        enforce.ifPresent(e -> field.setEnforce(e));
         field.setDeepStub(deepStub);
         return field;
     }

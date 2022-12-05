@@ -70,7 +70,7 @@ public class ClzMap extends HashMap<String, Clz> {
                 field.ifPresent(f -> {
                     f.setEnable(fieldCopy.isEnable());
                     f.setDeepStub(fieldCopy.isDeepStub());
-                    f.setEnforce(fieldCopy.getEnforce());
+                    fieldCopy.getEnforce().ifPresent(f::setEnforce);
                 });
             }
         }

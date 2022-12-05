@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 
-public class Insert {
+public class Load {
 
     /*
      * for list.get(0), list is consumer
@@ -20,8 +20,8 @@ public class Insert {
 
     /**
      * args are used in generated stmt, for String value = list.get(0) the
-     * generated insert stmt is list.add(value) and args is value. The usedVar
-     * is used to enable the vars.
+     * generated load stmt is list.add(value) and args is value. The usedVar is
+     * used to enable the vars.
      * <p>
      * String value = list.get(0), args [value] and no used vars
      * <p>
@@ -36,7 +36,7 @@ public class Insert {
     private boolean enable;
 
     @Inject
-    public Insert(@Assisted final IVar consumer, @Assisted final String call,
+    public Load(@Assisted final IVar consumer, @Assisted final String call,
             @Assisted("args") final List<IVar> args,
             @Assisted("usedVars") final List<IVar> usedVars) {
         this.consumer = consumer;
@@ -106,7 +106,7 @@ public class Insert {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Insert other = (Insert) obj;
+        Load other = (Load) obj;
         if (args == null) {
             if (other.args != null) {
                 return false;

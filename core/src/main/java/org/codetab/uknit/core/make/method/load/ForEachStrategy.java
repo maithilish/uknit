@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.insert;
+package org.codetab.uknit.core.make.method.load;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -11,8 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.Insert;
 import org.codetab.uknit.core.make.model.Invoke;
+import org.codetab.uknit.core.make.model.Load;
+import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.Expression;
 
 public class ForEachStrategy {
@@ -20,11 +22,13 @@ public class ForEachStrategy {
     private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    private Inserters inserters;
+    private Loaders loaders;
     @Inject
-    private InsertVars insertVars;
+    private LoadVars loadVars;
+    @Inject
+    private ModelFactory modelFactory;
 
-    public Optional<Insert> process(final IVar var, final Class<?> clz,
+    public Optional<Load> process(final IVar var, final Class<?> clz,
             final IVar loopVar, final Heap heap) {
 
         checkNotNull(var);
@@ -34,20 +38,20 @@ public class ForEachStrategy {
 
         IVar keyVar = null;
         IVar valueVar = null;
-        boolean createInsert = false;
+        boolean createload = false;
 
-        if (inserters.requiresKey(clz)) {
+        if (loaders.requiresKey(clz)) {
             /*
-             * Requires key such as map.put(). ExpVar is not present when no
+             * Requires key such as map.put(). Invoke is not present when no
              * collection access method is invoked. 1) Holder returns a
              * collection held by field. 2) Calling method passes collection to
-             * IMC where it is accessed. Then in calling method expVar is not
+             * IMC where it is accessed. Then in calling method invoke is not
              * present and it is present in internal method. See:
-             * itest.insert.VarConflict for example. Don't create insert if
-             * expVar is not present.
+             * itest.load.VarConflict for example. Don't create load if invoke
+             * is not present.
              */
-            List<Invoke> expVars = inserters.findAllowedPacks(var, clz, heap);
-            if (!expVars.isEmpty()) {
+            List<Invoke> invokes = loaders.findAllowedPacks(var, clz, heap);
+            if (!invokes.isEmpty()) {
 
                 /**
                  * When requireKey collections, such as Map, is used in
@@ -69,19 +73,23 @@ public class ForEachStrategy {
                  * the value as loop var but the key var is missing.
                  */
                 Optional<IVar> inferVarO =
-                        inserters.findPutInferVar(expVars, var, heap);
+                        loaders.findPutInferVar(invokes, var, heap);
                 if (inferVarO.isEmpty()) {
-                    Expression rExp = expVars.get(0).getExp();
-                    inferVarO = insertVars.createPutInferVar(var, rExp, heap);
-                    // add created infer var to heap
-                    inferVarO.ifPresent(heap.getVars()::add);
+                    Expression rExp = invokes.get(0).getExp();
+                    inferVarO = loadVars.createPutInferVar(var, rExp, heap);
+                    // create new pack for inferVar and exp.
+                    if (inferVarO.isPresent()) {
+                        Pack pack = modelFactory.createPack(inferVarO.get(),
+                                rExp, false);
+                        heap.addPack(pack);
+                    }
                 }
 
                 // determine key or value based on invoked method
                 if (inferVarO.isPresent()) {
 
                     String invokedMethod =
-                            inserters.getInvokedMethod(expVars.get(0).getExp());
+                            loaders.getInvokedMethod(invokes.get(0).getExp());
                     if (invokedMethod.equals("keySet")) {
                         keyVar = loopVar;
                         valueVar = inferVarO.get();
@@ -93,29 +101,28 @@ public class ForEachStrategy {
                         valueVar = inferVarO.get();
                     }
                 }
-                logInsert("forEach [key,value]", var, valueVar, keyVar);
-                createInsert = true;
+                logLoad("forEach [key,value]", var, valueVar, keyVar);
+                createload = true;
             }
         } else {
             // requires no key such as list.add()
             valueVar = loopVar;
-            logInsert("forEach [value]", var, valueVar, keyVar);
-            createInsert = true;
+            logLoad("forEach [value]", var, valueVar, keyVar);
+            createload = true;
         }
 
-        if (createInsert) {
-            String insertMethod = inserters.getInsertMethod(clz);
-            Insert insert =
-                    inserters.createInsert(var, valueVar, keyVar, insertMethod);
-            return Optional.of(insert);
+        if (createload) {
+            String loadMethod = loaders.getLoadMethod(clz);
+            Load load = loaders.createLoad(var, valueVar, keyVar, loadMethod);
+            return Optional.of(load);
         } else {
             return Optional.empty();
         }
     }
 
-    private void logInsert(final String strategy, final IVar var,
+    private void logLoad(final String strategy, final IVar var,
             final IVar valueVar, final IVar keyVar) {
-        LOG.trace("insert strategy: {}", strategy);
+        LOG.trace("load strategy: {}", strategy);
         LOG.trace("collection var: {}", var);
         LOG.trace("value var: {}", valueVar);
         LOG.trace("key var: {}", keyVar);

@@ -23,7 +23,12 @@ public class VarStateProcessor {
         varEnabler.enableVarsUsedInInitializers(heap);
 
         Set<String> linkedNames = varEnabler.collectLinkedVarNames(heap);
+        // REVIEW
         varEnabler.enableVars(linkedNames, heap);
+
+        Set<String> linkedFieldNames = varEnabler.collectLinkedFieldNames(heap);
+        // REVIEW
+        usedNames.addAll(linkedFieldNames);
 
         varEnabler.enableFromEnforce(heap);
 

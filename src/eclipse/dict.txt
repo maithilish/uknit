@@ -265,3 +265,4 @@ assignability
 downgrading
 stash
 parenthesized
+loadable

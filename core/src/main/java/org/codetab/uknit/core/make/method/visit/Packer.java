@@ -147,9 +147,11 @@ public class Packer {
      * SuperMethodInvocation.
      *
      * @param invoke
+     * @param imc
      * @param heap
      */
-    public void setupInvokes(final Invoke invoke, final Heap heap) {
+    public void setupInvokes(final Invoke invoke, final boolean imc,
+            final Heap heap) {
 
         Expression exp = invoke.getExp(); // MI, SMI
 
@@ -160,7 +162,12 @@ public class Packer {
         Optional<Expression> patchedExpO =
                 patcher.getPatchedCallExp(invoke, heap);
         Optional<IVar> callVarO = Optional.empty();
-        if (patchedExpO.isPresent()) {
+        /*
+         * If in IM, don't set callVar. The final var used by the IM, arg or
+         * param, is decided only after IMC merge and it will be set later in
+         * post process by InvokeProcessor.process().
+         */
+        if (patchedExpO.isPresent() && !imc) {
             try {
                 String name = expressions.getName(patchedExpO.get());
                 callVarO = Optional.of(vars.findVarByName(name, heap));

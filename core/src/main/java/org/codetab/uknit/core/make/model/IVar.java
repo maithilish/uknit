@@ -41,13 +41,17 @@ public interface IVar {
 
     void setEnable(boolean enable);
 
-    void setEnforce(Optional<Boolean> enforce);
+    void setEnforce(boolean enforce);
 
     Optional<Boolean> getEnforce();
 
     boolean isDeepStub();
 
     void setDeepStub(boolean deepStub);
+
+    void setProperty(String propertyName, Object data);
+
+    Object getProperty(String propertyName);
 
     IVar clone();
 

@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.method.insert.Inserter;
 import org.codetab.uknit.core.make.method.ret.ReturnCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -60,8 +59,6 @@ public class Visitor extends ASTVisitor {
     private Assignor assignor;
     @Inject
     private Variables variables;
-    @Inject
-    private Inserter inserter;
 
     private Heap heap;
 
@@ -138,14 +135,14 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final MethodInvocation node) {
         Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
-        packer.setupInvokes(invoke, heap);
+        packer.setupInvokes(invoke, imc, heap);
         heap.addPack(invoke);
     }
 
     @Override
     public void endVisit(final SuperMethodInvocation node) {
         Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
-        packer.setupInvokes(invoke, heap);
+        packer.setupInvokes(invoke, imc, heap);
         heap.addPack(invoke);
     }
 
@@ -240,7 +237,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final EnhancedForStatement node) {
-        inserter.collectEnhancedFor(node, imc);
+        heap.getLoader().collectEnhancedFor(node, imc);
     }
 
     /**

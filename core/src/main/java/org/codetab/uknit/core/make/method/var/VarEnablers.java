@@ -172,7 +172,7 @@ public class VarEnablers {
         var.setCreated(false);
         var.setDeepStub(false);
         var.setEnable(true);
-        var.setEnforce(Optional.of(false));
+        var.setEnforce(false);
         return var;
     }
 

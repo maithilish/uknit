@@ -5,19 +5,27 @@ import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
+import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Heaps;
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.Expressions;
+import org.codetab.uknit.core.node.Methods;
+import org.eclipse.jdt.core.dom.Expression;
 
 /**
  * Merges IM Heap on return of IM with Invoker Heap.
@@ -35,6 +43,17 @@ public class Merger {
     private DInjector di;
     @Inject
     private Heaps heaps;
+    @Inject
+    private Packs packs;
+    @Inject
+    private Methods methods;
+    @Inject
+    private Patcher patcher;
+    @Inject
+    private Expressions expressions;
+
+    private ArgParams argParams;
+    private InternalReturns internalReturns;
 
     public void merge(final Invoke invoke, final Heap heap,
             final Heap internalHeap) {
@@ -44,10 +63,10 @@ public class Merger {
         heaps.debugPacks("[ IM Heap Packs ]", internalHeap);
 
         // save states
-        InternalReturns internalReturns = di.instance(InternalReturns.class);
+        internalReturns = di.instance(InternalReturns.class);
         internalReturns.init(internalHeap);
 
-        ArgParams argParams = di.instance(ArgParams.class);
+        argParams = di.instance(ArgParams.class);
         argParams.init(invoke, heap, internalHeap);
 
         int invokeIndex = heap.getPacks().indexOf(invoke);
@@ -139,5 +158,49 @@ public class Merger {
         heap.addPacks(invokeIndex, internalPacks);
 
         heaps.debugPacks("[ Heap Packs after merge ]", heap);
+    }
+
+    /**
+     * Set call var of MI in internal method.
+     *
+     * @param heap
+     */
+    public void processInvokes(final Heap heap) {
+
+        // process all invokes where callVar is not yet set
+        List<Invoke> invokeList = packs.filterInvokes(heap.getPacks()).stream()
+                .filter(i -> i.getCallVar().isEmpty()
+                        && methods.isInvokable(i.getExp()))
+                .collect(Collectors.toList());
+
+        for (Invoke invoke : invokeList) {
+            Optional<Expression> patchedExpO =
+                    patcher.getPatchedCallExp(invoke, heap);
+            Optional<IVar> callVarO = Optional.empty();
+            if (patchedExpO.isPresent()) {
+                // if var for name is not found then find var for old name
+                String name = expressions.getName(patchedExpO.get());
+                try {
+                    callVarO = Optional.of(vars.findVarByName(name, heap));
+                } catch (VarNotFoundException e) {
+                    callVarO = Optional.of(vars.findVarByOldName(name, heap));
+                }
+                // call var is param's corresponding arg
+                if (callVarO.isPresent()) {
+                    callVarO = argParams.getArg(callVarO.get());
+                }
+            }
+            invoke.setCallVar(callVarO);
+        }
+    }
+
+    /**
+     * Merge loader of internal heap to the loader of calling heap.
+     *
+     * @param heap
+     * @param internalHeap
+     */
+    public void mergeLoader(final Heap heap, final Heap internalHeap) {
+        heap.getLoader().merge(internalHeap.getLoader());
     }
 }

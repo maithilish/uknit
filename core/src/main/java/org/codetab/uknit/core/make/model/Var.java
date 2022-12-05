@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,6 +29,7 @@ public class Var implements IVar {
     protected boolean enable;
     protected Optional<Boolean> enforce;
     protected boolean deepStub;
+    protected Map<String, Object> properties;
 
     @Inject
     public Var(@Assisted final Kind kind, @Assisted final String name,
@@ -40,6 +43,7 @@ public class Var implements IVar {
         this.enforce = Optional.empty();
         this.deepStub = false;
         this.created = false;
+        properties = new HashMap<>();
     }
 
     @Override
@@ -133,8 +137,8 @@ public class Var implements IVar {
     }
 
     @Override
-    public void setEnforce(final Optional<Boolean> enforce) {
-        this.enforce = enforce;
+    public void setEnforce(final boolean enforce) {
+        this.enforce = Optional.ofNullable(enforce);
     }
 
     @Override
@@ -154,7 +158,7 @@ public class Var implements IVar {
         clone.setDeepStub(deepStub);
         clone.setEnable(enable);
         if (enforce.isPresent()) {
-            clone.setEnforce(Optional.ofNullable(enforce.get()));
+            clone.setEnforce(enforce.get());
         }
         clone.setOldName(oldName);
         return clone;
@@ -190,6 +194,16 @@ public class Var implements IVar {
     public String toString() {
         return "Var [name=" + name + ", type=" + type + ", kind=" + kind
                 + ", mock=" + mock + ", created=" + created + "]";
+    }
+
+    @Override
+    public void setProperty(final String propertyName, final Object data) {
+        properties.put(propertyName, data);
+    }
+
+    @Override
+    public Object getProperty(final String propertyName) {
+        return properties.get(propertyName);
     }
 
 }

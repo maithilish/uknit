@@ -172,9 +172,10 @@ public class ITBase {
          * if exp file doesn't exists, copy the output file as exp file (on
          * first run)
          */
+        boolean copyExp = configs.getConfig("uknit.itest.copy.expFile", true);
         Path srcPath = Path.of(actualFilePath());
         Path destPath = Path.of(expFile);
-        if (Files.notExists(destPath)) {
+        if (copyExp && Files.notExists(destPath)) {
             Files.copy(srcPath, destPath);
         }
 
@@ -182,10 +183,11 @@ public class ITBase {
          * if test file doesn't exists, copy the output file as test file (on
          * first run)
          */
+        boolean copyTest = configs.getConfig("uknit.itest.copy.testFile", true);
         String testFile = String.join("/", ws, srcDir,
                 expectedFile.replace(".exp", "Test.java"));
         destPath = Path.of(testFile);
-        if (Files.notExists(destPath)) {
+        if (copyTest && Files.notExists(destPath)) {
             Files.copy(srcPath, destPath);
         }
 

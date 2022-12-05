@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.load.Loader;
+
 public class Heap implements Listener {
 
     @Inject
     private List<Pack> packs;
+
     @Inject
-    private List<Insert> inserts;
+    private Loader loader;
 
     /*
      * List of vars held by packs. The packsDirty field is set to true when ever
@@ -96,8 +99,8 @@ public class Heap implements Listener {
         return Collections.unmodifiableList(varCache);
     }
 
-    public List<Insert> getInserts() {
-        return inserts;
+    public Loader getLoader() {
+        return loader;
     }
 
     @Override

@@ -7,14 +7,17 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.body.initializer.Initializers;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
@@ -43,6 +46,8 @@ public class VarEnablers {
     private Packs packs;
     @Inject
     private Vars vars;
+    @Inject
+    private Patcher patcher;
 
     public void collectVarNamesOfWhens(final Set<String> names,
             final Heap heap) {
@@ -88,6 +93,10 @@ public class VarEnablers {
     public void enableVarsUsedInInitializers(final List<Expression> exps,
             final Heap heap) {
         for (Expression exp : exps) {
+            Optional<Pack> packO = packs.findByExp(exp, heap.getPacks());
+            if (packO.isPresent()) {
+                exp = patcher.copyAndPatch(packO.get(), heap);
+            }
             List<String> names = new ArrayList<>();
             if (nodes.is(exp, CastExpression.class)) {
                 Expression e =
@@ -121,7 +130,11 @@ public class VarEnablers {
                 names.add(nodes.getName(exp));
             }
             for (String name : names) {
-                vars.findVarByName(name, heap).setEnable(true);
+                try {
+                    vars.findVarByName(name, heap).setEnable(true);
+                } catch (VarNotFoundException e) {
+                    vars.findVarByOldName(name, heap).setEnable(true);
+                }
             }
         }
     }

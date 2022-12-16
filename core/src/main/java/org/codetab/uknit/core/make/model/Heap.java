@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.load.Loader;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class Heap implements Listener {
 
@@ -28,6 +29,12 @@ public class Heap implements Listener {
 
     // name of class under test
     private String cutName;
+
+    /**
+     * MUT - method under test. In IM Heap it is the internal method not the
+     * calling method.
+     */
+    private MethodDeclaration mut;
 
     // test method call
     private Call call;
@@ -114,5 +121,13 @@ public class Heap implements Listener {
 
     public boolean isAsserted() {
         return asserted;
+    }
+
+    public MethodDeclaration getMut() {
+        return mut;
+    }
+
+    public void setMut(final MethodDeclaration mut) {
+        this.mut = mut;
     }
 }

@@ -168,7 +168,8 @@ public class WhenCreator {
             Optional<Pack> callVarPackO = Optional.empty();
             Optional<Expression> patchedExpO =
                     patcher.getPatchedCallExp(invoke, heap);
-            if (!methods.isInternalCall(invoke.getExp(), patchedExpO)) {
+            if (!methods.isInternalCall(invoke.getExp(), patchedExpO,
+                    heap.getMut())) {
                 String name = expressions.getName(patchedExpO.get());
                 callVarPackO = packs.findByVarName(name, heap.getPacks());
             }

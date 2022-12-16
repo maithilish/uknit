@@ -21,6 +21,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Patch.Kind;
 import org.codetab.uknit.core.node.Braces;
+import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -56,6 +57,8 @@ public class Patcher {
     private Braces braces;
     @Inject
     private NodeGroups nodeGroups;
+    @Inject
+    private NodeFactory nodeFactory;
 
     /**
      * When inner expressions such as MethodInvocation returns InferVar then in
@@ -225,13 +228,11 @@ public class Patcher {
      * @param namesMap
      * @param heap
      */
-    public void updatePatchName(final Pack pack, final Pack renamedPack,
-            final Heap heap) {
+    public void updatePatchName(final Pack pack, final String oldName,
+            final String newName, final Heap heap) {
 
         for (Patch patch : pack.getPatches()) {
 
-            String oldName = renamedPack.getVar().getOldName();
-            String newName = renamedPack.getVar().getName();
             String patchName = patch.getName();
 
             if (nonNull(newName)) {
@@ -289,6 +290,21 @@ public class Patcher {
          * opt is just a name.
          */
         Expression node = pack.getExp();
+
+        /*
+         * if pack exp is name and no patch is present return the name, but if
+         * patch exists then return patch name as patched exp.
+         */
+        if (nodes.isSimpleName(node)) {
+            Optional<Patch> patchO =
+                    patches.findPatch(node, node, pack.getPatches());
+            if (patchO.isEmpty()) {
+                return node;
+            } else {
+                return nodeFactory.createName(patchO.get().getName());
+            }
+        }
+
         Expression nodeCopy =
                 (Expression) ASTNode.copySubtree(node.getAST(), node);
 
@@ -363,5 +379,4 @@ public class Patcher {
          */
         return packList;
     }
-
 }

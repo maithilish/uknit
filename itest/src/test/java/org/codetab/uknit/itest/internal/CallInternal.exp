@@ -51,10 +51,9 @@ public class CallInternalTest {
 
     @Test
     public void testProcess() throws Exception {
-        BlockingQueue<Person> blockingQueue = queue;
         Person person = Mockito.mock(Person.class);
 
-        when(blockingQueue.take()).thenReturn(person);
+        when(queue.take()).thenReturn(person);
 
         Person actual = callInternal.process();
 

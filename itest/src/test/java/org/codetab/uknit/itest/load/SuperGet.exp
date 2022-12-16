@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+// has errors
+
 public class SuperGetTest {
     @InjectMocks
     private SuperGet superGet;
@@ -35,7 +37,7 @@ public class SuperGetTest {
     @Test
     public void testGetSuperFieldList() {
         Date aDate = Mockito.mock(Date.class);
-        list.add(aDate);
+        fieldList.add(aDate);
 
         Date actual = superGet.getSuperFieldList();
 

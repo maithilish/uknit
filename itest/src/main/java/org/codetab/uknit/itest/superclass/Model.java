@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Model {
 
@@ -28,3 +29,93 @@ class AFactory {
     }
 }
 
+class Step {
+
+    private Payload payload;
+    private static Payload staticPayload = new Payload();
+
+    public Payload getPayload() {
+        return payload;
+    }
+
+    public static Payload staticGetSuperField() {
+        return staticPayload;
+    }
+
+    public static Payload staticGetSuperMock(final Payload mockPayload) {
+        return mockPayload;
+    }
+
+    public static Payload staticGetSuperReal(final Payload realPayload) {
+        return realPayload;
+    }
+}
+
+class Payload {
+
+    private JobInfo jobInfo;
+
+    private JobInfo realJobInfo = new JobInfo();
+
+    JobInfo getJobInfo() {
+        return jobInfo;
+    }
+
+    JobInfo getRealJobInfo() {
+        return realJobInfo;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jobInfo, realJobInfo);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Payload other = (Payload) obj;
+        return Objects.equals(jobInfo, other.jobInfo)
+                && Objects.equals(realJobInfo, other.realJobInfo);
+    }
+}
+
+class JobInfo {
+
+    private long id;
+
+    void setId(final long id) {
+        this.id = id;
+    }
+
+    long getId() {
+        return id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        JobInfo other = (JobInfo) obj;
+        return id == other.id;
+    }
+}

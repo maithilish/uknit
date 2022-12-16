@@ -90,6 +90,8 @@ public class MethodMaker {
         clzDecl = clzMap.getTypeDecl(testClzName);
         clz = clzMap.getClz(testClzName);
 
+        heap.setMut(method);
+
         String testMethodName =
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
 
@@ -127,10 +129,11 @@ public class MethodMaker {
         processor.processInfers(heap);
         processor.processVarReassign(heap);
         processor.processVarNameChange(heap);
+        processor.processInvokePatches(heap);
 
         processor.processIM(heap);
-        processor.postProcessIM(heap);
 
+        processor.processVars(heap);
         processor.processInvokes(heap);
         processor.processWhenVerify(heap);
 
@@ -141,7 +144,7 @@ public class MethodMaker {
 
         heaps.debugPacks("[ Heap after MUT processing ]", heap);
 
-        // REVIEW
+        // REVIEW Stash
         clzMap.updateFieldState(testClzName,
                 vars.getVarsOfKind(heap, Kind.FIELD));
 
@@ -199,8 +202,11 @@ public class MethodMaker {
          * are not processed here and these are later processed by caller.
          */
         processor.processInfers(internalHeap);
+        processor.processInvokePatches(internalHeap);
+
         processor.processIM(internalHeap);
-        processor.postProcessIM(internalHeap);
+
+        processor.processVars(internalHeap);
 
         // merge packs of internal heap to the caller heap.
         merger.merge(invoke, heap, internalHeap);
@@ -211,16 +217,9 @@ public class MethodMaker {
 
         // after merge, resolve any var name conflict
         processor.processVarNameChange(internalHeap);
+        processor.assignInternalReturnPatches(heap, internalHeap);
 
         heaps.debugPacks("[ Heap after IM processing ]", heap);
-
-        // List<IVar> insertableVars =
-        // inserter.filterInsertableVars(internalHeap.getVars());
-        // inserter.processInsertableVars(insertableVars, internalHeap);
-
-        // heap.merge(internalHeap);
-
-        // variables.checkVarConsistency(heap.getVars());
 
         return true;
     }

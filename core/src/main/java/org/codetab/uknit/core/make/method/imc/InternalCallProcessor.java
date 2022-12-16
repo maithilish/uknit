@@ -96,6 +96,7 @@ public class InternalCallProcessor {
 
             Heap internalHeap = di.instance(Heap.class);
             internalCalls.initInternalHeap(heap, internalHeap);
+            internalHeap.setMut(methodDecl);
 
             methodMaker.processMethod(methodDecl, invoke, internalMethod, heap,
                     internalHeap);

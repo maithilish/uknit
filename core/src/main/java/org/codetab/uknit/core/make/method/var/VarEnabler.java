@@ -158,7 +158,7 @@ public class VarEnabler {
      * @param heap
      * @return
      */
-    // REVIEW not fields
+    // REVIEW stash not fields
     public Set<String> collectLinkedVarNames(final Heap heap) {
         Set<String> names = new HashSet<>();
         // list packs with enabled var
@@ -180,7 +180,7 @@ public class VarEnabler {
         return names;
     }
 
-    // REVIEW only fields
+    // REVIEW stash only fields
     public Set<String> collectLinkedFieldNames(final Heap heap) {
         Set<String> names = new HashSet<>();
         // list packs with enabled var

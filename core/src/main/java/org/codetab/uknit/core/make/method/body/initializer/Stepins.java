@@ -94,7 +94,7 @@ public class Stepins {
              */
             Optional<Expression> patchedExpO =
                     patcher.getPatchedCallExp(invokeO.get(), heap);
-            if (!methods.isInternalCall(mi, patchedExpO)) {
+            if (!methods.isInternalCall(mi, patchedExpO, heap.getMut())) {
                 String name = expressions.getName(patchedExpO.get());
                 callVarPackO = packs.findByVarName(name, heap.getPacks());
             }

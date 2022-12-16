@@ -1,0 +1,285 @@
+package org.codetab.uknit.itest.superclass;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+public class StaticCallTest {
+    @InjectMocks
+    private StaticCall staticCall;
+
+    @Mock
+    private Payload mf;
+    @Mock
+    private Payload mfc;
+    @Mock
+    private Payload payload;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testMockField() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        long id = 1L;
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+
+        when(mf.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo.getId()).thenReturn(id);
+
+        long actual = staticCall.mockField(mockPayload);
+
+        assertEquals(id, actual);
+        verify(jobInfo2).setId(1);
+    }
+
+    @Test
+    public void testReturnMockField() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+        long apple = 1L;
+
+        when(mf.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo2.getId()).thenReturn(apple);
+
+        long actual = staticCall.returnMockField(mockPayload);
+
+        assertEquals(apple, actual);
+        verify(jobInfo).setId(1);
+    }
+
+    @Test
+    public void testMockFieldCreated() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        long id = 1L;
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+
+        when(mfc.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo.getId()).thenReturn(id);
+
+        long actual = staticCall.mockFieldCreated(mockPayload);
+
+        assertEquals(id, actual);
+        verify(jobInfo2).setId(1);
+    }
+
+    @Test
+    public void testReturnMockFieldCreated() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+        long apple = 1L;
+
+        when(mfc.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo2.getId()).thenReturn(apple);
+
+        long actual = staticCall.returnMockFieldCreated(mockPayload);
+
+        assertEquals(apple, actual);
+        verify(jobInfo).setId(1);
+    }
+
+    @Test
+    public void testStaticField() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        long id = 0;
+
+        long actual = staticCall.staticField(mockPayload);
+
+        assertEquals(id, actual);
+    }
+
+    @Test
+    public void testReturnStaticField() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        long apple = 1;
+
+        long actual = staticCall.returnStaticField(mockPayload);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignStaticInternal() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        JobInfo jobInfo3 = Mockito.mock(JobInfo.class);
+        long grape = 1L;
+        Payload iPayload = mockPayload;
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        long apple = 1L;
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+
+        when(mockPayload.getJobInfo()).thenReturn(jobInfo3);
+        when(jobInfo3.getId()).thenReturn(grape);
+        when(iPayload.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo.getId()).thenReturn(apple);
+
+        Payload actual = staticCall.assignStaticInternal(mockPayload);
+
+        assertSame(iPayload, actual);
+        verify(jobInfo2).setId(1);
+    }
+
+    @Test
+    public void testReturnStaticInternal() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        long apple = 1L;
+        Payload payload2 = mockPayload;
+
+        when(mockPayload.getJobInfo()).thenReturn(jobInfo);
+        when(jobInfo.getId()).thenReturn(apple);
+
+        Payload actual = staticCall.returnStaticInternal(mockPayload);
+
+        assertSame(payload2, actual);
+    }
+
+    @Test
+    public void testAssignStaticSuperField() {
+        long apple = 1;
+
+        long actual = staticCall.assignStaticSuperField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testReturnStaticSuperField() {
+        long apple = 1;
+
+        long actual = staticCall.returnStaticSuperField();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignStaticSuperMockParameterWithoutSuper() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        Payload mpay = mockPayload;
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+        long apple = 1L;
+
+        when(mpay.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo2.getId()).thenReturn(apple);
+
+        Payload actual = staticCall
+                .assignStaticSuperMockParameterWithoutSuper(mockPayload);
+
+        assertSame(mpay, actual);
+        verify(jobInfo).setId(1);
+    }
+
+    @Test
+    public void testReturnStaticSuperMockParameterWithoutSuper() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        Payload payload2 = mockPayload;
+
+        Payload actual = staticCall
+                .returnStaticSuperMockParameterWithoutSuper(mockPayload);
+
+        assertSame(payload2, actual);
+    }
+
+    @Test
+    public void testAssignStaticSuperMockParameter() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+        Payload mpay = mockPayload;
+        JobInfo jobInfo = Mockito.mock(JobInfo.class);
+        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
+        long apple = 1L;
+
+        when(mpay.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2);
+        when(jobInfo2.getId()).thenReturn(apple);
+
+        Payload actual = staticCall.assignStaticSuperMockParameter(mockPayload);
+
+        assertSame(mpay, actual);
+        verify(jobInfo).setId(1);
+    }
+
+    @Test
+    public void testReturnStaticSuperRealParameter() {
+        Payload realPayload = new Payload();
+
+        Payload actual = staticCall.returnStaticSuperRealParameter();
+
+        assertEquals(realPayload, actual);
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void testAssignStaticSuperRealParameterWithoutSuper() {
+        Payload realPayload = new Payload();
+        Payload rpay = realPayload;
+
+        Payload actual =
+                staticCall.assignStaticSuperRealParameterWithoutSuper();
+
+        // assertEquals(rpay, actual);
+    }
+
+    @Test
+    public void testReturnStaticSuperRealParameterWithoutSuper() {
+        Payload realPayload = new Payload();
+        Payload payload2 = realPayload;
+
+        Payload actual =
+                staticCall.returnStaticSuperRealParameterWithoutSuper();
+
+        assertEquals(payload2, actual);
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void testAssignStaticSuperRealParameter() {
+        Payload realPayload = new Payload();
+        Payload rpay = realPayload;
+
+        Payload actual = staticCall.assignStaticSuperRealParameter();
+
+        // assertEquals(rpay, actual);
+    }
+
+    @Test
+    public void testReturnStaticSuperMockParameter() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+
+        Payload actual = staticCall.returnStaticSuperMockParameter(mockPayload);
+
+        assertSame(mockPayload, actual);
+    }
+
+    @Test
+    public void testAssignAnyStaticCall() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+
+        boolean actual = staticCall.assignAnyStaticCall(mockPayload);
+
+        assertFalse(actual);
+    }
+
+    @Test
+    public void testReturnAnyStaticCall() {
+        Payload mockPayload = Mockito.mock(Payload.class);
+
+        boolean actual = staticCall.returnAnyStaticCall(mockPayload);
+
+        assertFalse(actual);
+    }
+}

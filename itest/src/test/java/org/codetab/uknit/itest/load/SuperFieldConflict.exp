@@ -19,7 +19,6 @@ public class SuperFieldConflictTest {
     public void testFoo() {
         List<Date> dates = new ArrayList<>();
         Date selectedDate = null;
-        Date date = Mockito.mock(Date.class);
         dates.add(date);
 
         Date actual = superFieldConflict.foo(dates);

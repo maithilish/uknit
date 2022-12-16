@@ -1,17 +1,21 @@
 package org.codetab.uknit.core.make.method.imc;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Var;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 
@@ -29,6 +33,8 @@ class InternalReturns {
     private Packs packs;
     @Inject
     private NodeFactory nodeFactory;
+    @Inject
+    private Patcher patcher;
 
     private IVar returnVar;
     private Optional<Pack> returnPackO;
@@ -76,7 +82,7 @@ class InternalReturns {
      *
      * @param invoke
      */
-    public void update(final Invoke invoke) {
+    public void updateExp(final Invoke invoke) {
         if (nonNull(returnVar) && nonNull(returnVarName)) {
             String varName = returnVar.getName();
 
@@ -91,6 +97,51 @@ class InternalReturns {
                 }
             } else {
                 invoke.setExp(nodeFactory.createName(varName));
+            }
+        }
+    }
+
+    /**
+     * Copy return var info to invoke var. If IM Return var is Kind.Field then
+     * update name in tailing matched patches (in calling heap) as the field
+     * name.<code>
+     *
+     * Invoke [var=payload2 exp=getPayload()]
+     * Invoke [var=jobInfo exp=getPayload().getJobInfo()]
+     *        [Patch exp=getPayload() name=payload2]
+     *
+     * </code> Suppose getPayload() returns super field named payload, then
+     * patch name is updated to payload.
+     *
+     * Ref itest: superclass.MultiGetMock.getMulti().
+     *
+     * @param invoke
+     * @param heap
+     * @param internalHeap
+     */
+    public void updateVar(final Invoke invoke, final Heap heap,
+            final Heap internalHeap) {
+
+        if (!nodes.isName(invoke.getExp()) || isNull(invoke.getVar())) {
+            return;
+        }
+
+        Optional<Pack> returnVarPackO = packs
+                .findByVarName(nodes.getName(invoke.getExp()), heap.getPacks());
+
+        // only if return is field
+        if (returnVarPackO.isPresent()) {
+            // update invoke var states with return field states
+            IVar returnField = returnVarPackO.get().getVar();
+            ((Var) invoke.getVar()).updateStates((Var) returnField);
+
+            if (returnVarPackO.get().getVar().isField()) {
+                // update patch name
+                String oldName = invoke.getVar().getName();
+                String newName = returnField.getName();
+                List<Pack> tailList = packs.tailList(invoke, heap.getPacks());
+                tailList.forEach(pack -> patcher.updatePatchName(pack, oldName,
+                        newName, heap));
             }
         }
     }

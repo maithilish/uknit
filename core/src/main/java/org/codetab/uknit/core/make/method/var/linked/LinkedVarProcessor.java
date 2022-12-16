@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.patch.Patchers;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
@@ -40,6 +41,8 @@ public class LinkedVarProcessor {
     private CastPropagator castPropagator;
     @Inject
     private Braces braces;
+    @Inject
+    private Vars vars;
 
     /**
      * Marks var as created when exp in any of the linkedPack of the pack is
@@ -71,10 +74,15 @@ public class LinkedVarProcessor {
                     if (methods.isStaticCall(exp)) {
                         created = true;
                     }
+                    // REVIEW
+                    Optional<String> topVarNameO = methods.getTopVarName(exp);
+                    if (topVarNameO.isPresent() && vars.isCreated(
+                            topVarNameO.get(), packs.asVars(packList))) {
+                        created = true;
+                    }
                 }
             }
 
-            // FIXME Pack - IMC top name left out, see VarStager localVar.
             if (nonNull(pack.getVar())) {
                 pack.getVar().setCreated(created);
             }

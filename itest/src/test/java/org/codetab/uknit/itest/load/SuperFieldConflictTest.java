@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class SuperFieldConflictTest {
@@ -28,8 +27,6 @@ public class SuperFieldConflictTest {
     @Test
     public void testFoo() {
         List<Date> dates = new ArrayList<>();
-
-        Date date = Mockito.mock(Date.class);
         Date selectedDate = date;
         dates.add(date);
 

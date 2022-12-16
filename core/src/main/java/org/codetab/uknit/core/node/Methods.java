@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -147,17 +148,22 @@ public class Methods {
     }
 
     public boolean isStaticCall(final Expression expression) {
-        if (!nodes.is(expression, MethodInvocation.class)) {
+
+        Expression exp = null;
+        if (nodes.is(expression, MethodInvocation.class)) {
+            exp = nodes.as(expression, MethodInvocation.class).getExpression();
+        } else if (nodes.is(expression, SuperMethodInvocation.class)) {
+            exp = nodes.as(expression, SuperMethodInvocation.class).getName();
+        } else {
             return false;
         }
 
-        MethodInvocation mi = nodes.as(expression, MethodInvocation.class);
-        Expression exp = mi.getExpression();
         // method of this object
         if (isNull(exp) || nodes.is(exp, SimpleName.class)) {
-            return (resolver.resolveMethodBinding(mi).getModifiers()
+            return (resolver.resolveMethodBinding(expression).getModifiers()
                     & Modifier.STATIC) > 0;
         }
+
         boolean isStatic = false;
         // if any part of chain call is static then isStatic is true
         while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
@@ -187,19 +193,41 @@ public class Methods {
 
     /**
      * Get var name of method invocation. If chained call, get top name.
+     * @param packList
      * @param mi
      * @return
      */
-    public Optional<String> getVarName(final MethodInvocation mi) {
-        String varName = null;
-        Expression exp = mi.getExpression();
-        while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
-            exp = nodes.as(exp, MethodInvocation.class).getExpression();
+    // REVIEW - for remove
+    // public Optional<String> getVarName(final MethodInvocation mi) {
+    // String varName = null;
+    // Expression exp = mi.getExpression();
+    // while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
+    // exp = nodes.as(exp, MethodInvocation.class).getExpression();
+    // }
+    // if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
+    // varName = nodes.getName(exp);
+    // }
+    // return Optional.ofNullable(varName);
+    // }
+
+    // REVIEW
+    public Optional<String> getTopVarName(final Expression expression) {
+        if (!nodes.is(expression, MethodInvocation.class)) {
+            return Optional.empty();
+        }
+        Expression exp = expression;
+        while (true) {
+            if (nodes.is(exp, MethodInvocation.class)) {
+                exp = nodes.as(exp, MethodInvocation.class).getExpression();
+            } else {
+                break;
+            }
         }
         if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
-            varName = nodes.getName(exp);
+            return Optional.ofNullable(nodes.getName(exp));
+        } else {
+            return Optional.empty();
         }
-        return Optional.ofNullable(varName);
     }
 
     @SuppressWarnings("unchecked")
@@ -267,23 +295,70 @@ public class Methods {
     }
 
     /**
-     * If call exp of MI or SMI is empty then it is internal call provided it is
-     * not static call as the call exp of static call (of static import type) is
-     * empty.
+     * If call expression of invoke is empty or with super key word then is
+     * internal method call with the exception of static call (static import) of
+     * some other class. Ex:
+     *
+     * callInternal(); - internal private method (true)
+     *
+     * super.callSuperMethod(); - super method with super keyword (true)
+     *
+     * callSuperMethod(); - super method (true)
+     *
+     * superStaticMethod() - super static method (true)
+     *
+     * isNull(mockPayload); - static method of java.util.Objects class (false)
      *
      * @param miOrSmi
      * @param callExpO
+     * @param mutDecl
+     *            - MUT
      * @return
      */
     public boolean isInternalCall(final Expression miOrSmi,
-            final Optional<Expression> callExpO) {
+            final Optional<Expression> callExpO,
+            final MethodDeclaration mutDecl) {
         boolean internalCall = false;
         if (callExpO.isEmpty()) {
             internalCall = true;
-            if (isStaticCall(miOrSmi)) {
+
+            ITypeBinding miClass = resolver.getDeclaringClass(miOrSmi);
+            ITypeBinding mutClass = resolver.getDeclaringClass(mutDecl);
+
+            /**
+             * if invoked method is defined in mut then it is internal (mi decl
+             * class == mut decl class). Ex: <code>
+             * class Foo {
+             *   void mut() { internal(); }
+             *   private internal(){...}
+             * } </code> The declaring class of mut() as well as internal() is
+             * Foo.
+             */
+            if (!miClass.getBinaryName().equals(mutClass.getBinaryName())) {
                 internalCall = false;
+            }
+
+            // method of super class
+            if (isSuper(mutClass, miClass)) {
+                internalCall = true;
+            }
+
+            // invoked with super keyword
+            if (nodes.is(miOrSmi, SuperMethodInvocation.class)) {
+                internalCall = true;
             }
         }
         return internalCall;
+    }
+
+    /**
+     * Whether b is super of a.
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public boolean isSuper(final ITypeBinding a, final ITypeBinding b) {
+        return a.isSubTypeCompatible(b);
     }
 }

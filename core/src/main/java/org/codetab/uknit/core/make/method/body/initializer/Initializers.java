@@ -55,8 +55,16 @@ public class Initializers {
             if (stepins.isStepin(initExpO.get(), heap)) {
                 initializer = "STEPIN";
             } else if (nodes.is(initExpO.get(), SimpleName.class)) {
-                initializer = nodes.getName(initExpO.get());
-            } else if (definedInitialzer.isAllowed(initExpO.get())) {
+                Expression exp = initExpO.get();
+                /*
+                 * Ex: Pack [var: date2, exp: d1] and Patch [exp: d1, name:
+                 * date] then d1 is patched to date.
+                 */
+                if (packO.isPresent()) {
+                    exp = patcher.copyAndPatch(packO.get(), heap);
+                }
+                initializer = nodes.getName(exp);
+            } else if (definedInitialzer.isAllowed(initExpO.get(), heap)) {
                 Expression exp = patcher.copyAndPatch(packO.get(), heap);
                 initializer = exp.toString();
             } else if (definedInitialzer.isMIAllowed(var, initExpO.get(),

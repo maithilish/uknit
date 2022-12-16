@@ -36,7 +36,7 @@ public class PatchCreator {
     }
 
     /**
-     * Creates patch of type Kink.Var for renaming the var.
+     * Creates patch of type Kind.Var for renaming the var.
      *
      * For example if an IM contains Foo foo = factory.foo(); foo.options(); If
      * IM is called twice then second instance of foo is renamed as foo2. The

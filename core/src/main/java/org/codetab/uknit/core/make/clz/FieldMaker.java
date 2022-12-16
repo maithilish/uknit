@@ -116,7 +116,7 @@ public class FieldMaker {
             if (!field.isMock()) {
                 FieldDeclaration fieldDecl = field.getFieldDecl();
                 testClz.bodyDeclarations().remove(fieldDecl);
-                // REVIEW
+                // REVIEW Stash
                 field.setEnable(false);
             }
         }

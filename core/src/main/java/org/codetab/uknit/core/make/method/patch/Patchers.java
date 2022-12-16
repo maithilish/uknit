@@ -77,6 +77,13 @@ public class Patchers {
             @SuppressWarnings("unchecked")
             List<Expression> args = mi.arguments();
             exps.addAll(args);
+        } else if (nodes.is(node, SuperMethodInvocation.class)) {
+            SuperMethodInvocation smi =
+                    nodes.as(node, SuperMethodInvocation.class);
+            exps.add(smi.getName()); // method name
+            @SuppressWarnings("unchecked")
+            List<Expression> args = smi.arguments();
+            exps.addAll(args);
         } else if (nodes.is(node, ClassInstanceCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
@@ -174,9 +181,12 @@ public class Patchers {
                     nodes.as(node, SuperMethodInvocation.class);
             @SuppressWarnings("unchecked")
             List<Expression> args = braces.strip(smi.arguments());
-            if (args.contains(exp)) {
+            if (nonNull(smi.getName())
+                    && braces.strip(smi.getName()).equals(exp)) {
+                return 0;
+            } else if (args.contains(exp)) {
                 // zero indexed
-                return args.indexOf(exp);
+                return args.indexOf(exp) + 1;
             } else {
                 return -1;
             }
@@ -334,6 +344,18 @@ public class Patchers {
                 listPatcher.patch(args, patch.getExpIndex() - 1, patch);
             }
             return true;
+        } else if (nodes.is(node, SuperMethodInvocation.class)) {
+            SuperMethodInvocation smi =
+                    nodes.as(node, SuperMethodInvocation.class);
+            if (patch.getExpIndex() == 0) {
+                // super method name
+                smi.setName(smi.getAST().newSimpleName(name));
+            } else if (patch.getExpIndex() > 0) {
+                @SuppressWarnings("unchecked")
+                List<Expression> args = smi.arguments();
+                listPatcher.patch(args, patch.getExpIndex() - 1, patch);
+            }
+            return true;
         } else if (nodes.is(node, ClassInstanceCreation.class)) {
             @SuppressWarnings("unchecked")
             List<Expression> args =
@@ -433,14 +455,18 @@ public class Patchers {
 
     public boolean patchable(final Invoke invoke) {
         boolean patch = false;
-        if (nodes.is(invoke.getExp(), MethodInvocation.class)) {
+        if (nodes.is(invoke.getExp(), MethodInvocation.class,
+                SuperMethodInvocation.class)) {
             patch = true;
-            MethodInvocation mi =
-                    nodes.as(invoke.getExp(), MethodInvocation.class);
+
+            Expression mi = invoke.getExp();
             if (nodes.is(mi.getParent(), MethodInvocation.class)) {
-                /*
-                 * static calls: return Byte.valueOf("100"); replace
-                 * date.compareTo(LocalDate.now()) == 1; don't replace
+                /**
+                 * static call is arg of another MI (parent is MI), don't
+                 * replace, Ex: date.compareTo(LocalDate.now()) == 1;
+                 *
+                 * static call is not arg of another MI (parent is not MI)
+                 * replace, Ex: return Byte.valueOf("100");
                  */
                 if (methods.isStaticCall(mi)) {
                     patch = false;

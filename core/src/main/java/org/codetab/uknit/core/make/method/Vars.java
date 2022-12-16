@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.VarNotFoundException;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 /**
@@ -26,6 +28,8 @@ public class Vars {
 
     @Inject
     private Nodes nodes;
+    @Inject
+    private Patcher patcher;
 
     /**
      * Get unmodifiable list of vars from packs.
@@ -105,8 +109,8 @@ public class Vars {
             final Heap heap) {
         if (returnPack.isPresent()) {
             if (nodes.is(returnPack.get().getExp(), SimpleName.class)) {
-                String name = nodes.getName(
-                        nodes.as(returnPack.get().getExp(), SimpleName.class));
+                Expression exp = patcher.copyAndPatch(returnPack.get(), heap);
+                String name = nodes.getName(exp);
                 return Optional.ofNullable(findVarByName(name, heap));
             } else {
                 throw new IllegalStateException(nodes.exMessage(
@@ -151,5 +155,10 @@ public class Vars {
             }
         }
         return varName;
+    }
+
+    public boolean isCreated(final String name, final List<IVar> varList) {
+        return varList.stream()
+                .anyMatch(v -> v.getName().equals(name) && v.isCreated());
     }
 }

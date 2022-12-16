@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -94,6 +95,18 @@ public class Packs {
         return invokes.stream().filter(p -> {
             return nonNull(p.getVar()) && p.getVar().getName().equals(name);
         }).findFirst();
+    }
+
+    /**
+     * Find var by an expression.
+     *
+     * @param exp
+     * @param packs
+     * @return
+     */
+    public Optional<IVar> findVarByExp(final Expression exp,
+            final List<Pack> packs) {
+        return findByExp(exp, packs).map(Pack::getVar);
     }
 
     /**
@@ -249,5 +262,10 @@ public class Packs {
                 return false;
             }
         }).reduce((f, s) -> s);
+    }
+
+    public List<IVar> asVars(final List<Pack> packList) {
+        return packList.stream().map(p -> p.getVar()).filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

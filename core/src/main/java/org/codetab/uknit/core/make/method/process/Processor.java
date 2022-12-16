@@ -53,6 +53,10 @@ public class Processor {
     public void processInfers(final Heap heap) {
         inferProcessor.createInfers(heap);
         inferProcessor.createInferForReturn(heap);
+        // patchProcessor.createInvokePatches(heap);
+    }
+
+    public void processInvokePatches(final Heap heap) {
         patchProcessor.createInvokePatches(heap);
     }
 
@@ -60,7 +64,7 @@ public class Processor {
         imcProcessor.process(heap);
     }
 
-    public void postProcessIM(final Heap heap) {
+    public void processVars(final Heap heap) {
         varProcessor.markCreation(heap);
         varProcessor.processCastType(heap);
     }
@@ -101,9 +105,9 @@ public class Processor {
      *
      * @param heap
      */
-    public void processVarNameChange(final Heap internalHeap) {
-        patchProcessor.createVarPatches(internalHeap);
-        patchProcessor.updateNamesInPatches(internalHeap);
+    public void processVarNameChange(final Heap heap) {
+        patchProcessor.createVarPatches(heap);
+        patchProcessor.updateNamesInPatches(heap);
     }
 
     public void processVarReassign(final Heap heap) {
@@ -116,5 +120,10 @@ public class Processor {
 
     public void processLoads(final Heap heap) {
         loadProcessor.processLoadableVars(heap);
+    }
+
+    public void assignInternalReturnPatches(final Heap heap,
+            final Heap internalHeap) {
+        patchProcessor.assignInternalReturnPatches(heap, internalHeap);
     }
 }

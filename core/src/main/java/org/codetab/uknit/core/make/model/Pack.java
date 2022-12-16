@@ -23,6 +23,7 @@ public class Pack {
     private Expression exp;
     private List<Patch> patches;
     private boolean inCtlPath;
+    private boolean im; // whether originated in internal method.
 
     /*
      * LHS of assignment, apart from var, may be array access (array[0]), field
@@ -80,6 +81,14 @@ public class Pack {
 
     public void setListener(final Listener listener) {
         this.listener = listener;
+    }
+
+    public boolean isIm() {
+        return im;
+    }
+
+    public void setIm(final boolean im) {
+        this.im = im;
     }
 
     @Override

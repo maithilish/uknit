@@ -10,11 +10,13 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.ReturnType;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
@@ -135,5 +137,28 @@ public class Resolver {
         } else {
             return typeBind.isTypeVariable();
         }
+    }
+
+    /**
+     * Get declaring class (ITypeBinding) for a node.
+     *
+     * @param node
+     * @return
+     */
+    public ITypeBinding getDeclaringClass(final ASTNode node) {
+        IMethodBinding methodBinding = null;
+        if (nodes.is(node, MethodInvocation.class)) {
+            methodBinding = nodes.as(node, MethodInvocation.class)
+                    .resolveMethodBinding();
+        } else if (nodes.is(node, SuperMethodInvocation.class)) {
+            methodBinding = nodes.as(node, SuperMethodInvocation.class)
+                    .resolveMethodBinding();
+        } else if (nodes.is(node, MethodDeclaration.class)) {
+            methodBinding =
+                    nodes.as(node, MethodDeclaration.class).resolveBinding();
+        } else {
+            throw new CodeException(nodes.noImplmentationMessage(node));
+        }
+        return methodBinding.getDeclaringClass();
     }
 }

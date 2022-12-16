@@ -38,5 +38,3 @@ public class BlendVar extends SuperBlendVar {
         return s1;
     }
 }
-
-

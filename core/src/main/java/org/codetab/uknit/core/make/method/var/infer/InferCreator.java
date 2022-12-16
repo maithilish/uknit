@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 
 public class InferCreator {
@@ -97,7 +98,11 @@ public class InferCreator {
             final boolean inCtlPath, final Heap heap) {
 
         Expression exp = returnPack.getExp();
-        if (nodes.is(exp, SimpleName.class)) {
+        /*
+         * Don't create infer for SimpleName or SMI. The SMI is replaced by IMC
+         * packs, so infer is not created.
+         */
+        if (nodes.is(exp, SimpleName.class, SuperMethodInvocation.class)) {
             return;
         }
 

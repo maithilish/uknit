@@ -36,3 +36,9 @@ IM the arg overrides the parameter. If arg and param name are named same then ar
 
 It is convenient to use custom interfaces defined in package private Model.java. Apart from it some of the suitable classes to use in itests - Instant, LocalDate, LocalDateTime, DateTimeFormatter, File, StringBuilder, Locale. Avoid Date as compare may randomly fail.
 
+## Static Calls
+
+Objects returned by statics calls are real, but in internal or super static calls the returned object may be mock if static call returns a mock field, parameter or mock object returned by mock field or parameter.
+
+
+

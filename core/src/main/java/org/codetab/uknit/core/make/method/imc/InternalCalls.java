@@ -33,7 +33,8 @@ public class InternalCalls {
                 Optional<Expression> patchedCallExpO =
                         patcher.getPatchedCallExp(invoke, heap);
 
-                if (methods.isInternalCall(miOrSmiExp, patchedCallExpO)) {
+                if (methods.isInternalCall(miOrSmiExp, patchedCallExpO,
+                        heap.getMut())) {
                     internalInvokes.add(invoke);
                 }
             }

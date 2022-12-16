@@ -266,3 +266,4 @@ downgrading
 stash
 parenthesized
 loadable
+decl

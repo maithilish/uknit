@@ -149,12 +149,16 @@ public class Merger {
         }
 
         // update invoke exp to internal return var name
-        internalReturns.update(invoke);
+        internalReturns.updateExp(invoke);
 
         // update param packs whose name differs from arg name
         argParams.updateParamsOfDifferentName(callingMethodVars);
 
+        // if return var is field then update return var and its patches
+        internalReturns.updateVar(invoke, heap, internalHeap);
+
         // add packs created in internal method before invoke index
+        internalPacks.forEach(p -> p.setIm(true));
         heap.addPacks(invokeIndex, internalPacks);
 
         heaps.debugPacks("[ Heap Packs after merge ]", heap);

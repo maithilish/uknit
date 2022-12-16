@@ -139,7 +139,7 @@ class DefinedInitialzer {
      * @param exp
      * @return
      */
-    public boolean isAllowed(final Expression exp) {
+    public boolean isAllowed(final Expression exp, final Heap heap) {
         List<Class<? extends Expression>> clzs =
                 nodeGroups.allowedAsInitializer();
         for (Class<?> clz : clzs) {
@@ -147,11 +147,31 @@ class DefinedInitialzer {
                 return true;
             }
         }
-        if (nodes.is(exp, MethodInvocation.class) && methods
-                .isStaticCall(nodes.as(exp, MethodInvocation.class))) {
-            return true;
+        if (nodes.is(exp, MethodInvocation.class)) {
+            MethodInvocation mi = nodes.as(exp, MethodInvocation.class);
+            // mi can't be internal
+            if (methods.isInternalCall(mi,
+                    Optional.ofNullable(mi.getExpression()), heap.getMut())) {
+                return false;
+            }
+            /*
+             * If var of expression of mi is created then mi can't be
+             * initializer. Ex: staticGetSuperField().getRealFoo().getId(); the
+             * var returned by exp staticGetSuperField().getRealFoo() is real
+             * and the mi can't be initializer. Ref itest:
+             * superclass.StaticCall.returnStaticSuperField()
+             */
+            Optional<IVar> varO =
+                    packs.findVarByExp(mi.getExpression(), heap.getPacks());
+            if (varO.isPresent() && varO.get().isCreated()) {
+                return false;
+            }
+            if (methods.isStaticCall(mi)) {
+                return true;
+            }
         }
         return false;
+
     }
 
     /**

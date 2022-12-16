@@ -55,7 +55,13 @@ public class SuperParser {
     private Resolver resolver;
 
     /**
-     * Get list of super class names.
+     * Get list of super class names. Ex: If Foo extends Bar in package x.y.z
+     * then Map is
+     *
+     * [class Bar {...}, []], [class Foo extends Bar {...}, [x.y.z=Bar]
+     *
+     * The Bar doesn't have any super class, but Foo has Bar.
+     *
      * @return list of pkgName, className entries
      */
     public Map<AbstractTypeDeclaration, List<Entry<String, String>>> getSuperClassNames() {

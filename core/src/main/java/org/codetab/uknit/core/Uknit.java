@@ -50,7 +50,7 @@ public class Uknit {
             if (nonNull(ctl) && nonNull(ctl.getMutSignature())) {
                 LOG.error("method under test: {}", ctl.getMutSignature());
             }
-            LOG.error("{}", e.getMessage());
+            LOG.error("{}: {}", e.getClass().getSimpleName(), e.getMessage());
             LOG.error(String.join(", ", message, "see log."));
             if (configs.getConfig("uknit.mode.dev", false)) {
                 LOG.error("", e);

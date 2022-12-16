@@ -75,8 +75,23 @@ public class FieldMakers {
         Field field = modelFactory.createField(name, type, mock, fieldDecl,
                 srcFieldDecl);
 
-        field.setEnable(enable(fieldDecl, mock));
-        field.setCreated(isCreated(fieldDecl));
+        field.setEnable(enable(srcFieldDecl, mock));
+        if (mock) {
+            /*
+             * mock can be injected to initialized mock field (i.e. created)
+             * which eases the testing.
+             */
+            field.setCreated(false);
+        } else {
+            field.setCreated(isCreated(srcFieldDecl));
+        }
+        /*
+         * static field is always created.
+         */
+        if (isStatic(srcFieldDecl)) {
+            field.setProperty("static", true);
+            field.setCreated(true);
+        }
 
         return field;
     }
@@ -139,6 +154,10 @@ public class FieldMakers {
             }
         }
         return false;
+    }
+
+    public boolean isStatic(final FieldDeclaration fieldDecl) {
+        return modifiers.isStatic(modifiers.getModifiers(fieldDecl));
     }
 
     public void addModifier(final FieldDeclaration fieldDecl,

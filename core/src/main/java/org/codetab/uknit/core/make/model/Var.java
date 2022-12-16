@@ -206,4 +206,16 @@ public class Var implements IVar {
         return properties.get(propertyName);
     }
 
+    /**
+     * Update fields of this with the other.
+     *
+     * @param other
+     */
+    public void updateStates(final Var other) {
+        created = other.created;
+        mock = other.mock;
+
+        properties.clear();
+        properties.putAll(other.properties);
+    }
 }

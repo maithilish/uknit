@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Load;
@@ -24,8 +23,6 @@ public class InvokeStrategy {
 
     @Inject
     private Loaders loaders;
-    @Inject
-    private Patcher patcher;
     @Inject
     private Nodes nodes;
 
@@ -51,8 +48,8 @@ public class InvokeStrategy {
                 if (nodes.is(exp, MethodInvocation.class)
                         && loaders.requiresKey(clz)) {
                     // requires key such as map.put()
-                    MethodInvocation patchedExp = (MethodInvocation) patcher
-                            .copyAndPatch(packO.get(), heap);
+                    MethodInvocation patchedExp = (MethodInvocation) heap
+                            .getPatcher().copyAndPatch(packO.get(), heap);
                     keyVar = loaders.getKeyArg(var,
                             nodes.as(exp, MethodInvocation.class), patchedExp,
                             heap);

@@ -36,7 +36,7 @@ public class Methods {
     @Inject
     private Types types;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     public String getMethodName(final MethodDeclaration method) {
         return method.getName().getFullyQualifiedName();
@@ -191,26 +191,7 @@ public class Methods {
         return stmts;
     }
 
-    /**
-     * Get var name of method invocation. If chained call, get top name.
-     * @param packList
-     * @param mi
-     * @return
-     */
-    // REVIEW - for remove
-    // public Optional<String> getVarName(final MethodInvocation mi) {
-    // String varName = null;
-    // Expression exp = mi.getExpression();
-    // while (nonNull(exp) && nodes.is(exp, MethodInvocation.class)) {
-    // exp = nodes.as(exp, MethodInvocation.class).getExpression();
-    // }
-    // if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
-    // varName = nodes.getName(exp);
-    // }
-    // return Optional.ofNullable(varName);
-    // }
-
-    // REVIEW
+    // REVIEW Stash
     public Optional<String> getTopVarName(final Expression expression) {
         if (!nodes.is(expression, MethodInvocation.class)) {
             return Optional.empty();
@@ -240,7 +221,7 @@ public class Methods {
         } else {
             throw new CodeException(nodes.noImplmentationMessage(exp));
         }
-        return braces.strip(args);
+        return wrappers.strip(args);
     }
 
     public boolean isInvokable(final Expression exp) {
@@ -262,11 +243,11 @@ public class Methods {
     @SuppressWarnings("unchecked")
     public List<String> getNames(final MethodInvocation mi) {
         List<String> names = new ArrayList<>();
-        Expression exp = braces.strip(mi.getExpression());
+        Expression exp = wrappers.strip(mi.getExpression());
         if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
             names.add(nodes.getName(exp));
         }
-        List<Expression> args = braces.strip(mi.arguments());
+        List<Expression> args = wrappers.strip(mi.arguments());
         for (Expression arg : args) {
             if (nodes.is(arg, SimpleName.class)) {
                 names.add(nodes.getName(arg));

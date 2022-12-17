@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -34,7 +34,7 @@ class InternalReturns {
     @Inject
     private NodeFactory nodeFactory;
     @Inject
-    private Patcher patcher;
+    private PatcherOld patcherOld;
 
     private IVar returnVar;
     private Optional<Pack> returnPackO;
@@ -140,8 +140,8 @@ class InternalReturns {
                 String oldName = invoke.getVar().getName();
                 String newName = returnField.getName();
                 List<Pack> tailList = packs.tailList(invoke, heap.getPacks());
-                tailList.forEach(pack -> patcher.updatePatchName(pack, oldName,
-                        newName, heap));
+                tailList.forEach(pack -> patcherOld.updatePatchName(pack,
+                        oldName, newName, heap));
             }
         }
     }

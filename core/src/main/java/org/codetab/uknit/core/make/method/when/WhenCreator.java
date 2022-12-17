@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.lamda.AnonymousProcessor;
 import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
-import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -37,8 +37,6 @@ public class WhenCreator {
     @Inject
     private Methods methods;
     @Inject
-    private Patcher patcher;
-    @Inject
     private Nodes nodes;
     @Inject
     private Excludes excludes;
@@ -65,7 +63,7 @@ public class WhenCreator {
          */
         MethodInvocation mi = nodes.as(invoke.getExp(), MethodInvocation.class);
         MethodInvocation patchedMi =
-                (MethodInvocation) patcher.copyAndPatch(invoke, heap);
+                (MethodInvocation) heap.getPatcher().copyAndPatch(invoke, heap);
 
         boolean anonReplaced =
                 anonymousProcessor.patchAnonymousArgs(patchedMi, heap);
@@ -113,7 +111,7 @@ public class WhenCreator {
         @Inject
         private Methods methods;
         @Inject
-        private Patcher patcher;
+        private PatcherOld patcherOld;
 
         public boolean exclude(final Invoke invoke, final Heap heap) {
             Optional<IVar> callVarO = invoke.getCallVar();
@@ -167,7 +165,7 @@ public class WhenCreator {
                 final Heap heap) {
             Optional<Pack> callVarPackO = Optional.empty();
             Optional<Expression> patchedExpO =
-                    patcher.getPatchedCallExp(invoke, heap);
+                    patcherOld.getPatchedCallExp(invoke, heap);
             if (!methods.isInternalCall(invoke.getExp(), patchedExpO,
                     heap.getMut())) {
                 String name = expressions.getName(patchedExpO.get());

@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.VarNames;
-import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
@@ -29,8 +28,6 @@ public class Initializers {
     private DerivedInitialzer derivedInitialzer;
     @Inject
     private Stepins stepins;
-    @Inject
-    private Patcher patcher;
     @Inject
     private Nodes nodes;
     @Inject
@@ -61,15 +58,17 @@ public class Initializers {
                  * date] then d1 is patched to date.
                  */
                 if (packO.isPresent()) {
-                    exp = patcher.copyAndPatch(packO.get(), heap);
+                    exp = heap.getPatcher().copyAndPatch(packO.get(), heap);
                 }
                 initializer = nodes.getName(exp);
             } else if (definedInitialzer.isAllowed(initExpO.get(), heap)) {
-                Expression exp = patcher.copyAndPatch(packO.get(), heap);
+                Expression exp =
+                        heap.getPatcher().copyAndPatch(packO.get(), heap);
                 initializer = exp.toString();
             } else if (definedInitialzer.isMIAllowed(var, initExpO.get(),
                     heap)) {
-                Expression exp = patcher.copyAndPatch(packO.get(), heap);
+                Expression exp =
+                        heap.getPatcher().copyAndPatch(packO.get(), heap);
                 initializer = exp.toString();
             }
 

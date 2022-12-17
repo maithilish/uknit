@@ -10,14 +10,14 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.Patchers;
+import org.codetab.uknit.core.make.method.patch.old.Patchers;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
+import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -40,7 +40,7 @@ public class LinkedVarProcessor {
     @Inject
     private CastPropagator castPropagator;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
     @Inject
     private Vars vars;
 
@@ -74,7 +74,7 @@ public class LinkedVarProcessor {
                     if (methods.isStaticCall(exp)) {
                         created = true;
                     }
-                    // REVIEW
+                    // REVIEW Stash
                     Optional<String> topVarNameO = methods.getTopVarName(exp);
                     if (topVarNameO.isPresent() && vars.isCreated(
                             topVarNameO.get(), packs.asVars(packList))) {
@@ -125,7 +125,7 @@ public class LinkedVarProcessor {
                     if (nonNull(var) && nonNull(eexp)
                             && expressions.isCastedExp(eexp)) {
 
-                        Expression stripedExp = braces.stripWraper(eexp);
+                        Expression stripedExp = wrappers.unpack(eexp);
                         // find pack by exp else by var name
                         Optional<Pack> ePackO =
                                 packs.findByExp(stripedExp, packList);

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.load.Loader;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class Heap implements Listener {
@@ -15,6 +16,8 @@ public class Heap implements Listener {
     @Inject
     private List<Pack> packs;
 
+    @Inject
+    private Patcher patcher;
     @Inject
     private Loader loader;
 
@@ -44,6 +47,10 @@ public class Heap implements Listener {
 
     // is assert stmt created in test method
     private boolean asserted;
+
+    public void setup() {
+        patcher.setup();
+    }
 
     public void setCutName(final String cutName) {
         this.cutName = cutName;
@@ -104,6 +111,10 @@ public class Heap implements Listener {
             packsDirty = false;
         }
         return Collections.unmodifiableList(varCache);
+    }
+
+    public Patcher getPatcher() {
+        return patcher;
     }
 
     public Loader getLoader() {

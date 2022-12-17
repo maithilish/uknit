@@ -7,7 +7,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
@@ -27,7 +27,7 @@ public class Stepins {
     @Inject
     private Expressions expressions;
     @Inject
-    private Patcher patcher;
+    private PatcherOld patcherOld;
     @Inject
     private Methods methods;
 
@@ -93,7 +93,7 @@ public class Stepins {
              * webClient2.
              */
             Optional<Expression> patchedExpO =
-                    patcher.getPatchedCallExp(invokeO.get(), heap);
+                    patcherOld.getPatchedCallExp(invokeO.get(), heap);
             if (!methods.isInternalCall(mi, patchedExpO, heap.getMut())) {
                 String name = expressions.getName(patchedExpO.get());
                 callVarPackO = packs.findByVarName(name, heap.getPacks());

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -37,8 +36,6 @@ class ArgParams {
     private Methods methods;
     @Inject
     private Packs packs;
-    @Inject
-    private Patcher patcher;
     @Inject
     private ModelFactory modelFactory;
     @Inject
@@ -73,8 +70,8 @@ class ArgParams {
 
             List<Expression> argList = methods.getArguments(invoke.getExp());
 
-            List<Expression> patchedArgList =
-                    methods.getArguments(patcher.copyAndPatch(invoke, heap));
+            List<Expression> patchedArgList = methods
+                    .getArguments(heap.getPatcher().copyAndPatch(invoke, heap));
 
             for (int i = 0; i < patchedArgList.size(); i++) {
 

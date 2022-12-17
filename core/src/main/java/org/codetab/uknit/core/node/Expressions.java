@@ -37,7 +37,7 @@ public class Expressions {
     @Inject
     private NodeGroups nodeGroups;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     public boolean isClassInstanceCreation(final Expression exp) {
         return nodes.is(exp, ClassInstanceCreation.class);
@@ -214,8 +214,8 @@ public class Expressions {
      * @return
      */
     public Optional<Expression> getCastedExp(final Expression exp) {
-        Expression e = braces.strip(exp);
-        ASTNode ancesstor = braces.stripAndGetParent(exp);
+        Expression e = wrappers.strip(exp);
+        ASTNode ancesstor = wrappers.stripAndGetParent(exp);
         if (nodes.is(e, CastExpression.class)) {
             return Optional.of(e);
         } else if (nodes.is(ancesstor, CastExpression.class)) {

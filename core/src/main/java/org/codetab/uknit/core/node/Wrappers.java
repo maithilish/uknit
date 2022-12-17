@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 
-public class Braces {
+public class Wrappers {
 
     @Inject
     private Nodes nodes;
@@ -22,7 +22,7 @@ public class Braces {
      * @param exp
      * @return
      */
-    public Expression stripWraper(final Expression exp) {
+    public Expression unpack(final Expression exp) {
         Expression eExp = exp;
         if (nodes.is(exp, CastExpression.class)) {
             eExp = nodes.as(exp, CastExpression.class).getExpression();
@@ -31,9 +31,31 @@ public class Braces {
         }
         if (nodes.is(eExp, CastExpression.class,
                 ParenthesizedExpression.class)) {
-            eExp = stripWraper(eExp);
+            eExp = unpack(eExp);
         }
         return eExp;
+    }
+
+    /**
+     * If exps list contains any Cast or Parenthesized exp then return new list
+     * of striped exps else return the original list. Ex: exps [((foo)),
+     * (index)] then return new list [foo, index].
+     *
+     * @param exps
+     * @return
+     */
+    // REVIEW if possible remove this to avoid side effects - any patch to new
+    // list will not reflect in copy
+    public List<Expression> unpack(final List<Expression> exps) {
+        boolean anyWrapers = exps.stream().anyMatch(e -> nodes.is(e,
+                ParenthesizedExpression.class, CastExpression.class));
+        if (anyWrapers) {
+            List<Expression> cleanExps = new ArrayList<>();
+            exps.forEach(e -> cleanExps.add(unpack(e)));
+            return cleanExps;
+        } else {
+            return exps;
+        }
     }
 
     /**
@@ -62,6 +84,8 @@ public class Braces {
      * @param exps
      * @return
      */
+    // REVIEW if possible remove this to avoid side effects - any patch to new
+    // list will not reflect in copy
     public List<Expression> strip(final List<Expression> exps) {
         boolean anyBraces = exps.stream()
                 .anyMatch(e -> nodes.is(e, ParenthesizedExpression.class));

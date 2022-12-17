@@ -19,7 +19,7 @@ public class Nodes {
     @Inject
     private NodeGroups nodeGroups;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     /**
      * Ex: if node SimpleName and clz is SimpleName then return true else if clz
@@ -86,7 +86,7 @@ public class Nodes {
      * @return
      */
     public String getName(final Expression expression) {
-        Expression exp = braces.strip(expression);
+        Expression exp = wrappers.strip(expression);
         if (exp.getNodeType() == ASTNode.SIMPLE_NAME) {
             return ((SimpleName) exp).getFullyQualifiedName();
         }
@@ -107,7 +107,7 @@ public class Nodes {
      * @return
      */
     public String getQualifiedName(final Expression expression) {
-        Expression exp = braces.strip(expression);
+        Expression exp = wrappers.strip(expression);
         if (exp.getNodeType() == ASTNode.SIMPLE_NAME) {
             return ((SimpleName) exp).getFullyQualifiedName();
         }
@@ -129,7 +129,7 @@ public class Nodes {
         if (isNull(expression)) {
             return false;
         }
-        Expression exp = braces.strip(expression);
+        Expression exp = wrappers.strip(expression);
         return exp.getNodeType() == ASTNode.SIMPLE_NAME
                 || exp.getNodeType() == ASTNode.QUALIFIED_NAME;
     }
@@ -144,7 +144,7 @@ public class Nodes {
         if (isNull(expression)) {
             return false;
         }
-        Expression exp = braces.strip(expression);
+        Expression exp = wrappers.strip(expression);
         return exp.getNodeType() == ASTNode.SIMPLE_NAME;
     }
 

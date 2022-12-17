@@ -12,7 +12,7 @@ public class Literals {
     @Inject
     private Nodes nodes;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     /**
      * Whether literal is used by uknit. Literals may appear in MI, Annotation,
@@ -31,7 +31,7 @@ public class Literals {
          * Strip wrapper parenthesises and get parent. Ex: return (((foo)));
          * parent exp foo is ReturnStatement.
          */
-        ASTNode parent = braces.stripAndGetParent(exp);
+        ASTNode parent = wrappers.stripAndGetParent(exp);
         if (nodes.is(parent, ReturnStatement.class)) {
             ofInterest = true;
         }

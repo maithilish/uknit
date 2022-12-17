@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.VarNotFoundException;
-import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -28,8 +27,6 @@ public class Vars {
 
     @Inject
     private Nodes nodes;
-    @Inject
-    private Patcher patcher;
 
     /**
      * Get unmodifiable list of vars from packs.
@@ -109,7 +106,8 @@ public class Vars {
             final Heap heap) {
         if (returnPack.isPresent()) {
             if (nodes.is(returnPack.get().getExp(), SimpleName.class)) {
-                Expression exp = patcher.copyAndPatch(returnPack.get(), heap);
+                Expression exp =
+                        heap.getPatcher().copyAndPatch(returnPack.get(), heap);
                 String name = nodes.getName(exp);
                 return Optional.ofNullable(findVarByName(name, heap));
             } else {

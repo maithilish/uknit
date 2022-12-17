@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -16,7 +16,6 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.ReturnType;
-import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Literals;
 import org.codetab.uknit.core.node.Mocks;
@@ -24,6 +23,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Variables;
+import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
@@ -48,13 +48,13 @@ public class Packer {
     @Inject
     private Mocks mocks;
     @Inject
-    private Patcher patcher;
+    private PatcherOld patcherOld;
     @Inject
     private Resolver resolver;
     @Inject
     private Expressions expressions;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     /**
      * Creates packs for VarDecl list. If initializer exists then its pack is
@@ -74,7 +74,7 @@ public class Packer {
             boolean isMock = mocks.isMockable(type);
             IVar var = modelFactory.createVar(kind, name, type, isMock);
             var.setTypeBinding(type.resolveBinding());
-            Expression initializer = braces.strip(vd.getInitializer());
+            Expression initializer = wrappers.strip(vd.getInitializer());
 
             /*
              * The initializer, if exists, then its type overrides the var
@@ -160,7 +160,7 @@ public class Packer {
          * keywords this and super or without keywords (plain call)
          */
         Optional<Expression> patchedExpO =
-                patcher.getPatchedCallExp(invoke, heap);
+                patcherOld.getPatchedCallExp(invoke, heap);
         Optional<IVar> callVarO = Optional.empty();
         /*
          * If in IM, don't set callVar. The final var used by the IM, arg or

@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.patch;
+package org.codetab.uknit.core.make.method.patch.old;
 
 import static java.util.Objects.nonNull;
 
@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.dom.Expression;
 public class PatchCreator {
 
     @Inject
-    private Patcher patcher;
+    private PatcherOld patcherOld;
     @Inject
     private Patchers patchers;
     @Inject
@@ -31,7 +31,7 @@ public class PatchCreator {
     public void createInvokePatch(final Pack pack, final Heap heap) {
         Expression exp = pack.getExp();
         List<Patch> patches =
-                patcher.creatInvokePatches(exp, patchers.getExps(exp), heap);
+                patcherOld.creatInvokePatches(exp, patchers.getExps(exp), heap);
         pack.getPatches().addAll(patches);
     }
 
@@ -53,7 +53,7 @@ public class PatchCreator {
     public void createVarPatch(final Pack pack, final Pack renamedPack) {
         Expression exp = pack.getExp();
         if (nonNull(exp)) {
-            List<Patch> patches = patcher.creatVarPatches(exp,
+            List<Patch> patches = patcherOld.creatVarPatches(exp,
                     patchers.getExps(exp), renamedPack);
             pack.getPatches().addAll(patches);
         }

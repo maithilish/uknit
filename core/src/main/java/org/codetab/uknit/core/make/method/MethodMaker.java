@@ -118,6 +118,8 @@ public class MethodMaker {
                 configs.getConfig("uknit.controlFlow.method.split", true));
         visitor.setMethodReturnType(method.getReturnType2());
 
+        heap.setup();
+
         // add method under test call
         callCreator.createCall(method, heap);
 
@@ -191,6 +193,8 @@ public class MethodMaker {
         visitor.setHeap(internalHeap);
         visitor.setImc(internalMethod);
         visitor.setMethodReturnType(method.getReturnType2());
+
+        internalHeap.setup();
 
         // stage call for this method
         callCreator.createCall(method, internalHeap);

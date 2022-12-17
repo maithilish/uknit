@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.patch;
+package org.codetab.uknit.core.make.method.patch.old;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.nonNull;
@@ -14,10 +14,10 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.ReturnType;
-import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayAccess;
@@ -45,7 +45,7 @@ public class Patchers {
     @Inject
     private Methods methods;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     /**
      * Returns list of expressions in an expression.
@@ -138,7 +138,7 @@ public class Patchers {
             exps.add(cond.getThenExpression());
             exps.add(cond.getElseExpression());
         }
-        return braces.strip(exps);
+        return wrappers.strip(exps);
     }
 
     /**
@@ -163,12 +163,12 @@ public class Patchers {
         } else if (nodes.is(node, MethodInvocation.class)) {
             MethodInvocation mi = nodes.as(node, MethodInvocation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args = braces.strip(mi.arguments());
+            List<Expression> args = wrappers.strip(mi.arguments());
             /*
              * If IMC or static import call is arg for invoke then exp is null
              */
             if (nonNull(mi.getExpression())
-                    && braces.strip(mi.getExpression()).equals(exp)) {
+                    && wrappers.strip(mi.getExpression()).equals(exp)) {
                 return 0;
             } else if (args.contains(exp)) {
                 // starts from 1
@@ -180,9 +180,9 @@ public class Patchers {
             SuperMethodInvocation smi =
                     nodes.as(node, SuperMethodInvocation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args = braces.strip(smi.arguments());
+            List<Expression> args = wrappers.strip(smi.arguments());
             if (nonNull(smi.getName())
-                    && braces.strip(smi.getName()).equals(exp)) {
+                    && wrappers.strip(smi.getName()).equals(exp)) {
                 return 0;
             } else if (args.contains(exp)) {
                 // zero indexed
@@ -194,7 +194,7 @@ public class Patchers {
             ClassInstanceCreation cic =
                     nodes.as(node, ClassInstanceCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args = braces.strip(cic.arguments());
+            List<Expression> args = wrappers.strip(cic.arguments());
             if (args.contains(exp)) {
                 // zero indexed
                 return args.indexOf(exp);
@@ -208,13 +208,13 @@ public class Patchers {
              */
             ArrayCreation ac = nodes.as(node, ArrayCreation.class);
             @SuppressWarnings("unchecked")
-            List<Expression> dims = braces.strip(ac.dimensions());
+            List<Expression> dims = wrappers.strip(ac.dimensions());
             List<Expression> args = new ArrayList<>(dims);
             // combine initializer expressions
             if (nonNull(ac.getInitializer())) {
                 @SuppressWarnings("unchecked")
                 List<Expression> initArgs =
-                        braces.strip(ac.getInitializer().expressions());
+                        wrappers.strip(ac.getInitializer().expressions());
                 args.addAll(initArgs);
             }
             if (args.contains(exp)) {
@@ -226,7 +226,7 @@ public class Patchers {
         } else if (nodes.is(node, ArrayInitializer.class)) {
             ArrayInitializer ai = nodes.as(node, ArrayInitializer.class);
             @SuppressWarnings("unchecked")
-            List<Expression> args = braces.strip(ai.expressions());
+            List<Expression> args = wrappers.strip(ai.expressions());
             if (args.contains(exp)) {
                 // zero indexed
                 return args.indexOf(exp);
@@ -235,39 +235,39 @@ public class Patchers {
             }
         } else if (nodes.is(node, ArrayAccess.class)) {
             ArrayAccess aa = nodes.as(node, ArrayAccess.class);
-            if (braces.strip(aa.getArray()).equals(exp)) {
+            if (wrappers.strip(aa.getArray()).equals(exp)) {
                 return 0;
-            } else if (braces.strip(aa.getIndex()).equals(exp)) {
+            } else if (wrappers.strip(aa.getIndex()).equals(exp)) {
                 return 1;
             } else {
                 return -1;
             }
         } else if (nodes.is(node, InfixExpression.class)) {
             InfixExpression infix = nodes.as(node, InfixExpression.class);
-            if (braces.strip(infix.getLeftOperand()).equals(exp)) {
+            if (wrappers.strip(infix.getLeftOperand()).equals(exp)) {
                 return 0;
-            } else if (braces.strip(infix.getRightOperand()).equals(exp)) {
+            } else if (wrappers.strip(infix.getRightOperand()).equals(exp)) {
                 return 1;
             } else {
                 @SuppressWarnings("unchecked")
                 List<Expression> extOps =
-                        braces.strip(infix.extendedOperands());
+                        wrappers.strip(infix.extendedOperands());
                 final int operandOffset = 2;
                 int index = extOps.indexOf(exp);
                 return operandOffset + index;
             }
         } else if (nodes.is(node, Assignment.class)) {
             Assignment assign = nodes.as(node, Assignment.class);
-            if (braces.strip(assign.getLeftHandSide()).equals(exp)) {
+            if (wrappers.strip(assign.getLeftHandSide()).equals(exp)) {
                 return 0;
-            } else if (braces.strip(assign.getRightHandSide()).equals(exp)) {
+            } else if (wrappers.strip(assign.getRightHandSide()).equals(exp)) {
                 return 1;
             } else {
                 return -1;
             }
         } else if (nodes.is(node, CastExpression.class)) {
             CastExpression ce = nodes.as(node, CastExpression.class);
-            if (braces.strip(ce.getExpression()).equals(exp)) {
+            if (wrappers.strip(ce.getExpression()).equals(exp)) {
                 return 0;
             } else {
                 return -1;
@@ -275,7 +275,7 @@ public class Patchers {
         } else if (nodes.is(node, ParenthesizedExpression.class)) {
             ParenthesizedExpression pe =
                     nodes.as(node, ParenthesizedExpression.class);
-            if (braces.strip(pe.getExpression()).equals(exp)) {
+            if (wrappers.strip(pe.getExpression()).equals(exp)) {
                 return 0;
             } else {
                 return -1;
@@ -283,11 +283,11 @@ public class Patchers {
         } else if (nodes.is(node, ConditionalExpression.class)) {
             ConditionalExpression cond =
                     nodes.as(node, ConditionalExpression.class);
-            if (braces.strip(cond.getExpression()).equals(exp)) {
+            if (wrappers.strip(cond.getExpression()).equals(exp)) {
                 return 0;
-            } else if (braces.strip(cond.getThenExpression()).equals(exp)) {
+            } else if (wrappers.strip(cond.getThenExpression()).equals(exp)) {
                 return 1;
-            } else if (braces.strip(cond.getElseExpression()).equals(exp)) {
+            } else if (wrappers.strip(cond.getElseExpression()).equals(exp)) {
                 return 2;
             } else {
                 return -1;

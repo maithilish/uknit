@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.patch;
+package org.codetab.uknit.core.make.method.patch.old;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ public class PatchProcessor {
     @Inject
     private PatchCreator patchCreator;
     @Inject
-    private Patcher patcher;
+    private PatcherOld patcherOld;
     @Inject
     private Packs packs;
 
@@ -24,7 +24,7 @@ public class PatchProcessor {
      * @param heap
      */
     public void createInvokePatches(final Heap heap) {
-        List<Pack> packList = patcher.getInvokePatchables(heap);
+        List<Pack> packList = patcherOld.getInvokePatchables(heap);
         packList.forEach(pack -> patchCreator.createInvokePatch(pack, heap));
     }
 
@@ -62,7 +62,7 @@ public class PatchProcessor {
             String oldName = renamedPack.getVar().getOldName();
             String newName = renamedPack.getVar().getName();
             List<Pack> tailList = packs.tailList(renamedPack, heap.getPacks());
-            tailList.forEach(pack -> patcher.updatePatchName(pack, oldName,
+            tailList.forEach(pack -> patcherOld.updatePatchName(pack, oldName,
                     newName, heap));
         }
     }

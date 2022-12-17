@@ -17,7 +17,7 @@ import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Heaps;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -48,7 +48,7 @@ public class Merger {
     @Inject
     private Methods methods;
     @Inject
-    private Patcher patcher;
+    private PatcherOld patcherOld;
     @Inject
     private Expressions expressions;
 
@@ -179,7 +179,7 @@ public class Merger {
 
         for (Invoke invoke : invokeList) {
             Optional<Expression> patchedExpO =
-                    patcher.getPatchedCallExp(invoke, heap);
+                    patcherOld.getPatchedCallExp(invoke, heap);
             Optional<IVar> callVarO = Optional.empty();
             if (patchedExpO.isPresent()) {
                 // if var for name is not found then find var for old name

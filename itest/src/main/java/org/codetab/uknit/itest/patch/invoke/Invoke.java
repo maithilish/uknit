@@ -42,6 +42,17 @@ public class Invoke {
         return bar.locale(foo.lang(foo.cntry()), foo.cntry());
     }
 
+    public Locale assignInvokeNested2(final Bar bar, final Foo foo) {
+        Locale locale = bar.locale(foo.lang(foo.cntry(foo.region("asia"))),
+                foo.cntry(foo.region("asia")));
+        return locale;
+    }
+
+    public Locale returnInvokeNested2(final Bar bar, final Foo foo) {
+        return bar.locale(foo.lang(foo.cntry(foo.region("asia"))),
+                foo.cntry(foo.region("asia")));
+    }
+
     /*
      * TODO H - args of invoke on real or created should be real
      *

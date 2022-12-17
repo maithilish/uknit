@@ -114,6 +114,50 @@ public class InvokeTest {
     }
 
     @Test
+    public void testAssignInvokeNested2() {
+        Bar bar = Mockito.mock(Bar.class);
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String mango = "Quux";
+        Locale locale = Mockito.mock(Locale.class);
+
+        when(foo.region("asia")).thenReturn(apple).thenReturn(kiwi);
+        when(foo.cntry(apple)).thenReturn(grape);
+        when(foo.lang(grape)).thenReturn(orange);
+        when(foo.cntry(kiwi)).thenReturn(mango);
+        when(bar.locale(orange, mango)).thenReturn(locale);
+
+        Locale actual = invoke.assignInvokeNested2(bar, foo);
+
+        assertSame(locale, actual);
+    }
+
+    @Test
+    public void testReturnInvokeNested2() {
+        Bar bar = Mockito.mock(Bar.class);
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String mango = "Quux";
+        Locale locale = Mockito.mock(Locale.class);
+
+        when(foo.region("asia")).thenReturn(apple).thenReturn(kiwi);
+        when(foo.cntry(apple)).thenReturn(grape);
+        when(foo.lang(grape)).thenReturn(orange);
+        when(foo.cntry(kiwi)).thenReturn(mango);
+        when(bar.locale(orange, mango)).thenReturn(locale);
+
+        Locale actual = invoke.returnInvokeNested2(bar, foo);
+
+        assertSame(locale, actual);
+    }
+
+    @Test
     public void testAssginInvokeOnExpression() {
         Foo foo = Mockito.mock(Foo.class);
         Bar bar = Mockito.mock(Bar.class);

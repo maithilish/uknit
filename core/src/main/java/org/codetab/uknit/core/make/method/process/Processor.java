@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.imc.IMCProcessor;
 import org.codetab.uknit.core.make.method.invoke.InvokeProcessor;
 import org.codetab.uknit.core.make.method.load.LoadProcessor;
-import org.codetab.uknit.core.make.method.patch.PatchProcessor;
+import org.codetab.uknit.core.make.method.patch.old.PatchProcessor;
 import org.codetab.uknit.core.make.method.var.VarProcessor;
 import org.codetab.uknit.core.make.method.var.VarStateProcessor;
 import org.codetab.uknit.core.make.method.var.infer.InferProcessor;

@@ -11,8 +11,8 @@ import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Braces;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
@@ -26,7 +26,7 @@ public class Assignor {
     @Inject
     private Nodes nodes;
     @Inject
-    private Braces braces;
+    private Wrappers wrappers;
 
     /**
      *
@@ -46,8 +46,8 @@ public class Assignor {
      * @param heap
      */
     public void process(final Assignment node, final Heap heap) {
-        Expression lhs = braces.strip(node.getLeftHandSide());
-        Expression rhs = braces.strip(node.getRightHandSide());
+        Expression lhs = wrappers.strip(node.getLeftHandSide());
+        Expression rhs = wrappers.strip(node.getRightHandSide());
 
         /**
          * Some constructs results in two packs. Assign left pack to right pack

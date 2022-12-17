@@ -18,6 +18,10 @@ class Model {
         Object obj();
 
         String name();
+
+        String region(String code);
+
+        String cntry(String region);
     }
 
     interface Bar {

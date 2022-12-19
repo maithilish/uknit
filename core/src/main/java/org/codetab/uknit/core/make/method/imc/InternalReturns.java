@@ -3,14 +3,12 @@ package org.codetab.uknit.core.make.method.imc;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -33,8 +31,6 @@ class InternalReturns {
     private Packs packs;
     @Inject
     private NodeFactory nodeFactory;
-    @Inject
-    private PatcherOld patcherOld;
 
     private IVar returnVar;
     private Optional<Pack> returnPackO;
@@ -81,6 +77,7 @@ class InternalReturns {
      * conflict the merge assign new name to returnVar.
      *
      * @param invoke
+     * @param heap
      */
     public void updateExp(final Invoke invoke) {
         if (nonNull(returnVar) && nonNull(returnVarName)) {
@@ -121,28 +118,32 @@ class InternalReturns {
      */
     public void updateVar(final Invoke invoke, final Heap heap,
             final Heap internalHeap) {
-
         if (!nodes.isName(invoke.getExp()) || isNull(invoke.getVar())) {
             return;
         }
-
         Optional<Pack> returnVarPackO = packs
                 .findByVarName(nodes.getName(invoke.getExp()), heap.getPacks());
 
-        // only if return is field
+        // update invoke var states with return field states, only for field
         if (returnVarPackO.isPresent()) {
-            // update invoke var states with return field states
             IVar returnField = returnVarPackO.get().getVar();
             ((Var) invoke.getVar()).updateStates((Var) returnField);
+        }
+    }
 
-            if (returnVarPackO.get().getVar().isField()) {
-                // update patch name
-                String oldName = invoke.getVar().getName();
-                String newName = returnField.getName();
-                List<Pack> tailList = packs.tailList(invoke, heap.getPacks());
-                tailList.forEach(pack -> patcherOld.updatePatchName(pack,
-                        oldName, newName, heap));
-            }
+    /**
+     * Add patch for chained IM Call. Ex: name = internal().getName().
+     *
+     * Ex itest: internal.CallInternal.process()
+     *
+     * @param invoke
+     * @param invokeIndex
+     * @param heap
+     */
+    public void addIMPatch(final Invoke invoke, final int invokeIndex,
+            final Heap heap) {
+        if (nonNull(returnVar) && nonNull(returnVarName)) {
+            heap.getPatcher().addPatch(invoke.getExp(), returnVar);
         }
     }
 }

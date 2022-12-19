@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -24,8 +23,6 @@ public class Invokes {
     private Vars vars;
     @Inject
     private Expressions expressions;
-    @Inject
-    private PatcherOld patcherOld;
 
     /**
      * Set call var. The call var of MI is expression and its var is known only
@@ -42,12 +39,12 @@ public class Invokes {
          * Find callVar of invoke. It is empty for all types of IMC - with
          * keywords this and super or without keywords (plain call)
          */
-        Optional<Expression> patchedExpO =
-                patcherOld.getPatchedCallExp(invoke, heap);
         Optional<IVar> callVarO = Optional.empty();
-        if (patchedExpO.isPresent()) {
+        Optional<Expression> patchedCallExpO =
+                heap.getPatcher().copyAndPatchCallExp(invoke, heap);
+        if (patchedCallExpO.isPresent()) {
             try {
-                String name = expressions.getName(patchedExpO.get());
+                String name = expressions.getName(patchedCallExpO.get());
                 callVarO = Optional.of(vars.findVarByName(name, heap));
             } catch (VarNotFoundException e) {
             }

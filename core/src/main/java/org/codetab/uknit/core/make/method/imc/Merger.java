@@ -17,7 +17,6 @@ import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Heaps;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -47,8 +46,6 @@ public class Merger {
     private Packs packs;
     @Inject
     private Methods methods;
-    @Inject
-    private PatcherOld patcherOld;
     @Inject
     private Expressions expressions;
 
@@ -148,13 +145,15 @@ public class Merger {
             }
         }
 
-        // update invoke exp to internal return var name
-        internalReturns.updateExp(invoke);
-
         // update param packs whose name differs from arg name
         argParams.updateParamsOfDifferentName(callingMethodVars);
 
-        // if return var is field then update return var and its patches
+        // update invoke exp to internal return var name
+        internalReturns.addIMPatch(invoke, invokeIndex, heap);
+
+        internalReturns.updateExp(invoke);
+
+        // if return var is field then update return var
         internalReturns.updateVar(invoke, heap, internalHeap);
 
         // add packs created in internal method before invoke index
@@ -165,7 +164,12 @@ public class Merger {
     }
 
     /**
-     * Set call var of MI in internal method.
+     * Set call var of MI in internal method. The processEnhancedFor() depends
+     * on call var to load collections.
+     *
+     * Ex: for (String key : meters.keySet()) {..}, when call var is not set
+     * then loader wrongly loads a Set to the map else put key and meter to the
+     * map.
      *
      * @param heap
      */
@@ -178,12 +182,12 @@ public class Merger {
                 .collect(Collectors.toList());
 
         for (Invoke invoke : invokeList) {
-            Optional<Expression> patchedExpO =
-                    patcherOld.getPatchedCallExp(invoke, heap);
             Optional<IVar> callVarO = Optional.empty();
-            if (patchedExpO.isPresent()) {
+            Optional<Expression> patchedCallExpO =
+                    heap.getPatcher().copyAndPatchCallExp(invoke, heap);
+            if (patchedCallExpO.isPresent()) {
                 // if var for name is not found then find var for old name
-                String name = expressions.getName(patchedExpO.get());
+                String name = expressions.getName(patchedCallExpO.get());
                 try {
                     callVarO = Optional.of(vars.findVarByName(name, heap));
                 } catch (VarNotFoundException e) {
@@ -206,5 +210,15 @@ public class Merger {
      */
     public void mergeLoader(final Heap heap, final Heap internalHeap) {
         heap.getLoader().merge(internalHeap.getLoader());
+    }
+
+    /**
+     * Merge patches of internal heap to the calling heap.
+     *
+     * @param heap
+     * @param internalHeap
+     */
+    public void mergePatcher(final Heap heap, final Heap internalHeap) {
+        heap.getPatcher().merge(internalHeap.getPatcher());
     }
 }

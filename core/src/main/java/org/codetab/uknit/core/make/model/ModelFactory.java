@@ -3,7 +3,6 @@ package org.codetab.uknit.core.make.model;
 import java.util.List;
 
 import org.codetab.uknit.core.make.model.IVar.Kind;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -31,7 +30,7 @@ public interface ModelFactory {
     Invoke createInvoke(IVar var, Expression exp, boolean inCtlPath);
 
     Patch createPatch(org.codetab.uknit.core.make.model.Patch.Kind kind,
-            ASTNode node, Expression exp, String name, int expIndex);
+            IVar var, int index);
 
     Call createCall(TypeDeclaration clz, SimpleName name, Type returnType,
             MethodDeclaration methodDecl);

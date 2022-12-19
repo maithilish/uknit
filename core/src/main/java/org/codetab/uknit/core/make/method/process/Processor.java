@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.imc.IMCProcessor;
 import org.codetab.uknit.core.make.method.invoke.InvokeProcessor;
 import org.codetab.uknit.core.make.method.load.LoadProcessor;
-import org.codetab.uknit.core.make.method.patch.old.PatchProcessor;
+import org.codetab.uknit.core.make.method.patch.PatchProcessor;
 import org.codetab.uknit.core.make.method.var.VarProcessor;
 import org.codetab.uknit.core.make.method.var.VarStateProcessor;
 import org.codetab.uknit.core.make.method.var.infer.InferProcessor;
@@ -53,11 +53,6 @@ public class Processor {
     public void processInfers(final Heap heap) {
         inferProcessor.createInfers(heap);
         inferProcessor.createInferForReturn(heap);
-        // patchProcessor.createInvokePatches(heap);
-    }
-
-    public void processInvokePatches(final Heap heap) {
-        patchProcessor.createInvokePatches(heap);
     }
 
     public void processIM(final Heap heap) {
@@ -107,7 +102,6 @@ public class Processor {
      */
     public void processVarNameChange(final Heap heap) {
         patchProcessor.createVarPatches(heap);
-        patchProcessor.updateNamesInPatches(heap);
     }
 
     public void processVarReassign(final Heap heap) {
@@ -120,10 +114,5 @@ public class Processor {
 
     public void processLoads(final Heap heap) {
         loadProcessor.processLoadableVars(heap);
-    }
-
-    public void assignInternalReturnPatches(final Heap heap,
-            final Heap internalHeap) {
-        patchProcessor.assignInternalReturnPatches(heap, internalHeap);
     }
 }

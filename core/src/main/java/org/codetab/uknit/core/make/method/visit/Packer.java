@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -47,8 +46,6 @@ public class Packer {
     private ModelFactory modelFactory;
     @Inject
     private Mocks mocks;
-    @Inject
-    private PatcherOld patcherOld;
     @Inject
     private Resolver resolver;
     @Inject
@@ -159,17 +156,17 @@ public class Packer {
          * Find callVar of invoke. It is empty for all types of IMC - with
          * keywords this and super or without keywords (plain call)
          */
-        Optional<Expression> patchedExpO =
-                patcherOld.getPatchedCallExp(invoke, heap);
+        Optional<Expression> patchedCallExpO =
+                heap.getPatcher().copyAndPatchCallExp(invoke, heap);
         Optional<IVar> callVarO = Optional.empty();
         /*
          * If in IM, don't set callVar. The final var used by the IM, arg or
          * param, is decided only after IMC merge and it will be set later in
          * post process by InvokeProcessor.process().
          */
-        if (patchedExpO.isPresent() && !imc) {
+        if (patchedCallExpO.isPresent() && !imc) {
             try {
-                String name = expressions.getName(patchedExpO.get());
+                String name = expressions.getName(patchedCallExpO.get());
                 callVarO = Optional.of(vars.findVarByName(name, heap));
             } catch (VarNotFoundException e) {
             }

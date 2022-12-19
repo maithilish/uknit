@@ -42,36 +42,30 @@ public class MultiCallTest {
     @Test
     public void testCallAndUse() {
         JobInfo jobInfo4 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo = jobInfo4;
         JobInfo jobInfo5 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo2 = jobInfo5;
         JobInfo jobInfo6 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo3 = jobInfo6;
 
         when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5).thenReturn(jobInfo6);
         multiCall.callAndUse();
 
-        verify(jobInfo).check();
-        verify(jobInfo2).check();
-        verify(jobInfo3).check();
+        verify(jobInfo4).check();
+        verify(jobInfo5).check();
+        verify(jobInfo6).check();
     }
 
     @Test
     public void testReturnCallAndUse() {
         JobInfo jobInfo4 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo = jobInfo4;
         boolean apple = true;
         JobInfo jobInfo5 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo2 = jobInfo5;
         boolean grape = true;
         JobInfo jobInfo6 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo3 = jobInfo6;
         boolean orange = true;
 
         when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5).thenReturn(jobInfo6);
-        when(jobInfo.isValid()).thenReturn(apple);
-        when(jobInfo2.isValid()).thenReturn(grape);
-        when(jobInfo3.isValid()).thenReturn(orange);
+        when(jobInfo4.isValid()).thenReturn(apple);
+        when(jobInfo5.isValid()).thenReturn(grape);
+        when(jobInfo6.isValid()).thenReturn(orange);
 
         boolean actual = multiCall.returnCallAndUse();
 
@@ -81,43 +75,35 @@ public class MultiCallTest {
     @Test
     public void testCallNestedArg() {
         JobInfo jobInfo7 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo = jobInfo7;
         JobInfo jobInfo8 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo2 = jobInfo8;
         JobInfo jobInfo9 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo10 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo4 = jobInfo10;
         JobInfo jobInfo11 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo5 = jobInfo11;
         JobInfo jobInfo12 = Mockito.mock(JobInfo.class);
 
         when((payload).getJobInfo()).thenReturn(jobInfo7).thenReturn(jobInfo10);
-        when((payload).getJobInfo(((jobInfo)))).thenReturn(jobInfo8);
-        when((payload).getJobInfo(jobInfo2)).thenReturn(jobInfo9);
-        when((payload).getJobInfo(jobInfo4)).thenReturn(jobInfo11);
-        when((payload).getJobInfo(jobInfo5)).thenReturn(jobInfo12);
+        when((payload).getJobInfo(jobInfo7)).thenReturn(jobInfo8);
+        when((payload).getJobInfo(jobInfo8)).thenReturn(jobInfo9);
+        when((payload).getJobInfo(jobInfo10)).thenReturn(jobInfo11);
+        when((payload).getJobInfo(jobInfo11)).thenReturn(jobInfo12);
         multiCall.callNestedArg();
     }
 
     @Test
     public void testReturnCallNestedArg() {
         JobInfo jobInfo7 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo = jobInfo7;
         JobInfo jobInfo8 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo2 = jobInfo8;
         JobInfo jobInfo9 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo10 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo4 = jobInfo10;
         JobInfo jobInfo11 = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo5 = jobInfo11;
         JobInfo jobInfo12 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo6 = jobInfo12;
 
         when((payload).getJobInfo()).thenReturn(jobInfo7).thenReturn(jobInfo10);
-        when((payload).getJobInfo(((jobInfo)))).thenReturn(jobInfo8);
-        when((payload).getJobInfo(jobInfo2)).thenReturn(jobInfo9);
-        when((payload).getJobInfo(jobInfo4)).thenReturn(jobInfo11);
-        when((payload).getJobInfo(jobInfo5)).thenReturn(jobInfo12);
+        when((payload).getJobInfo(jobInfo7)).thenReturn(jobInfo8);
+        when((payload).getJobInfo(jobInfo8)).thenReturn(jobInfo9);
+        when((payload).getJobInfo(jobInfo10)).thenReturn(jobInfo11);
+        when((payload).getJobInfo(jobInfo11)).thenReturn(jobInfo12);
 
         JobInfo actual = multiCall.returnCallNestedArg();
 

@@ -206,20 +206,35 @@ public class Expressions {
     }
 
     /**
-     * If parent is CastExpression after stripping any wrapper parenthesises,
-     * then return the cast exp else empty. Ex: Both of following are
-     * CastExpression - (Foo) obj; or (Foo) ((obj));
+     * Return effective cast expression for an exp. Useful to know effective
+     * return type of an exp.
+     *
+     * Ex: Bar bar = ((Bar) (foo.obj())); for input exp foo.obj(), returns
+     * CastExpression (Bar)(foo.obj())
+     *
+     * Ex: Zoo zoo = ((Zoo) ((Bar) (foo.obj()))); for input exp foo.obj(),
+     * returns CastExpression (Zoo)((Bar)(foo.obj()))
      *
      * @param exp
      * @return
      */
     public Optional<Expression> getCastedExp(final Expression exp) {
         Expression e = wrappers.strip(exp);
-        ASTNode ancesstor = wrappers.stripAndGetParent(exp);
         if (nodes.is(e, CastExpression.class)) {
             return Optional.of(e);
-        } else if (nodes.is(ancesstor, CastExpression.class)) {
-            return Optional.of((Expression) ancesstor);
+        }
+
+        ASTNode node = exp;
+        while (true) {
+            ASTNode ancesstor = wrappers.stripAndGetParent(node);
+            if (!nodes.is(ancesstor, CastExpression.class)) {
+                break;
+            }
+            node = ancesstor;
+        }
+
+        if (nodes.is(node, CastExpression.class)) {
+            return Optional.of((Expression) node);
         } else {
             return Optional.empty();
         }

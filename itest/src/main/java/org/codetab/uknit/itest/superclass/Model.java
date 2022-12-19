@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Model {
@@ -117,5 +118,53 @@ class JobInfo {
         }
         JobInfo other = (JobInfo) obj;
         return id == other.id;
+    }
+}
+
+class Bar {
+
+    private String name;
+
+    public Bar(final String name) {
+        this.name = name;
+    }
+
+    public Bar() {
+        name = "undefined";
+    }
+
+    public Locale locale() {
+        return new Locale("en");
+    }
+
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Bar other = (Bar) obj;
+        return Objects.equals(name, other.name);
+    }
+}
+
+class Factory {
+
+    public Bar instance(final String name) {
+        return new Bar(name);
     }
 }

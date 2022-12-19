@@ -10,7 +10,10 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.patch.old.Patchers;
+import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.patch.ServiceLoader;
+import org.codetab.uknit.core.make.method.patch.service.PatchService;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
@@ -32,8 +35,6 @@ public class LinkedVarProcessor {
     @Inject
     private Nodes nodes;
     @Inject
-    private Patchers patchers;
-    @Inject
     private Packs packs;
     @Inject
     private Resolver resolver;
@@ -43,6 +44,10 @@ public class LinkedVarProcessor {
     private Wrappers wrappers;
     @Inject
     private Vars vars;
+    @Inject
+    private ServiceLoader serviceLoader;
+    @Inject
+    private Patcher patcher;
 
     /**
      * Marks var as created when exp in any of the linkedPack of the pack is
@@ -51,11 +56,12 @@ public class LinkedVarProcessor {
      * @param pack
      * @param packList
      */
-    public void markAndPropagateCreation(final Pack pack,
-            final List<Pack> packList) {
+    public void markAndPropagateCreation(final Pack pack, final Heap heap) {
         Expression exp = pack.getExp();
         boolean created = false;
         if (nonNull(exp)) {
+            final List<Pack> packList = heap.getPacks();
+
             /*
              * if any exp isCreation in linkedPacks then var is created.
              */
@@ -75,7 +81,16 @@ public class LinkedVarProcessor {
                         created = true;
                     }
                     // REVIEW Stash
-                    Optional<String> topVarNameO = methods.getTopVarName(exp);
+                    /*
+                     * The copyAndPatch() ensure that top exp is replaced with
+                     * name. Ex: super.staticGetSuperField().getRealJobInfo(),
+                     * the staticGetSuperField() returns var payload so patch
+                     * exp is payload.getRealJobInfo() and top name is payload.
+                     */
+                    Expression patchedExp =
+                            patcher.copyAndPatch(linkPack, heap);
+                    Optional<String> topVarNameO =
+                            methods.getTopVarName(patchedExp);
                     if (topVarNameO.isPresent() && vars.isCreated(
                             topVarNameO.get(), packs.asVars(packList))) {
                         created = true;
@@ -120,7 +135,8 @@ public class LinkedVarProcessor {
                 /*
                  * propagate cast of exp's exps to linked vars.
                  */
-                List<Expression> exps = patchers.getExps(exp);
+                PatchService patchService = serviceLoader.loadService(exp);
+                List<Expression> exps = patchService.getExps(exp);
                 for (Expression eexp : exps) {
                     if (nonNull(var) && nonNull(eexp)
                             && expressions.isCastedExp(eexp)) {

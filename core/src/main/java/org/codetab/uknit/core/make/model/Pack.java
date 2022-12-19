@@ -75,6 +75,10 @@ public class Pack {
         return patches;
     }
 
+    public void addPatch(final Patch patch) {
+        patches.add(patch);
+    }
+
     public boolean isInCtlPath() {
         return inCtlPath;
     }

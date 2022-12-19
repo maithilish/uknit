@@ -7,7 +7,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -17,8 +16,6 @@ import org.eclipse.jdt.core.dom.Expression;
 
 public class InternalCalls {
 
-    @Inject
-    private PatcherOld patcherOld;
     @Inject
     private Methods methods;
     @Inject
@@ -31,8 +28,7 @@ public class InternalCalls {
             if (methods.isInvokable(invoke.getExp())) {
                 Expression miOrSmiExp = invoke.getExp();
                 Optional<Expression> patchedCallExpO =
-                        patcherOld.getPatchedCallExp(invoke, heap);
-
+                        heap.getPatcher().copyAndPatchCallExp(invoke, heap);
                 if (methods.isInternalCall(miOrSmiExp, patchedCallExpO,
                         heap.getMut())) {
                     internalInvokes.add(invoke);

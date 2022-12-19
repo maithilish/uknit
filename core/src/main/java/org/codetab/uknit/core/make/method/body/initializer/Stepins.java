@@ -1,14 +1,15 @@
 package org.codetab.uknit.core.make.method.body.initializer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.nonNull;
 
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
@@ -27,8 +28,6 @@ public class Stepins {
     @Inject
     private Expressions expressions;
     @Inject
-    private PatcherOld patcherOld;
-    @Inject
     private Methods methods;
 
     /**
@@ -44,7 +43,6 @@ public class Stepins {
         checkNotNull(exp);
 
         Optional<Pack> packO = Optional.empty();
-
         if (nodes.is(exp, ArrayAccess.class)) {
             /*
              * int[] array = new int[2]; int foo = array[0]; can't use array[0]
@@ -53,20 +51,34 @@ public class Stepins {
             ArrayAccess aa = nodes.as(exp, ArrayAccess.class);
             String name = expressions.getName(aa.getArray());
             packO = packs.findByVarName(name, heap.getPacks());
+            if (packO.isPresent()) {
+                return packO.get().getVar().isCreated();
+            }
         } else if (nodes.is(exp, MethodInvocation.class)) {
             /*
              * List<String> list = new ArrayList<>(); String foo = list.get(0);
              * can't use list.get(0) as initializer for foo as list is locally
              * created.
+             *
+             * If var is primitive then assign sensible default, so no STEPIN.
+             * Ex itest: superclass.StaticCall.assignStaticSuperField
              */
+            Optional<Pack> varPackO = packs.findByExp(exp, heap.getPacks());
+            if (varPackO.isPresent() && nonNull(varPackO.get().getVar())) {
+                IVar var = varPackO.get().getVar();
+                if (var.getType().isPrimitiveType()) {
+                    return false;
+                }
+            }
+
             packO = findCallVarPack(exp, heap);
+            if (packO.isPresent()) {
+                return packO.get().getVar().isCreated();
+            }
         }
 
-        if (packO.isPresent()) {
-            return packO.get().getVar().isCreated();
-        } else {
-            return false;
-        }
+        return false;
+
     }
 
     /**
@@ -92,10 +104,10 @@ public class Stepins {
              * webClient.getOptions() in configure() is invoked on renamed var
              * webClient2.
              */
-            Optional<Expression> patchedExpO =
-                    patcherOld.getPatchedCallExp(invokeO.get(), heap);
-            if (!methods.isInternalCall(mi, patchedExpO, heap.getMut())) {
-                String name = expressions.getName(patchedExpO.get());
+            Optional<Expression> patchedCallExpO =
+                    heap.getPatcher().copyAndPatchCallExp(invokeO.get(), heap);
+            if (!methods.isInternalCall(mi, patchedCallExpO, heap.getMut())) {
+                String name = expressions.getName(patchedCallExpO.get());
                 callVarPackO = packs.findByVarName(name, heap.getPacks());
             }
         }

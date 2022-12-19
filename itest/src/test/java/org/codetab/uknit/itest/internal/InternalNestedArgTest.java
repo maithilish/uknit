@@ -28,12 +28,11 @@ public class InternalNestedArgTest {
     public void testCallA() {
         Date date = Mockito.mock(Date.class);
         Instant instant2 = Mockito.mock(Instant.class);
-        Instant instant = instant2;
         int grape = 1;
         int apple = grape;
 
         when(date.toInstant()).thenReturn(instant2);
-        when(instant.getNano()).thenReturn(grape);
+        when(instant2.getNano()).thenReturn(grape);
 
         int actual = internalNestedArg.callA(date);
 
@@ -46,11 +45,10 @@ public class InternalNestedArgTest {
         String dateStr1 = "Foo";
         Date date2 = Mockito.mock(Date.class);
         Date date3 = Mockito.mock(Date.class);
-        Date date = date3;
         boolean grape = true;
 
         when(dateFormat.parse(dateStr1)).thenReturn(date3);
-        when(date.after(date2)).thenReturn(grape);
+        when(date3.after(date2)).thenReturn(grape);
 
         boolean actual = internalNestedArg.callB(dateFormat, dateStr1, date2);
 
@@ -61,15 +59,13 @@ public class InternalNestedArgTest {
     public void testMockDiffNameC() {
         Instant instant = Mockito.mock(Instant.class);
         Instant instant5 = Mockito.mock(Instant.class);
-        Instant instant2 = instant5;
         Instant instant6 = Mockito.mock(Instant.class);
-        Instant instant3 = instant6;
         Instant instant7 = Mockito.mock(Instant.class);
         Instant instant4 = instant7;
 
         when(instant.minusMillis(1)).thenReturn(instant5);
-        when(instant2.minusMillis(2)).thenReturn(instant6);
-        when(instant3.minusMillis(3)).thenReturn(instant7);
+        when(instant5.minusMillis(2)).thenReturn(instant6);
+        when(instant6.minusMillis(3)).thenReturn(instant7);
 
         Instant actual = internalNestedArg.mockDiffNameC(instant);
 
@@ -80,15 +76,13 @@ public class InternalNestedArgTest {
     public void testMockSameNameD() {
         Instant instant = Mockito.mock(Instant.class);
         Instant instant5 = Mockito.mock(Instant.class);
-        Instant instant2 = instant5;
         Instant instant6 = Mockito.mock(Instant.class);
-        Instant instant3 = instant6;
         Instant instant7 = Mockito.mock(Instant.class);
         Instant instant4 = instant7;
 
         when(instant.minusMillis(4)).thenReturn(instant5);
-        when(instant2.minusMillis(5)).thenReturn(instant6);
-        when(instant3.minusMillis(6)).thenReturn(instant7);
+        when(instant5.minusMillis(5)).thenReturn(instant6);
+        when(instant6.minusMillis(6)).thenReturn(instant7);
 
         Instant actual = internalNestedArg.mockSameNameD(instant);
 

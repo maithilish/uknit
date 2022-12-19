@@ -37,28 +37,6 @@ public class Wrappers {
     }
 
     /**
-     * If exps list contains any Cast or Parenthesized exp then return new list
-     * of striped exps else return the original list. Ex: exps [((foo)),
-     * (index)] then return new list [foo, index].
-     *
-     * @param exps
-     * @return
-     */
-    // REVIEW if possible remove this to avoid side effects - any patch to new
-    // list will not reflect in copy
-    public List<Expression> unpack(final List<Expression> exps) {
-        boolean anyWrapers = exps.stream().anyMatch(e -> nodes.is(e,
-                ParenthesizedExpression.class, CastExpression.class));
-        if (anyWrapers) {
-            List<Expression> cleanExps = new ArrayList<>();
-            exps.forEach(e -> cleanExps.add(unpack(e)));
-            return cleanExps;
-        } else {
-            return exps;
-        }
-    }
-
-    /**
      * Get exp that is wrapped in parenthesises. Ex: For ParenthesizedExpression
      * (((foo))) returns foo.
      *
@@ -81,11 +59,12 @@ public class Wrappers {
      * striped exps else return the original list. Ex: exps [((foo)), (index)]
      * then return new list [foo, index].
      *
+     * Use this method with caution. Don't use it in any patch related class.
+     * Any modification to the new list will not reflect in the copy!
+     *
      * @param exps
      * @return
      */
-    // REVIEW if possible remove this to avoid side effects - any patch to new
-    // list will not reflect in copy
     public List<Expression> strip(final List<Expression> exps) {
         boolean anyBraces = exps.stream()
                 .anyMatch(e -> nodes.is(e, ParenthesizedExpression.class));
@@ -103,11 +82,11 @@ public class Wrappers {
      * Strip wrapper parenthesises and get parent. Ex: return (((foo))); For
      * SimpleName exp 'foo' returns the ReturnStatement 'return (((foo)))'.
      *
-     * @param exp
+     * @param node
      * @return
      */
-    public ASTNode stripAndGetParent(final Expression exp) {
-        ASTNode parent = exp.getParent();
+    public ASTNode stripAndGetParent(final ASTNode node) {
+        ASTNode parent = node.getParent();
         while (true) {
             if (nodes.is(parent, ParenthesizedExpression.class)) {
                 parent = parent.getParent();

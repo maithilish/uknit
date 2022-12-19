@@ -131,7 +131,6 @@ public class MethodMaker {
         processor.processInfers(heap);
         processor.processVarReassign(heap);
         processor.processVarNameChange(heap);
-        processor.processInvokePatches(heap);
 
         processor.processIM(heap);
 
@@ -145,6 +144,8 @@ public class MethodMaker {
         processor.processVarState(heap);
 
         heaps.debugPacks("[ Heap after MUT processing ]", heap);
+
+        heaps.debugPatches("[ Patch Map ]", heap);
 
         // REVIEW Stash
         clzMap.updateFieldState(testClzName,
@@ -206,7 +207,6 @@ public class MethodMaker {
          * are not processed here and these are later processed by caller.
          */
         processor.processInfers(internalHeap);
-        processor.processInvokePatches(internalHeap);
 
         processor.processIM(internalHeap);
 
@@ -221,9 +221,11 @@ public class MethodMaker {
 
         // after merge, resolve any var name conflict
         processor.processVarNameChange(internalHeap);
-        processor.assignInternalReturnPatches(heap, internalHeap);
+        merger.mergePatcher(heap, internalHeap);
 
         heaps.debugPacks("[ Heap after IM processing ]", heap);
+
+        heaps.debugPatches("[ Patch Map ]", heap);
 
         return true;
     }

@@ -85,7 +85,7 @@ public class StaticCallTest {
     @Test
     public void testStaticField() {
         Payload mockPayload = Mockito.mock(Payload.class);
-        long id = STEPIN;
+        long id = 1L;
 
         long actual = staticCall.staticField(mockPayload);
 
@@ -95,7 +95,7 @@ public class StaticCallTest {
     @Test
     public void testReturnStaticField() {
         Payload mockPayload = Mockito.mock(Payload.class);
-        long apple = STEPIN;
+        long apple = 1L;
 
         long actual = staticCall.returnStaticField(mockPayload);
 
@@ -140,7 +140,7 @@ public class StaticCallTest {
 
     @Test
     public void testAssignStaticSuperField() {
-        long apple = STEPIN;
+        long apple = 1L;
 
         long actual = staticCall.assignStaticSuperField();
 

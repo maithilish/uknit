@@ -1,5 +1,7 @@
 package org.codetab.uknit.itest.linked;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Locale;
 
 import org.codetab.uknit.itest.linked.Model.Foo;
@@ -83,5 +85,14 @@ public class Cast {
     public Locale invokeReturnCast(final Foo foo) {
         Object obj = foo.obj();
         return (Locale) obj;
+    }
+
+    public FileInputStream assginMultiCast(final Foo foo) {
+        FileInputStream bar = ((FileInputStream) ((InputStream) (foo.obj())));
+        return bar;
+    }
+
+    public FileInputStream returnMultiCast(final Foo foo) {
+        return ((FileInputStream) ((InputStream) (foo.obj())));
     }
 }

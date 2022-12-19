@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 public class Assignor {
@@ -98,7 +99,8 @@ public class Assignor {
                         }
                     }
                 }
-            } else if (nodes.is(lhs, ArrayAccess.class, FieldAccess.class)) {
+            } else if (nodes.is(lhs, ArrayAccess.class, FieldAccess.class,
+                    QualifiedName.class)) {
                 /*
                  * array[0] = "foo", set LHS array[0] to leftExp of foo pack (
                  * it is exp and not var, so to leftExp) and remove array[0]

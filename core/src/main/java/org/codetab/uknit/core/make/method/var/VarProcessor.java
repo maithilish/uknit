@@ -43,7 +43,7 @@ public class VarProcessor {
                 .collect(Collectors.toList());
 
         packList.forEach(pack -> linkedVarProcessor
-                .markAndPropagateCreation(pack, heap.getPacks()));
+                .markAndPropagateCreation(pack, heap));
     }
 
     /**

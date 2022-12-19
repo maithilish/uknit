@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 public class Arguments {
 
@@ -18,6 +19,12 @@ public class Arguments {
     }
 
     public List<Expression> getArgs(final MethodInvocation node) {
+        @SuppressWarnings("unchecked")
+        List<Expression> args = node.arguments();
+        return args;
+    }
+
+    public List<Expression> getArgs(final SuperMethodInvocation node) {
         @SuppressWarnings("unchecked")
         List<Expression> args = node.arguments();
         return args;

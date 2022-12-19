@@ -155,6 +155,11 @@ public class Packs {
                 .collect(Collectors.toList());
     }
 
+    public List<Pack> filterPacks(final List<Pack> packs,
+            final Predicate<Pack> predicate) {
+        return packs.stream().filter(predicate).collect(Collectors.toList());
+    }
+
     /**
      * Filter pack list where exp is any of classes type.
      *
@@ -268,4 +273,38 @@ public class Packs {
         return packList.stream().map(p -> p.getVar()).filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Reverse traverse the list of packs starting from the position of the pack
+     * and return first matching pack whose exp is equal to node.
+     *
+     * Ex: <code>
+     * 0 Pack[v=apple, e=foo.x()]
+     * 1 Pack[v=grape, e=foo.x()]
+     * 2 Pack[e=foo.x().z()]
+     * 3 Pack[e=bar.y()]
+     * </code> For Pack 2 and node foo.x(), the Pack 1 is returned as it is the
+     * nearest that comes before Pack 2 and node matches its exp. Patcher use it
+     * to replace foo.x() with name grape in foo.x().z().
+     *
+     * @param pack
+     * @param node
+     * @param packs
+     * @return
+     */
+    public Optional<Pack> findPatchPack(final Pack pack, final Expression node,
+            final List<Pack> packs) {
+        int index = packs.indexOf(pack);
+        index--;
+        if (index >= 0) {
+            for (int i = index; i >= 0; i--) {
+                Pack pPack = packs.get(i);
+                if (nonNull(pPack.getExp()) && pPack.getExp().equals(node)) {
+                    return Optional.of(pPack);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
 }

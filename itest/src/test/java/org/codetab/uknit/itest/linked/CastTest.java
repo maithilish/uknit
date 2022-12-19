@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.when;
 
+import java.io.FileInputStream;
 import java.util.Locale;
 
 import org.codetab.uknit.itest.linked.Model.Foo;
@@ -134,5 +135,30 @@ public class CastTest {
         Locale actual = cast.invokeReturnCast(foo);
 
         assertSame(obj, actual);
+    }
+
+    @Test
+    public void testAssginMultiCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        FileInputStream fileInputStream = Mockito.mock(FileInputStream.class);
+        FileInputStream bar = (FileInputStream) fileInputStream;
+
+        when(foo.obj()).thenReturn(fileInputStream);
+
+        FileInputStream actual = cast.assginMultiCast(foo);
+
+        assertSame(bar, actual);
+    }
+
+    @Test
+    public void testReturnMultiCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        FileInputStream fileInputStream = Mockito.mock(FileInputStream.class);
+
+        when(foo.obj()).thenReturn(fileInputStream);
+
+        FileInputStream actual = cast.returnMultiCast(foo);
+
+        assertSame(fileInputStream, actual);
     }
 }

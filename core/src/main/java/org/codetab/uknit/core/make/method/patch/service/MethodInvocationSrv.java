@@ -2,12 +2,14 @@ package org.codetab.uknit.core.make.method.patch.service;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
@@ -23,8 +25,28 @@ public class MethodInvocationSrv implements PatchService {
     private Wrappers wrappers;
 
     @Override
-    public void patch(final Expression node, final Expression copy,
-            final Map<Expression, IVar> patches) {
+    public void patch(final Pack pack, final Expression node,
+            final Expression copy, final Heap heap) {
+
+        checkState(node instanceof MethodInvocation);
+        checkState(node instanceof MethodInvocation);
+
+        MethodInvocation mi = (MethodInvocation) node;
+        MethodInvocation miCopy = (MethodInvocation) copy;
+
+        Expression exp = wrappers.unpack(mi.getExpression());
+        Expression expCopy = wrappers.unpack(miCopy.getExpression());
+        patchers.patchExpWithName(pack, exp, expCopy, heap,
+                miCopy::setExpression);
+
+        List<Expression> args = arguments.getArgs(mi);
+        List<Expression> argsCopy = arguments.getArgs(miCopy);
+        patchers.patchExpsWithName(pack, args, argsCopy, heap);
+    }
+
+    @Override
+    public void patchName(final Pack pack, final Expression node,
+            final Expression copy) {
 
         checkState(node instanceof MethodInvocation);
         checkState(copy instanceof MethodInvocation);
@@ -32,12 +54,32 @@ public class MethodInvocationSrv implements PatchService {
         MethodInvocation mi = (MethodInvocation) node;
         MethodInvocation miCopy = (MethodInvocation) copy;
 
-        Expression exp = wrappers.unpack(mi.getExpression());
-        Expression expCopy = wrappers.unpack(mi.getExpression());
-        patchers.patchExpWithName(exp, expCopy, patches, miCopy::setExpression);
+        final List<Patch> patches = pack.getPatches();
 
+        final int index = 0;
+        Expression exp = wrappers.unpack(mi.getExpression());
+        Expression expCopy = wrappers.unpack(miCopy.getExpression());
+        patchers.patchExpWithName(exp, expCopy, patches, index,
+                miCopy::setExpression);
+
+        final int offset = 1;
         List<Expression> args = arguments.getArgs(mi);
         List<Expression> argsCopy = arguments.getArgs(miCopy);
-        patchers.patchExpsWithName(args, argsCopy, patches);
+        patchers.patchExpsWithName(args, argsCopy, patches, offset);
+    }
+
+    @Override
+    public List<Expression> getExps(final Expression node) {
+        checkState(node instanceof MethodInvocation);
+
+        MethodInvocation mi = (MethodInvocation) node;
+
+        List<Expression> exps = new ArrayList<>();
+
+        exps.add(wrappers.strip(mi.getExpression()));
+
+        List<Expression> args = arguments.getArgs(mi);
+        args.forEach(a -> exps.add(wrappers.strip(a)));
+        return exps;
     }
 }

@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.lamda.AnonymousProcessor;
 import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
-import org.codetab.uknit.core.make.method.patch.old.PatcherOld;
 import org.codetab.uknit.core.make.model.ArgCapture;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -73,8 +72,6 @@ public class VerifyCreator {
         private Packs packs;
         @Inject
         private Methods methods;
-        @Inject
-        private PatcherOld patcherOld;
 
         public boolean exclude(final Invoke invoke, final Heap heap) {
             Optional<IVar> callVarO = invoke.getCallVar();
@@ -124,11 +121,11 @@ public class VerifyCreator {
         private Optional<Pack> findCallVarPack(final Invoke invoke,
                 final Heap heap) {
             Optional<Pack> callVarPackO = Optional.empty();
-            Optional<Expression> patchedExpO =
-                    patcherOld.getPatchedCallExp(invoke, heap);
-            if (!methods.isInternalCall(invoke.getExp(), patchedExpO,
+            Optional<Expression> patchedCallExpO =
+                    heap.getPatcher().copyAndPatchCallExp(invoke, heap);
+            if (!methods.isInternalCall(invoke.getExp(), patchedCallExpO,
                     heap.getMut())) {
-                String name = expressions.getName(patchedExpO.get());
+                String name = expressions.getName(patchedCallExpO.get());
                 callVarPackO = packs.findByVarName(name, heap.getPacks());
             }
             return callVarPackO;

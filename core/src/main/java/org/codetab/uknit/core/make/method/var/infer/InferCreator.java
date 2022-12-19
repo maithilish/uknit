@@ -80,7 +80,6 @@ public class InferCreator {
                 IVar inferVar =
                         inferFactory.createInfer(type, typeBinding, heap);
                 pack.setVar(inferVar);
-                heap.getPatcher().addPatch(pack.getExp(), inferVar);
             }
         } else {
             throw new TypeException(

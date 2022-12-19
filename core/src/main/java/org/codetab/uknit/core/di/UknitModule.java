@@ -6,7 +6,6 @@ import java.util.List;
 import org.codetab.uknit.core.make.model.Load;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.tree.TreeFactory;
@@ -29,11 +28,6 @@ public class UknitModule extends AbstractModule {
 
     @Provides
     public List<Pack> createPacks() {
-        return new ArrayList<>();
-    }
-
-    @Provides
-    public List<Patch> createPatches() {
         return new ArrayList<>();
     }
 

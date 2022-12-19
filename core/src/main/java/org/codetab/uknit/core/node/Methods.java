@@ -342,4 +342,5 @@ public class Methods {
     public boolean isSuper(final ITypeBinding a, final ITypeBinding b) {
         return a.isSubTypeCompatible(b);
     }
+
 }

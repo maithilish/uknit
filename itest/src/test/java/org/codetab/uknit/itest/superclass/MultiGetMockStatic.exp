@@ -1,7 +1,5 @@
 package org.codetab.uknit.itest.superclass;
 
-// has errors
-
 public class MultiGetMockStaticTest {
     @InjectMocks
     private MultiGetMockStatic multiGetMockStatic;
@@ -25,19 +23,11 @@ public class MultiGetMockStaticTest {
 
     @Test
     public void testGetStaticMultiWithSuper() {
-        JobInfo jobInfo = Mockito.mock(JobInfo.class);
-        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
-        long apple = 1L;
-        JobInfo jobInfo3 = Mockito.mock(JobInfo.class);
         long grape = 1L;
-
-        when(jobInfo2.getId()).thenReturn(apple);
-        when(jobInfo3.getId()).thenReturn(grape);
 
         long actual = multiGetMockStatic.getStaticMultiWithSuper();
 
         assertEquals(grape, actual);
-        verify(jobInfo).setId(1L);
     }
 
     @Test

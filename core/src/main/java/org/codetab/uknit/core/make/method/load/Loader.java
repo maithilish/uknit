@@ -79,20 +79,21 @@ public class Loader {
             loopVar = vars.findVarByOldName(loopVarName, heap);
         }
 
-        /*
-         * for load vars use enforce instead of enable as processVarState()
-         * disables these vars.
-         */
-        loopVar.setEnforce(true);
-
+        boolean enforceLoopVar = false;
         if (nodes.is(exp, SimpleName.class)) {
             /*
              * The simple name is the collection var. No need to validate it as
              * compiler will allow only Iterable in for each statement.
              */
             String name = nodes.getName(exp);
-            IVar collectionVar = vars.findVarByName(name, heap);
+            IVar collectionVar = null;
+            try {
+                collectionVar = vars.findVarByName(name, heap);
+            } catch (VarNotFoundException e) {
+                collectionVar = vars.findVarByOldName(name, heap);
+            }
             forEachVars.put(collectionVar, loopVar);
+            enforceLoopVar = true;
         }
         if (nodes.is(exp, MethodInvocation.class)
                 || nodes.is(exp, SuperMethodInvocation.class)) {
@@ -132,8 +133,16 @@ public class Loader {
                 }
                 if (nonNull(collectionVar)) {
                     forEachVars.put(collectionVar, loopVar);
+                    enforceLoopVar = true;
                 }
             }
+        }
+        if (enforceLoopVar) {
+            /*
+             * for load vars use enforce instead of enable as processVarState()
+             * disables these vars.
+             */
+            loopVar.setEnforce(true);
         }
     }
 
@@ -234,5 +243,9 @@ public class Loader {
 
     public List<Load> getLoads() {
         return loads;
+    }
+
+    public Map<IVar, IVar> getForEachVars() {
+        return forEachVars;
     }
 }

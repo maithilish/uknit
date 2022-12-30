@@ -13,10 +13,18 @@ import java.util.List;
  */
 public class SuperFieldConflict extends SuperField {
 
-    public Date foo(final List<Date> dates) {
+    public Date conflicts(final List<Date> dates) {
         Date selectedDate = null;
         for (Date date : dates) {
             selectedDate = date;
+        }
+        return selectedDate;
+    }
+
+    public Date noConflict(final List<Date> dates) {
+        Date selectedDate = null;
+        for (Date someDate : dates) {
+            selectedDate = someDate;
         }
         return selectedDate;
     }

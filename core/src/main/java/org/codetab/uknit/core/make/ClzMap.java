@@ -53,7 +53,9 @@ public class ClzMap extends HashMap<String, Clz> {
     /**
      * Method visit uses field copies and may change field state - enable,
      * deepStub, enforce. The state of original field is updated from field
-     * copy. Mock and created are not affected.
+     * copy. The mock and created state (mock and created fields of Var) are not
+     * updated.
+     *
      * @param clzName
      * @param vars
      */

@@ -107,6 +107,7 @@ public class FieldMaker {
      * If field is not mock (even when uninitialised), then remove it from test
      * clz. Example: removes the field private List<String> list (with or
      * without initialization) in FieldIT test.
+     *
      * @param clz
      */
     public void removeFields(final Clz clz) {
@@ -116,7 +117,7 @@ public class FieldMaker {
             if (!field.isMock()) {
                 FieldDeclaration fieldDecl = field.getFieldDecl();
                 testClz.bodyDeclarations().remove(fieldDecl);
-                // REVIEW Stash
+                // as field is removed set it as disabled.
                 field.setEnable(false);
             }
         }

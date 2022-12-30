@@ -16,12 +16,24 @@ public class SuperFieldConflictTest {
     }
 
     @Test
-    public void testFoo() {
+    public void testConflicts() {
         List<Date> dates = new ArrayList<>();
         Date selectedDate = null;
         dates.add(date);
 
-        Date actual = superFieldConflict.foo(dates);
+        Date actual = superFieldConflict.conflicts(dates);
+
+        assertEquals(selectedDate, actual);
+    }
+
+    @Test
+    public void testNoConflict() {
+        List<Date> dates = new ArrayList<>();
+        Date selectedDate = null;
+        Date someDate = Mockito.mock(Date.class);
+        dates.add(someDate);
+
+        Date actual = superFieldConflict.noConflict(dates);
 
         assertEquals(selectedDate, actual);
     }

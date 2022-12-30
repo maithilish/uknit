@@ -54,9 +54,6 @@ public class CastExpressionSrv implements PatchService {
                 Name name = node.getAST().newName(expVar.getName());
                 ceCopy.setExpression(name);
             }
-
-            // REVIEW - FileInputStream bar = (FileInputStream) (InputStream)
-            // foo.obj();
         }
     }
 
@@ -72,7 +69,6 @@ public class CastExpressionSrv implements PatchService {
 
         IVar expVar = patches.get(0).getVar();
 
-        // REVIEW
         if (nonNull(expVar)) {
             Name name = node.getAST().newName(expVar.getName());
             ceCopy.setExpression(name);

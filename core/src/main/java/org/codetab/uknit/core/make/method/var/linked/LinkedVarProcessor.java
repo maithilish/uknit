@@ -80,12 +80,13 @@ public class LinkedVarProcessor {
                     if (methods.isStaticCall(exp)) {
                         created = true;
                     }
-                    // REVIEW Stash
+
                     /*
-                     * The copyAndPatch() ensure that top exp is replaced with
-                     * name. Ex: super.staticGetSuperField().getRealJobInfo(),
-                     * the staticGetSuperField() returns var payload so patch
-                     * exp is payload.getRealJobInfo() and top name is payload.
+                     * In a chained call whether the leading exp is created. In
+                     * the patchedExp leading exp is replaced with name. Ex:
+                     * super.staticGetSuperField().getRealJobInfo(), the
+                     * staticGetSuperField() returns var payload so patch exp is
+                     * payload.getRealJobInfo() and top name is payload.
                      */
                     Expression patchedExp =
                             patcher.copyAndPatch(linkPack, heap);

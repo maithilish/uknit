@@ -1,7 +1,7 @@
 package org.codetab.uknit.itest.load;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,46 +13,50 @@ import java.util.List;
  */
 public class SuperGet extends SuperGetHolder {
 
-    public List<Date> getSuperField() {
+    public List<File> getSuperField() {
         return getFieldList();
     }
 
-    public Date getSuperCreatedList() {
-        Date aDate = getCreatedList().get(0);
-        return aDate;
+    public File getSuperCreatedList() {
+        File aFile = getCreatedList().get(0);
+        return aFile;
     }
 
-    public Date getSuperFieldList() {
-        Date aDate = getFieldList().get(0);
-        return aDate;
+    public File getSuperFieldList() {
+        File aFile = getFieldList().get(0);
+        return aFile;
     }
 
-    public Date getSuperCreatedListInForEach() {
-        Date aDate = null;
-        for (Date date : super.getCreatedList()) {
-            aDate = date;
+    public File getSuperCreatedListInForEach() {
+        File aFile = null;
+        for (File file : super.getCreatedList()) {
+            aFile = file;
         }
-        return aDate;
+        return aFile;
     }
 
-    public Date getSuperFieldListInForEach() {
-        Date aDate = null;
-        for (Date date : super.getFieldList()) {
-            aDate = date;
+    public File getSuperFieldListInForEach() {
+        File aFile = null;
+        for (File file : super.getFieldList()) {
+            aFile = file;
         }
-        return aDate;
+        return aFile;
     }
 }
 
 class SuperGetHolder {
 
-    private List<Date> fieldList;
+    private List<File> fieldList;
 
-    public List<Date> getCreatedList() {
-        return new ArrayList<>();
+    public List<File> getCreatedList() {
+        List<File> list = new ArrayList<>();
+        list.add(new File("test"));
+        return list;
     }
 
-    public List<Date> getFieldList() {
+    public List<File> getFieldList() {
+        fieldList = new ArrayList<>();
+        fieldList.add(new File("test"));
         return fieldList;
     }
 }

@@ -40,10 +40,7 @@ public class VarEnabler {
      * Update enable field of vars.
      * <p>
      * It collects the names of vars used whens, verifies and return var. Then
-     * it marks all the vars that are not in names list as disabled. Next, it
-     * collects the initializer expressions assigned to enabled vars and marks
-     * the vars used by such expression also as enabled. Finally, it overrides
-     * enable state with state - true or false - of enforce field.
+     * it marks all the vars that are not in names list as disabled
      *
      * Note: when this method is called all vars are enabled by default and this
      * method disables the var that are not used.
@@ -69,6 +66,12 @@ public class VarEnabler {
                 .forEach(v -> v.setEnable(true));
     }
 
+    /**
+     * Collects the initializer expressions assigned to enabled vars and marks
+     * the vars used by such expression also as enabled.
+     *
+     * @param heap
+     */
     public void enableVarsUsedInInitializers(final Heap heap) {
         // enable vars used in initializer assigned to vars enabled above
         List<Expression> exps = varEnablers.getInitializers(heap);
@@ -127,15 +130,25 @@ public class VarEnabler {
     public void addLocalVarForDisabledField(final Set<String> names,
             final Heap heap) {
         for (String name : names) {
-            Optional<IVar> field;
+            Optional<IVar> varO;
             try {
-                field = Optional.of(vars.findVarByName(name, heap));
+                varO = Optional.of(vars.findVarByName(name, heap));
             } catch (VarNotFoundException e) {
-                field = Optional.empty();
+                varO = Optional.empty();
             }
-            if (field.isPresent() && !field.get().isEnable()) {
-                IVar var = varEnablers.createStandinVar(field.get());
-                packer.packStandinVar(var, true, heap);
+            if (varO.isPresent() && varO.get().isField()) {
+                IVar field = varO.get();
+                boolean createStandin = false;
+                if (field.isEnable() && !field.isMock()) {
+                    createStandin = true;
+                }
+                if (!field.isEnable()) {
+                    createStandin = true;
+                }
+                if (createStandin) {
+                    IVar var = varEnablers.createStandinVar(varO.get());
+                    packer.packStandinVar(var, true, heap);
+                }
             }
         }
     }
@@ -152,13 +165,12 @@ public class VarEnabler {
      * The var assigned in Pack and is enabled then collect names of other vars
      * that are used to define the var.
      *
-     * Ex: Foo foo1 = new Foo(); foo2 = foo1; then i foo2 is enabled then foo1
-     * always be enabled so add foo1 to names.
+     * Ex: Foo foo1 = new Foo(); foo2 = foo1; if foo2 is enabled then enable
+     * foo1 also.
      *
      * @param heap
      * @return
      */
-    // REVIEW stash not fields
     public Set<String> collectLinkedVarNames(final Heap heap) {
         Set<String> names = new HashSet<>();
         // list packs with enabled var
@@ -167,7 +179,11 @@ public class VarEnabler {
         }).collect(Collectors.toList());
 
         for (Pack enabledPack : enabledPacks) {
-            // get linked vars packs and enable the vars
+            /*
+             * Get linked vars packs and enable the vars.
+             *
+             * Exclude fields, ref itest: load.SuperFieldConflict.foo().
+             */
             List<Pack> linkPacks =
                     linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
             linkPacks.stream().filter(p -> {
@@ -180,16 +196,26 @@ public class VarEnabler {
         return names;
     }
 
-    // REVIEW stash only fields
+    /**
+     * For enabled local vars, get linked fields and collect their names.
+     *
+     * Ex: The super method returns field it is assigned to local var, if local
+     * var is enabled then enable linked super field too. Ref itest:
+     * load.SuperGet.getSuperField().
+     *
+     * @param heap
+     * @return
+     */
     public Set<String> collectLinkedFieldNames(final Heap heap) {
         Set<String> names = new HashSet<>();
-        // list packs with enabled var
+        // list packs with enabled var - only local vars not fields
         List<Pack> enabledPacks = heap.getPacks().stream().filter(p -> {
-            return nonNull(p.getVar()) && p.getVar().isEnable();
+            return nonNull(p.getVar()) && p.getVar().isEnable()
+                    && !p.getVar().isField();
         }).collect(Collectors.toList());
 
         for (Pack enabledPack : enabledPacks) {
-            // get linked vars packs and enable the vars
+            // get linked packs, filter fields and collect names
             List<Pack> linkPacks =
                     linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
             linkPacks.stream().filter(p -> {

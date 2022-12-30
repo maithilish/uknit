@@ -1,15 +1,18 @@
 
+## ITest
+
+In this note we broadly explain the design of uKnit. As it's not possible to cover each and every aspect of the code here or in the class documentation, we can use itests gain better understanding of impact of the particualar code block. Just disable the code under question and use error thrown by the itests. The integration tests cover majority of the features.
 
 ## Abbrivations
 
-Abbrivations used in uKnit code and documentation.
+Abbrivations used in this note, uKnit code and documentation.
 
 IMC - Internal Method Call
 IM  - Internal Method
 CUT - Class Under Test
 MUT - Method Under Test
 
-The exp refers to the Expression (ASTNode) and stmt to Statment.
+The AST nodes, Expression is shortened as exp and Statment as stmt.
 
 ## Pack
 

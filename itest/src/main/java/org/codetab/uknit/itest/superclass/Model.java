@@ -3,6 +3,7 @@ package org.codetab.uknit.itest.superclass;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
 
 public class Model {
 
@@ -167,4 +168,87 @@ class Factory {
     public Bar instance(final String name) {
         return new Bar(name);
     }
+}
+
+class Vehicle {
+
+    protected String licensePlate = null;
+
+    public void setLicensePlate(final String license) {
+        this.licensePlate = license;
+    }
+
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+}
+
+class MultiLevelMiddle extends MultiLevelBottom {
+
+    private BlockingQueue<Person> queue;
+
+    @Override
+    public BlockingQueue<Person> getQueue() {
+        return queue;
+    }
+
+    public BlockingQueue<Person> getQueueArgParamSameName(
+            final QFactory qFactory, final int size) {
+        BlockingQueue<Person> q = qFactory.getQ(size);
+        q.clear();
+        return q;
+    }
+}
+
+class MultiLevelBottom {
+
+    private BlockingQueue<Person> queue;
+
+    public BlockingQueue<Person> getQueue() {
+        return queue;
+    }
+
+    public BlockingQueue<Person> getQueueArgParamDiffName(
+            final QFactory queueFactory, final int size) {
+        BlockingQueue<Person> q = queueFactory.getQ(size);
+        q.clear();
+        return q;
+    }
+}
+
+class Person {
+
+    public enum Sex {
+        MALE, FEMALE
+    }
+
+    private String name;
+    private int age;
+    private Sex gender;
+    private String city;
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public Sex getGender() {
+        return gender;
+    }
+
+    public String getCity() {
+        return city;
+    }
+}
+
+class QFactory {
+
+    public BlockingQueue<Person> getQ(final int size) {
+        return null;
+    }
+
 }

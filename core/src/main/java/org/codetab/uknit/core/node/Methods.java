@@ -191,7 +191,13 @@ public class Methods {
         return stmts;
     }
 
-    // REVIEW Stash
+    /**
+     * In a chained exp, get leading (first) exp name. Ex:
+     * payload.getRealJobInfo().getId() and top name is payload.
+     *
+     * @param expression
+     * @return
+     */
     public Optional<String> getTopVarName(final Expression expression) {
         if (!nodes.is(expression, MethodInvocation.class)) {
             return Optional.empty();

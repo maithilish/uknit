@@ -16,6 +16,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.ThisExpression;
 
 /**
  * This class consists exclusively of methods to find or work with IVar.
@@ -77,7 +78,7 @@ public class Vars {
 
     /**
      *
-     * Find first var matching the var old name.
+     * Find first var whose old name matches the name.
      *
      * @param name
      * @param heap
@@ -110,6 +111,15 @@ public class Vars {
                         heap.getPatcher().copyAndPatch(returnPack.get(), heap);
                 String name = nodes.getName(exp);
                 return Optional.ofNullable(findVarByName(name, heap));
+            } else if (nodes.is(returnPack.get().getExp(),
+                    ThisExpression.class)) {
+                /*
+                 * if return exp is this, then CUT is the expected var. But for
+                 * CUT there is no pack and CUT var only exists in test class.
+                 * The AssertStmt will create assert stmt if return is
+                 * ThisExpression.
+                 */
+                return Optional.empty();
             } else {
                 throw new IllegalStateException(nodes.exMessage(
                         "can't map return exp to var, expected SimpleName but found",

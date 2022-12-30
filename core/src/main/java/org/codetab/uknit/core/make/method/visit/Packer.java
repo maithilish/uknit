@@ -78,13 +78,19 @@ public class Packer {
              * declaration type. Ex: Object obj = new Date(); obj's type is
              * upgraded from Object to Date
              *
+             * For parameterised type don't use initializer type as it may be a
+             * diamond <>. Ex: List<File> list = new ArrayList<>(); initializer
+             * type is ArrayList<> and it is not allowed in LHS.
+             *
              * FIXME Pack - similar to invoke returnType, check is it possible
              * to simplify the invoke
              */
             Optional<Type> initializerTypeO = types.getType(initializer);
             initializerTypeO.ifPresent(t -> {
-                var.setType(t);
-                var.setTypeBinding(initializer.resolveTypeBinding());
+                if (!t.isParameterizedType()) {
+                    var.setType(t);
+                    var.setTypeBinding(initializer.resolveTypeBinding());
+                }
             });
 
             /*

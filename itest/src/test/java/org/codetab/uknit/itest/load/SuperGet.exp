@@ -1,10 +1,8 @@
 package org.codetab.uknit.itest.load;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-// has errors
 
 public class SuperGetTest {
     @InjectMocks
@@ -17,50 +15,47 @@ public class SuperGetTest {
 
     @Test
     public void testGetSuperField() {
-        List<Date> list = fieldList;
+        List<File> list = fieldList;
+        List<File> fieldList = new ArrayList<>();
 
-        List<Date> actual = superGet.getSuperField();
+        List<File> actual = superGet.getSuperField();
 
         assertEquals(list, actual);
     }
 
     @Test
     public void testGetSuperCreatedList() {
-        Date aDate = STEPIN;
-        list.add(aDate);
+        File aFile = STEPIN;
 
-        Date actual = superGet.getSuperCreatedList();
+        File actual = superGet.getSuperCreatedList();
 
-        assertSame(aDate, actual);
+        assertEquals(aFile, actual);
     }
 
     @Test
     public void testGetSuperFieldList() {
-        Date aDate = Mockito.mock(Date.class);
-        fieldList.add(aDate);
+        File aFile = STEPIN;
 
-        Date actual = superGet.getSuperFieldList();
+        File actual = superGet.getSuperFieldList();
 
-        assertSame(aDate, actual);
+        assertEquals(aFile, actual);
     }
 
     @Test
     public void testGetSuperCreatedListInForEach() {
-        Date aDate = null;
-        Date date = Mockito.mock(Date.class);
+        File aFile = null;
 
-        Date actual = superGet.getSuperCreatedListInForEach();
+        File actual = superGet.getSuperCreatedListInForEach();
 
-        assertEquals(aDate, actual);
+        assertEquals(aFile, actual);
     }
 
     @Test
     public void testGetSuperFieldListInForEach() {
-        Date aDate = null;
-        Date date = Mockito.mock(Date.class);
+        File aFile = null;
 
-        Date actual = superGet.getSuperFieldListInForEach();
+        File actual = superGet.getSuperFieldListInForEach();
 
-        assertEquals(aDate, actual);
+        assertEquals(aFile, actual);
     }
 }

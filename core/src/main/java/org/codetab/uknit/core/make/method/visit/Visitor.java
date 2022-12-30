@@ -39,6 +39,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -149,6 +150,11 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final ReturnStatement node) {
         returnCreator.createReturnVar(node, methodReturnType, heap);
+    }
+
+    @Override
+    public void endVisit(final ThisExpression node) {
+        packer.packExp(node, inCtlPath, heap);
     }
 
     /**

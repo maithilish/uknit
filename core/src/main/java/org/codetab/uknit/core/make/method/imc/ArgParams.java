@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -206,6 +207,33 @@ class ArgParams {
     }
 
     /**
+     * The forEachVars in internal heap may refers param, in such cases replace
+     * it with arg so that loader uses arg var in calling method.
+     *
+     * Ref itest: load ForEachInternal.callListForEach()
+     *
+     * @param heap
+     */
+    public void updateForEachVars(final Heap heap) {
+        Map<IVar, IVar> forEachVars = heap.getLoader().getForEachVars();
+        for (int i = 0; i < params.size(); i++) {
+
+            IVar param = params.get(i).getVar();
+            IVar arg = null;
+            if (args.get(i).isPresent()) {
+                arg = args.get(i).get().getVar();
+            }
+
+            if (nonNull(param) && nonNull(arg)
+                    && forEachVars.containsKey(param)) {
+                IVar loopVar = forEachVars.get(param);
+                forEachVars.remove(param);
+                forEachVars.put(arg, loopVar);
+            }
+        }
+    }
+
+    /**
      * Find corresponding arg for the param.
      *
      * @param param
@@ -220,4 +248,5 @@ class ArgParams {
         }
         return Optional.empty();
     }
+
 }

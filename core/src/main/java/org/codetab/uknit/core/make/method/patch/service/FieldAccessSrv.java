@@ -13,6 +13,7 @@ import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.SimpleName;
 
 public class FieldAccessSrv implements PatchService {
 
@@ -36,7 +37,10 @@ public class FieldAccessSrv implements PatchService {
         patchers.patchExpWithName(pack, exp, expCopy, heap,
                 faCopy::setExpression);
 
-        // REVIEW what about FieldAccess.getName()
+        Expression name = wrappers.unpack(fa.getName());
+        Expression nameCopy = wrappers.unpack(faCopy.getName());
+        patchers.patchExpWithName(pack, name, nameCopy, heap,
+                n -> faCopy.setName((SimpleName) n));
     }
 
     @Override
@@ -56,8 +60,11 @@ public class FieldAccessSrv implements PatchService {
         patchers.patchExpWithName(exp, expCopy, patches, index,
                 faCopy::setExpression);
 
-        // REVIEW what about FieldAccess.getName()
-
+        index = 1;
+        Expression name = wrappers.unpack(fa.getName());
+        Expression nameCopy = wrappers.unpack(faCopy.getName());
+        patchers.patchExpWithName(name, nameCopy, patches, index,
+                n -> faCopy.setName((SimpleName) n));
     }
 
     @Override
@@ -69,6 +76,7 @@ public class FieldAccessSrv implements PatchService {
         List<Expression> exps = new ArrayList<>();
 
         exps.add(wrappers.strip(fa.getExpression()));
+        exps.add(wrappers.strip(fa.getName()));
 
         return exps;
     }

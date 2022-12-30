@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class SuperFieldConflictTest {
@@ -25,12 +26,25 @@ public class SuperFieldConflictTest {
     }
 
     @Test
-    public void testFoo() {
+    public void testConflicts() {
         List<Date> dates = new ArrayList<>();
         Date selectedDate = date;
         dates.add(date);
 
-        Date actual = superFieldConflict.foo(dates);
+        Date actual = superFieldConflict.conflicts(dates);
+
+        assertEquals(selectedDate, actual);
+    }
+
+    @Test
+    public void testNoConflict() {
+        List<Date> dates = new ArrayList<>();
+
+        Date someDate = Mockito.mock(Date.class);
+        Date selectedDate = someDate;
+        dates.add(someDate);
+
+        Date actual = superFieldConflict.noConflict(dates);
 
         assertEquals(selectedDate, actual);
     }

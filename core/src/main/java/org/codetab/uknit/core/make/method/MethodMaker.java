@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
+import org.codetab.uknit.core.make.method.getter.GetterSetter;
 import org.codetab.uknit.core.make.method.imc.Merger;
 import org.codetab.uknit.core.make.method.process.Processor;
 import org.codetab.uknit.core.make.method.visit.Visitor;
@@ -65,6 +66,8 @@ public class MethodMaker {
     private Heaps heaps;
     @Inject
     private Vars vars;
+    @Inject
+    private GetterSetter getterSetter;
 
     private ClzMap clzMap;
 
@@ -72,7 +75,6 @@ public class MethodMaker {
 
     private TypeDeclaration clzDecl;
 
-    @SuppressWarnings("unused")
     private Clz clz;
 
     public boolean stageMethod(final MethodDeclaration method,
@@ -104,11 +106,10 @@ public class MethodMaker {
         heap.setTestThrowsException(
                 methodMakers.isMethodUnderTestThrowsException(method));
 
-        // FIXME Pack - enable this
-        // if (configs.getConfig("uknit.detect.getterSetter", true)) {
-        // getterSetter.detect(clz, method, testMethod,
-        // clzMap.getFieldsCopy(testClzName));
-        // }
+        if (configs.getConfig("uknit.detect.getterSetter", true)) {
+            getterSetter.detect(clz, method, testMethod,
+                    clzMap.getFieldsCopy(testClzName));
+        }
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(heap);
@@ -147,7 +148,6 @@ public class MethodMaker {
 
         heaps.debugPatches("[ Patch Map ]", heap);
 
-        // REVIEW Stash
         clzMap.updateFieldState(testClzName,
                 vars.getVarsOfKind(heap, Kind.FIELD));
 

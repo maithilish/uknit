@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.imc;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
@@ -130,17 +131,15 @@ public class Merger {
                  * client.getOptions() is patched to infer var option but the
                  * option.setFooEnabled() returns void.
                  */
-                boolean illegalState = true;
                 if (iPack instanceof Invoke
                         && ((Invoke) iPack).getReturnType().isPresent()) {
                     if (((Invoke) iPack).getReturnType().get().isVoid()) {
                         internalPacks.add(iPack);
-                        illegalState = false;
+                    } else if (isNull(iPack.getVar())) {
+                        // var is not set, but return is not void
+                        throw new IllegalStateException(
+                                spaceit("var is not set", iPack.toString()));
                     }
-                }
-                if (illegalState) {
-                    throw new IllegalStateException(
-                            spaceit("var is not set", iPack.toString()));
                 }
             }
         }
@@ -209,6 +208,7 @@ public class Merger {
      * @param internalHeap
      */
     public void mergeLoader(final Heap heap, final Heap internalHeap) {
+        argParams.updateForEachVars(internalHeap);
         heap.getLoader().merge(internalHeap.getLoader());
     }
 

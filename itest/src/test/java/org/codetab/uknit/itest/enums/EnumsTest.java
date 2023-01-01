@@ -43,7 +43,7 @@ public class EnumsTest {
     @Test
     public void testMi() {
         Account a = Mockito.mock(Account.class);
-        Type type = Type.OVERDRAFT;
+        Type type = Model.Account.Type.OVERDRAFT;
 
         when(a.getType()).thenReturn(type);
 
@@ -55,7 +55,7 @@ public class EnumsTest {
     @Test
     public void testAssignmentMi() {
         Account a = Mockito.mock(Account.class);
-        Type t = Type.SAVINGS;
+        Type t = Model.Account.Type.OVERDRAFT;
 
         when(a.getType()).thenReturn(t);
 

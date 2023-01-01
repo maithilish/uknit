@@ -61,6 +61,8 @@ public class Processor {
 
     public void processVars(final Heap heap) {
         varProcessor.markCreation(heap);
+        varProcessor.propagateCreationForLinkedVars(heap);
+        varProcessor.propagateRealishForMocks(heap);
         varProcessor.processCastType(heap);
     }
 

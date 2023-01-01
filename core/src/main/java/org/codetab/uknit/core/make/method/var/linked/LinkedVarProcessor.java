@@ -15,6 +15,7 @@ import org.codetab.uknit.core.make.method.patch.ServiceLoader;
 import org.codetab.uknit.core.make.method.patch.service.PatchService;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
@@ -22,6 +23,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 
 public class LinkedVarProcessor {
@@ -50,57 +52,82 @@ public class LinkedVarProcessor {
     private Patcher patcher;
 
     /**
-     * Marks var as created when exp in any of the linkedPack of the pack is
-     * creation, anon, lambda or static call.
+     * Marks var as created if exp is created, also marks var as realish if exp
+     * is static call.
      *
      * @param pack
      * @param packList
      */
-    public void markAndPropagateCreation(final Pack pack, final Heap heap) {
+    public void markCreation(final Pack pack, final Heap heap) {
         Expression exp = pack.getExp();
-        boolean created = false;
-        if (nonNull(exp)) {
-            final List<Pack> packList = heap.getPacks();
 
-            /*
-             * if any exp isCreation in linkedPacks then var is created.
-             */
-            List<Pack> linkedPacks =
-                    linkedPack.getLinkedVarPacks(pack, packList);
+        if (expressions.isCreation(exp)) {
+            pack.getVar().setCreated(true);
+        }
 
-            for (Pack linkPack : linkedPacks) {
-                exp = linkPack.getExp();
-                if (nonNull(exp)) {
-                    if (expressions.isCreation(exp)) {
-                        created = true;
-                    }
-                    if (expressions.isAnonOrLambda(exp)) {
-                        created = true;
-                    }
-                    if (methods.isStaticCall(exp)) {
-                        created = true;
-                    }
+        if (methods.isStaticCall(exp)) {
+            pack.getVar().addNature(Nature.REALISH);
+        }
 
-                    /*
-                     * In a chained call whether the leading exp is created. In
-                     * the patchedExp leading exp is replaced with name. Ex:
-                     * super.staticGetSuperField().getRealJobInfo(), the
-                     * staticGetSuperField() returns var payload so patch exp is
-                     * payload.getRealJobInfo() and top name is payload.
-                     */
-                    Expression patchedExp =
-                            patcher.copyAndPatch(linkPack, heap);
-                    Optional<String> topVarNameO =
-                            methods.getTopVarName(patchedExp);
-                    if (topVarNameO.isPresent() && vars.isCreated(
-                            topVarNameO.get(), packs.asVars(packList))) {
-                        created = true;
-                    }
+    }
+
+    /**
+     * Marks var as created when exp in any of the linkedPack is created or
+     * realish.
+     *
+     * @param pack
+     * @param packList
+     */
+    public void propagateCreationForLinkedVars(final Pack pack,
+            final Heap heap) {
+        Expression exp = pack.getExp();
+        boolean realish = false;
+
+        final List<Pack> packList = heap.getPacks();
+
+        List<Pack> linkedPacks = linkedPack.getLinkedVarPacks(pack, heap);
+
+        for (Pack linkPack : linkedPacks) {
+            exp = linkPack.getExp();
+            if (nonNull(exp)) {
+                // if linkPack var is created, then pack var is realish
+                if (nonNull(linkPack.getVar())
+                        && linkPack.getVar().isCreated()) {
+                    realish = true;
+                }
+                /*
+                 * In a chained call if the leading exp is created or realish,
+                 * then pack var is realish.
+                 *
+                 * Ex: super.staticGetSuperField().getRealJobInfo(), the
+                 * staticGetSuperField() returns var payload so top name is
+                 * payload and it is realish, so the pack var jobInfo is also
+                 * realish.
+                 */
+                Expression patchedExp = patcher.copyAndPatch(linkPack, heap);
+                Optional<String> topVarNameO =
+                        methods.getTopVarName(patchedExp);
+                if (topVarNameO.isPresent() && vars.isCreated(topVarNameO.get(),
+                        packs.asVars(packList))) {
+                    realish = true;
                 }
             }
+        }
 
-            if (nonNull(pack.getVar())) {
-                pack.getVar().setCreated(created);
+        if (realish) {
+            pack.getVar().addNature(Nature.REALISH);
+        }
+    }
+
+    // REVIEW
+    public void propagateRealishForMocks(final Pack pack, final Heap heap) {
+        MethodInvocation mi = (MethodInvocation) pack.getExp();
+        Optional<IVar> varO =
+                packs.findVarByExp(mi.getExpression(), heap.getPacks());
+        if (varO.isPresent()) {
+            IVar var = varO.get();
+            if (var.isCreated() || var.is(Nature.REALISH) || !var.isMock()) {
+                pack.getVar().addNature(Nature.REALISH);
             }
         }
     }
@@ -121,17 +148,19 @@ public class LinkedVarProcessor {
      * @param pack
      * @param packList
      */
-    public void propogateCastType(final Pack pack, final List<Pack> packList) {
+    public void propogateCastType(final Pack pack, final Heap heap) {
         if (nonNull(pack.getExp())) {
             Expression exp = pack.getExp();
             IVar var = pack.getVar();
+
+            List<Pack> packList = heap.getPacks();
 
             if (nonNull(var) && nonNull(exp) && expressions.isCastedExp(exp)) {
                 /*
                  * propagate exp cast type to linked vars.
                  */
                 Type type = var.getType();
-                castPropagator.propogate(pack, packList, pack, type);
+                castPropagator.propogate(pack, pack, type, heap);
             } else if (nonNull(exp)) {
                 /*
                  * propagate cast of exp's exps to linked vars.
@@ -149,16 +178,16 @@ public class LinkedVarProcessor {
                         if (ePackO.isPresent()) {
                             if (nonNull(ePackO.get().getVar())) {
                                 Type type = ePackO.get().getVar().getType();
-                                castPropagator.propogate(pack, packList,
-                                        ePackO.get(), type);
+                                castPropagator.propogate(pack, ePackO.get(),
+                                        type, heap);
                             }
                         } else if (nodes.isName(stripedExp)) {
                             ePackO = packs.findByVarName(
                                     nodes.getName(stripedExp), packList);
                             if (ePackO.isPresent()) {
                                 Type type = resolver.getReturnType(eexp);
-                                castPropagator.propogate(pack, packList,
-                                        ePackO.get(), type);
+                                castPropagator.propogate(pack, ePackO.get(),
+                                        type, heap);
                             }
                         }
                     }
@@ -200,9 +229,9 @@ class CastPropagator {
      * @param ePack
      * @param type
      */
-    public void propogate(final Pack pack, final List<Pack> packList,
-            final Pack ePack, final Type type) {
-        List<Pack> linkedPacks = linkedPack.getLinkedVarPacks(ePack, packList);
+    public void propogate(final Pack pack, final Pack ePack, final Type type,
+            final Heap heap) {
+        List<Pack> linkedPacks = linkedPack.getLinkedVarPacks(ePack, heap);
         for (Pack linkPack : linkedPacks) {
             if (nonNull(linkPack.getVar()) && isAssignable(pack, linkPack)) {
                 linkPack.getVar().setType(type);

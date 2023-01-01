@@ -1,0 +1,27 @@
+package org.codetab.uknit.itest.interfaces;
+
+import org.codetab.uknit.itest.interfaces.Model.Person;
+
+public class InterfacesTest {
+    @InjectMocks
+    private Interfaces interfaces;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCheck() {
+        Person p = Mockito.mock(Person.class);
+        Sex sex = Model.Person.Sex.FEMALE;
+        int apple = 1;
+
+        when(p.getGender()).thenReturn(sex);
+        when(p.getAge()).thenReturn(apple);
+
+        boolean actual = interfaces.check(p);
+
+        assertTrue(actual);
+    }
+}

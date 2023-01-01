@@ -87,6 +87,7 @@ public class VarEnablers {
         });
     }
 
+    // REVIEW - simplify this
     public void enableVarsUsedInInitializers(final List<Expression> exps,
             final Heap heap) {
         for (Expression exp : exps) {
@@ -123,6 +124,12 @@ public class VarEnablers {
                 if (nodes.isSimpleName(e)) {
                     names.add(nodes.getName(e));
                 }
+                // } else if (nodes.is(exp, MethodInvocation.class)) {
+                // Expression e =
+                // nodes.as(exp, MethodInvocation.class).getExpression();
+                // if (nodes.isSimpleName(e)) {
+                // names.add(nodes.getName(e));
+                // }
             } else if (nodes.isSimpleName(exp)) {
                 names.add(nodes.getName(exp));
             }
@@ -130,7 +137,10 @@ public class VarEnablers {
                 try {
                     vars.findVarByName(name, heap).setEnable(true);
                 } catch (VarNotFoundException e) {
-                    vars.findVarByOldName(name, heap).setEnable(true);
+                    try {
+                        vars.findVarByOldName(name, heap).setEnable(true);
+                    } catch (VarNotFoundException e2) {
+                    }
                 }
             }
         }

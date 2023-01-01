@@ -15,6 +15,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
+import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
@@ -27,6 +28,8 @@ public class Patchers {
     private Wrappers wrappers;
     @Inject
     private Packs packs;
+    @Inject
+    private Methods methods;
 
     public void patchExpWithName(final Pack pack, final Expression node,
             final Expression copy, final Heap heap,
@@ -44,9 +47,15 @@ public class Patchers {
                 /*
                  * Ex: {foo.name()} the ArrayInitializer has MI exp foo.name()
                  * which is inferred to var apple and patch it as {apple}.
+                 *
+                 * Don't patch static call as we don't own instance returned.
+                 * Ex: path.compareTo(Path.of(Statics.getName("foo")));
+                 * Statics.getName() is not patched.
                  */
-                Name name = node.getAST().newName(var.getName());
-                consumer.accept(name);
+                if (!methods.isStaticCall(node)) {
+                    Name name = node.getAST().newName(var.getName());
+                    consumer.accept(name);
+                }
             } else {
                 /*
                  * Ex: {new Foo(bar.name())}; the ArrayInitializer has

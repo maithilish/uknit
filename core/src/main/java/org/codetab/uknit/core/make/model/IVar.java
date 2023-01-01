@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -9,6 +10,10 @@ public interface IVar {
 
     enum Kind {
         FIELD, PARAMETER, LOCAL, RETURN, INFER
+    }
+
+    enum Nature {
+        REALISH, COLLECTION
     }
 
     void setKind(Kind kind);
@@ -51,7 +56,13 @@ public interface IVar {
 
     void setProperty(String propertyName, Object data);
 
-    Object getProperty(String propertyName);
+    Object getProperty(String propertyName, Object defaultVal);
+
+    void addNature(Nature nature);
+
+    List<Nature> getNatures();
+
+    boolean is(Nature nature);
 
     IVar clone();
 

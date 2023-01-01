@@ -185,7 +185,7 @@ public class VarEnabler {
              * Exclude fields, ref itest: load.SuperFieldConflict.foo().
              */
             List<Pack> linkPacks =
-                    linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
+                    linkedPack.getLinkedVarPacks(enabledPack, heap);
             linkPacks.stream().filter(p -> {
                 return nonNull(p.getVar())
                         && !p.getVar().getKind().equals(Kind.FIELD);
@@ -217,7 +217,7 @@ public class VarEnabler {
         for (Pack enabledPack : enabledPacks) {
             // get linked packs, filter fields and collect names
             List<Pack> linkPacks =
-                    linkedPack.getLinkedVarPacks(enabledPack, heap.getPacks());
+                    linkedPack.getLinkedVarPacks(enabledPack, heap);
             linkPacks.stream().filter(p -> {
                 return nonNull(p.getVar())
                         && p.getVar().getKind().equals(Kind.FIELD);

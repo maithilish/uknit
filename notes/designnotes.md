@@ -175,7 +175,7 @@ The copyAndPatch() delgates to appropriate PatchService in org.codetab.uknit.cor
 
 ## Java classes for Test
 
-It is convenient to use custom interfaces defined in package private Model.java. Apart from it some of the suitable classes to use in itests - Instant, LocalDate, LocalDateTime, DateTimeFormatter, File, StringBuilder, Locale, IO InputStream, OutputStream (io related classes). Avoid Date as compare may randomly fail.
+It is convenient to use custom interfaces defined in package private Model.java. Apart from it some of the suitable classes to use in itests - Instant, LocalDate, LocalDateTime, DateTimeFormatter, File, Path, StringBuilder, Locale, IO InputStream, OutputStream (io related classes). Avoid Date as compare may randomly fail.
 
 ## Static Calls
 

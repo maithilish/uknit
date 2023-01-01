@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 
 public class LoadProcessor {
 
@@ -22,7 +23,8 @@ public class LoadProcessor {
          * load these collections. Test can only consume its items. Ref itest:
          * load.SuperGet class.
          */
-        vars = vars.stream().filter(v -> !v.isCreated())
+        vars = vars.stream()
+                .filter(v -> !(v.isCreated() || v.is(Nature.REALISH)))
                 .collect(Collectors.toList());
         loader.processLoadableVars(vars, heap);
         loader.enableLoads(heap);

@@ -40,10 +40,7 @@ public class Initializers {
         Optional<Expression> initExpO =
                 definedInitialzer.getInitializer(var, heap);
 
-        /*
-         * If present try to get initializer from initExp else try from
-         * initEnum.
-         */
+        // try to get initializer from initExp if present
         if (initExpO.isPresent()) {
 
             Optional<Pack> packO =
@@ -71,8 +68,10 @@ public class Initializers {
                         heap.getPatcher().copyAndPatch(packO.get(), heap);
                 initializer = exp.toString();
             }
+        }
 
-        } else {
+        // try to get from initEnum if present
+        if (isNull(initializer)) {
             Optional<String> initEnum =
                     enumInitializer.getInitializer(var, heap);
             if (initEnum.isPresent()) {

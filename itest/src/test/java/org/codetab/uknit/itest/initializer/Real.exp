@@ -119,7 +119,7 @@ public class RealTest {
 
         IntStream actual = real.assignRealReturnsMock(file);
 
-        assertSame(codePoints, actual);
+        assertEquals(codePoints, actual);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class RealTest {
 
         IntStream actual = real.returnRalReturnsMock(file);
 
-        assertSame(intStream, actual);
+        assertEquals(intStream, actual);
     }
 
     @Test

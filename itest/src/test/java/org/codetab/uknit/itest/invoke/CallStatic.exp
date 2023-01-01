@@ -1,0 +1,115 @@
+package org.codetab.uknit.itest.invoke;
+
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
+import org.codetab.uknit.itest.invoke.Model.Statics;
+
+public class CallStaticTest {
+    @InjectMocks
+    private CallStatic callStatic;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignStatic() {
+        String name = Statics.getName("foo");
+
+        String actual = callStatic.assignStatic();
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testReturnStatic() {
+        String apple = Statics.getName("foo");
+
+        String actual = callStatic.returnStatic();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testAssignInvokeOnStaticCallMock() {
+        Path fileName = STEPIN;
+
+        Path actual = callStatic.assignInvokeOnStaticCallMock();
+
+        assertEquals(fileName, actual);
+    }
+
+    @Test
+    public void testReturnInvokeOnStaticCallMock() {
+        Path path2 = STEPIN;
+
+        Path actual = callStatic.returnInvokeOnStaticCallMock();
+
+        assertEquals(path2, actual);
+    }
+
+    @Test
+    public void testAssignInvokeOnStaticCallReal() {
+        String name = Statics.getName("hello").toLowerCase();
+
+        String actual = callStatic.assignInvokeOnStaticCallReal();
+
+        assertEquals(name, actual);
+    }
+
+    @Test
+    public void testReturnInvokeOnStaticCallReal() {
+        String grape = Statics.getName("hello").toLowerCase();
+
+        String actual = callStatic.returnInvokeOnStaticCallReal();
+
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testAssignStaticInInvokeExp() {
+        String foo = "Foo";
+        String bar = "Bar";
+        FileSystem fileSystem = STEPIN;
+
+        FileSystem actual = callStatic.assignStaticInInvokeExp(foo, bar);
+
+        assertEquals(fileSystem, actual);
+    }
+
+    @Test
+    public void testReturnStaticInInvokeExp() {
+        String foo = "Foo";
+        String bar = "Bar";
+        FileSystem fileSystem = STEPIN;
+
+        FileSystem actual = callStatic.returnStaticInInvokeExp(foo, bar);
+
+        assertEquals(fileSystem, actual);
+    }
+
+    @Test
+    public void testAssignStaticInArg() {
+        Path path = Mockito.mock(Path.class);
+        int val = 1;
+
+        when(path.compareTo(Path.of(Statics.getName(Statics.getFile().getAbsolutePath())))).thenReturn(val);
+
+        int actual = callStatic.assignStaticInArg(path);
+
+        assertEquals(val, actual);
+    }
+
+    @Test
+    public void testReturnStaticInArg() {
+        Path path = Mockito.mock(Path.class);
+        int orange = 1;
+
+        when(path.compareTo(Path.of(Statics.getName(Statics.getFile().getAbsolutePath())))).thenReturn(orange);
+
+        int actual = callStatic.returnStaticInArg(path);
+
+        assertEquals(orange, actual);
+    }
+}

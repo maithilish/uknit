@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Methods;
@@ -163,7 +164,8 @@ class DefinedInitialzer {
              */
             Optional<IVar> varO =
                     packs.findVarByExp(mi.getExpression(), heap.getPacks());
-            if (varO.isPresent() && varO.get().isCreated()) {
+            if (varO.isPresent() && (varO.get().isCreated()
+                    || varO.get().is(Nature.REALISH))) {
                 return false;
             }
             if (methods.isStaticCall(mi)) {
@@ -219,6 +221,7 @@ class DefinedInitialzer {
                  * is list and its return is assigned to var foo. The list (var)
                  * is real and foo (its return var) is also real.
                  */
+                // REVIEW simplify the below
                 boolean varIsReal =
                         !invokeO.get().getReturnType().get().isMock();
                 boolean returnIsMock = var.isMock();
@@ -234,6 +237,30 @@ class DefinedInitialzer {
                     miAllowedAsInitializer = true;
                 }
 
+                // Optional<IVar> callVarO = invokeO.get().getCallVar();
+                // if (callVarO.isPresent() && nonNull(invokeO.get().getVar()))
+                // {
+                // IVar callVar = callVarO.get();
+                // IVar iVar = invokeO.get().getVar();
+                // if ((callVar.isCreated() || callVar.is(Nature.REALISH)
+                // || !callVar.isMock())
+                // && (iVar.isCreated() || iVar.is(Nature.REALISH)
+                // || !iVar.isMock())) {
+                // miAllowedAsInitializer = true;
+                // }
+                // }
+
+                // Optional<String> topNameO = methods.getTopVarName(miExp);
+                // if (topNameO.isPresent()) {
+                // Optional<Pack> topPackO = packs
+                // .findByVarName(topNameO.get(), heap.getPacks());
+                // if (topPackO.isPresent()
+                // && nonNull(topPackO.get().getExp())) {
+                // miAllowedAsInitializer =
+                // !methods.isStaticCall(topPackO.get().getExp());
+                // }
+                // }
+
                 /*
                  * If invoke var is collection then mi can't be initializer. Ex:
                  * String name = listHolder.getList().get(0); Invoke [var: list]
@@ -241,10 +268,9 @@ class DefinedInitialzer {
                  * be initializer for the var name. Ref itest:
                  * load.Lists.getAssign(listHolder).
                  */
-                Object isCollection =
-                        invokeO.get().getVar().getProperty("isCollection");
-                if (varIsReal && nonNull(isCollection)
-                        && (boolean) isCollection) {
+                boolean isCollection =
+                        invokeO.get().getVar().is(Nature.COLLECTION);
+                if (varIsReal && isCollection) {
                     miAllowedAsInitializer = false;
                 }
 

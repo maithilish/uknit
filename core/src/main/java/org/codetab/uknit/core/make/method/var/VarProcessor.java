@@ -11,6 +11,7 @@ import org.codetab.uknit.core.make.method.var.linked.LinkedVarProcessor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 
 public class VarProcessor {
 
@@ -39,11 +40,46 @@ public class VarProcessor {
          * Ex: internal.CallAndAssign.callAndAssignToSameNameNullInitialized()
          */
         List<Pack> packList = heap.getPacks().stream().filter(p -> !p.isIm())
-                .filter(p -> nonNull(p.getVar()) && !p.getVar().isCreated())
+                .filter(p -> nonNull(p.getVar()) && !p.getVar().isCreated()
+                        && nonNull(p.getExp()))
+                .collect(Collectors.toList());
+
+        packList.forEach(pack -> linkedVarProcessor.markCreation(pack, heap));
+    }
+
+    public void propagateCreationForLinkedVars(final Heap heap) {
+        /*
+         * IM packs are processed before the merge, so don't process them again
+         * while processing the calling heap. While processing the internal heap
+         * all its packs are processed as markCreation is called before merge
+         * and marking the packs as IM packs.
+         *
+         * If IM return var is created then internalReturns.updateVar() in
+         * Merger has already set the created field of invoke var, exclude such
+         * packs as calling heap linked packs doesn't have info about such
+         * creation.
+         *
+         * Ex: internal.CallAndAssign.callAndAssignToSameNameNullInitialized()
+         */
+        List<Pack> packList = heap.getPacks().stream().filter(p -> !p.isIm())
+                .filter(p -> nonNull(p.getVar()) && !p.getVar().isCreated()
+                        && nonNull(p.getExp()))
                 .collect(Collectors.toList());
 
         packList.forEach(pack -> linkedVarProcessor
-                .markAndPropagateCreation(pack, heap));
+                .propagateCreationForLinkedVars(pack, heap));
+    }
+
+    // REVIEW
+    public void propagateRealishForMocks(final Heap heap) {
+        List<Pack> packList = heap.getPacks().stream().filter(p -> !p.isIm())
+                .filter(p -> nonNull(p.getVar()) && p.getVar().isMock())
+                .filter(p -> nonNull(p.getExp())
+                        && p.getExp() instanceof MethodInvocation)
+                .collect(Collectors.toList());
+
+        packList.forEach(pack -> linkedVarProcessor
+                .propagateRealishForMocks(pack, heap));
     }
 
     /**
@@ -74,7 +110,7 @@ public class VarProcessor {
      * @param heap
      */
     public void processCastType(final Heap heap) {
-        heap.getPacks().forEach(pack -> linkedVarProcessor
-                .propogateCastType(pack, heap.getPacks()));
+        heap.getPacks().forEach(
+                pack -> linkedVarProcessor.propogateCastType(pack, heap));
     }
 }

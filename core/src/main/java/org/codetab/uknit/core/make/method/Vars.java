@@ -12,6 +12,7 @@ import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
@@ -166,7 +167,7 @@ public class Vars {
     }
 
     public boolean isCreated(final String name, final List<IVar> varList) {
-        return varList.stream()
-                .anyMatch(v -> v.getName().equals(name) && v.isCreated());
+        return varList.stream().anyMatch(v -> v.getName().equals(name)
+                && (v.isCreated() || v.is(Nature.REALISH)));
     }
 }

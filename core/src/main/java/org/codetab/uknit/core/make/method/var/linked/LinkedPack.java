@@ -9,8 +9,11 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
+import org.eclipse.jdt.core.dom.Expression;
 
 /**
  * Methods to get packs are linked in some way.
@@ -24,6 +27,8 @@ public class LinkedPack {
     private Packs packs;
     @Inject
     private Expressions expressions;
+    @Inject
+    private Patcher patcher;
 
     /**
      * Returns list of packs where vars are linked. Ex: <code>
@@ -42,25 +47,25 @@ public class LinkedPack {
      * of order of visit) with latest pack first.
      *
      * @param pack
-     * @param packList
+     * @param heap
      * @return
      */
-    public List<Pack> getLinkedVarPacks(final Pack pack,
-            final List<Pack> packList) {
+    public List<Pack> getLinkedVarPacks(final Pack pack, final Heap heap) {
 
         List<Pack> linkedPacks = new ArrayList<>();
         linkedPacks.add(pack);
 
         if (nonNull(pack.getExp())) {
             // as long as exp is Name or SimpleName continues else terminates
-            String name = expressions.getName(pack.getExp());
+            Expression patchedExp = patcher.copyAndPatch(pack, heap);
+            String name = expressions.getName(patchedExp);
             if (nonNull(name)) {
                 Optional<Pack> linkedPackO =
-                        packs.findByVarName(name, packList);
+                        packs.findByVarName(name, heap.getPacks());
                 if (linkedPackO.isPresent()) {
                     // recursively find matching packs and on return add
-                    linkedPacks.addAll(
-                            getLinkedVarPacks(linkedPackO.get(), packList));
+                    linkedPacks
+                            .addAll(getLinkedVarPacks(linkedPackO.get(), heap));
                 }
             }
         }

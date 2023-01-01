@@ -15,6 +15,7 @@ import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Load;
 import org.codetab.uknit.core.node.Nodes;
@@ -175,8 +176,9 @@ public class Loader {
         for (IVar var : loadableVars) {
             Optional<Class<?>> clz = loaders.getClz(var);
             if (clz.isPresent()) {
-                var.setProperty("isCollection",
-                        loaders.isCollection(var, clz.get()));
+                if (loaders.isCollection(var, clz.get())) {
+                    var.addNature(Nature.COLLECTION);
+                }
                 Optional<Load> loadO = Optional.empty();
                 if (forEachVars.containsKey(var)) {
                     // strategy - forEach
@@ -187,7 +189,25 @@ public class Loader {
                     // strategy - invoke
                     loadO = invokeStrategy.process(var, clz.get(), heap);
                 }
-                loadO.ifPresent(loads::add);
+
+                if (loadO.isPresent()) {
+                    /*
+                     * if any arg ( key/value loaded to collection) is mock but
+                     * realish then remove realish so that mock is added to
+                     * collection otherwise tries to add real.
+                     *
+                     * Ex: File file = holder.getMap().get(key); here file is
+                     * mock but its nature is realish as map.get() make it so
+                     * because Map is real. If nature is not removed from file
+                     * its initialiser is set to STEPIN instead of mock.
+                     */
+                    loadO.get().getArgs().forEach(v -> {
+                        if (v.isMock() && v.is(Nature.REALISH)) {
+                            v.getNatures().remove(Nature.REALISH);
+                        }
+                    });
+                    loads.add(loadO.get());
+                }
             }
         }
     }

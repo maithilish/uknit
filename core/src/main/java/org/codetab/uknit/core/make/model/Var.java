@@ -1,6 +1,10 @@
 package org.codetab.uknit.core.make.model;
 
+import static java.util.Objects.isNull;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +34,7 @@ public class Var implements IVar {
     protected Optional<Boolean> enforce;
     protected boolean deepStub;
     protected Map<String, Object> properties;
+    protected List<Nature> natures;
 
     @Inject
     public Var(@Assisted final Kind kind, @Assisted final String name,
@@ -44,6 +49,7 @@ public class Var implements IVar {
         this.deepStub = false;
         this.created = false;
         properties = new HashMap<>();
+        natures = new ArrayList<>();
     }
 
     @Override
@@ -161,6 +167,8 @@ public class Var implements IVar {
             clone.setEnforce(enforce.get());
         }
         clone.setOldName(oldName);
+        properties.forEach((k, v) -> clone.setProperty(k, v));
+        natures.forEach(n -> clone.addNature(n));
         return clone;
     }
 
@@ -202,8 +210,13 @@ public class Var implements IVar {
     }
 
     @Override
-    public Object getProperty(final String propertyName) {
-        return properties.get(propertyName);
+    public Object getProperty(final String propertyName,
+            final Object defaultValue) {
+        Object value = properties.get(propertyName);
+        if (isNull(value)) {
+            value = defaultValue;
+        }
+        return value;
     }
 
     /**
@@ -217,5 +230,23 @@ public class Var implements IVar {
 
         properties.clear();
         properties.putAll(other.properties);
+
+        natures.clear();
+        natures.addAll(other.natures);
+    }
+
+    @Override
+    public void addNature(final Nature nature) {
+        natures.add(nature);
+    }
+
+    @Override
+    public boolean is(final Nature nature) {
+        return natures.contains(nature);
+    }
+
+    @Override
+    public List<Nature> getNatures() {
+        return natures;
     }
 }

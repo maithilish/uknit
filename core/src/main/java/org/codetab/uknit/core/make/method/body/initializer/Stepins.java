@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
@@ -52,7 +53,10 @@ public class Stepins {
             String name = expressions.getName(aa.getArray());
             packO = packs.findByVarName(name, heap.getPacks());
             if (packO.isPresent()) {
-                return packO.get().getVar().isCreated();
+                IVar var = packO.get().getVar();
+                return var.isCreated() || var.is(Nature.REALISH);
+            } else {
+                return false;
             }
         } else if (nodes.is(exp, MethodInvocation.class)) {
             /*
@@ -63,6 +67,7 @@ public class Stepins {
              * If var is primitive then assign sensible default, so no STEPIN.
              * Ex itest: superclass.StaticCall.assignStaticSuperField
              */
+
             Optional<Pack> varPackO = packs.findByExp(exp, heap.getPacks());
             if (varPackO.isPresent() && nonNull(varPackO.get().getVar())) {
                 IVar var = varPackO.get().getVar();
@@ -72,8 +77,18 @@ public class Stepins {
             }
 
             packO = findCallVarPack(exp, heap);
-            if (packO.isPresent()) {
-                return packO.get().getVar().isCreated();
+            if (packO.isPresent() && varPackO.isPresent()) {
+                IVar callVar = packO.get().getVar();
+                IVar var = varPackO.get().getVar();
+                // return callVar.isCreated() || callVar.is(Nature.REALISH);
+                if ((callVar.isCreated() || callVar.is(Nature.REALISH)
+                        || !callVar.isMock())
+                        && (var.isCreated() || var.is(Nature.REALISH)
+                                || !var.isMock())) {
+                    return false;
+                } else {
+                    return callVar.isCreated() || callVar.is(Nature.REALISH);
+                }
             }
         }
 

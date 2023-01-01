@@ -133,6 +133,7 @@ public class RealTest {
         IntStream actual = real.assignRealReturnsMock(file);
 
         Iterators.elementsEqual(codePoints.iterator(), actual.iterator());
+
     }
 
     @Test

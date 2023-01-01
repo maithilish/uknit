@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Type;
@@ -52,7 +53,7 @@ class DerivedInitialzer {
         if (isNull(initializer)) {
             if (var.isMock()) {
                 // mock but created is effectively real, can't test as mock
-                if (var.isCreated()) {
+                if (var.isCreated() || var.is(Nature.REALISH)) {
                     initializer = "STEPIN";
                 } else {
                     // mock initialiser

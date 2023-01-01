@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
@@ -54,6 +55,10 @@ public class Heaps {
                 }
                 if (!v.isEnable()) {
                     s.append(", Disable");
+                }
+                for (Nature n : v.getNatures()) {
+                    s.append(", ");
+                    s.append(n.name());
                 }
             }
 

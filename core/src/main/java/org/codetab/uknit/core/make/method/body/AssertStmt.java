@@ -8,6 +8,7 @@ import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
@@ -37,8 +38,10 @@ public class AssertStmt {
         if (expectedVarO.isPresent()) {
             IVar expectedVar = expectedVarO.get();
             Type retType = heap.getCall().getReturnType();
+            boolean created =
+                    expectedVar.isCreated() || expectedVar.is(Nature.REALISH);
             String key = asserts.getAssertKey(retType, expectedVar.isMock(),
-                    expectedVar.isCreated());
+                    created);
             String fmt = asserts.getAssertFormat(key, expectedVar.getName());
             stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
         }

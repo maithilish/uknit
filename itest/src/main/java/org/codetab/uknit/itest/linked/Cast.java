@@ -47,6 +47,9 @@ public class Cast {
         return name3;
     }
 
+    /*
+     * TODO L - missing cast
+     */
     public String castArrayAccess(final Object[] names) {
         String name = (String) names[0];
         String name2 = name;

@@ -19,6 +19,8 @@ public class VarProcessor {
     private LinkedVarProcessor linkedVarProcessor;
     @Inject
     private VarAssignor varAssignor;
+    @Inject
+    private Accessibles accessibles;
 
     /**
      * Propagate create to all linked packs.
@@ -112,5 +114,12 @@ public class VarProcessor {
     public void processCastType(final Heap heap) {
         heap.getPacks().forEach(
                 pack -> linkedVarProcessor.propogateCastType(pack, heap));
+    }
+
+    // REVIEW
+    public void processAccessible(final Heap heap) {
+        List<Pack> packList = heap.getPacks().stream()
+                .filter(p -> nonNull(p.getVar())).collect(Collectors.toList());
+        packList.forEach(p -> accessibles.addNature(p, heap));
     }
 }

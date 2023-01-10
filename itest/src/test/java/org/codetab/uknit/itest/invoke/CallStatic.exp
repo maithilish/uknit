@@ -15,7 +15,7 @@ public class CallStaticTest {
 
     @Test
     public void testAssignStatic() {
-        String name = Statics.getName("foo");
+        String name = STEPIN;
 
         String actual = callStatic.assignStatic();
 
@@ -24,7 +24,7 @@ public class CallStaticTest {
 
     @Test
     public void testReturnStatic() {
-        String apple = Statics.getName("foo");
+        String apple = "Foo";
 
         String actual = callStatic.returnStatic();
 
@@ -51,7 +51,7 @@ public class CallStaticTest {
 
     @Test
     public void testAssignInvokeOnStaticCallReal() {
-        String name = Statics.getName("hello").toLowerCase();
+        String name = STEPIN;
 
         String actual = callStatic.assignInvokeOnStaticCallReal();
 
@@ -60,7 +60,7 @@ public class CallStaticTest {
 
     @Test
     public void testReturnInvokeOnStaticCallReal() {
-        String grape = Statics.getName("hello").toLowerCase();
+        String grape = "Bar";
 
         String actual = callStatic.returnInvokeOnStaticCallReal();
 

@@ -16,7 +16,7 @@ public class StepinTest {
 
     @Test
     public void testAccessArrayCreation() {
-        int foo = STEPIN;
+        int foo = 1;
 
         int actual = stepin.accessArrayCreation();
 
@@ -25,7 +25,7 @@ public class StepinTest {
 
     @Test
     public void testAccessArrayInitializer() {
-        int foo = STEPIN;
+        int foo = 1;
 
         int actual = stepin.accessArrayInitializer();
 
@@ -34,7 +34,7 @@ public class StepinTest {
 
     @Test
     public void testAccessArrayNewInitializer() {
-        int foo = STEPIN;
+        int foo = 1;
 
         int actual = stepin.accessArrayNewInitializer();
 
@@ -43,7 +43,7 @@ public class StepinTest {
 
     @Test
     public void testInvokeReal() {
-        String foo = STEPIN;
+        String foo = "Foo";
 
         String actual = stepin.invokeReal();
 
@@ -52,7 +52,7 @@ public class StepinTest {
 
     @Test
     public void testInvokeRealOfMockType() {
-        Set<String> attr = STEPIN;
+        Set<String> attr = new HashSet<>();
 
         Set<String> actual = stepin.invokeRealOfMockType();
 

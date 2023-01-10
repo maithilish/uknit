@@ -81,7 +81,7 @@ public class CastTest {
 
     @Test
     public void testCastArrayAccess() {
-        Object[] names = {"foo"};
+        Object[] names = {"Foo"};
         String name = (String) names[0];
         String name2 = name;
         String name3 = name2;
@@ -141,7 +141,7 @@ public class CastTest {
     public void testAssginMultiCast() {
         Foo foo = Mockito.mock(Foo.class);
         FileInputStream fileInputStream = Mockito.mock(FileInputStream.class);
-        FileInputStream bar = (FileInputStream) fileInputStream;
+        FileInputStream bar = fileInputStream;
 
         when(foo.obj()).thenReturn(fileInputStream);
 

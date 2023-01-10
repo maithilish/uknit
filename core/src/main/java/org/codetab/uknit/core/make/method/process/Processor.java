@@ -1,7 +1,10 @@
 package org.codetab.uknit.core.make.method.process;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.body.initializer.InitializerProcessor;
 import org.codetab.uknit.core.make.method.imc.IMCProcessor;
 import org.codetab.uknit.core.make.method.invoke.InvokeProcessor;
 import org.codetab.uknit.core.make.method.load.LoadProcessor;
@@ -39,6 +42,8 @@ public class Processor {
     private InvokeProcessor invokeProcessor;
     @Inject
     private LoadProcessor loadProcessor;
+    @Inject
+    private InitializerProcessor initializerProcessor;
 
     /**
      * Call after MUT and each IM visit. The ImcProcessor.process() call
@@ -83,13 +88,14 @@ public class Processor {
     }
 
     /**
-     * Called only after the MUT visit and not called for IM visit. This ensures
+     * Called only after the MUT visit and not called for IM visit to ensure
      * that var state processed only once in the end.
      *
      * @param heap
      */
     public void processVarState(final Heap heap) {
-        varStateProcessor.process(heap);
+        Set<String> usedNames = varStateProcessor.process(heap);
+        varStateProcessor.processStandinVars(usedNames, heap);
     }
 
     /**
@@ -116,5 +122,17 @@ public class Processor {
 
     public void processLoads(final Heap heap) {
         loadProcessor.processLoadableVars(heap);
+    }
+
+    public void processInitializer(final Heap heap) {
+        initializerProcessor.processExps(heap);
+        initializerProcessor.processReals(heap);
+        initializerProcessor.processMocks(heap);
+        initializerProcessor.processSensibles(heap);
+        initializerProcessor.processStepins(heap);
+    }
+
+    public void processAccessible(final Heap heap) {
+        varProcessor.processAccessible(heap);
     }
 }

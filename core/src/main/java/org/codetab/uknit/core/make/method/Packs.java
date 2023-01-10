@@ -219,6 +219,22 @@ public class Packs {
     }
 
     /**
+     * Filter packs where initializer is empty and var is not return var.
+     *
+     * @param packs
+     * @return
+     */
+    public List<Pack> filterNoInitializers(final List<Pack> packs,
+            final Predicate<Pack> predicate) {
+        List<Pack> list = packs.stream().filter(p -> {
+            IVar var = p.getVar();
+            return nonNull(var) && var.getInitializer().isEmpty()
+                    && !p.getVar().isReturnVar() && predicate.test(p);
+        }).collect(Collectors.toList());
+        return list;
+    }
+
+    /**
      * Return the sublist of packs starting from the pack (including the pack)
      * to the end of packs.
      *
@@ -306,5 +322,4 @@ public class Packs {
         }
         return Optional.empty();
     }
-
 }

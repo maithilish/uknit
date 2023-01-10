@@ -26,7 +26,7 @@ public class CastTest {
     @Test
     public void testCastTwiceCreated() {
         Locale locale = new Locale("en");
-        Locale locale2 = locale;
+        Locale locale2 = (Locale) locale;
 
         Locale actual = cast.castTwiceCreated();
 
@@ -36,7 +36,7 @@ public class CastTest {
     @Test
     public void testCastThriceCreated() {
         Locale locale = new Locale("en");
-        Locale locale2 = locale;
+        Locale locale2 = (Locale) locale;
         Locale locale3 = locale2;
 
         Locale actual = cast.castThriceCreated();
@@ -48,7 +48,7 @@ public class CastTest {
     public void testCastInvoke() {
         Foo foo = Mockito.mock(Foo.class);
         Locale locale = Mockito.mock(Locale.class);
-        Locale locale2 = locale;
+        Locale locale2 = (Locale) locale;
         Locale locale3 = locale2;
 
         when(foo.locale()).thenReturn(locale);
@@ -62,7 +62,7 @@ public class CastTest {
     public void testCastLiteral() {
         Foo foo = Mockito.mock(Foo.class);
         String name = "foo";
-        String name2 = name;
+        String name2 = (String) name;
         String name3 = name2;
 
         String actual = cast.castLiteral(foo);
@@ -86,7 +86,7 @@ public class CastTest {
     public void testCreateAssignCast() {
         Foo foo = Mockito.mock(Foo.class);
         Locale obj = new Locale("");
-        Locale locale = obj;
+        Locale locale = (Locale) obj;
 
         Locale actual = cast.createAssignCast(foo);
 
@@ -107,7 +107,7 @@ public class CastTest {
     public void testInvokeAssignCast() {
         Foo foo = Mockito.mock(Foo.class);
         Locale obj = Mockito.mock(Locale.class);
-        Locale locale = obj;
+        Locale locale = (Locale) obj;
 
         when(foo.obj()).thenReturn(obj);
 

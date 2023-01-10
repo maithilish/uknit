@@ -43,4 +43,8 @@ public interface ModelFactory {
 
     Load createLoad(IVar var, String call, @Assisted("args") List<IVar> args,
             @Assisted("usedVars") List<IVar> usedVars);
+
+    Initializer createInitializer(
+            org.codetab.uknit.core.make.model.Initializer.Kind kind,
+            Object initializer);
 }

@@ -60,9 +60,11 @@ public class NodeGroups {
      * FieldAccess but AST treats this as QName. Don't know the full impact by
      * allowing it as initializer.
      *
+     * REVIEW ArrayAccess.class
+     *
      */
     private List<Class<? extends Expression>> allowedAsInitializer = List.of(
-            ClassInstanceCreation.class, ArrayCreation.class, ArrayAccess.class,
+            ClassInstanceCreation.class, ArrayCreation.class,
             ArrayInitializer.class, InfixExpression.class,
             PostfixExpression.class, PrefixExpression.class,
             ConditionalExpression.class, CastExpression.class,

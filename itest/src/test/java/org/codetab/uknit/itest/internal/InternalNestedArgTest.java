@@ -92,7 +92,9 @@ public class InternalNestedArgTest {
     @Test
     public void testRealDiffNameE() {
         String str = "Foo";
-        String banana = "FooE3E2E1";
+        String kiwi = str.concat("E3");
+        String mango = kiwi.concat("E2");
+        String banana = mango.concat("E1");
         String orange = banana;
 
         String actual = internalNestedArg.realDiffNameE(str);
@@ -103,7 +105,9 @@ public class InternalNestedArgTest {
     @Test
     public void testRealSameNameF() {
         String str = "Foo";
-        String banana = "FooF3F2F1";
+        String kiwi = str.concat("F3");
+        String mango = kiwi.concat("F2");
+        String banana = mango.concat("F1");
         String orange = banana;
 
         String actual = internalNestedArg.realSameNameF(str);

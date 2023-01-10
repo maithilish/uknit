@@ -80,15 +80,12 @@ public class VerifyCreator {
                 return true;
             }
 
+            // exclude if effectively real
             IVar callVar = callVarO.get();
-            // exclude if created
-            if (callVar.isCreated() || callVar.is(Nature.REALISH)) {
+            if (callVar.isEffectivelyReal()) {
                 return true;
             }
-            // exclude if real
-            if (!callVar.isMock()) {
-                return true;
-            }
+
             // when is present, exclude verify
             if (invoke.getWhen().isPresent()) {
                 return true;

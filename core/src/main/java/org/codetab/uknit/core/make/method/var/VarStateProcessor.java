@@ -1,17 +1,19 @@
 package org.codetab.uknit.core.make.method.var;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Pack;
 
 public class VarStateProcessor {
 
     @Inject
     private VarEnabler varEnabler;
 
-    public void process(final Heap heap) {
+    public Set<String> process(final Heap heap) {
         varEnabler.checkEnableState(heap);
 
         /*
@@ -30,6 +32,11 @@ public class VarStateProcessor {
 
         varEnabler.enableFromEnforce(heap);
 
-        varEnabler.addLocalVarForDisabledField(usedNames, heap);
+        return usedNames;
+    }
+
+    public List<Pack> processStandinVars(final Set<String> usedNames,
+            final Heap heap) {
+        return varEnabler.addLocalVarForDisabledField(usedNames, heap);
     }
 }

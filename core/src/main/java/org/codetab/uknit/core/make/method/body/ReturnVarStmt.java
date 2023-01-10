@@ -5,7 +5,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.body.initializer.Initializers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
@@ -35,8 +34,6 @@ public class ReturnVarStmt {
     private Packs packs;
     @Inject
     private Nodes nodes;
-    @Inject
-    private Initializers initializers;
 
     public Optional<Statement> createStmt(final Heap heap) {
 
@@ -57,7 +54,11 @@ public class ReturnVarStmt {
             }
 
             if (var.isEnable() && !isSelfField) {
-                String initializer = initializers.getInitializer(var, heap);
+                String initializer = "\"not set\"";
+                if (var.getInitializer().isPresent()) {
+                    initializer = var.getInitializer().get().getInitializer()
+                            .toString();
+                }
                 Type type = var.getType();
                 String typeLiteral;
                 if (type.isParameterizedType()) {

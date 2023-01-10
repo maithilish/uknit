@@ -6,7 +6,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.body.initializer.Initializers;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -25,8 +24,6 @@ public class VarStmt {
     private Types types;
     @Inject
     private Vars vars;
-    @Inject
-    private Initializers initializers;
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
@@ -42,7 +39,11 @@ public class VarStmt {
                 createStmt = true;
             }
             if (createStmt) {
-                String initializer = initializers.getInitializer(var, heap);
+                String initializer = "\"not set\"";
+                if (var.getInitializer().isPresent()) {
+                    initializer = var.getInitializer().get().getInitializer()
+                            .toString();
+                }
                 Type type = var.getType();
                 String typeLiteral;
                 if (type.isParameterizedType()) {

@@ -76,6 +76,12 @@ public class Heaps {
                 s.append(pack.getLeftExp().get().toString());
             }
 
+            for (org.codetab.uknit.core.make.model.Pack.Nature n : pack
+                    .getNatures()) {
+                s.append(", ");
+                s.append(n.name());
+            }
+
             s.append("]");
 
             LOG.debug("{}", s.toString());

@@ -137,9 +137,9 @@ public class InlineArgTest {
     @Test
     public void testStaticCallArg() {
         Foo foo = Mockito.mock(Foo.class);
-        Integer apple = Integer.valueOf((10));
+        Integer apple = Integer.valueOf(1);
         String mango = "Foo";
-        Integer orange = Integer.valueOf((20));
+        Integer orange = Integer.valueOf(1);
         String banana = "Bar";
         String kiwi = banana;
 

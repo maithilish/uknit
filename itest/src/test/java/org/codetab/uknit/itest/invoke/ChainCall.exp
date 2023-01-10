@@ -89,6 +89,7 @@ public class ChainCallTest {
     @Test
     public void testRealRealRealChain() {
         String name = "Foo";
+        String apple = name.toLowerCase();
         String grape = apple.toUpperCase();
 
         String actual = chainCall.realRealRealChain(name);
@@ -100,15 +101,13 @@ public class ChainCallTest {
     public void testMockRealMockChain() {
         File file = Mockito.mock(File.class);
         String apple = "Foo";
-        IntStream intStream = apple.codePoints();
-        IntSummaryStatistics intSummaryStatistics = Mockito.mock(IntSummaryStatistics.class);
+        IntSummaryStatistics intSummaryStatistics = STEPIN;
 
         when(file.getName()).thenReturn(apple);
-        when(intStream.summaryStatistics()).thenReturn(intSummaryStatistics);
 
         IntSummaryStatistics actual = chainCall.mockRealMockChain(file);
 
-        assertSame(intSummaryStatistics, actual);
+        assertEquals(intSummaryStatistics, actual);
     }
 
     @Test

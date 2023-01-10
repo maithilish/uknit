@@ -11,7 +11,6 @@ import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
 import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
@@ -117,15 +116,12 @@ public class WhenCreator {
                 return true;
             }
 
+            // exclude if effectively real
             IVar callVar = callVarO.get();
-            // exclude if created
-            if (callVar.isCreated() || callVar.is(Nature.REALISH)) {
+            if (callVar.isEffectivelyReal()) {
                 return true;
             }
-            // exclude if real
-            if (!callVar.isMock()) {
-                return true;
-            }
+
             // returnType void, exclude
             if (invoke.getReturnType().isPresent()) {
                 Type type = invoke.getReturnType().get().getType();
@@ -145,7 +141,7 @@ public class WhenCreator {
             Optional<Pack> callVarPackO = findCallVarPack(invoke, heap);
             if (callVarPackO.isPresent()) {
                 IVar var = callVarPackO.get().getVar();
-                if (var.isCreated() || var.is(Nature.REALISH)) {
+                if (var.isCreated()) {
                     return true;
                 }
             }

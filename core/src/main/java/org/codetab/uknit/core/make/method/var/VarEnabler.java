@@ -2,6 +2,7 @@ package org.codetab.uknit.core.make.method.var;
 
 import static java.util.Objects.nonNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -71,11 +72,15 @@ public class VarEnabler {
      * the vars used by such expression also as enabled.
      *
      * @param heap
+     * @return
      */
-    public void enableVarsUsedInInitializers(final Heap heap) {
+    public List<String> enableVarsUsedInInitializers(final Heap heap) {
         // enable vars used in initializer assigned to vars enabled above
         List<Expression> exps = varEnablers.getInitializers(heap);
-        varEnablers.enableVarsUsedInInitializers(exps, heap);
+        List<String> names =
+                varEnablers.collectNamesUsedInInitializers(exps, heap);
+        varEnablers.enabledVarsUsedInInitializers(names, heap);
+        return names;
     }
 
     public void enableFromEnforce(final Heap heap) {
@@ -126,9 +131,12 @@ public class VarEnabler {
      *
      * @param names
      * @param heap
+     * @return
      */
-    public void addLocalVarForDisabledField(final Set<String> names,
+    public List<Pack> addLocalVarForDisabledField(final Set<String> names,
             final Heap heap) {
+        List<Pack> standinPacks = new ArrayList<>();
+
         for (String name : names) {
             Optional<IVar> varO;
             try {
@@ -147,10 +155,13 @@ public class VarEnabler {
                 }
                 if (createStandin) {
                     IVar var = varEnablers.createStandinVar(varO.get());
-                    packer.packStandinVar(var, true, heap);
+                    Pack standinPack =
+                            packer.packStandinVar(var, true, heap);
+                    standinPacks.add(standinPack);
                 }
             }
         }
+        return standinPacks;
     }
 
     public Set<String> collectUsedVarNames(final Heap heap) {

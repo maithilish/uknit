@@ -65,6 +65,7 @@ public class LinkedVarProcessor {
             pack.getVar().setCreated(true);
         }
 
+        // REVIEW - later, get static call from pack nature
         if (methods.isStaticCall(exp)) {
             pack.getVar().addNature(Nature.REALISH);
         }

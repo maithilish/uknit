@@ -19,11 +19,16 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class Pack {
 
+    public enum Nature {
+        STATIC_CALL
+    }
+
     private IVar var;
     private Expression exp;
     private List<Patch> patches;
     private boolean inCtlPath;
     private boolean im; // whether originated in internal method.
+    private List<Nature> natures;
 
     /*
      * LHS of assignment, apart from var, may be array access (array[0]), field
@@ -44,6 +49,7 @@ public class Pack {
         patches = new ArrayList<>();
         leftExp = Optional.empty();
         this.inCtlPath = inCtlPath;
+        natures = new ArrayList<>();
     }
 
     public IVar getVar() {
@@ -93,6 +99,18 @@ public class Pack {
 
     public void setIm(final boolean im) {
         this.im = im;
+    }
+
+    public void addNature(final Nature nature) {
+        natures.add(nature);
+    }
+
+    public List<Nature> getNatures() {
+        return natures;
+    }
+
+    public boolean is(final Nature nature) {
+        return natures.contains(nature);
     }
 
     @Override

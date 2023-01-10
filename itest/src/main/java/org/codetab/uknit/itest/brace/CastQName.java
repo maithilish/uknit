@@ -10,6 +10,7 @@ public class CastQName {
         return lid;
     }
 
+    // TODO N - cast is not set in initializer
     public int returnQName(final Person person) {
         return (int) ((person.lid));
     }

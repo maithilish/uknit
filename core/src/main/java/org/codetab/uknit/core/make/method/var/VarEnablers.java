@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.var;
 
+import static java.util.Objects.nonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +12,8 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
-import org.codetab.uknit.core.make.method.body.initializer.Initializers;
+import org.codetab.uknit.core.make.method.patch.ServiceLoader;
+import org.codetab.uknit.core.make.method.patch.service.PatchService;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -22,12 +25,8 @@ import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
-import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 
 public class VarEnablers {
 
@@ -38,13 +37,13 @@ public class VarEnablers {
     @Inject
     private Methods methods;
     @Inject
-    private Initializers initializers;
-    @Inject
     private ModelFactory modelFactory;
     @Inject
     private Packs packs;
     @Inject
     private Vars vars;
+    @Inject
+    private ServiceLoader serviceLoader;
 
     public void collectVarNamesOfWhens(final Set<String> names,
             final Heap heap) {
@@ -87,60 +86,63 @@ public class VarEnablers {
         });
     }
 
-    // REVIEW - simplify this
-    public void enableVarsUsedInInitializers(final List<Expression> exps,
-            final Heap heap) {
-        for (Expression exp : exps) {
-            Optional<Pack> packO = packs.findByExp(exp, heap.getPacks());
+    // REVIEW
+    public List<String> collectNamesUsedInInitializers(
+            final List<Expression> initializerList, final Heap heap) {
+
+        List<String> names = new ArrayList<>();
+
+        for (Expression ini : initializerList) {
+            Optional<Pack> packO = packs.findByExp(ini, heap.getPacks());
             if (packO.isPresent()) {
-                exp = heap.getPatcher().copyAndPatch(packO.get(), heap);
+                ini = heap.getPatcher().copyAndPatch(packO.get(), heap);
             }
-            List<String> names = new ArrayList<>();
-            if (nodes.is(exp, CastExpression.class)) {
-                Expression e =
-                        nodes.as(exp, CastExpression.class).getExpression();
-                if (nodes.isSimpleName(e)) {
-                    names.add(nodes.getName(e));
-                }
-            } else if (nodes.is(exp, PrefixExpression.class)) {
-                Expression e =
-                        nodes.as(exp, PrefixExpression.class).getOperand();
-                if (nodes.isSimpleName(e)) {
-                    names.add(nodes.getName(e));
-                }
-            } else if (nodes.is(exp, PostfixExpression.class)) {
-                Expression e =
-                        nodes.as(exp, PostfixExpression.class).getOperand();
-                if (nodes.isSimpleName(e)) {
-                    names.add(nodes.getName(e));
-                }
-            } else if (nodes.is(exp, InfixExpression.class)) {
-                Expression e =
-                        nodes.as(exp, InfixExpression.class).getLeftOperand();
-                if (nodes.isSimpleName(e)) {
-                    names.add(nodes.getName(e));
-                }
-                e = nodes.as(exp, InfixExpression.class).getRightOperand();
-                if (nodes.isSimpleName(e)) {
-                    names.add(nodes.getName(e));
-                }
-                // } else if (nodes.is(exp, MethodInvocation.class)) {
-                // Expression e =
-                // nodes.as(exp, MethodInvocation.class).getExpression();
-                // if (nodes.isSimpleName(e)) {
-                // names.add(nodes.getName(e));
-                // }
-            } else if (nodes.isSimpleName(exp)) {
-                names.add(nodes.getName(exp));
-            }
-            for (String name : names) {
-                try {
-                    vars.findVarByName(name, heap).setEnable(true);
-                } catch (VarNotFoundException e) {
-                    try {
-                        vars.findVarByOldName(name, heap).setEnable(true);
-                    } catch (VarNotFoundException e2) {
+            PatchService srv = serviceLoader.loadService(ini);
+            List<Expression> expsOfIni = srv.getExps(ini);
+            List<Expression> linkedInis = new ArrayList<>();
+            for (Expression expOfIni : expsOfIni) {
+                if (nodes.isSimpleName(expOfIni)) {
+                    String name = nodes.getName(expOfIni);
+                    names.add(name);
+                    /*
+                     * Process linked initializers. Find the pack for the name
+                     * and collect its initializer if present. Ref itest:
+                     * internal.InternalNestedArg.realDiffNameE(). Exclude the
+                     * initializer that already exists in initializerList to
+                     * avoid cyclic. Ref itest: qname.QName.assignQName().
+                     */
+                    Optional<Pack> varPackO =
+                            packs.findByVarName(name, heap.getPacks());
+                    if (varPackO.isPresent() && nonNull(varPackO.get().getVar())
+                            && varPackO.get().getVar().getInitializer()
+                                    .isPresent()) {
+                        Object varIni = varPackO.get().getVar().getInitializer()
+                                .get().getInitializer();
+                        if (varIni instanceof Expression
+                                && !initializerList.contains(varIni)) {
+                            linkedInis.add((Expression) varIni);
+                        }
                     }
+                }
+            }
+            // recursively process linked initializers.
+            List<String> varNames =
+                    collectNamesUsedInInitializers(linkedInis, heap);
+            names.addAll(varNames);
+        }
+
+        return names;
+    }
+
+    public void enabledVarsUsedInInitializers(final List<String> names,
+            final Heap heap) {
+        for (String name : names) {
+            try {
+                vars.findVarByName(name, heap).setEnable(true);
+            } catch (VarNotFoundException e) {
+                try {
+                    vars.findVarByOldName(name, heap).setEnable(true);
+                } catch (VarNotFoundException e2) {
                 }
             }
         }
@@ -153,8 +155,11 @@ public class VarEnablers {
                         && v.isEnable());
 
         for (IVar usedVar : usedVars) {
-            initializers.getInitializerExp(usedVar, heap)
-                    .ifPresent(e -> list.add(e));
+            usedVar.getInitializer().ifPresent(i -> {
+                if (i.getInitializer() instanceof Expression) {
+                    list.add((Expression) i.getInitializer());
+                }
+            });
         }
         return list;
     }
@@ -189,6 +194,7 @@ public class VarEnablers {
     public IVar createStandinVar(final IVar field) {
         IVar var = modelFactory.createVar(Kind.LOCAL, field.getName(),
                 field.getType(), field.isMock());
+        var.setInitializer(field.getInitializer());
         var.setCreated(false);
         var.setDeepStub(false);
         var.setEnable(true);

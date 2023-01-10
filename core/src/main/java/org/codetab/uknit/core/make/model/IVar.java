@@ -13,7 +13,7 @@ public interface IVar {
     }
 
     enum Nature {
-        REALISH, COLLECTION
+        REALISH, COLLECTION, OFFLIMIT
     }
 
     void setKind(Kind kind);
@@ -37,6 +37,8 @@ public interface IVar {
     boolean isMock();
 
     void setMock(boolean mock);
+
+    boolean isEffectivelyReal();
 
     boolean isCreated();
 
@@ -89,4 +91,8 @@ public interface IVar {
     default boolean isReturnVar() {
         return is(Kind.RETURN);
     }
+
+    void setInitializer(Optional<Initializer> initializer);
+
+    Optional<Initializer> getInitializer();
 }

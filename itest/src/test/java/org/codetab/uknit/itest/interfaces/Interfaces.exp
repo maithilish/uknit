@@ -14,7 +14,7 @@ public class InterfacesTest {
     @Test
     public void testCheck() {
         Person p = Mockito.mock(Person.class);
-        Sex sex = Model.Person.Sex.FEMALE;
+        Sex sex = STEPIN;
         int apple = 1;
 
         when(p.getGender()).thenReturn(sex);

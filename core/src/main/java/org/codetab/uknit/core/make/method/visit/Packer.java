@@ -14,9 +14,11 @@ import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Literals;
+import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
@@ -52,6 +54,8 @@ public class Packer {
     private Expressions expressions;
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private Methods methods;
 
     /**
      * Creates packs for VarDecl list. If initializer exists then its pack is
@@ -138,11 +142,12 @@ public class Packer {
         }
     }
 
-    public void packStandinVar(final IVar var, final boolean inCtlPath,
+    public Pack packStandinVar(final IVar var, final boolean inCtlPath,
             final Heap heap) {
         Expression exp = null; // no exp
         Pack pack = modelFactory.createPack(var, exp, inCtlPath);
         heap.addPack(pack);
+        return pack;
     }
 
     /**
@@ -156,7 +161,7 @@ public class Packer {
     public void setupInvokes(final Invoke invoke, final boolean imc,
             final Heap heap) {
 
-        Expression exp = invoke.getExp(); // MI, SMI
+        final Expression exp = invoke.getExp(); // MI, SMI
 
         /*
          * Find callVar of invoke. It is empty for all types of IMC - with
@@ -203,6 +208,10 @@ public class Packer {
          */
         if (resolver.resolveMethodBinding(exp).getExceptionTypes().length > 0) {
             heap.setTestThrowsException(true);
+        }
+
+        if (methods.isStaticCall(exp)) {
+            invoke.addNature(Nature.STATIC_CALL);
         }
     }
 }

@@ -75,7 +75,7 @@ public class CastQNameTest {
         Foo foo = Mockito.mock(Foo.class);
         Person person1 = Mockito.mock(Person.class);
         Person person2 = Mockito.mock(Person.class);
-        int apple = (person1.lid) + (person2.lid);
+        int apple = (int) ((person1.lid) + (person2.lid));
 
         int actual = castQName.returnInfixQName(foo, person1, person2);
 
@@ -119,7 +119,7 @@ public class CastQNameTest {
     public void testReturnPostfixQName() {
         Foo foo = Mockito.mock(Foo.class);
         Person person = Mockito.mock(Person.class);
-        int apple = ((person.lid))--;
+        int apple = (int) ((person.lid))--;
 
         int actual = castQName.returnPostfixQName(foo, person);
 
@@ -141,7 +141,7 @@ public class CastQNameTest {
     public void testReturnPrefixQName() {
         Foo foo = Mockito.mock(Foo.class);
         Person person = Mockito.mock(Person.class);
-        int apple = --((person.lid));
+        int apple = (int) --((person.lid));
 
         int actual = castQName.returnPrefixQName(foo, person);
 

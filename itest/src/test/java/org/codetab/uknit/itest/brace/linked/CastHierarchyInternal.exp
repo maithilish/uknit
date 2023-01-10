@@ -155,7 +155,7 @@ public class CastHierarchyInternalTest {
         Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String apple = "Foo";
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String grape = "Bar";
         Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
@@ -193,9 +193,9 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherFirstMix() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String apple = "Foo";
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String grape = "Bar";
         Dog dog2 = (Dog) (obj);
         Dog dog = dog2;

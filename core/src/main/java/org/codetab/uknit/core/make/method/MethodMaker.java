@@ -141,7 +141,10 @@ public class MethodMaker {
 
         processor.processEnhancedFor(heap);
         processor.processLoads(heap);
+        heap.getVars();
 
+        processor.processAccessible(heap);
+        processor.processInitializer(heap);
         processor.processVarState(heap);
 
         heaps.debugPacks("[ Heap after MUT processing ]", heap);

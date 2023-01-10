@@ -48,15 +48,17 @@ class SuperGetHolder {
 
     private List<File> fieldList;
 
-    public List<File> getCreatedList() {
-        List<File> list = new ArrayList<>();
-        list.add(new File("test"));
-        return list;
-    }
-
+    // returns field
     public List<File> getFieldList() {
         fieldList = new ArrayList<>();
         fieldList.add(new File("test"));
         return fieldList;
+    }
+
+    // returns local var
+    public List<File> getCreatedList() {
+        List<File> list = new ArrayList<>();
+        list.add(new File("test"));
+        return list;
     }
 }

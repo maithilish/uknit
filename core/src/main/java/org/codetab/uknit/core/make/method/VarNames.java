@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.method;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
@@ -111,6 +112,14 @@ public class VarNames {
         } else {
             return stringUtils.generateString(RANDOM_STR_LEN);
         }
+    }
+
+    public String replaceMetaSyntantics(final String str) {
+        String replacedStr = str;
+        if (nonNull(str) && str.contains("${metasyntatic}")) {
+            replacedStr = str.replace("${metasyntatic}", getMetaSyntantics());
+        }
+        return replacedStr;
     }
 
     public String getMetaSyntantics() {

@@ -181,5 +181,22 @@ It is convenient to use custom interfaces defined in package private Model.java.
 
 Objects returned by statics calls are real, but in internal or super static calls the returned object may be mock if static call returns a mock field, parameter or mock object returned by mock field or parameter.
 
+Any static call either from project packages or external lib can't be initializer. Ex: Integer.of(10) or Statics.getName("foo")  both are not allowed as initializer.
+
+## Accessible Objects
+
+Test class don't have access to instances produced and consumed inside a method. 
+
+    public int foo() {
+        int[] array = new int[2];
+        int foo = array[0];
+        return foo;
+    }        
+        
+Here array is created and accessed within the method and test method can't access the array. The foo is returned by the method and is accessible. Whether var is accessible is set with Nature.ACCESSIBLE.
+
+  - Fields, Parameters and return vars, either real or mock, are accessible.
+  - The objects returned by accessible mocks are also accessible.
+  - The objects returned by accessible real are accessbile only if it is field or parameters or return var. (1st rule takes care of this)
 
 

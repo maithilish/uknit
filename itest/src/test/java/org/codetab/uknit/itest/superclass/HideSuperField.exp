@@ -11,7 +11,7 @@ public class HideSuperFieldTest {
 
     @Test
     public void testSetLicensePlate() {
-        String license = "Foo";
+        String license = "Baz";
         hideSuperField.setLicensePlate(license);
 
         Object actual = hideSuperField.getLicensePlate();
@@ -31,7 +31,7 @@ public class HideSuperFieldTest {
 
     @Test
     public void testUpdateLicensePlate() {
-        String license = "Foo";
+        String license = "Baz";
         hideSuperField.updateLicensePlate(license);
     }
 }

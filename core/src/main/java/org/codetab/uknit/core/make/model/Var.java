@@ -35,6 +35,7 @@ public class Var implements IVar {
     protected boolean deepStub;
     protected Map<String, Object> properties;
     protected List<Nature> natures;
+    protected Optional<Initializer> initializer;
 
     @Inject
     public Var(@Assisted final Kind kind, @Assisted final String name,
@@ -50,6 +51,7 @@ public class Var implements IVar {
         this.created = false;
         properties = new HashMap<>();
         natures = new ArrayList<>();
+        initializer = Optional.empty();
     }
 
     @Override
@@ -248,5 +250,20 @@ public class Var implements IVar {
     @Override
     public List<Nature> getNatures() {
         return natures;
+    }
+
+    @Override
+    public boolean isEffectivelyReal() {
+        return created || natures.contains(Nature.REALISH) || !mock;
+    }
+
+    @Override
+    public void setInitializer(final Optional<Initializer> initializer) {
+        this.initializer = initializer;
+    }
+
+    @Override
+    public Optional<Initializer> getInitializer() {
+        return initializer;
     }
 }

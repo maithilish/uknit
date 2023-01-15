@@ -239,7 +239,9 @@ public class Var implements IVar {
 
     @Override
     public void addNature(final Nature nature) {
-        natures.add(nature);
+        if (!natures.contains(nature)) {
+            natures.add(nature);
+        }
     }
 
     @Override

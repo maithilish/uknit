@@ -16,6 +16,7 @@ import org.codetab.uknit.core.make.method.patch.service.PatchService;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Nature;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
@@ -23,7 +24,6 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 
 public class LinkedVarProcessor {
@@ -52,8 +52,7 @@ public class LinkedVarProcessor {
     private Patcher patcher;
 
     /**
-     * Marks var as created if exp is created, also marks var as realish if exp
-     * is static call.
+     * Marks var as created if exp is created.
      *
      * @param pack
      * @param packList
@@ -64,12 +63,6 @@ public class LinkedVarProcessor {
         if (expressions.isCreation(exp)) {
             pack.getVar().setCreated(true);
         }
-
-        // REVIEW - later, get static call from pack nature
-        if (methods.isStaticCall(exp)) {
-            pack.getVar().addNature(Nature.REALISH);
-        }
-
     }
 
     /**
@@ -120,15 +113,23 @@ public class LinkedVarProcessor {
         }
     }
 
-    // REVIEW
-    public void propagateRealishForMocks(final Pack pack, final Heap heap) {
-        MethodInvocation mi = (MethodInvocation) pack.getExp();
-        Optional<IVar> varO =
-                packs.findVarByExp(mi.getExpression(), heap.getPacks());
-        if (varO.isPresent()) {
-            IVar var = varO.get();
-            if (var.isCreated() || var.is(Nature.REALISH) || !var.isMock()) {
-                pack.getVar().addNature(Nature.REALISH);
+    /**
+     * If invokes call var is effectively real, add Nature.REALISH to invoke
+     * var.
+     *
+     * @param invoke
+     * @param heap
+     */
+    public void propagateRealish(final Invoke invoke, final Heap heap) {
+        Optional<Expression> callExpO =
+                patcher.copyAndPatchCallExp(invoke, heap);
+
+        if (callExpO.isPresent() && nodes.isName(callExpO.get())) {
+            Optional<Pack> callPackO = packs.findByVarName(
+                    nodes.getName(callExpO.get()), heap.getPacks());
+            if (callPackO.isPresent() && nonNull(callPackO.get().getVar())
+                    && callPackO.get().getVar().isEffectivelyReal()) {
+                invoke.getVar().addNature(Nature.REALISH);
             }
         }
     }

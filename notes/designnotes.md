@@ -183,6 +183,8 @@ Objects returned by statics calls are real, but in internal or super static call
 
 Any static call either from project packages or external lib can't be initializer. Ex: Integer.of(10) or Statics.getName("foo")  both are not allowed as initializer.
 
+Calls to internal static methods are not static calls and they are treated as regular methods.
+
 ## Accessible Objects
 
 Test class don't have access to instances produced and consumed inside a method. 

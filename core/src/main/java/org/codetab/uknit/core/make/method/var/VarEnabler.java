@@ -155,8 +155,7 @@ public class VarEnabler {
                 }
                 if (createStandin) {
                     IVar var = varEnablers.createStandinVar(varO.get());
-                    Pack standinPack =
-                            packer.packStandinVar(var, true, heap);
+                    Pack standinPack = packer.packStandinVar(var, true, heap);
                     standinPacks.add(standinPack);
                 }
             }
@@ -237,5 +236,11 @@ public class VarEnabler {
             });
         }
         return names;
+    }
+
+    public void disableVars(final Set<String> names, final Heap heap) {
+        List<IVar> varList = heap.getVars();
+        varList.stream().filter(v -> names.contains(v.getName()))
+                .forEach(v -> v.setEnable(false));
     }
 }

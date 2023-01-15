@@ -24,7 +24,6 @@ public class ForEachInternalTest {
     @Test
     public void testCallListForEachTwice() {
         List<Integer> foos = new ArrayList<>();
-        int key = 1;
         int key2 = 1;
         foos.add(key2);
         forEachInternal.callListForEachTwice(foos);
@@ -41,15 +40,12 @@ public class ForEachInternalTest {
     @Test
     public void testCallSimilarWithOneMap() {
         Map<String, Foo> foos = new HashMap<>();
-        String key = "Foo";
         Foo foo = Mockito.mock(Foo.class);
         String key2 = "Bar";
-        Foo foo2 = Mockito.mock(Foo.class);
         foos.put(key2, foo);
         forEachInternal.callSimilarWithOneMap(foos);
 
         verify(foo).file();
-        verify(foo2).file();
     }
 
     @Test

@@ -72,6 +72,10 @@ class MockExcludes {
             exclude = true;
         }
 
+        if (var.is(org.codetab.uknit.core.make.model.IVar.Nature.OFFLIMIT)) {
+            exclude = true;
+        }
+
         return exclude;
     }
 }

@@ -102,7 +102,9 @@ public class Pack {
     }
 
     public void addNature(final Nature nature) {
-        natures.add(nature);
+        if (!natures.contains(nature)) {
+            natures.add(nature);
+        }
     }
 
     public List<Nature> getNatures() {

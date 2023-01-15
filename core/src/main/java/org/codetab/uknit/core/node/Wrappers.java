@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.node;
 
+import static java.util.Objects.isNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class Wrappers {
      * @return
      */
     public Expression unpack(final Expression exp) {
+        if (isNull(exp)) {
+            return exp;
+        }
         Expression eExp = exp;
         if (nodes.is(exp, CastExpression.class)) {
             eExp = nodes.as(exp, CastExpression.class).getExpression();

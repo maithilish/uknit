@@ -1,0 +1,119 @@
+package org.codetab.uknit.itest.invoke;
+
+import java.io.File;
+import java.util.IntSummaryStatistics;
+import java.util.stream.IntStream;
+
+public class ChainCallRealTest {
+    @InjectMocks
+    private ChainCallReal chainCallReal;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testRealRealReal() {
+        String name = "Foo";
+        String apple = name.toLowerCase();
+        String grape = apple.toUpperCase();
+
+        String actual = chainCallReal.realRealReal(name);
+
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testRealRealRealFile() {
+        File file = new File("foo");
+        File file2 = file.getAbsoluteFile();
+        File file3 = file2.getParentFile();
+
+        File actual = chainCallReal.realRealReal(file);
+
+        assertEquals(file3, actual);
+    }
+
+    @Test
+    public void testRealRealRealString() {
+        File file = new File("foo");
+        String apple = file.getName();
+        String grape = apple.toLowerCase();
+
+        String actual = chainCallReal.realRealRealString(file);
+
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testRealRealRealRealString() {
+        File file = new File("foo");
+        String apple = file.getName();
+        String grape = apple.toLowerCase();
+        String orange = grape.toUpperCase();
+
+        String actual = chainCallReal.realRealRealRealString(file);
+
+        assertEquals(orange, actual);
+    }
+
+    @Test
+    public void testRealRealRealish() {
+        File file = new File("foo");
+        String apple = file.getName();
+        IntStream intStream = apple.codePoints();
+
+        IntStream actual = chainCallReal.realRealRealish(file);
+
+        assertEquals(intStream, actual);
+    }
+
+    @Test
+    public void testRealRealRealishRealish() {
+        File file = new File("foo");
+        String apple = file.getName();
+        IntStream intStream = apple.codePoints();
+        IntSummaryStatistics intSummaryStatistics = intStream.summaryStatistics();
+
+        IntSummaryStatistics actual = chainCallReal.realRealRealishRealish(file);
+
+        assertEquals(intSummaryStatistics, actual);
+    }
+
+    @Test
+    public void testRealRealRealAsArg() {
+        StringBuilder s1 = Mockito.mock(StringBuilder.class);
+        StringBuilder s2 = Mockito.mock(StringBuilder.class);
+        File file = new File("foo");
+        String apple = file.getName();
+        String grape = apple.toLowerCase();
+        StringBuilder stringBuilder = Mockito.mock(StringBuilder.class);
+        StringBuilder stringBuilder2 = Mockito.mock(StringBuilder.class);
+
+        when(s2.append(grape)).thenReturn(stringBuilder);
+        when(s1.append(stringBuilder)).thenReturn(stringBuilder2);
+
+        StringBuilder actual = chainCallReal.realRealRealAsArg(s1, s2, file);
+
+        assertSame(stringBuilder2, actual);
+    }
+
+    @Test
+    public void testRealMockMockAsArg() {
+        StringBuilder s1 = Mockito.mock(StringBuilder.class);
+        StringBuilder s2 = Mockito.mock(StringBuilder.class);
+        File file = new File("foo");
+        File file2 = file.getAbsoluteFile();
+        File file3 = file2.getParentFile();
+        StringBuilder stringBuilder = Mockito.mock(StringBuilder.class);
+        StringBuilder stringBuilder2 = Mockito.mock(StringBuilder.class);
+
+        when(s2.append(file3)).thenReturn(stringBuilder);
+        when(s1.append(stringBuilder)).thenReturn(stringBuilder2);
+
+        StringBuilder actual = chainCallReal.realMockMockAsArg(s1, s2, file);
+
+        assertSame(stringBuilder2, actual);
+    }
+}

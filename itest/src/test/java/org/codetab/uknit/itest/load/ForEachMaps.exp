@@ -50,12 +50,10 @@ public class ForEachMapsTest {
         ForEachHolder holder = Mockito.mock(ForEachHolder.class);
         Map<String, Date> dates = new HashMap<>();
         Date date = Mockito.mock(Date.class);
-        Class<? extends Date> clz = STEPIN;
         String apple = "Foo";
         dates.put(apple, date);
 
         when(holder.getDates()).thenReturn(dates);
-        when(date.getClass()).thenReturn(clz);
         forEachMaps.putVarFromValues(holder);
     }
 }

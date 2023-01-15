@@ -80,7 +80,6 @@ public class Loader {
             loopVar = vars.findVarByOldName(loopVarName, heap);
         }
 
-        boolean enforceLoopVar = false;
         if (nodes.is(exp, SimpleName.class)) {
             /*
              * The simple name is the collection var. No need to validate it as
@@ -94,7 +93,6 @@ public class Loader {
                 collectionVar = vars.findVarByOldName(name, heap);
             }
             forEachVars.put(collectionVar, loopVar);
-            enforceLoopVar = true;
         }
         if (nodes.is(exp, MethodInvocation.class)
                 || nodes.is(exp, SuperMethodInvocation.class)) {
@@ -134,17 +132,10 @@ public class Loader {
                 }
                 if (nonNull(collectionVar)) {
                     forEachVars.put(collectionVar, loopVar);
-                    enforceLoopVar = true;
                 }
             }
         }
-        if (enforceLoopVar) {
-            /*
-             * for load vars use enforce instead of enable as processVarState()
-             * disables these vars.
-             */
-            loopVar.setEnforce(true);
-        }
+        // loop vars are enforced in enableLoads()
     }
 
     /**
@@ -240,9 +231,16 @@ public class Loader {
             if (arg1.isEnable()) {
                 loads.stream().filter(i -> i.getArgs().get(0).equals(arg1))
                         .forEach(i -> i.setEnable(true));
-                // enable second args, if any.
+                /*
+                 * for load vars use enforce instead of enable as
+                 * processVarState() disables these vars.
+                 */
                 if (args.size() > 1) {
+                    // enable both args
+                    args.get(0).setEnforce(true);
                     args.get(1).setEnforce(true);
+                } else {
+                    args.get(0).setEnforce(true);
                 }
             }
         }
@@ -267,5 +265,15 @@ public class Loader {
 
     public Map<IVar, IVar> getForEachVars() {
         return forEachVars;
+    }
+
+    public boolean usedByLoader(final IVar var) {
+        boolean used = false;
+        for (Load load : loads) {
+            if (load.getArgs().contains(var)) {
+                used = true;
+            }
+        }
+        return used;
     }
 }

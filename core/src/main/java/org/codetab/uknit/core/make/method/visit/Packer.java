@@ -210,7 +210,12 @@ public class Packer {
             heap.setTestThrowsException(true);
         }
 
-        if (methods.isStaticCall(exp)) {
+        boolean isInternalCall = methods.isInternalCall(exp,
+                heap.getPatcher().copyAndPatchCallExp(invoke, heap),
+                heap.getMut());
+        boolean isStaticCall = methods.isStaticCall(exp);
+
+        if (isStaticCall && !isInternalCall) {
             invoke.addNature(Nature.STATIC_CALL);
         }
     }

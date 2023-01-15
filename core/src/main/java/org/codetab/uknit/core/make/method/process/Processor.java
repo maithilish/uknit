@@ -67,7 +67,7 @@ public class Processor {
     public void processVars(final Heap heap) {
         varProcessor.markCreation(heap);
         varProcessor.propagateCreationForLinkedVars(heap);
-        varProcessor.propagateRealishForMocks(heap);
+        varProcessor.propagateRealish(heap);
         varProcessor.processCastType(heap);
     }
 
@@ -132,7 +132,7 @@ public class Processor {
         initializerProcessor.processStepins(heap);
     }
 
-    public void processAccessible(final Heap heap) {
-        varProcessor.processAccessible(heap);
+    public void processOfflimits(final Heap heap) {
+        varProcessor.processOfflimits(heap);
     }
 }

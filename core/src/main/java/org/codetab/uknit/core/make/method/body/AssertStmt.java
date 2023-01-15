@@ -8,11 +8,12 @@ import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.Type;
@@ -38,10 +39,31 @@ public class AssertStmt {
         if (expectedVarO.isPresent()) {
             IVar expectedVar = expectedVarO.get();
             Type retType = heap.getCall().getReturnType();
-            boolean created =
-                    expectedVar.isCreated() || expectedVar.is(Nature.REALISH);
+
+            boolean created = expectedVar.isEffectivelyReal();
             String key = asserts.getAssertKey(retType, expectedVar.isMock(),
                     created);
+
+            /*
+             * If expected var is from a static call or if it is not visible
+             * then use assertEquals. Ref itest: invoke.CallStatic.java
+             */
+            Optional<Pack> expectedPackO =
+                    packs.findByVarName(expectedVar.getName(), heap.getPacks());
+            if (expectedPackO.isPresent()) {
+                Pack expectedPack = expectedPackO.get();
+                if (nodes.is(expectedPack.getExp(), MethodInvocation.class)
+                        && expectedPack.is(Nature.STATIC_CALL)) {
+                    key = asserts.getAssertKey(retType, expectedVar.isMock(),
+                            true);
+                }
+                if (expectedPack.getVar().is(
+                        org.codetab.uknit.core.make.model.IVar.Nature.OFFLIMIT)) {
+                    key = asserts.getAssertKey(retType, expectedVar.isMock(),
+                            true);
+                }
+            }
+
             String fmt = asserts.getAssertFormat(key, expectedVar.getName());
             stmt = Optional.of(nodeFactory.createAssertStatement(fmt));
         }

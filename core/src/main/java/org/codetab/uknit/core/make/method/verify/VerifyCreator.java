@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.verify;
 
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Misuses;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -73,6 +76,8 @@ public class VerifyCreator {
         private Packs packs;
         @Inject
         private Methods methods;
+        @Inject
+        private Misuses misuses;
 
         public boolean exclude(final Invoke invoke, final Heap heap) {
             Optional<IVar> callVarO = invoke.getCallVar();
@@ -106,6 +111,18 @@ public class VerifyCreator {
                     return true;
                 }
             }
+
+            if (nonNull(invoke.getVar())) {
+                IVar var = invoke.getVar();
+                if (var.is(Nature.OFFLIMIT)) {
+                    return true;
+                }
+
+                if (misuses.isMisuse(var)) {
+                    return true;
+                }
+            }
+
             return false;
         }
 

@@ -59,9 +59,6 @@ public class NodeGroups {
      * QualifiedName as initializer. Ex: int id = foo.id; Actually this is
      * FieldAccess but AST treats this as QName. Don't know the full impact by
      * allowing it as initializer.
-     *
-     * REVIEW ArrayAccess.class
-     *
      */
     private List<Class<? extends Expression>> allowedAsInitializer = List.of(
             ClassInstanceCreation.class, ArrayCreation.class,

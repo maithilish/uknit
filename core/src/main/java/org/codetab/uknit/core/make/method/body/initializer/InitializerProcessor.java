@@ -84,7 +84,6 @@ public class InitializerProcessor {
         }
     }
 
-    // REVIEW - in initializer package add wrappers.unpack() to all exps
     public void processExps(final Heap heap) {
 
         List<Pack> packList = packs.filterNoInitializers(heap.getPacks(),

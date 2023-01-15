@@ -137,13 +137,14 @@ public class MethodMaker {
 
         processor.processVars(heap);
         processor.processInvokes(heap);
-        processor.processWhenVerify(heap);
 
         processor.processEnhancedFor(heap);
         processor.processLoads(heap);
-        heap.getVars();
 
-        processor.processAccessible(heap);
+        processor.processOfflimits(heap);
+
+        processor.processWhenVerify(heap);
+
         processor.processInitializer(heap);
         processor.processVarState(heap);
 

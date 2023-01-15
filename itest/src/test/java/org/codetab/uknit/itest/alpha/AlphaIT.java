@@ -35,13 +35,7 @@ public class AlphaIT extends ITBase {
 
         configure();
 
-        // addTransientConfig("uknit.createInstance.PayloadReal",
-        // "new PayloadReal();");
-        // addTransientConfig("uknit.createInstance.InfoReal", "new
-        // InfoReal();");
-
-        // addTransientConfig("uknit.createInstance.List", "mock");
-        // addTransientConfig("uknit.createInstance.Stream", "mock");
+        addTransientConfig("uknit.createInstance.Canvas", "new Canvas()");
 
         try {
             generateTestClass();

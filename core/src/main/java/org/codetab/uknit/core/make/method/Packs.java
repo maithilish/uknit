@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -98,7 +99,9 @@ public class Packs {
     }
 
     /**
-     * Find var by an expression.
+     * Find pack by an expression and return its var.
+     *
+     * Ex: Returns Pack [var=foo, exp=bar()] for exp bar().
      *
      * @param exp
      * @param packs
@@ -107,6 +110,30 @@ public class Packs {
     public Optional<IVar> findVarByExp(final Expression exp,
             final List<Pack> packs) {
         return findByExp(exp, packs).map(Pack::getVar);
+    }
+
+    /**
+     * If exp is name then find pack with matching var name and return its var.
+     *
+     * Ex: Pack 1 [var=foo, exp=bar()], Pack 2 [var=baz, exp=foo] then for exp
+     * foo returns Pack 1.
+     *
+     * @param nameExp
+     * @param packs
+     * @return
+     */
+    public Optional<IVar> findVarByName(final Expression nameExp,
+            final List<Pack> packs) {
+
+        checkState(nodes.isName(nameExp));
+
+        String name = nodes.getName(nameExp);
+        Optional<Pack> packO = findByVarName(name, packs);
+        if (packO.isPresent()) {
+            return Optional.ofNullable(packO.get().getVar());
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**

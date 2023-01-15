@@ -36,6 +36,7 @@ public class WhenStmt {
          * same method signature in the first When ignoring others
          */
         for (Invoke invoke : invokes) {
+
             if (invoke.getWhen().isPresent()) {
                 When when = invoke.getWhen().get();
                 Optional<When> sameWhenO =

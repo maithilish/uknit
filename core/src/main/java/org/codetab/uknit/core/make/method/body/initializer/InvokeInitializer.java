@@ -96,18 +96,14 @@ class AllowedInvokes {
         if (callVarO.isPresent() && nonNull(pack.getVar())) {
             IVar callVar = callVarO.get();
             IVar returnVar = pack.getVar();
-            boolean callVarIsMock = callVar.isMock();
-            boolean returnVarIsMock = returnVar.isMock();
-            boolean returnVarIsReal = returnVar.isEffectivelyReal();
+            boolean callVarEffectivelyMock = !callVar.isEffectivelyReal();
+            boolean returnVarEffectivelyMock = !returnVar.isEffectivelyReal();
 
-            if (callVarIsMock && returnVarIsReal) {
-                allowed = false;
-            }
-            if (callVarIsMock && returnVarIsMock) {
+            if (callVarEffectivelyMock) {
                 allowed = false;
             }
 
-            if (callVar.isCreated() && returnVarIsMock) {
+            if (callVar.isCreated() && returnVarEffectivelyMock) {
                 allowed = false;
             }
 

@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.when;
 
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -11,12 +13,14 @@ import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
 import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.When;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Misuses;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
@@ -109,6 +113,8 @@ public class WhenCreator {
         private Types types;
         @Inject
         private Methods methods;
+        @Inject
+        private Misuses misuses;
 
         public boolean exclude(final Invoke invoke, final Heap heap) {
             Optional<IVar> callVarO = invoke.getCallVar();
@@ -142,6 +148,17 @@ public class WhenCreator {
             if (callVarPackO.isPresent()) {
                 IVar var = callVarPackO.get().getVar();
                 if (var.isCreated()) {
+                    return true;
+                }
+            }
+
+            if (nonNull(invoke.getVar())) {
+                IVar var = invoke.getVar();
+                if (var.is(Nature.OFFLIMIT)) {
+                    return true;
+                }
+
+                if (misuses.isMisuse(var)) {
                     return true;
                 }
             }

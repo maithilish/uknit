@@ -29,6 +29,7 @@ public class VarStmt {
         List<Statement> stmts = new ArrayList<>();
         List<IVar> varList = vars.getVarsOfKind(heap, Kind.PARAMETER,
                 Kind.INFER, Kind.LOCAL);
+
         for (IVar var : varList) {
             boolean createStmt = false;
             if (var.is(Kind.PARAMETER)) {
@@ -38,6 +39,7 @@ public class VarStmt {
             } else if (var.is(Kind.LOCAL) && var.isEnable()) {
                 createStmt = true;
             }
+
             if (createStmt) {
                 String initializer = "\"not set\"";
                 if (var.getInitializer().isPresent()) {

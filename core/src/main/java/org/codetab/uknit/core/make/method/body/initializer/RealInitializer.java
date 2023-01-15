@@ -71,17 +71,6 @@ class RealExcludes {
     public boolean exclude(final IVar var, final Optional<Pack> iniPackO) {
         boolean exclude = false;
 
-        // REVIEW - remove this
-        // if (var.isField()) {
-        // String typeClzName = types.getClzName(var.getType());
-        // if (nonNull(typeClzName)
-        // && typeClzName.equals("java.lang.String")) {
-        // exclude = false;
-        // } else {
-        // exclude = true;
-        // }
-        // }
-
         // if exp is static call, assigning mock to var is useless
         if (iniPackO.isPresent() && iniPackO.get().is(Nature.STATIC_CALL)) {
             /*

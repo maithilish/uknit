@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.var.linked.LinkedVarProcessor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 
@@ -20,7 +21,7 @@ public class VarProcessor {
     @Inject
     private VarAssignor varAssignor;
     @Inject
-    private Accessibles accessibles;
+    private Offlimits offlimits;
 
     /**
      * Propagate create to all linked packs.
@@ -72,16 +73,20 @@ public class VarProcessor {
                 .propagateCreationForLinkedVars(pack, heap));
     }
 
-    // REVIEW
-    public void propagateRealishForMocks(final Heap heap) {
-        List<Pack> packList = heap.getPacks().stream().filter(p -> !p.isIm())
+    /**
+     * For each Invoke whose var is mock propagate Nature.REALISH.
+     *
+     * @param heap
+     */
+    public void propagateRealish(final Heap heap) {
+        List<Invoke> packList = heap.getPacks().stream().filter(p -> !p.isIm())
                 .filter(p -> nonNull(p.getVar()) && p.getVar().isMock())
-                .filter(p -> nonNull(p.getExp())
+                .filter(p -> p instanceof Invoke && nonNull(p.getExp())
                         && p.getExp() instanceof MethodInvocation)
-                .collect(Collectors.toList());
+                .map(p -> (Invoke) p).collect(Collectors.toList());
 
-        packList.forEach(pack -> linkedVarProcessor
-                .propagateRealishForMocks(pack, heap));
+        packList.forEach(
+                invoke -> linkedVarProcessor.propagateRealish(invoke, heap));
     }
 
     /**
@@ -116,10 +121,15 @@ public class VarProcessor {
                 pack -> linkedVarProcessor.propogateCastType(pack, heap));
     }
 
-    // REVIEW
-    public void processAccessible(final Heap heap) {
+    /**
+     * Add Nature.OFFLIMIT to the vars that are internal to CUT and not visible
+     * to test class.
+     *
+     * @param heap
+     */
+    public void processOfflimits(final Heap heap) {
         List<Pack> packList = heap.getPacks().stream()
                 .filter(p -> nonNull(p.getVar())).collect(Collectors.toList());
-        packList.forEach(p -> accessibles.addNature(p, heap));
+        packList.forEach(p -> offlimits.addNature(p, heap));
     }
 }

@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
-public class ChainCallIT extends ITBase {
+public class ChainCallRealIT extends ITBase {
 
     @Test
     public void test() throws IOException {
@@ -17,6 +17,9 @@ public class ChainCallIT extends ITBase {
         configure();
 
         try {
+            addTransientConfig("uknit.createInstance.File",
+                    "new File(\"foo\")");
+
             generateTestClass();
 
             File actualFile = getActualFile();

@@ -86,7 +86,13 @@ public class VarEnablers {
         });
     }
 
-    // REVIEW
+    /**
+     * Collect var names used in initializers.
+     *
+     * @param initializerList
+     * @param heap
+     * @return
+     */
     public List<String> collectNamesUsedInInitializers(
             final List<Expression> initializerList, final Heap heap) {
 
@@ -134,6 +140,12 @@ public class VarEnablers {
         return names;
     }
 
+    /**
+     * Enable vars used in initializers.
+     *
+     * @param names
+     * @param heap
+     */
     public void enabledVarsUsedInInitializers(final List<String> names,
             final Heap heap) {
         for (String name : names) {
@@ -148,6 +160,12 @@ public class VarEnablers {
         }
     }
 
+    /**
+     * Get initializers in infer, local and return vars.
+     *
+     * @param heap
+     * @return
+     */
     public List<Expression> getInitializers(final Heap heap) {
         List<Expression> list = new ArrayList<>();
         List<IVar> usedVars = vars.filterVars(heap,

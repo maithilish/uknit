@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.load;
 import java.util.Date;
 import java.util.Map;
 
-public class MapsWithLiteral {
+class MapsWithLiteral {
 
     public Date getUsingString(final Map<String, Date> names) {
         Date date = names.get("foo");

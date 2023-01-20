@@ -8,7 +8,7 @@ import org.codetab.uknit.itest.internal.Model.WebClient;
  * @author m
  *
  */
-public class CallAndAssign {
+class CallAndAssign {
 
     private Factory factory;
 

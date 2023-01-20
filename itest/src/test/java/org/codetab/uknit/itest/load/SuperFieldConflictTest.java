@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class SuperFieldConflictTest {
+class SuperFieldConflictTest {
     @InjectMocks
     private SuperFieldConflict superFieldConflict;
 
@@ -28,8 +28,8 @@ public class SuperFieldConflictTest {
     @Test
     public void testConflicts() {
         List<Date> dates = new ArrayList<>();
-        Date selectedDate = date;
-        dates.add(date);
+        Date selectedDate = new Date();
+        dates.add(selectedDate);
 
         Date actual = superFieldConflict.conflicts(dates);
 

@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.brace;
 
 import org.codetab.uknit.itest.brace.Model.Foo;
 import org.codetab.uknit.itest.brace.Model.Person;
-
-public class QNameTest {
+class QNameTest {
     @InjectMocks
     private QName qName;
 

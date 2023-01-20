@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class ModifyingSetterTest {
+class ModifyingSetterTest {
     @InjectMocks
     private ModifyingSetter modifyingSetter;
 
@@ -28,18 +28,17 @@ public class ModifyingSetterTest {
 
     @Test
     public void testGetName() {
-        String name = "Foo";
-        String expected = "FooBar";
-        modifyingSetter.setName(name);
+        String name = "FooBar";
+        modifyingSetter.setName("Foo");
 
         String actual = modifyingSetter.getName();
 
-        assertEquals(expected, actual);
+        assertEquals(name, actual);
     }
 
     @Test
     public void testSetName() {
-        String name = "Foo";
+        String name = "Bar";
         String apple = name + "Bar";
 
         String actual = modifyingSetter.setName(name);

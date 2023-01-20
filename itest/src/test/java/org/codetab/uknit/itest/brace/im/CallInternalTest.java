@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CallInternalTest {
+class CallInternalTest {
     @InjectMocks
     private CallInternal callInternal;
 

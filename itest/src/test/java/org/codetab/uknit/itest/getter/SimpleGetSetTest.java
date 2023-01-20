@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class SimpleGetSetTest {
+class SimpleGetSetTest {
     @InjectMocks
     private SimpleGetSet simpleGetSet;
 
@@ -36,7 +36,7 @@ public class SimpleGetSetTest {
 
     @Test
     public void testSetName() {
-        String name = "Foo";
+        String name = "Bar";
         simpleGetSet.setName(name);
 
         Object actual = simpleGetSet.getName();

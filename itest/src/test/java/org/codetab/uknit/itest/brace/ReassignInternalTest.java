@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class ReassignInternalTest {
+class ReassignInternalTest {
     @InjectMocks
     private ReassignInternal reassignInternal;
 

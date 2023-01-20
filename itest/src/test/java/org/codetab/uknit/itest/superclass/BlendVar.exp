@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import java.util.Date;
-
-public class BlendVarTest {
+class BlendVarTest {
     @InjectMocks
     private BlendVar blendVar;
 

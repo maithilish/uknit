@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.load;
 
 import java.util.Date;
 import java.util.Map;
-
-public class MapsTest {
+class MapsTest {
     @InjectMocks
     private Maps maps;
 

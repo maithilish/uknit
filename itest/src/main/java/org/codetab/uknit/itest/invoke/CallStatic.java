@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import org.codetab.uknit.itest.invoke.Model.Statics;
 
-public class CallStatic {
+class CallStatic {
 
     public String assignStatic() {
         String name = Statics.getName("foo");

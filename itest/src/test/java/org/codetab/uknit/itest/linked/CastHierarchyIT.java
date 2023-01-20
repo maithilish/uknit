@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
-public class CastHierarchyIT extends ITBase {
+class CastHierarchyIT extends ITBase {
 
     @Test
     public void test() throws IOException {

@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 
@@ -81,7 +81,7 @@ public class CastTest {
 
     @Test
     public void testCastArrayAccess() {
-        Object[] names = {"Foo"};
+        Object[] names = {"foo"};
         String name = (String) names[0];
         String name2 = name;
         String name3 = name2;

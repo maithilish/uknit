@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.superclass;
-
-public class WithoutWithSuperTest {
+class WithoutWithSuperTest {
     @InjectMocks
     private WithoutWithSuper withoutWithSuper;
 

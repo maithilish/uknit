@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.clz;
-
-public class EmptyClzTest {
+class EmptyClzTest {
     @InjectMocks
     private EmptyClz emptyClz;
 

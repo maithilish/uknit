@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import java.text.ParseException;
-
-public class SuperCallsTest {
+class SuperCallsTest {
     @InjectMocks
     private SuperCalls superCalls;
 

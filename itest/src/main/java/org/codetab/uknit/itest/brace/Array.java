@@ -4,7 +4,7 @@ import org.codetab.uknit.itest.brace.Model.Bar;
 import org.codetab.uknit.itest.brace.Model.Foo;
 import org.codetab.uknit.itest.brace.Model.Groups;
 
-public class Array {
+class Array {
 
     public int assignAccessPrimitive() {
         int[] array = new int[(1)];
@@ -21,6 +21,7 @@ public class Array {
         return (array[(0)]);
     }
 
+    // TODO H - load array
     public int[][] createIntTwoDimArray() {
         int[][] anArray = new int[(2)][(3)];
         anArray[(0)][(0)] = (100);

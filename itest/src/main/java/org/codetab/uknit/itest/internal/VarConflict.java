@@ -12,7 +12,7 @@ import org.codetab.uknit.itest.internal.Model.Provider;
  * @author Maithilish
  *
  */
-public class VarConflict {
+class VarConflict {
 
     private Provider provider;
     private Holder otherHolder;

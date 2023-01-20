@@ -4,7 +4,7 @@ import org.codetab.uknit.itest.invoke.Model.Dog;
 import org.codetab.uknit.itest.invoke.Model.Pets;
 import org.codetab.uknit.itest.invoke.ModelOld.Names;
 
-public class MiCreateInstance {
+class MiCreateInstance {
 
     // method invocation in instance creation
     public void process(final Pets pets, final Names names) {

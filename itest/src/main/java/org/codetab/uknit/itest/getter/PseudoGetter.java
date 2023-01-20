@@ -8,7 +8,7 @@ import java.util.Date;
  * @author m
  *
  */
-public class PseudoGetter {
+class PseudoGetter {
 
     private Payload payload;
 

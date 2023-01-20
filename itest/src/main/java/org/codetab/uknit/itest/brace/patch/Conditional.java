@@ -5,7 +5,7 @@ import java.util.Locale;
 import org.codetab.uknit.itest.brace.patch.Model.Bar;
 import org.codetab.uknit.itest.brace.patch.Model.Foo;
 
-public class Conditional {
+class Conditional {
 
     public Locale assignConditional(final Foo foo, final Bar bar) {
         Locale locale = (foo.size()) > 1 ? bar.locale((foo.lang()))

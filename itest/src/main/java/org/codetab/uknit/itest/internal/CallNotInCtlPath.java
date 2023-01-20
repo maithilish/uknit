@@ -10,7 +10,7 @@ import java.util.Date;
  * @author Maithilish
  *
  */
-public class CallNotInCtlPath {
+class CallNotInCtlPath {
 
     private Payload payload;
 

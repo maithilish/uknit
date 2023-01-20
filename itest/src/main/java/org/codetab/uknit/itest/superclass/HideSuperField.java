@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.superclass;
 
-public class HideSuperField extends Vehicle {
+class HideSuperField extends Vehicle {
 
     protected String licensePlate = null;
 

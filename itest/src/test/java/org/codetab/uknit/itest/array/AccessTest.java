@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class AccessTest {
+class AccessTest {
     @InjectMocks
     private Access access;
 

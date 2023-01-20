@@ -9,7 +9,7 @@ import org.codetab.uknit.itest.brace.Model.Person;
  * @author Maithilish
  *
  */
-public class FieldAccess {
+class FieldAccess {
 
     public int assignFieldAccess(final Person person) {
         int id = ((person).id);

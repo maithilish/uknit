@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InterfacesTest {
+class InterfacesTest {
     @InjectMocks
     private Interfaces interfaces;
 
@@ -23,8 +23,8 @@ public class InterfacesTest {
     @Test
     public void testCheck() {
         Person p = Mockito.mock(Person.class);
-        Sex sex = Model.Person.Sex.FEMALE;
-        int apple = 21;
+        Sex sex = Sex.FEMALE;
+        int apple = 18;
 
         when(p.getGender()).thenReturn(sex);
         when(p.getAge()).thenReturn(apple);

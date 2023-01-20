@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class FieldTest {
+class FieldTest {
     @InjectMocks
     private Field field;
 
@@ -39,7 +39,7 @@ public class FieldTest {
     @Test
     public void testGetDateStr() {
         LocalDate dateP = Mockito.mock(LocalDate.class);
-        String apple = "Foo";
+        String apple = "Bar";
 
         when(dateP.toString()).thenReturn(apple);
 
@@ -51,7 +51,7 @@ public class FieldTest {
     @Test
     public void testTreatInitializedFieldAsMock() {
         DateTimeFormatter formatter = Mockito.mock(DateTimeFormatter.class);
-        String apple = "Foo";
+        String apple = "Bar";
 
         when(dateTimeC.format(formatter)).thenReturn(apple);
 
@@ -64,7 +64,7 @@ public class FieldTest {
     public void testHideField() {
         LocalDateTime dateTimeA = Mockito.mock(LocalDateTime.class);
         DateTimeFormatter formatter = Mockito.mock(DateTimeFormatter.class);
-        String apple = "Foo";
+        String apple = "Bar";
 
         when(dateTimeA.format(formatter)).thenReturn(apple);
 

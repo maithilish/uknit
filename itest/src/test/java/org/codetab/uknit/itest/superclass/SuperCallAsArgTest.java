@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class SuperCallAsArgTest {
+class SuperCallAsArgTest {
     @InjectMocks
     private SuperCallAsArg superCallAsArg;
 

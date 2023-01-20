@@ -6,7 +6,7 @@ import org.codetab.uknit.itest.invoke.Model.Dog;
 import org.codetab.uknit.itest.invoke.Model.Pets;
 import org.codetab.uknit.itest.invoke.ModelOld.Names;
 
-public class MiInstanceOf {
+class MiInstanceOf {
 
     // method invocation in instance of
     public void process(final Pets pets, final Names names) {

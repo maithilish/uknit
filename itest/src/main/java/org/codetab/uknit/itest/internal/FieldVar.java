@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.internal;
 
 import java.util.Locale;
 
-public class FieldVar {
+class FieldVar {
 
     private Locale locale;
 

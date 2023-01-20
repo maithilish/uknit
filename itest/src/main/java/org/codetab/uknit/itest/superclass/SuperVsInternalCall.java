@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.superclass;
 
-public class SuperVsInternalCall extends SuperFoo {
+class SuperVsInternalCall extends SuperFoo {
 
     public StringBuilder getInternalFooBar() {
         return internalFooBar(internalBar());

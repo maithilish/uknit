@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.load;
 
 import java.util.Map;
-
-public class ForEachMapsInternalTest {
+class ForEachMapsInternalTest {
     @InjectMocks
     private ForEachMapsInternal forEachMapsInternal;
 

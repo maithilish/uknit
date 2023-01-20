@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.superclass;
 
-public class WithoutWithSuper extends SuperBaz {
+class WithoutWithSuper extends SuperBaz {
 
     public StringBuilder assignPrefix() {
         StringBuilder b = getBaz();

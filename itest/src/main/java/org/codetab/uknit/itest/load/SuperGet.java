@@ -11,8 +11,9 @@ import java.util.List;
  * @author m
  *
  */
-public class SuperGet extends SuperGetHolder {
+class SuperGet extends SuperGetHolder {
 
+    // REVIEW error - item not loaded
     public List<File> getSuperField() {
         return getFieldList();
     }

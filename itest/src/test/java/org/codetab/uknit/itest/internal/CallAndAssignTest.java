@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CallAndAssignTest {
+class CallAndAssignTest {
     @InjectMocks
     private CallAndAssign callAndAssign;
 

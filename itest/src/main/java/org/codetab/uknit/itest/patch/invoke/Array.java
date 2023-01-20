@@ -14,7 +14,7 @@ import org.codetab.uknit.itest.patch.invoke.Model.Foo;
  * @author Maithilish
  *
  */
-public class Array {
+class Array {
 
     public Locale[] assignArrayCreation(final Foo foo) {
         Locale[] locales = new Locale[foo.size()];

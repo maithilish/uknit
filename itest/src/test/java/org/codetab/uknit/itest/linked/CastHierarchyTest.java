@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastHierarchyTest {
+class CastHierarchyTest {
     @InjectMocks
     private CastHierarchy castHierarchy;
 
@@ -24,9 +24,9 @@ public class CastHierarchyTest {
     @Test
     public void testHigerLast() {
         Dog obj = Mockito.mock(Dog.class);
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String apple = "Foo";
-        Dog dog = obj;
+        Dog dog = (Dog) obj;
         String grape = "Bar";
 
         when(pet.sex()).thenReturn(apple);
@@ -40,9 +40,9 @@ public class CastHierarchyTest {
     @Test
     public void testLowerLast() {
         Dog obj = Mockito.mock(Dog.class);
-        Dog dog = obj;
+        Dog dog = (Dog) obj;
         String apple = "Foo";
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String grape = "Bar";
 
         when(dog.breed()).thenReturn(apple);
@@ -56,11 +56,11 @@ public class CastHierarchyTest {
     @Test
     public void testHigherMiddle() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Dog dog = obj;
+        Dog dog = (Dog) obj;
         String apple = "Foo";
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String grape = "Bar";
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String orange = "Baz";
 
         when(dog.breed()).thenReturn(apple);
@@ -75,11 +75,11 @@ public class CastHierarchyTest {
     @Test
     public void testHigherLast() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Dog dog = obj;
+        Dog dog = (Dog) obj;
         String apple = "Foo";
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String grape = "Bar";
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String orange = "Baz";
 
         when(dog.breed()).thenReturn(apple);
@@ -94,11 +94,11 @@ public class CastHierarchyTest {
     @Test
     public void testHigherFirst() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String apple = "Foo";
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String grape = "Bar";
-        Dog dog = obj;
+        Dog dog = (Dog) obj;
         String orange = "Baz";
 
         when(pitbull.name()).thenReturn(apple);

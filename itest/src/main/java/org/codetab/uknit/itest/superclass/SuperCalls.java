@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.superclass;
 
 import java.text.ParseException;
 
-public class SuperCalls extends SuperBar {
+class SuperCalls extends SuperBar {
 
     public Bar assignFromSuperCreate() {
         Bar bar = super.createBar();

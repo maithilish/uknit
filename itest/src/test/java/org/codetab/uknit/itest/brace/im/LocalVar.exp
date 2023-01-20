@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.brace.im;
-
-public class LocalVarTest {
+class LocalVarTest {
     @InjectMocks
     private LocalVar localVar;
 

@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.qname;
 import org.codetab.uknit.itest.qname.Model.Foo;
 import org.codetab.uknit.itest.qname.Model.Person;
 
-public class QName {
+class QName {
 
     public int assignQName(final Person person) {
         int id = person.id;

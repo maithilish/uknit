@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("unused")
-public class Field {
+class Field {
 
     private static final Logger LOG = LogManager.getLogger();
     private static LocalDate staticDate;

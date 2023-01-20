@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CallInternalTest {
+class CallInternalTest {
     @InjectMocks
     private CallInternal callInternal;
 
@@ -72,10 +72,10 @@ public class CallInternalTest {
         assertSame(person, actual);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testProcessSameName() throws Exception {
         QFactory qFactory = Mockito.mock(QFactory.class);
+        @SuppressWarnings("unchecked")
         BlockingQueue<Person> q2 = Mockito.mock(BlockingQueue.class);
         BlockingQueue<Person> q = q2;
         Person person = Mockito.mock(Person.class);
@@ -90,10 +90,10 @@ public class CallInternalTest {
         verify(q2).clear();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testProcessDiffName() throws Exception {
         QFactory qFactory = Mockito.mock(QFactory.class);
+        @SuppressWarnings("unchecked")
         BlockingQueue<Person> q2 = Mockito.mock(BlockingQueue.class);
         BlockingQueue<Person> q = q2;
         Person person = Mockito.mock(Person.class);

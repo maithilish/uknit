@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class NameChangeTest {
+class NameChangeTest {
     @InjectMocks
     private NameChange nameChange;
 

@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.codetab.uknit.itest.brace.patch.Model.Foo;
 
-public class Cast {
+class Cast {
 
     public Locale createAssignCast() {
         Object obj = new Locale("en");

@@ -4,8 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import org.codetab.uknit.itest.internal.Model.Foo;
 import org.codetab.uknit.itest.internal.Model.Person;
 import org.codetab.uknit.itest.internal.Model.QFactory;
-
-public class CallInternalTest {
+class CallInternalTest {
     @InjectMocks
     private CallInternal callInternal;
 

@@ -105,8 +105,8 @@ public class SourceVisitor extends ASTVisitor {
      * generated test class.
      */
     public void postProcess() {
-        clzMaker.annotateFields(configs);
-        clzMaker.removeFields(configs);
+        clzMaker.annotateFields();
+        clzMaker.removeFields();
 
         if (configs.getConfig("uknit.detect.getterSetter", true)) {
             getterSetter.postProcess();

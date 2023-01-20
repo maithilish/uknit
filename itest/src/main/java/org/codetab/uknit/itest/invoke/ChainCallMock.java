@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import org.codetab.uknit.itest.invoke.Model.Pet;
 import org.codetab.uknit.itest.invoke.Model.Pets;
 
-public class ChainCallMock {
+class ChainCallMock {
 
     public List<Pet> assignInfer(final Pets pets) {
         List<Pet> dogs = pets.getPets().get("dog");

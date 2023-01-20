@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import org.codetab.uknit.itest.brace.Model.Contacts;
 import org.codetab.uknit.itest.brace.Model.Foo;
 import org.codetab.uknit.itest.brace.Model.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class FieldAccessTest {
+class FieldAccessTest {
     @InjectMocks
     private FieldAccess fieldAccess;
 
@@ -68,31 +69,43 @@ public class FieldAccessTest {
     }
 
     /*
-     * not possible to test. For invoke person.contacts.getHome(), the exp is
-     * person.contacts for which it is not possible use
-     * when(person.contacts).thenReturn(..)
+     * Not possible to test with mocks. The exp person.contacts in invoke
+     * person.contacts.getHome(), is field access and Mockito when is not
+     * allowed.
      */
-    // @Test
-    // public void testAssignFieldAccessInInvokeExp() {
-    // Foo foo = Mockito.mock(Foo.class);
-    // Person person = Mockito.mock(Person.class);
-    // String home = "Foo";
-    //
-    // String actual = fieldAccess.assignFieldAccessInInvokeExp(foo, person);
-    //
-    // assertEquals(home, actual);
-    // }
-    //
-    // @Test
-    // public void testReturnFieldAccessInInvokeExp() {
-    // Foo foo = Mockito.mock(Foo.class);
-    // Person person = Mockito.mock(Person.class);
-    // String apple = "Foo";
-    //
-    // String actual = fieldAccess.returnFieldAccessInInvokeExp(foo, person);
-    //
-    // assertEquals(apple, actual);
-    // }
+    @Test
+    public void testAssignFieldAccessInInvokeExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = new Person(1);
+        person.contacts = new Contacts() {
+            @Override
+            public String getHome() {
+                return "Foo";
+            }
+        };
+        String home = "Foo";
+
+        String actual = fieldAccess.assignFieldAccessInInvokeExp(foo, person);
+
+        assertEquals(home, actual);
+    }
+
+    @Test
+    public void testReturnFieldAccessInInvokeExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = new Person(1);
+        person.contacts = new Contacts() {
+            @Override
+            public String getHome() {
+                return "Foo";
+            }
+        };
+        String apple = "Foo";
+
+        String actual = fieldAccess.returnFieldAccessInInvokeExp(foo, person);
+
+        assertEquals(apple, actual);
+    }
 
     @Test
     public void testAssignInfixFieldAccess() {
@@ -217,7 +230,7 @@ public class FieldAccessTest {
     @Test
     public void testReturnFieldAccessInArrayCreation() {
         Person person = Mockito.mock(Person.class);
-        String[] apple = new String[(((person).id))];
+        String[] apple = new String[0];
 
         String[] actual = fieldAccess.returnFieldAccessInArrayCreation(person);
 
@@ -228,7 +241,7 @@ public class FieldAccessTest {
     public void testAssignFieldAccessInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String name = names[((person).id)];
+        String name = names[0];
 
         String actual =
                 fieldAccess.assignFieldAccessInArrayAccess(names, person);
@@ -240,7 +253,7 @@ public class FieldAccessTest {
     public void testReturnFieldAccessInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String apple = names[(((person).id))];
+        String apple = names[0];
 
         String actual =
                 fieldAccess.returnFieldAccessInArrayAccess(names, person);

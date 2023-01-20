@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class FieldVarTest {
+class FieldVarTest {
     @InjectMocks
     private FieldVar fieldVar;
 

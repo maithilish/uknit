@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InlineArgTest {
+class InlineArgTest {
     @InjectMocks
     private InlineArg inlineArg;
 
@@ -146,9 +146,9 @@ public class InlineArgTest {
     @Test
     public void testStaticCallArg() {
         Foo foo = Mockito.mock(Foo.class);
-        Integer apple = Integer.valueOf(10);
+        Integer apple = 10;
         String mango = "Foo";
-        Integer orange = Integer.valueOf(20);
+        Integer orange = 20;
         String banana = "Bar";
         String kiwi = banana;
 

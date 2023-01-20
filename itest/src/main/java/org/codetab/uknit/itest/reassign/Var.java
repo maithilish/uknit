@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.reassign;
 
 import org.codetab.uknit.itest.reassign.Model.Foo;
 
-public class Var {
+class Var {
 
     public String defineAndAssign(final Foo foo) {
         int index = 1;

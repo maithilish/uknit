@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.brace.im;
 
 import java.util.Locale;
-
-public class FieldVarTest {
+class FieldVarTest {
     @InjectMocks
     private FieldVar fieldVar;
 

@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.create;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateReal {
+class CreateReal {
 
     public String createString() {
         String foo = new String();

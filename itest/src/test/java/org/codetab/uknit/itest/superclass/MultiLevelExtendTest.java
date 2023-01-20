@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class MultiLevelExtendTest {
+class MultiLevelExtendTest {
     @InjectMocks
     private MultiLevelExtend multiLevelExtend;
 

@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InfixTest {
+class InfixTest {
     @InjectMocks
     private Infix infix;
 
@@ -158,8 +158,8 @@ public class InfixTest {
     @Test
     public void testAssignArrayAccessInfix() {
         Foo foo = Mockito.mock(Foo.class);
-        String[] names = {"foo"};
-        int apple = -1;
+        String[] names = {"foo", "bar"};
+        int apple = 0;
         String name = names[apple + 1];
 
         when(foo.size()).thenReturn(apple);
@@ -172,8 +172,8 @@ public class InfixTest {
     @Test
     public void testReturnArrayAccessInfix() {
         Foo foo = Mockito.mock(Foo.class);
-        String[] names = {"foo"};
-        int apple = -1;
+        String[] names = {"foo", "bar"};
+        int apple = 0;
         String grape = names[apple + 1];
 
         when(foo.size()).thenReturn(apple);

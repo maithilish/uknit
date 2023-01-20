@@ -3,8 +3,7 @@ package org.codetab.uknit.itest.brace.linked;
 import java.util.Date;
 import java.util.Locale;
 import org.codetab.uknit.itest.brace.linked.Model.Foo;
-
-public class EnabledTest {
+class EnabledTest {
     @InjectMocks
     private Enabled enabled;
 

@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.array;
 
-public class Access {
+class Access {
 
     public int assignAccessPrimitive() {
         int[] array = new int[1];

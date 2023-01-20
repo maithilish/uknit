@@ -13,7 +13,7 @@ import org.codetab.uknit.itest.brace.patch.Model.Foo;
  * @author Maithilish
  *
  */
-public class Invoke {
+class Invoke {
 
     public Locale assignInvoke(final Bar bar, final Foo foo) {
         Locale locale = (bar.locale((foo.lang())));
@@ -43,7 +43,10 @@ public class Invoke {
     }
 
     /*
-     * TODO H - args of invoke on real or created should be real
+     * TODO H - Args of invoke on real or created should be real. If you pass
+     * mock locale to getDisplayName() of created locale then error may occur.
+     * In the method some code may call methods of mock locale which results in
+     * null pointer exception.
      *
      * It is bit complicated, collections may be real but it can hold mocks and
      * the arg of collection methods can be mock or real.

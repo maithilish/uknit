@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.codetab.uknit.itest.infix.Model.Person;
 
-public class SimpleInfix {
+class SimpleInfix {
 
     public boolean assignInfixLeft(final File file, final File other) {
         boolean eq = file.compareTo(other) == 1;

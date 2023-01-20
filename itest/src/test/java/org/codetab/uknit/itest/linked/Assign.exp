@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.linked;
 
 import java.util.Locale;
 import org.codetab.uknit.itest.linked.Model.Foo;
-
-public class AssignTest {
+class AssignTest {
     @InjectMocks
     private Assign assign;
 

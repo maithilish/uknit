@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class EnumsTest {
+class EnumsTest {
     @InjectMocks
     private Enums enums;
 
@@ -43,7 +43,7 @@ public class EnumsTest {
     @Test
     public void testMi() {
         Account a = Mockito.mock(Account.class);
-        Type type = Model.Account.Type.OVERDRAFT;
+        Type type = Type.OVERDRAFT;
 
         when(a.getType()).thenReturn(type);
 
@@ -55,7 +55,7 @@ public class EnumsTest {
     @Test
     public void testAssignmentMi() {
         Account a = Mockito.mock(Account.class);
-        Type t = Model.Account.Type.OVERDRAFT;
+        Type t = Type.OVERDRAFT;
 
         when(a.getType()).thenReturn(t);
 
@@ -66,7 +66,7 @@ public class EnumsTest {
 
     @Test
     public void testParameter() {
-        Type type = Model.Account.Type.OVERDRAFT;
+        Type type = Type.OVERDRAFT;
 
         Type actual = enums.parameter(type);
 

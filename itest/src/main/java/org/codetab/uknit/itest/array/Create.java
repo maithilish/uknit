@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.array;
 
-public class Create {
+class Create {
 
     public int[] createIntArray() {
         int[] anArray = new int[2];

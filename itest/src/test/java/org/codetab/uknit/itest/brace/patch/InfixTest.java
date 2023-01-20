@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InfixTest {
+class InfixTest {
     @InjectMocks
     private Infix infix;
 

@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.brace;
 
 import org.codetab.uknit.itest.brace.Model.Foo;
-
-public class ReassignTest {
+class ReassignTest {
     @InjectMocks
     private Reassign reassign;
 

@@ -8,7 +8,7 @@ import org.codetab.uknit.itest.brace.im.Model.WebClient;
  * @author m
  *
  */
-public class CallAndAssign {
+class CallAndAssign {
 
     private Factory factory;
 

@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.qname;
 
 import org.codetab.uknit.itest.qname.Model.Foo;
 import org.codetab.uknit.itest.qname.Model.Person;
-
-public class QNameTest {
+class QNameTest {
     @InjectMocks
     private QName qName;
 

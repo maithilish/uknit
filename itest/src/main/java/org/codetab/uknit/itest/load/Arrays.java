@@ -5,7 +5,7 @@ import org.codetab.uknit.itest.load.Model.Pets;
 
 // TODO N - add feature to load array.
 
-public class Arrays {
+class Arrays {
 
     public int[] createIntArray() {
         int[] anArray = new int[2];

@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.array;
-
-public class CreateTest {
+class CreateTest {
     @InjectMocks
     private Create create;
 

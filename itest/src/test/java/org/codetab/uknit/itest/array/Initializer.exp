@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.array;
-
-public class InitializerTest {
+class InitializerTest {
     @InjectMocks
     private Initializer initializer;
 

@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-public class SuperCallAsArg extends SuperFactory {
+class SuperCallAsArg extends SuperFactory {
 
     public boolean callInternalCreateArgInSuper() {
         return internalFoo(super.getDate(), super.getDate());

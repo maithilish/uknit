@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.Iterators;
 
-public class ChainCallRealTest {
+class ChainCallRealTest {
     @InjectMocks
     private ChainCallReal chainCallReal;
 

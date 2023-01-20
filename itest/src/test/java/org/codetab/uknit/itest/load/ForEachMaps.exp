@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.load;
 
 import java.util.Date;
 import java.util.Map;
-
-public class ForEachMapsTest {
+class ForEachMapsTest {
     @InjectMocks
     private ForEachMaps forEachMaps;
 

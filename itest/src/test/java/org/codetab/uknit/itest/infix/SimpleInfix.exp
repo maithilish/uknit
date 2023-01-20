@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.infix;
 
 import java.io.File;
 import org.codetab.uknit.itest.infix.Model.Person;
-
-public class SimpleInfixTest {
+class SimpleInfixTest {
     @InjectMocks
     private SimpleInfix simpleInfix;
 

@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.initializer;
 
 import java.io.File;
 import java.io.IOException;
-
-public class MockTest {
+class MockTest {
     @InjectMocks
     private Mock mock;
 

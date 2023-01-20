@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class HideSuperFieldTest {
+class HideSuperFieldTest {
     @InjectMocks
     private HideSuperField hideSuperField;
 
@@ -19,7 +19,7 @@ public class HideSuperFieldTest {
 
     @Test
     public void testSetLicensePlate() {
-        String license = "Foo";
+        String license = "Baz";
         hideSuperField.setLicensePlate(license);
 
         Object actual = hideSuperField.getLicensePlate();
@@ -39,7 +39,7 @@ public class HideSuperFieldTest {
 
     @Test
     public void testUpdateLicensePlate() {
-        String license = "Foo";
+        String license = "Baz";
         hideSuperField.updateLicensePlate(license);
     }
 }

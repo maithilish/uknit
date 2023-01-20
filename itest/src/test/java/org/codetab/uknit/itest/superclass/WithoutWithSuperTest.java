@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class WithoutWithSuperTest {
+class WithoutWithSuperTest {
     @InjectMocks
     private WithoutWithSuper withoutWithSuper;
 

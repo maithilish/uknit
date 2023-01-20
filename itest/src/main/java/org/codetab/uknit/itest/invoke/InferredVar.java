@@ -5,7 +5,7 @@ import java.io.File;
 import org.codetab.uknit.itest.invoke.ModelOld.Address;
 import org.codetab.uknit.itest.invoke.ModelOld.Person;
 
-public class InferredVar {
+class InferredVar {
 
     public StringBuilder chainedCall(final StringBuilder s1,
             final StringBuilder s2, final File file) {

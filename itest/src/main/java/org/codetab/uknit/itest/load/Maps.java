@@ -8,7 +8,7 @@ import java.util.Map;
  * @author m
  *
  */
-public class Maps {
+class Maps {
 
     public Date getAssign(final Map<String, Date> names) {
         String key = "foo";

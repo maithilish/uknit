@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.load;
 
-public class Model {
+class Model {
 
     interface Foo {
 

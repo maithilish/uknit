@@ -10,7 +10,7 @@ import org.codetab.uknit.itest.linked.Model.Pitbull;
  * @author Maithilish
  *
  */
-public class CastHierarchy {
+class CastHierarchy {
 
     public String higerLast(final Object obj) {
         Pet pet = (Pet) obj;

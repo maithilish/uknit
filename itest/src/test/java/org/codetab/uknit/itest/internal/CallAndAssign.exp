@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.internal;
 
 import org.codetab.uknit.itest.internal.Model.Factory;
 import org.codetab.uknit.itest.internal.Model.WebClient;
-
-public class CallAndAssignTest {
+class CallAndAssignTest {
     @InjectMocks
     private CallAndAssign callAndAssign;
 

@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class MapsWithLiteralTest {
+class MapsWithLiteralTest {
     @InjectMocks
     private MapsWithLiteral mapsWithLiteral;
 

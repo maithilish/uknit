@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastHierarchyInternalTest {
+class CastHierarchyInternalTest {
     @InjectMocks
     private CastHierarchyInternal castHierarchyInternal;
 
@@ -24,10 +24,10 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigerLast() {
         Dog obj = Mockito.mock(Dog.class);
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String apple = "Foo";
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String grape = "Bar";
 
@@ -42,10 +42,10 @@ public class CastHierarchyInternalTest {
     @Test
     public void testLowerLast() {
         Dog obj = Mockito.mock(Dog.class);
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String apple = "Foo";
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String grape = "Bar";
 
@@ -60,13 +60,13 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherMiddle() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String apple = "Foo";
-        Pitbull pitbull2 = (obj);
+        Pitbull pitbull2 = (Pitbull) (obj);
         Pitbull pitbull = pitbull2;
         String grape = "Bar";
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String orange = "Baz";
 
@@ -82,13 +82,13 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherLast() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String apple = "Foo";
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String grape = "Bar";
-        Pitbull pitbull2 = (obj);
+        Pitbull pitbull2 = (Pitbull) (obj);
         Pitbull pitbull = pitbull2;
         String orange = "Baz";
 
@@ -104,13 +104,13 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherFirst() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Pitbull pitbull2 = (obj);
+        Pitbull pitbull2 = (Pitbull) (obj);
         Pitbull pitbull = pitbull2;
         String apple = "Foo";
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String grape = "Bar";
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String orange = "Baz";
 
@@ -126,9 +126,9 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigerLastMix() {
         Dog obj = Mockito.mock(Dog.class);
-        Pet pet = (obj);
+        Pet pet = (Pet) (obj);
         String apple = "Foo";
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String grape = "Bar";
 
@@ -143,9 +143,9 @@ public class CastHierarchyInternalTest {
     @Test
     public void testLowerLastMix() {
         Dog obj = Mockito.mock(Dog.class);
-        Dog dog = (obj);
+        Dog dog = (Dog) (obj);
         String apple = "Foo";
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String grape = "Bar";
 
@@ -160,12 +160,12 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherMiddleMix() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String apple = "Foo";
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String grape = "Bar";
-        Pet pet2 = (obj);
+        Pet pet2 = (Pet) (obj);
         Pet pet = pet2;
         String orange = "Baz";
 
@@ -181,11 +181,11 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherLastMix() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Dog dog = (obj);
+        Dog dog = (Dog) (obj);
         String apple = "Foo";
-        Pet pet = (obj);
+        Pet pet = (Pet) (obj);
         String grape = "Bar";
-        Pitbull pitbull2 = (obj);
+        Pitbull pitbull2 = (Pitbull) (obj);
         Pitbull pitbull = pitbull2;
         String orange = "Baz";
 
@@ -201,11 +201,11 @@ public class CastHierarchyInternalTest {
     @Test
     public void testHigherFirstMix() {
         Pitbull obj = Mockito.mock(Pitbull.class);
-        Pitbull pitbull = obj;
+        Pitbull pitbull = (Pitbull) obj;
         String apple = "Foo";
-        Pet pet = obj;
+        Pet pet = (Pet) obj;
         String grape = "Bar";
-        Dog dog2 = (obj);
+        Dog dog2 = (Dog) (obj);
         Dog dog = dog2;
         String orange = "Baz";
 

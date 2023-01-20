@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 
@@ -141,7 +141,7 @@ public class CastTest {
     public void testAssginMultiCast() {
         Foo foo = Mockito.mock(Foo.class);
         FileInputStream fileInputStream = Mockito.mock(FileInputStream.class);
-        FileInputStream bar = (FileInputStream) fileInputStream;
+        FileInputStream bar = fileInputStream;
 
         when(foo.obj()).thenReturn(fileInputStream);
 

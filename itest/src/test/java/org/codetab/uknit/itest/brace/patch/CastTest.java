@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 
@@ -25,7 +25,7 @@ public class CastTest {
     @Test
     public void testCreateAssignCast() {
         Locale obj = new Locale("en");
-        Locale locale = obj;
+        Locale locale = (Locale) obj;
 
         Locale actual = cast.createAssignCast();
 
@@ -45,7 +45,7 @@ public class CastTest {
     public void testAssignCast() {
         Foo foo = Mockito.mock(Foo.class);
         Locale locale2 = Mockito.mock(Locale.class);
-        Locale locale = locale2;
+        Locale locale = (Locale) locale2;
 
         when(foo.obj()).thenReturn(locale2);
 
@@ -70,7 +70,7 @@ public class CastTest {
     public void testInvokeAssignCast() {
         Foo foo = Mockito.mock(Foo.class);
         Locale obj = Mockito.mock(Locale.class);
-        Locale locale = obj;
+        Locale locale = (Locale) obj;
 
         when(foo.obj()).thenReturn(obj);
 

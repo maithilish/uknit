@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class SuperGetTest {
+class SuperGetTest {
     @InjectMocks
     private SuperGet superGet;
 

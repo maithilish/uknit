@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.internal;
 import org.codetab.uknit.itest.internal.Model.Foo;
 import org.codetab.uknit.itest.internal.Model.Person;
 
-public class InlineArg {
+class InlineArg {
 
     private String imc(final Foo foo, final int index) {
         return foo.get(index);

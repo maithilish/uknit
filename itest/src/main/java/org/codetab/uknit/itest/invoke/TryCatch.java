@@ -9,7 +9,7 @@ package org.codetab.uknit.itest.invoke;
  * @author m
  *
  */
-public class TryCatch {
+class TryCatch {
 
     private DataDao dataDao;
     private Document document;

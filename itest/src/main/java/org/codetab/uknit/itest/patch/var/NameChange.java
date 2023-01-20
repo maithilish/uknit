@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.patch.var;
 import org.codetab.uknit.itest.patch.var.Model.Factory;
 import org.codetab.uknit.itest.patch.var.Model.Foo;
 
-public class NameChange {
+class NameChange {
 
     private Factory factory;
 

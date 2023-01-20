@@ -9,7 +9,7 @@ import org.codetab.uknit.itest.fieldaccess.Model.Person;
  * @author Maithilish
  *
  */
-public class FieldAccess {
+class FieldAccess {
 
     public int assignFieldAccess(final Person person) {
         int id = (person).id;
@@ -31,6 +31,7 @@ public class FieldAccess {
         return foo.get((person).id);
     }
 
+    // REVIEW - has error
     public String assignFieldAccessInInvokeExp(final Foo foo,
             final Person person) {
         String home = person.contacts.getHome();

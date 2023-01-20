@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.internal;
-
-public class LocalVarTest {
+class LocalVarTest {
     @InjectMocks
     private LocalVar localVar;
 

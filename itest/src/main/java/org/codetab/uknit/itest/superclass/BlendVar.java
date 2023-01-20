@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.superclass;
 
 import java.util.Date;
 
-public class BlendVar extends SuperBlendVar {
+class BlendVar extends SuperBlendVar {
 
     // mock
     public Date invokeInternalMock(final AFactory aFactory) {

@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class MapsTest {
+class MapsTest {
     @InjectMocks
     private Maps maps;
 
@@ -118,6 +118,7 @@ public class MapsTest {
     @Test
     public void testForValuesAssignMapHolder() {
         MapHolder holder = Mockito.mock(MapHolder.class);
+
         Date d = Mockito.mock(Date.class);
         Date date = d;
         Map<String, Date> map = new HashMap<>();
@@ -134,9 +135,8 @@ public class MapsTest {
     @Test
     public void testForKeySetAssign() {
         Map<String, Date> names = new HashMap<>();
-
+        String name = "Foo";
         String str = "Foo";
-        String name = str;
         Date apple = Mockito.mock(Date.class);
         names.put(str, apple);
 
@@ -148,9 +148,8 @@ public class MapsTest {
     @Test
     public void testForKeySetAssignMapHolder() {
         MapHolder holder = Mockito.mock(MapHolder.class);
-
+        String name = "Foo";
         String str = "Foo";
-        String name = str;
         Map<String, Date> map = new HashMap<>();
         Date apple = Mockito.mock(Date.class);
         map.put(str, apple);

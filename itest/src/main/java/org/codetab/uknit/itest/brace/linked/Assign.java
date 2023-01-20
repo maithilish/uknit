@@ -11,7 +11,7 @@ import org.codetab.uknit.itest.brace.linked.Model.Foo;
  * @author Maithilish
  *
  */
-public class Assign {
+class Assign {
 
     public Locale assignCreated() {
         Locale locale = ((new Locale(("en"))));

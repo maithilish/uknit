@@ -13,7 +13,7 @@ import org.codetab.uknit.itest.patch.invoke.Model.Foo;
  * @author Maithilish
  *
  */
-public class Invoke {
+class Invoke {
 
     public Locale assignInvoke(final Bar bar, final Foo foo) {
         Locale locale = bar.locale(foo.lang());

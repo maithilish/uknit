@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.clz;
 
 import java.util.Date;
 
-public class MultiClz {
+class MultiClz {
 
     private Date fooBirthDay;
 

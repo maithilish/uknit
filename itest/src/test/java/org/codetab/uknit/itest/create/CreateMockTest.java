@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class CreateMockTest {
+class CreateMockTest {
     @InjectMocks
     private CreateMock createMock;
 

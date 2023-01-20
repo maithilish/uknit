@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.brace;
 
 import java.util.Locale;
-
-public class RecursiveTest {
+class RecursiveTest {
     @InjectMocks
     private Recursive recursive;
 

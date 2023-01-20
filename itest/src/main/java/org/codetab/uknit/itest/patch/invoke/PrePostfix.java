@@ -6,6 +6,6 @@ package org.codetab.uknit.itest.patch.invoke;
  * @author Maithilish
  *
  */
-public class PrePostfix {
+class PrePostfix {
 
 }

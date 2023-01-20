@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.brace;
 
 import java.util.Locale;
 
-public class Recursive {
+class Recursive {
 
     public int array1() {
         int[] array = new int[(3)];

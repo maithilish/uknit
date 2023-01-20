@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.codetab.uknit.itest.invoke.Model.Pet;
 import org.codetab.uknit.itest.invoke.Model.Pets;
-
-public class ChainCallMockTest {
+class ChainCallMockTest {
     @InjectMocks
     private ChainCallMock chainCallMock;
 

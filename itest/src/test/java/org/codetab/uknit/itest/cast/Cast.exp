@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.cast;
 
 import org.codetab.uknit.itest.cast.Model.Dog;
 import org.codetab.uknit.itest.cast.Model.Pets;
-
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 

@@ -3,8 +3,7 @@ package org.codetab.uknit.itest.superclass;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-
-public class SuperCallAsArgTest {
+class SuperCallAsArgTest {
     @InjectMocks
     private SuperCallAsArg superCallAsArg;
 

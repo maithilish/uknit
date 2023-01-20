@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class PseudoGetterTest {
+class PseudoGetterTest {
     @InjectMocks
     private PseudoGetter pseudoGetter;
 

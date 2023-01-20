@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.load;
 import java.util.Date;
 import java.util.Map;
 
-public class ForEachMaps {
+class ForEachMaps {
 
     private ForEachHolder collectorHolder;
 

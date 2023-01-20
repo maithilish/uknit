@@ -5,7 +5,7 @@ import java.util.Locale;
 import org.codetab.uknit.itest.patch.invoke.Model.Bar;
 import org.codetab.uknit.itest.patch.invoke.Model.Foo;
 
-public class Conditional {
+class Conditional {
 
     public Locale assignConditional(final Foo foo, final Bar bar) {
         Locale locale =

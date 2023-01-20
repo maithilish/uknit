@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class StaticCallTest {
+class StaticCallTest {
     @InjectMocks
     private StaticCall staticCall;
 
@@ -96,7 +96,7 @@ public class StaticCallTest {
     @Test
     public void testStaticField() {
         Payload mockPayload = Mockito.mock(Payload.class);
-        long id = 0;
+        long id = 0L;
 
         long actual = staticCall.staticField(mockPayload);
 
@@ -106,7 +106,7 @@ public class StaticCallTest {
     @Test
     public void testReturnStaticField() {
         Payload mockPayload = Mockito.mock(Payload.class);
-        long apple = 1;
+        long apple = 1L;
 
         long actual = staticCall.returnStaticField(mockPayload);
 
@@ -151,7 +151,7 @@ public class StaticCallTest {
 
     @Test
     public void testAssignStaticSuperField() {
-        long apple = 1;
+        long apple = 1L;
 
         long actual = staticCall.assignStaticSuperField();
 
@@ -160,7 +160,7 @@ public class StaticCallTest {
 
     @Test
     public void testReturnStaticSuperField() {
-        long apple = 1;
+        long apple = 1L;
 
         long actual = staticCall.returnStaticSuperField();
 
@@ -222,16 +222,16 @@ public class StaticCallTest {
         assertEquals(realPayload, actual);
     }
 
-    @SuppressWarnings("unused")
     @Test
     public void testAssignStaticSuperRealParameterWithoutSuper() {
         Payload realPayload = new Payload();
         Payload rpay = realPayload;
+        rpay.getRealJobInfo().setId(1);
 
         Payload actual =
                 staticCall.assignStaticSuperRealParameterWithoutSuper();
 
-        // assertEquals(rpay, actual);
+        assertEquals(rpay, actual);
     }
 
     @Test
@@ -245,15 +245,15 @@ public class StaticCallTest {
         assertEquals(payload2, actual);
     }
 
-    @SuppressWarnings("unused")
     @Test
     public void testAssignStaticSuperRealParameter() {
         Payload realPayload = new Payload();
         Payload rpay = realPayload;
+        rpay.getRealJobInfo().setId(1);
 
         Payload actual = staticCall.assignStaticSuperRealParameter();
 
-        // assertEquals(rpay, actual);
+        assertEquals(rpay, actual);
     }
 
     @Test

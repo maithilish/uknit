@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.load;
 
 import java.util.List;
-
-public class ListsTest {
+class ListsTest {
     @InjectMocks
     private Lists lists;
 

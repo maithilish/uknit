@@ -4,8 +4,7 @@ import java.util.List;
 import org.codetab.uknit.itest.array.Model.Bar;
 import org.codetab.uknit.itest.array.Model.Foo;
 import org.codetab.uknit.itest.array.Model.Groups;
-
-public class InferTest {
+class InferTest {
     @InjectMocks
     private Infer infer;
 

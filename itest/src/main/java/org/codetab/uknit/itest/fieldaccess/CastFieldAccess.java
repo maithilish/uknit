@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.fieldaccess;
 import org.codetab.uknit.itest.fieldaccess.Model.Foo;
 import org.codetab.uknit.itest.fieldaccess.Model.Person;
 
-public class CastFieldAccess {
+class CastFieldAccess {
 
     public int assignQName(final Person person) {
         int lid = (int) (person).lid;

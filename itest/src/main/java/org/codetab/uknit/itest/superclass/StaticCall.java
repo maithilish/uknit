@@ -9,7 +9,7 @@ import static java.util.Objects.isNull;
  * @author Maithilish
  *
  */
-public class StaticCall extends Step {
+class StaticCall extends Step {
 
     // mock
     private Payload mf;

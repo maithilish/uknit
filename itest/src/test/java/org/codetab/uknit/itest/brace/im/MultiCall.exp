@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.brace.im;
 
 import org.codetab.uknit.itest.brace.im.Model.JobInfo;
 import org.codetab.uknit.itest.brace.im.Model.Payload;
-
-public class MultiCallTest {
+class MultiCallTest {
     @InjectMocks
     private MultiCall multiCall;
 

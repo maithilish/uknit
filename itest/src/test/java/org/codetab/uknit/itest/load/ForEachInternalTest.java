@@ -15,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class ForEachInternalTest {
+class ForEachInternalTest {
     @InjectMocks
     private ForEachInternal forEachInternal;
 
@@ -35,7 +35,6 @@ public class ForEachInternalTest {
     @Test
     public void testCallListForEachTwice() {
         List<Integer> foos = new ArrayList<>();
-
         int key2 = 0;
         foos.add(key2);
         forEachInternal.callListForEachTwice(foos);

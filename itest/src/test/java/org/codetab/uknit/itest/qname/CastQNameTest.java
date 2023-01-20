@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastQNameTest {
+class CastQNameTest {
     @InjectMocks
     private CastQName castQName;
 
@@ -34,7 +34,7 @@ public class CastQNameTest {
     @Test
     public void testReturnQName() {
         Person person = Mockito.mock(Person.class);
-        int apple = (int) person.lid;
+        int apple = 0;
 
         int actual = castQName.returnQName(person);
 

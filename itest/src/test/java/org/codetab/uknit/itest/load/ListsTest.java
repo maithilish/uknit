@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class ListsTest {
+class ListsTest {
     @InjectMocks
     private Lists lists;
 
@@ -96,8 +96,8 @@ public class ListsTest {
     @Test
     public void testForAssign() {
         List<String> names = new ArrayList<>();
+        String name = "Foo";
         String str = "Foo";
-        String name = str;
         names.add(str);
 
         String actual = lists.forAssign(names);
@@ -108,8 +108,8 @@ public class ListsTest {
     @Test
     public void testForAssignListHolder() {
         ListHolder listHolder = Mockito.mock(ListHolder.class);
+        String name = "Foo";
         String str = "Foo";
-        String name = str;
         List<String> list = new ArrayList<>();
         list.add(str);
 

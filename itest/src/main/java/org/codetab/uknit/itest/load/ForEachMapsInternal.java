@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Maithilish
  *
  */
-public class ForEachMapsInternal {
+class ForEachMapsInternal {
 
     private MetricHolder collectorHolder;
 

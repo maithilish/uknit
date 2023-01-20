@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class UnusedTest {
+class UnusedTest {
     @InjectMocks
     private Unused unused;
 

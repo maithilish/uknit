@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class RecursiveTest {
+class RecursiveTest {
     @InjectMocks
     private Recursive recursive;
 

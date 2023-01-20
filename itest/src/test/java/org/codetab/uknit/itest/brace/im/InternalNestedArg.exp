@@ -4,8 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
-
-public class InternalNestedArgTest {
+class InternalNestedArgTest {
     @InjectMocks
     private InternalNestedArg internalNestedArg;
 

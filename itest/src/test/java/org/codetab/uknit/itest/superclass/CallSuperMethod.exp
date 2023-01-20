@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.superclass;
-
-public class CallSuperMethodTest {
+class CallSuperMethodTest {
     @InjectMocks
     private CallSuperMethod callSuperMethod;
 

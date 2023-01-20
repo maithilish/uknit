@@ -1,6 +1,7 @@
 package org.codetab.uknit.itest.infix;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class SimpleInfixTest {
+class SimpleInfixTest {
     @InjectMocks
     private SimpleInfix simpleInfix;
 
@@ -104,32 +105,32 @@ public class SimpleInfixTest {
     @Test
     public void testAssignComparision() {
         Person p = Mockito.mock(Person.class);
-        Sex sex = Model.Person.Sex.MALE;
-        int apple = 19;
-        int grape = 14;
-        int orange = 15;
+        Sex sex = Sex.FEMALE;
+        int apple = 0;
+        int grape = 1;
+        int orange = 1;
 
         when(p.getGender()).thenReturn(sex);
         when(p.getAge()).thenReturn(apple).thenReturn(grape).thenReturn(orange);
 
         boolean actual = simpleInfix.assignComparision(p);
 
-        assertTrue(actual);
+        assertFalse(actual);
     }
 
     @Test
     public void testReturnComparition() {
         Person p = Mockito.mock(Person.class);
-        Sex sex = Model.Person.Sex.MALE;
-        int apple = 19;
-        int grape = 15;
-        int orange = 16;
+        Sex sex = Sex.FEMALE;
+        int apple = 0;
+        int grape = 1;
+        int orange = 1;
 
         when(p.getGender()).thenReturn(sex);
         when(p.getAge()).thenReturn(apple).thenReturn(grape).thenReturn(orange);
 
         boolean actual = simpleInfix.returnComparition(p);
 
-        assertTrue(actual);
+        assertFalse(actual);
     }
 }

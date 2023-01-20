@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastQNameTest {
+class CastQNameTest {
     @InjectMocks
     private CastQName castQName;
 
@@ -84,7 +84,7 @@ public class CastQNameTest {
         Foo foo = Mockito.mock(Foo.class);
         Person person1 = Mockito.mock(Person.class);
         Person person2 = Mockito.mock(Person.class);
-        int apple = 0;
+        int apple = (int) ((person1.lid) + (person2.lid));
 
         int actual = castQName.returnInfixQName(foo, person1, person2);
 

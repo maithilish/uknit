@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.brace;
 
 import org.codetab.uknit.itest.brace.Model.Foo;
 
-public class Reassign {
+class Reassign {
 
     public String defineAndAssign(final Foo foo) {
         int index = 1;

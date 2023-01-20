@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.getter;
 
 import java.util.Date;
 
-public class SimpleGetSet {
+class SimpleGetSet {
 
     private String name;
     private Date birthday;

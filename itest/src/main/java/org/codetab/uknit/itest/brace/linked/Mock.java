@@ -10,7 +10,7 @@ import org.codetab.uknit.itest.brace.linked.Model.Foo;
  * @author Maithilish
  *
  */
-public class Mock {
+class Mock {
 
     /*
      * Var locale is mock but later new Locale() is assigned to it. The 1st stmt

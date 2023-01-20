@@ -6,7 +6,7 @@ package org.codetab.uknit.itest.internal;
  * @author Maithilish
  *
  */
-public class LocalVar {
+class LocalVar {
 
     public String callReturnsVar() {
         String foo = returnsVar();

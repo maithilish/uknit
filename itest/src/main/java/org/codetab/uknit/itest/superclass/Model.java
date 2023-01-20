@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
-public class Model {
+class Model {
 
 }
 

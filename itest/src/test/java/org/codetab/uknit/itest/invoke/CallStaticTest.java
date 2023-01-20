@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CallStaticTest {
+class CallStaticTest {
     @InjectMocks
     private CallStatic callStatic;
 
@@ -24,7 +24,7 @@ public class CallStaticTest {
 
     @Test
     public void testAssignStatic() {
-        String name = Statics.getName("foo");
+        String name = "foofoo";
 
         String actual = callStatic.assignStatic();
 
@@ -33,7 +33,7 @@ public class CallStaticTest {
 
     @Test
     public void testReturnStatic() {
-        String apple = Statics.getName("foo");
+        String apple = "foofoo";
 
         String actual = callStatic.returnStatic();
 
@@ -60,7 +60,7 @@ public class CallStaticTest {
 
     @Test
     public void testAssignInvokeOnStaticCallReal() {
-        String name = Statics.getName("hello").toLowerCase();
+        String name = "hellofoo";
 
         String actual = callStatic.assignInvokeOnStaticCallReal();
 
@@ -69,7 +69,7 @@ public class CallStaticTest {
 
     @Test
     public void testReturnInvokeOnStaticCallReal() {
-        String grape = Statics.getName("hello").toLowerCase();
+        String grape = "hellofoo";
 
         String actual = callStatic.returnInvokeOnStaticCallReal();
 

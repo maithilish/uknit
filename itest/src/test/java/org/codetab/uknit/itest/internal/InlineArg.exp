@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.internal;
 
 import org.codetab.uknit.itest.internal.Model.Foo;
 import org.codetab.uknit.itest.internal.Model.Person;
-
-public class InlineArgTest {
+class InlineArgTest {
     @InjectMocks
     private InlineArg inlineArg;
 

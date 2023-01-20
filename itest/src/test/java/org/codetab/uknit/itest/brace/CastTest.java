@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 
@@ -67,6 +67,7 @@ public class CastTest {
     @Test
     public void testAssignToParameterArray() {
         Pets pets = Mockito.mock(Pets.class);
+
         Dog dog = Mockito.mock(Dog.class);
         Dog[] dogs = {dog};
 

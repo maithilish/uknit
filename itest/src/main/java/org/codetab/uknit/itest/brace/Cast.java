@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.brace;
 import org.codetab.uknit.itest.brace.Model.Dog;
 import org.codetab.uknit.itest.brace.Model.Pets;
 
-public class Cast {
+class Cast {
 
     @SuppressWarnings("unused")
     private Dog fDog;

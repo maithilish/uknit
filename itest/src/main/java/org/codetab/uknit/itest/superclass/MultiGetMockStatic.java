@@ -5,7 +5,7 @@ package org.codetab.uknit.itest.superclass;
  * @author m
  *
  */
-public class MultiGetMockStatic extends Step {
+class MultiGetMockStatic extends Step {
 
     // get internal static payload
     public long getStaticMulti() {

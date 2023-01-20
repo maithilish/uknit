@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.getter;
 
 import java.util.Date;
 
-public class ModifyingSetter {
+class ModifyingSetter {
 
     private String name;
     private Date birthday;

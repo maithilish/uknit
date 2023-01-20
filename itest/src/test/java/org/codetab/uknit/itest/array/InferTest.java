@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InferTest {
+class InferTest {
     @InjectMocks
     private Infer infer;
 

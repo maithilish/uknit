@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class SimpleAltNameTest {
+class SimpleAltNameTest {
     @InjectMocks
     private SimpleAltName simpleAltName;
 
@@ -36,7 +36,7 @@ public class SimpleAltNameTest {
 
     @Test
     public void testSetName() {
-        String altName = "Foo";
+        String altName = "Bar";
         simpleAltName.setName(altName);
 
         Object actual = simpleAltName.getName();

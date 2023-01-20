@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.brace.patch;
 import org.codetab.uknit.itest.brace.patch.Model.Factory;
 import org.codetab.uknit.itest.brace.patch.Model.Foo;
 
-public class NameChange {
+class NameChange {
 
     private Factory factory;
 

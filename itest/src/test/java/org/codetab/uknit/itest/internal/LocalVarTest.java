@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class LocalVarTest {
+class LocalVarTest {
     @InjectMocks
     private LocalVar localVar;
 

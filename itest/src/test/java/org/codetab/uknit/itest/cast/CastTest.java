@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 
@@ -62,8 +62,9 @@ public class CastTest {
     @Test
     public void testAssignToParameterArray() {
         Pets pets = Mockito.mock(Pets.class);
-        Dog[] dogs = {Mockito.mock(Dog.class)};
+
         Dog dog = Mockito.mock(Dog.class);
+        Dog[] dogs = {dog};
 
         when(pets.getPet("foo")).thenReturn(dog);
         cast.assignToParameterArray(pets, dogs);

@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.clz;
 
 import java.util.Date;
-
-public class MultiClzBarTest {
+class MultiClzBarTest {
     @InjectMocks
     private MultiClzBar multiClzBar;
 

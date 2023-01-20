@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class ArrayTest {
+class ArrayTest {
     @InjectMocks
     private Array array;
 
@@ -44,7 +44,7 @@ public class ArrayTest {
     @Test
     public void testCreateIntTwoDimArray() {
         int[][] anArray = new int[(2)][(3)];
-        anArray[(0)][(0)] = 100;
+        anArray[(0)][(0)] = (100);
 
         int[][] actual = array.createIntTwoDimArray();
 
@@ -57,13 +57,13 @@ public class ArrayTest {
         Groups<String> groups = Mockito.mock(Groups.class);
         int apple = 1;
         int grape = 1;
-        String[][] names = new String[apple][grape];
+        String[][] expected = new String[apple][grape];
 
         when(groups.size()).thenReturn(apple).thenReturn(grape);
 
         String[][] actual = array.createMultiInferTwoDim(groups);
 
-        assertArrayEquals(names, actual);
+        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -87,14 +87,14 @@ public class ArrayTest {
         Bar bar = Mockito.mock(Bar.class);
         String apple = "Foo";
         String grape = "Bar";
-        String[] names = new String[] {apple, grape};
+        String[] expected = new String[] {apple, grape};
 
         when(foo.name()).thenReturn(apple);
         when(bar.name()).thenReturn(grape);
 
         String[] actual = array.inferInInitialize(foo, bar);
 
-        assertArrayEquals(names, actual);
+        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -145,10 +145,10 @@ public class ArrayTest {
 
     @Test
     public void testInitializeMultiDim() {
-        int[][] nos = {{(1), (2)}, {(3), (4)}};
+        int[][] expected = {{(1), (2)}, {(3), (4)}};
 
         int[][] actual = array.initializeMultiDim();
 
-        assertArrayEquals(nos, actual);
+        assertArrayEquals(expected, actual);
     }
 }

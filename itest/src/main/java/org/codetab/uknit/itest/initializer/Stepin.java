@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class Stepin {
+class Stepin {
 
     public int accessArrayCreation() {
         int[] array = new int[2];

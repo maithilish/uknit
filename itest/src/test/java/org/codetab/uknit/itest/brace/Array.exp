@@ -3,8 +3,7 @@ package org.codetab.uknit.itest.brace;
 import org.codetab.uknit.itest.brace.Model.Bar;
 import org.codetab.uknit.itest.brace.Model.Foo;
 import org.codetab.uknit.itest.brace.Model.Groups;
-
-public class ArrayTest {
+class ArrayTest {
     @InjectMocks
     private Array array;
 

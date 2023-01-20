@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.codetab.uknit.itest.brace.linked.Model.Foo;
 
-public class Unused {
+class Unused {
 
     /*
      * Even though unusedObj when is created for it.

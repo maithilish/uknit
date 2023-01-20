@@ -12,7 +12,7 @@ import org.codetab.uknit.itest.internal.Model.Payload;
  * @author m
  *
  */
-public class MultiCall {
+class MultiCall {
 
     private Payload payload;
 

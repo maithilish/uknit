@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.array;
 
-public class Initializer {
+class Initializer {
 
     public String[] initialize() {
         final String[] array = {"hello", "world"};

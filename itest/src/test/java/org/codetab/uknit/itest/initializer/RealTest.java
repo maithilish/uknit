@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.Iterators;
 
-public class RealTest {
+class RealTest {
     @InjectMocks
     private Real real;
 
@@ -133,7 +133,6 @@ public class RealTest {
         IntStream actual = real.assignRealReturnsMock(file);
 
         Iterators.elementsEqual(codePoints.iterator(), actual.iterator());
-
     }
 
     @Test

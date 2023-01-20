@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastFieldAccessTest {
+class CastFieldAccessTest {
     @InjectMocks
     private CastFieldAccess castFieldAccess;
 
@@ -34,7 +34,7 @@ public class CastFieldAccessTest {
     @Test
     public void testReturnQName() {
         Person person = Mockito.mock(Person.class);
-        int apple = 0;
+        int apple = (int) (person).lid;
 
         int actual = castFieldAccess.returnQName(person);
 
@@ -84,7 +84,7 @@ public class CastFieldAccessTest {
         Foo foo = Mockito.mock(Foo.class);
         Person person1 = Mockito.mock(Person.class);
         Person person2 = Mockito.mock(Person.class);
-        int apple = 0;
+        int apple = (int) ((person1).lid + (person2).lid);
 
         int actual = castFieldAccess.returnInfixQName(foo, person1, person2);
 
@@ -201,7 +201,7 @@ public class CastFieldAccessTest {
     public void testAssignQNameInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String name = names[(int) (person).lid];
+        String name = names[0];
 
         String actual = castFieldAccess.assignQNameInArrayAccess(names, person);
 
@@ -212,7 +212,7 @@ public class CastFieldAccessTest {
     public void testReturnQNameInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String apple = names[(int) (person).lid];
+        String apple = names[0];
 
         String actual = castFieldAccess.returnQNameInArrayAccess(names, person);
 

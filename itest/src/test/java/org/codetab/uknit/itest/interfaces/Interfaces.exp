@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.interfaces;
 
 import org.codetab.uknit.itest.interfaces.Model.Person;
-
-public class InterfacesTest {
+class InterfacesTest {
     @InjectMocks
     private Interfaces interfaces;
 

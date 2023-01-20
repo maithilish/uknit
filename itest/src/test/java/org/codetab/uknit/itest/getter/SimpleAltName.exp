@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.getter;
 
 import java.util.Date;
-
-public class SimpleAltNameTest {
+class SimpleAltNameTest {
     @InjectMocks
     private SimpleAltName simpleAltName;
 

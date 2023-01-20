@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.reassign;
 
 import org.codetab.uknit.itest.reassign.Model.Foo;
-
-public class InternalTest {
+class InternalTest {
     @InjectMocks
     private Internal internal;
 

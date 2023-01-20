@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class EmptyClzTest {
+class EmptyClzTest {
     @InjectMocks
     private EmptyClz emptyClz;
 

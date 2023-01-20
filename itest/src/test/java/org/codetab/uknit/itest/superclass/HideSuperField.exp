@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.superclass;
-
-public class HideSuperFieldTest {
+class HideSuperFieldTest {
     @InjectMocks
     private HideSuperField hideSuperField;
 

@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.brace.patch;
 
 import java.util.Locale;
 import org.codetab.uknit.itest.brace.patch.Model.Foo;
-
-public class CastTest {
+class CastTest {
     @InjectMocks
     private Cast cast;
 

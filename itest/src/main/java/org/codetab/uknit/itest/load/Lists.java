@@ -7,7 +7,7 @@ import java.util.List;
  * @author m
  *
  */
-public class Lists {
+class Lists {
 
     public String getAssign(final List<String> names) {
         String name = names.get(0);

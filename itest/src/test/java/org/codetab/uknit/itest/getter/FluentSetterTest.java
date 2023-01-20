@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class FluentSetterTest {
+class FluentSetterTest {
     @InjectMocks
     private FluentSetter fluentSetter;
 
@@ -36,7 +36,7 @@ public class FluentSetterTest {
 
     @Test
     public void testSetName() {
-        String name = "Foo";
+        String name = "Bar";
 
         FluentSetter actual = fluentSetter.setName(name);
 

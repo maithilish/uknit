@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import java.util.concurrent.BlockingQueue;
-
-public class MultiLevelExtendTest {
+class MultiLevelExtendTest {
     @InjectMocks
     private MultiLevelExtend multiLevelExtend;
 

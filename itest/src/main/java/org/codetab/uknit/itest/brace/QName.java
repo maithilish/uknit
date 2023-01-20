@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.brace;
 import org.codetab.uknit.itest.brace.Model.Foo;
 import org.codetab.uknit.itest.brace.Model.Person;
 
-public class QName {
+class QName {
 
     public int assignQName(final Person person) {
         int id = ((person.id));

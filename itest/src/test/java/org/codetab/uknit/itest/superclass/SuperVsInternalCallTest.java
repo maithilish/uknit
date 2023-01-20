@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class SuperVsInternalCallTest {
+class SuperVsInternalCallTest {
     @InjectMocks
     private SuperVsInternalCall superVsInternalCall;
 

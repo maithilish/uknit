@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.initializer;
 import java.io.File;
 import java.io.IOException;
 
-public class Mock {
+class Mock {
 
     public File assignMockReturnsMock(final File file) throws IOException {
         File cFile = file.getCanonicalFile();

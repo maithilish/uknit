@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.codetab.uknit.itest.load.Model.Foo;
 
-public class ForEachInternal {
+class ForEachInternal {
 
     public void callListForEach(final List<Integer> foos) {
         listIMForEach(foos);

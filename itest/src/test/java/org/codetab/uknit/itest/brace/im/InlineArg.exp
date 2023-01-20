@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.brace.im;
 
 import org.codetab.uknit.itest.brace.im.Model.Foo;
 import org.codetab.uknit.itest.brace.im.Model.Person;
-
-public class InlineArgTest {
+class InlineArgTest {
     @InjectMocks
     private InlineArg inlineArg;
 

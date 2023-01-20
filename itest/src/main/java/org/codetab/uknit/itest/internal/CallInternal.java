@@ -6,7 +6,7 @@ import org.codetab.uknit.itest.internal.Model.Foo;
 import org.codetab.uknit.itest.internal.Model.Person;
 import org.codetab.uknit.itest.internal.Model.QFactory;
 
-public class CallInternal {
+class CallInternal {
 
     private BlockingQueue<Person> queue;
 

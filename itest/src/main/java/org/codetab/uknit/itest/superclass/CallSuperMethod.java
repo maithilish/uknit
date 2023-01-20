@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.superclass;
 
-public class CallSuperMethod extends Vehicle {
+class CallSuperMethod extends Vehicle {
 
     @Override
     public void setLicensePlate(final String license) {

@@ -31,7 +31,7 @@ public class TestWriter {
         CompilationUnit cu = ctl.getTestCompilationUnit();
 
         boolean insertLineBreaks =
-                configs.getConfig("uknit.pretty.insertLineBreaks", true);
+                configs.getConfig("uknit.output.pretty.insertLineBreaks", true);
 
         String outputMode = configs.getConfig("uknit.output.mode", "file");
         boolean outputFileOverwrite =

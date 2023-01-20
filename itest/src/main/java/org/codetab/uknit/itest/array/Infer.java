@@ -6,7 +6,7 @@ import org.codetab.uknit.itest.array.Model.Bar;
 import org.codetab.uknit.itest.array.Model.Foo;
 import org.codetab.uknit.itest.array.Model.Groups;
 
-public class Infer {
+class Infer {
 
     public String[] create(final Groups<String> groups) {
         String[] array = new String[3];

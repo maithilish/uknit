@@ -5,7 +5,7 @@ package org.codetab.uknit.itest.superclass;
  * @author m
  *
  */
-public class MultiGetReal extends Task {
+class MultiGetReal extends Task {
 
     // get internal payload
     public long getMulti() {

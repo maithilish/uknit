@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.IntSummaryStatistics;
 import java.util.stream.IntStream;
 
-public class ChainCallReal {
+class ChainCallReal {
 
     public String realRealReal(final String name) {
         return name.toLowerCase().toUpperCase();

@@ -11,7 +11,7 @@ import java.util.List;
  * @author m
  *
  */
-public class SuperFieldConflict extends SuperField {
+class SuperFieldConflict extends SuperField {
 
     public Date conflicts(final List<Date> dates) {
         Date selectedDate = null;

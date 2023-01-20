@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.brace;
 
 import org.codetab.uknit.itest.brace.Model.Metric;
-
-public class TypeChangeTest {
+class TypeChangeTest {
     @InjectMocks
     private TypeChange typeChange;
 

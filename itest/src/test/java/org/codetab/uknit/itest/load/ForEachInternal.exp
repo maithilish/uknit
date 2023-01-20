@@ -3,8 +3,7 @@ package org.codetab.uknit.itest.load;
 import java.util.List;
 import java.util.Map;
 import org.codetab.uknit.itest.load.Model.Foo;
-
-public class ForEachInternalTest {
+class ForEachInternalTest {
     @InjectMocks
     private ForEachInternal forEachInternal;
 

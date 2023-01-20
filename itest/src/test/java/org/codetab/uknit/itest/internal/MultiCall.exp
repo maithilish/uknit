@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.internal;
 
 import org.codetab.uknit.itest.internal.Model.JobInfo;
 import org.codetab.uknit.itest.internal.Model.Payload;
-
-public class MultiCallTest {
+class MultiCallTest {
     @InjectMocks
     private MultiCall multiCall;
 

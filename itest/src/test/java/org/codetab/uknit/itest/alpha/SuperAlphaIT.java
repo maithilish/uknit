@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  * @author Maithilish
  *
  */
-public class SuperAlphaIT extends ITBase {
+class SuperAlphaIT extends ITBase {
 
     @Test
     public void test() throws IOException {

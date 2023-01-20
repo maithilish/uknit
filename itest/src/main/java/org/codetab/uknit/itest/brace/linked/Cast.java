@@ -13,7 +13,7 @@ import org.codetab.uknit.itest.brace.linked.Model.Foo;
  * @author Maithilish
  *
  */
-public class Cast {
+class Cast {
 
     public Locale castCreated() {
         Object locale = (new Locale(("en")));

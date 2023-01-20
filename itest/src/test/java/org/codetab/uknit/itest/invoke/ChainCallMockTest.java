@@ -22,7 +22,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.Iterators;
 
-public class ChainCallMockTest {
+class ChainCallMockTest {
     @InjectMocks
     private ChainCallMock chainCallMock;
 

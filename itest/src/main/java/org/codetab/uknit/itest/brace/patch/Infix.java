@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.brace.patch;
 import org.codetab.uknit.itest.brace.patch.Model.Bar;
 import org.codetab.uknit.itest.brace.patch.Model.Foo;
 
-public class Infix {
+class Infix {
 
     public String assignInfix(final Foo foo, final Bar bar) {
         String str = (foo.lang()) + " " + (bar.locale((foo.lang())));

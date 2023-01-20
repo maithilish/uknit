@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class StepinInternalTest {
+class StepinInternalTest {
     @InjectMocks
     private StepinInternal stepinInternal;
 

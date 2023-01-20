@@ -43,6 +43,8 @@ public class ClzMaker {
     private FieldMaker fieldMaker;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Configs configs;
 
     // test class cu
     private CompilationUnit cu;
@@ -67,9 +69,14 @@ public class ClzMaker {
         TypeDeclaration testTypeDecl = clzNodeFactory.createTypeDecl(typeDecl);
         clzMakers.addType(cu, testTypeDecl);
 
-        Modifier modifier =
-                nodeFactory.createModifier(ModifierKeyword.PUBLIC_KEYWORD);
-        clzMakers.addModifier(testTypeDecl, modifier);
+        String clzModifier =
+                configs.getConfig("uknit.test.class.modifier", "default");
+
+        if (clzModifier.equalsIgnoreCase("public")) {
+            Modifier modifier =
+                    nodeFactory.createModifier(ModifierKeyword.PUBLIC_KEYWORD);
+            clzMakers.addModifier(testTypeDecl, modifier);
+        }
 
         Clz clz = di.instance(Clz.class);
 
@@ -151,7 +158,7 @@ public class ClzMaker {
         return superTypeDecls;
     }
 
-    public void annotateFields(final Configs configs) {
+    public void annotateFields() {
         String[] deepStubAnnotation =
                 configs.getConfig("uknit.annotation.chainCall").split("=");
         for (String clzName : clzMap.keySet()) {
@@ -165,7 +172,7 @@ public class ClzMaker {
      * initialized by class under test.
      * @param configs
      */
-    public void removeFields(final Configs configs) {
+    public void removeFields() {
         for (String clzName : clzMap.keySet()) {
             Clz clz = clzMap.get(clzName);
             fieldMaker.removeFields(clz);

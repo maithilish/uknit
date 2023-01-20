@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.invoke;
 
 import java.util.Map;
 
-public class RealArg {
+class RealArg {
 
     /**
      * real var is not staged, but used in

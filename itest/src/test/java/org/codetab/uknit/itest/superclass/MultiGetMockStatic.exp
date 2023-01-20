@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.superclass;
-
-public class MultiGetMockStaticTest {
+class MultiGetMockStaticTest {
     @InjectMocks
     private MultiGetMockStatic multiGetMockStatic;
 

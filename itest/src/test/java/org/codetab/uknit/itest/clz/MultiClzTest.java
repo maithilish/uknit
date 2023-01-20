@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class MultiClzTest {
+class MultiClzTest {
     @InjectMocks
     private MultiClz multiClz;
 

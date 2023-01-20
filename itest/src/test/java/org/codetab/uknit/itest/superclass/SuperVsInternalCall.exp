@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.superclass;
-
-public class SuperVsInternalCallTest {
+class SuperVsInternalCallTest {
     @InjectMocks
     private SuperVsInternalCall superVsInternalCall;
 

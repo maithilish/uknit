@@ -11,7 +11,7 @@ import java.util.Date;
  * @author Maithilish
  *
  */
-public class InternalNestedArg {
+class InternalNestedArg {
 
     // Test A
     public int callA(final Date date) {

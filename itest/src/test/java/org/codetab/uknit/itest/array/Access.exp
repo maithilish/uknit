@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.array;
-
-public class AccessTest {
+class AccessTest {
     @InjectMocks
     private Access access;
 

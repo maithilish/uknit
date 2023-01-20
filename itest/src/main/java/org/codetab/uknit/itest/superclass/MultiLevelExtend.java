@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.superclass;
 
 import java.util.concurrent.BlockingQueue;
 
-public class MultiLevelExtend extends MultiLevelMiddle {
+class MultiLevelExtend extends MultiLevelMiddle {
 
     public Person process() throws InterruptedException {
         Person person = getQueue().take();

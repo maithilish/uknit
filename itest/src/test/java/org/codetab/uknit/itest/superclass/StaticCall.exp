@@ -1,8 +1,7 @@
 package org.codetab.uknit.itest.superclass;
 
 import java.util.Objects.isNull;
-
-public class StaticCallTest {
+class StaticCallTest {
     @InjectMocks
     private StaticCall staticCall;
 

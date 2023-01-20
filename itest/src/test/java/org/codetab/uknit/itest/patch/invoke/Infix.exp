@@ -2,8 +2,7 @@ package org.codetab.uknit.itest.patch.invoke;
 
 import org.codetab.uknit.itest.patch.invoke.Model.Bar;
 import org.codetab.uknit.itest.patch.invoke.Model.Foo;
-
-public class InfixTest {
+class InfixTest {
     @InjectMocks
     private Infix infix;
 

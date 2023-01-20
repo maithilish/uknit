@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class MockTest {
+class MockTest {
     @InjectMocks
     private Mock mock;
 

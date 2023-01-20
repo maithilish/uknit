@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import org.codetab.uknit.itest.qname.Model.Contacts;
 import org.codetab.uknit.itest.qname.Model.Foo;
 import org.codetab.uknit.itest.qname.Model.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class QNameTest {
+class QNameTest {
     @InjectMocks
     private QName qName;
 
@@ -68,31 +69,43 @@ public class QNameTest {
     }
 
     /*
-     * not possible to test. For invoke person.contacts.getHome(), the exp is
-     * person.contacts for which it is not possible use
-     * when(person.contacts).thenReturn(..)
+     * Not possible to test with mocks. The exp person.contacts in invoke
+     * person.contacts.getHome(), is field access and Mockito when is not
+     * allowed.
      */
-    // @Test
-    // public void testAssignQNameInInvokeExp() {
-    // Foo foo = Mockito.mock(Foo.class);
-    // Person person = Mockito.mock(Person.class);
-    // String home = "Foo";
-    //
-    // String actual = qName.assignQNameInInvokeExp(foo, person);
-    //
-    // assertEquals(home, actual);
-    // }
-    //
-    // @Test
-    // public void testReturnQNameInInvokeExp() {
-    // Foo foo = Mockito.mock(Foo.class);
-    // Person person = Mockito.mock(Person.class);
-    // String apple = "Foo";
-    //
-    // String actual = qName.returnQNameInInvokeExp(foo, person);
-    //
-    // assertEquals(apple, actual);
-    // }
+    @Test
+    public void testAssignQNameInInvokeExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = new Person(1);
+        person.contacts = new Contacts() {
+            @Override
+            public String getHome() {
+                return "Foo";
+            }
+        };
+        String home = "Foo";
+
+        String actual = qName.assignQNameInInvokeExp(foo, person);
+
+        assertEquals(home, actual);
+    }
+
+    @Test
+    public void testReturnQNameInInvokeExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        Person person = new Person(1);
+        person.contacts = new Contacts() {
+            @Override
+            public String getHome() {
+                return "Foo";
+            }
+        };
+        String apple = "Foo";
+
+        String actual = qName.returnQNameInInvokeExp(foo, person);
+
+        assertEquals(apple, actual);
+    }
 
     @Test
     public void testAssignInfixQName() {
@@ -228,7 +241,7 @@ public class QNameTest {
     public void testAssignQNameInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String name = names[person.id];
+        String name = names[0];
 
         String actual = qName.assignQNameInArrayAccess(names, person);
 
@@ -239,7 +252,7 @@ public class QNameTest {
     public void testReturnQNameInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String apple = names[person.id];
+        String apple = names[0];
 
         String actual = qName.returnQNameInArrayAccess(names, person);
 

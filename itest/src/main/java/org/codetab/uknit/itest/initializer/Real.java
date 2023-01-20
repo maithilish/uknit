@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class Real {
+class Real {
 
     /**
      * Real returns real - file.getName() returns String (real) on which

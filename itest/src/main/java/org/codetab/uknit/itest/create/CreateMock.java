@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.codetab.uknit.itest.create.Model.Event;
 
-public class CreateMock {
+class CreateMock {
 
     public List<File> assignCreateListOfMocks() {
         List<File> list = new ArrayList<>();

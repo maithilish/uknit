@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import org.codetab.uknit.itest.brace.linked.Model.Foo;
 
-public class Enabled {
+class Enabled {
 
     /*
      * check var enable, created

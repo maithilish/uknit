@@ -10,7 +10,7 @@ import org.codetab.uknit.itest.brace.linked.Model.Foo;
  * @author Maithilish
  *
  */
-public class Created {
+class Created {
 
     /*
      * Created assert should be assertEquals()

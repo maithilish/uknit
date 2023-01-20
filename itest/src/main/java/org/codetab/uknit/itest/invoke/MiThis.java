@@ -9,7 +9,7 @@ package org.codetab.uknit.itest.invoke;
  * @author m
  *
  */
-public class MiThis {
+class MiThis {
 
     private Helper helper;
 

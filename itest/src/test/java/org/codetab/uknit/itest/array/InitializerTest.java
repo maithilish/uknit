@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InitializerTest {
+class InitializerTest {
     @InjectMocks
     private Initializer initializer;
 

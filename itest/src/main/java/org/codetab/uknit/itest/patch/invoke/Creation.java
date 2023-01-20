@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.codetab.uknit.itest.patch.invoke.Model.Foo;
 
-public class Creation {
+class Creation {
 
     public Locale assginCreate(final Foo foo) {
         Locale locale = new Locale(foo.lang());

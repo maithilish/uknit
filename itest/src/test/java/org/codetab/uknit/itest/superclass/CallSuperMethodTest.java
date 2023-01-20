@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-public class CallSuperMethodTest {
+class CallSuperMethodTest {
     @InjectMocks
     private CallSuperMethod callSuperMethod;
 
@@ -16,7 +16,7 @@ public class CallSuperMethodTest {
 
     @Test
     public void testSetLicensePlate() {
-        String license = "Foo";
+        String license = "Bar";
         callSuperMethod.setLicensePlate(license);
     }
 }

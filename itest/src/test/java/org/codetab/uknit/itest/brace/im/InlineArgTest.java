@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class InlineArgTest {
+class InlineArgTest {
     @InjectMocks
     private InlineArg inlineArg;
 
@@ -146,10 +146,10 @@ public class InlineArgTest {
     @Test
     public void testStaticCallArg() {
         Foo foo = Mockito.mock(Foo.class);
-        Integer apple = Integer.valueOf((10));
+        Integer apple = Integer.valueOf(1);
         String mango = "Foo";
-        Integer orange = Integer.valueOf((20));
-        String banana = "Bar";
+        Integer orange = Integer.valueOf(1);
+        String banana = null;
         String kiwi = banana;
 
         when((foo).get(apple)).thenReturn(mango);
@@ -163,7 +163,7 @@ public class InlineArgTest {
     @Test
     public void testArrayAccessArg() {
         Foo foo = Mockito.mock(Foo.class);
-        int[] indexes = {3, 4};
+        int[] indexes = {1, 2};
         int index = (indexes)[0];
         String orange = "Foo";
         int index2 = indexes[1];

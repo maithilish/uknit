@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class CastFieldAccessTest {
+class CastFieldAccessTest {
     @InjectMocks
     private CastFieldAccess castFieldAccess;
 
@@ -212,7 +212,7 @@ public class CastFieldAccessTest {
     public void testReturnQNameInArrayAccess() {
         String[] names = {"foo"};
         Person person = Mockito.mock(Person.class);
-        String apple = names[(int) (((person).lid))];
+        String apple = names[0];
 
         String actual = castFieldAccess.returnQNameInArrayAccess(names, person);
 

@@ -3,8 +3,7 @@ package org.codetab.uknit.itest.invoke;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import org.codetab.uknit.itest.invoke.Model.Statics;
-
-public class CallStaticTest {
+class CallStaticTest {
     @InjectMocks
     private CallStatic callStatic;
 

@@ -34,12 +34,18 @@ enum Configuration {
 
     Configuration() {
         try {
+
+            props = new Properties();
+
             defaults = new Properties();
             defaults.load(Configuration.class.getClassLoader()
                     .getResourceAsStream("uknit-defaults.properties"));
-
-            props = new Properties();
             props.putAll(defaults);
+
+            Properties mockito = new Properties();
+            mockito.load(Configuration.class.getClassLoader()
+                    .getResourceAsStream("mockito.properties"));
+            props.putAll(mockito);
 
             // used by itest to ignore user defined properties
             boolean loadUserDefined = Boolean.valueOf(System

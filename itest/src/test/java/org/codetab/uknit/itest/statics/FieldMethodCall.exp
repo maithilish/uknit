@@ -1,0 +1,48 @@
+package org.codetab.uknit.itest.statics;
+
+import org.codetab.uknit.itest.statics.MetricRegistry.name;
+
+
+// FIX errors
+
+class FieldMethodCallTest {
+    @InjectMocks
+    private FieldMethodCall fieldMethodCall;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetTimer() {
+        Object clz = Mockito.mock(Object.class);
+        String[] names = {};
+        Timer timer = STEPIN;
+
+        Timer actual = fieldMethodCall.getTimer(clz, names);
+
+        assertEquals(timer, actual);
+    }
+
+    @Test
+    public void testGetMeter() {
+        Object clz = Mockito.mock(Object.class);
+        String[] names = {};
+        Meter meter = STEPIN;
+
+        Meter actual = fieldMethodCall.getMeter(clz, names);
+
+        assertEquals(meter, actual);
+    }
+
+    @Test
+    public void testRegisterGuage() throws Exception {
+        T value = Mockito.mock(T.class);
+        Object clz = Mockito.mock(Object.class);
+        String[] names = {};
+        fieldMethodCall.registerGuage(value, clz, names);
+
+        assertEquals(value, actual);
+    }
+}

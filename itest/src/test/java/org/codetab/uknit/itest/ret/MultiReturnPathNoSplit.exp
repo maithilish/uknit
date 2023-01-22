@@ -1,0 +1,28 @@
+package org.codetab.uknit.itest.ret;
+class MultiReturnPathNoSplitTest {
+    @InjectMocks
+    private MultiReturnPathNoSplit multiReturnPathNoSplit;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testTwoReturnPathsIfFlag() {
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.twoReturnPaths();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testTwoReturnPathsElseFlag() {
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.twoReturnPaths();
+
+        assertEquals(apple, actual);
+    }
+}

@@ -11,14 +11,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.method.VarNames;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Initializer.Kind;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Pack.Nature;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
 
 class RealInitializer {
@@ -39,7 +43,7 @@ class RealInitializer {
     public Optional<Initializer> getInitializer(final IVar var,
             final Optional<Pack> iniPackO, final Heap heap) {
 
-        if (realExcludes.exclude(var, iniPackO)) {
+        if (realExcludes.exclude(var, iniPackO, heap)) {
             return Optional.empty();
         } else {
             Type type = var.getType();
@@ -68,18 +72,42 @@ class RealInitializer {
 
 class RealExcludes {
 
-    public boolean exclude(final IVar var, final Optional<Pack> iniPackO) {
+    @Inject
+    private Types types;
+    @Inject
+    private Patcher patcher;
+    @Inject
+    private Nodes nodes;
+
+    public boolean exclude(final IVar var, final Optional<Pack> iniPackO,
+            final Heap heap) {
         boolean exclude = false;
 
         // if exp is static call, assigning mock to var is useless
-        if (iniPackO.isPresent() && iniPackO.get().is(Nature.STATIC_CALL)) {
+        if (iniPackO.isPresent() && iniPackO.get() instanceof Invoke
+                && iniPackO.get().is(Nature.STATIC_CALL)) {
             /*
-             * Ex: foo(Integer.valueOf(20)); the arg is static but infer var so
-             * allowed and output is String apple = Integer.valueOf(20). String
-             * name = Statics.name("foo"), static but infer allowed and output
-             * is String apple = "foo". If not infer then not allowed.
+             * Ex: foo(Integer.valueOf(20)); the arg is static but infer var and
+             * call var is unmodifiable, so allowed. The output is String apple
+             * = Integer.valueOf(20). Ref itest:
+             * ret.Unmodifiable.returnByteVar().
+             *
+             * Ex: String name = Statics.getName("foo"); static but not infer
+             * and call var not unmodifiable, so not allowed. The output is
+             * String apple = STEPIN. Ref itest:
+             * invoke.CallStatic.assignStatic().
+             *
              */
-            if (!var.isInferVar()) {
+            Invoke invoke = (Invoke) iniPackO.get();
+            Optional<Expression> callExpO =
+                    patcher.copyAndPatchCallExp(invoke, heap);
+            boolean callVarUnmodifiable = false;
+            if (callExpO.isPresent() && nodes.isName(callExpO.get())) {
+                callVarUnmodifiable =
+                        types.isUnmodifiable(nodes.getName(callExpO.get()));
+            }
+
+            if (!var.isInferVar() && !callVarUnmodifiable) {
                 exclude = true;
             }
         }

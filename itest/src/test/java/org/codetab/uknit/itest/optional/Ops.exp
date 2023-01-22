@@ -1,0 +1,43 @@
+package org.codetab.uknit.itest.optional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+class OpsTest {
+    @InjectMocks
+    private Ops ops;
+
+    @Mock
+    private Dates dates;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFooIfDateOIsPresent() {
+        Date date = Mockito.mock(Date.class);
+        Optional<List<Date>> dateO = Optional.empty();
+        String format = "foo";
+        List<Date> list = dateO.get();
+
+        when(dates.getDates()).thenReturn(dateO);
+        ops.foo(date);
+
+        verify(dates).doSomething(list, format);
+    }
+
+    @Test
+    public void testFooElseDateOIsPresent() {
+        Date date = Mockito.mock(Date.class);
+        Optional<List<Date>> dateO = Optional.empty();
+        String format = "foo";
+        List<Date> list = dateO.get();
+
+        when(dates.getDates()).thenReturn(dateO);
+        ops.foo(date);
+
+        verify(dates, never()).doSomething(list, format);
+    }
+}

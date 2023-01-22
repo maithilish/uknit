@@ -12,7 +12,7 @@ import org.codetab.uknit.core.node.NodeFactory;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 
-public class InsertStmt {
+public class LoadStmt {
 
     @Inject
     private NodeFactory nodeFactory;
@@ -23,7 +23,7 @@ public class InsertStmt {
         List<Statement> stmts = new ArrayList<>();
         String insertFormat = configs.getFormat("uknit.format.insert");
         for (Load load : heap.getLoader().getLoads()) {
-            if (load.isEnable()) {
+            if (load.isEnable() && load.getConsumer().isEnable()) {
                 Statement stmt =
                         nodeFactory.createInsertStmt(load.getConsumer(),
                                 load.getCall(), load.getArgs(), insertFormat);

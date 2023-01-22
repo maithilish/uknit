@@ -1,11 +1,18 @@
 package org.codetab.uknit.core.make.model;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.nonNull;
+
 import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 import com.google.inject.assistedinject.Assisted;
 
@@ -35,8 +42,27 @@ public class Invoke extends Pack {
             @Assisted @Nullable final Expression exp,
             @Assisted final boolean inCtlPath) {
         super(var, exp, inCtlPath);
+
+        if (nonNull(exp)) {
+            checkExpState(exp);
+        }
+
         when = Optional.empty();
         verify = Optional.empty();
+    }
+
+    @Override
+    public void setExp(final Expression exp) {
+        checkNotNull(exp);
+        checkExpState(exp);
+
+        super.setExp(exp);
+    }
+
+    private void checkExpState(final Expression exp) {
+        checkState(exp instanceof MethodInvocation
+                || exp instanceof SuperMethodInvocation
+                || exp instanceof SimpleName);
     }
 
     public Optional<IVar> getCallVar() {
@@ -69,6 +95,14 @@ public class Invoke extends Pack {
 
     public void setVerify(final Optional<Verify> verify) {
         this.verify = verify;
+    }
+
+    public MethodInvocation getMi() {
+        if (nonNull(getExp()) && getExp() instanceof MethodInvocation) {
+            return (MethodInvocation) getExp();
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -1,0 +1,32 @@
+package org.codetab.uknit.itest.misuse;
+
+import java.io.File;
+class EqualsTest {
+    @InjectMocks
+    private Equals equals;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFooIfFile1Equals() {
+        File file1 = Mockito.mock(File.class);
+        File file2 = Mockito.mock(File.class);
+
+        boolean actual = equals.foo(file1, file2);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testFooElseFile1Equals() {
+        File file1 = Mockito.mock(File.class);
+        File file2 = Mockito.mock(File.class);
+
+        boolean actual = equals.foo(file1, file2);
+
+        assertTrue(actual);
+    }
+}

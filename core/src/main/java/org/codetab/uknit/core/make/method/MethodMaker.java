@@ -238,19 +238,12 @@ public class MethodMaker {
         // generate parameters, infer and local vars
         bodyMaker.generateVarStmts(testMethod, heap);
 
-        // bodyMaker.generateReturnVarStmt(testMethod, heap);
-        // FIXME Pack - enable this
-        bodyMaker.generateInserts(testMethod, heap);
+        bodyMaker.generateLoads(testMethod, heap);
         bodyMaker.generateWhenStmts(testMethod, heap);
         bodyMaker.generateCallStmt(testMethod, heap);
         bodyMaker.generateAssertStmt(testMethod, heap);
         // bodyMaker.generateArgCaptureStmts(testMethod, heap);
         bodyMaker.generateVerifyStmts(testMethod, heap);
-
-        // if (!getterSetter.isGetter(clz, testMethod)
-        // && !getterSetter.isSetter(clz, testMethod)) {
-        // bodyMaker.generateFailAssertStmt(testMethod, heap);
-        // }
 
         methodMakers.addMethod(clzDecl, testMethod);
     }

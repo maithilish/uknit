@@ -13,7 +13,7 @@ import java.util.List;
  */
 class SuperGet extends SuperGetHolder {
 
-    // REVIEW error - item not loaded
+    // TODO L - load the collection if MUT uses add/put to add items.
     public List<File> getSuperField() {
         return getFieldList();
     }

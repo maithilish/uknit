@@ -40,7 +40,6 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
@@ -202,8 +201,6 @@ public class Types {
             type = ((ClassInstanceCreation) exp).getType();
         } else if (nodes.is(exp, CreationReference.class)) {
             type = ((CreationReference) exp).getType();
-        } else if (nodes.is(exp, TypeLiteral.class)) {
-            type = ((TypeLiteral) exp).getType();
         } else if (nodes.is(exp, TypeMethodReference.class)) {
             type = ((TypeMethodReference) exp).getType();
         } else if (nodes.is(exp, VariableDeclarationExpression.class)) {

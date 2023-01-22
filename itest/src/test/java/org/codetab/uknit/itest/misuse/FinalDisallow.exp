@@ -1,0 +1,22 @@
+package org.codetab.uknit.itest.misuse;
+
+import org.codetab.uknit.itest.misuse.Model.Foo;
+class FinalDisallowTest {
+    @InjectMocks
+    private FinalDisallow finalDisallow;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() {
+        Foo foo = Mockito.mock(Foo.class);
+        int flag = 1;
+
+        int actual = finalDisallow.foo(foo);
+
+        assertEquals(flag, actual);
+    }
+}

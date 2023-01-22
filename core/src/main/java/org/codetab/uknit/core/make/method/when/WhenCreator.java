@@ -152,6 +152,10 @@ public class WhenCreator {
                 }
             }
 
+            if (misuses.isMisuse(invoke)) {
+                return true;
+            }
+
             if (nonNull(invoke.getVar())) {
                 IVar var = invoke.getVar();
                 if (var.is(Nature.OFFLIMIT)) {

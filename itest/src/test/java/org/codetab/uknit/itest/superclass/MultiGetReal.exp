@@ -26,6 +26,7 @@ class MultiGetRealTest {
         long actual = multiGetReal.getMulti();
 
         assertEquals(grape, actual);
+
         verify(infoReal).setId(1L);
     }
 
@@ -44,6 +45,7 @@ class MultiGetRealTest {
         long actual = multiGetReal.getMultiWithSuper();
 
         assertEquals(grape, actual);
+
         verify(infoReal).setId(1L);
     }
 
@@ -69,6 +71,7 @@ class MultiGetRealTest {
         long actual = multiGetReal.getMulti(task);
 
         assertEquals(grape, actual);
+
         verify(infoReal).setId(1L);
     }
 
@@ -88,6 +91,7 @@ class MultiGetRealTest {
         long actual = multiGetReal.getMulti(payloadReal);
 
         assertEquals(grape, actual);
+
         verify(infoReal).setId(1L);
     }
 }

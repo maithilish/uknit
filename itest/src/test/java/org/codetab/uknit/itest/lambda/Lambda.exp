@@ -1,0 +1,87 @@
+package org.codetab.uknit.itest.lambda;
+
+import java.io.FileFilter;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
+class LambdaTest {
+    @InjectMocks
+    private Lambda lambda;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testReturnLambdaVar() {
+
+        FileFilter actual = lambda.returnLambdaVar();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testReturnLambda() {
+
+        FileFilter actual = lambda.returnLambda();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testReturnLambdaVarParentheses() {
+
+        BiFunction actual = lambda.returnLambdaVarParentheses();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testReturnLambdaParentheses() {
+
+        BiFunction actual = lambda.returnLambdaParentheses();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testReturnLambdaVarTyped() {
+
+        BiFunction<Integer, Integer, Integer> actual = lambda.returnLambdaVarTyped();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testReturnLambdaTyped() {
+
+        BiFunction<Integer, Integer, Integer> actual = lambda.returnLambdaTyped();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testMultiStatementLambda() {
+
+        Runnable actual = lambda.multiStatementLambda();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testExplicitParameterLambda() {
+
+        BinaryOperator<Long> actual = lambda.explicitParameterLambda();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testCallLamdba() {
+
+        boolean actual = lambda.callLamdba();
+
+        assertTrue(actual);
+    }
+}

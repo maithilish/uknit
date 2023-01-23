@@ -34,6 +34,8 @@ class VarConflictTest {
         when(instant.compareTo(other)).thenReturn(apple);
         when(instant2.compareTo(other2)).thenReturn(grape);
         varConflict.callSameTwice();
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -52,6 +54,8 @@ class VarConflictTest {
         when(instant.compareTo(other)).thenReturn(apple);
         when(instant2.compareTo(other2)).thenReturn(grape);
         varConflict.callTwoMethodsOfSameType();
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -72,5 +76,7 @@ class VarConflictTest {
         when(otherHolder.getLocale()).thenReturn(other2);
         when(locale.getDisplayCountry(other2)).thenReturn(grape);
         varConflict.callTwoMethodsOfDiffTypes();
+
+        fail("unable to assert, STEPIN");
     }
 }

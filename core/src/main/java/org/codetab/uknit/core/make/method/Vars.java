@@ -16,6 +16,7 @@ import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.ThisExpression;
 
@@ -112,13 +113,15 @@ public class Vars {
                         heap.getPatcher().copyAndPatch(returnPack.get(), heap);
                 String name = nodes.getName(exp);
                 return Optional.ofNullable(findVarByName(name, heap));
-            } else if (nodes.is(returnPack.get().getExp(),
-                    ThisExpression.class)) {
+            } else if (nodes.is(returnPack.get().getExp(), ThisExpression.class,
+                    LambdaExpression.class)) {
                 /*
                  * if return exp is this, then CUT is the expected var. But for
                  * CUT there is no pack and CUT var only exists in test class.
                  * The AssertStmt will create assert stmt if return is
                  * ThisExpression.
+                 *
+                 * No expectedVar for LambdaExp in return stmt.
                  */
                 return Optional.empty();
             } else {

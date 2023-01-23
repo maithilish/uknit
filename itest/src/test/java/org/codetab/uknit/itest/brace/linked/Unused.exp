@@ -18,6 +18,8 @@ class UnusedTest {
 
         when((foo).obj()).thenReturn(unObj);
         unused.unusedButInovked(foo);
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -27,5 +29,7 @@ class UnusedTest {
 
         when((foo).obj()).thenReturn(unObj);
         unused.unusedButInovkedAndCreated(foo);
+
+        fail("unable to assert, STEPIN");
     }
 }

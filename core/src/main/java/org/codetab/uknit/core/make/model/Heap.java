@@ -46,9 +46,10 @@ public class Heap implements Listener {
     private boolean testThrowsException;
 
     // is assert stmt created in test method
-    private boolean asserted;
+    private boolean asserted = false;
 
     public void setup() {
+        asserted = false;
         patcher.setup();
     }
 

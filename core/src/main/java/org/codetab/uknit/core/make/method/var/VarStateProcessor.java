@@ -30,6 +30,11 @@ public class VarStateProcessor {
         Set<String> linkedFieldNames = varEnabler.collectLinkedFieldNames(heap);
         usedNames.addAll(linkedFieldNames);
 
+        // Var initialized with anonymous or lambda are not required.
+        Set<String> anonNames = varEnabler.collectAnonNames(heap);
+        varEnabler.disableVars(anonNames, heap);
+        usedNames.removeAll(anonNames);
+
         varEnabler.enableFromEnforce(heap);
 
         return usedNames;

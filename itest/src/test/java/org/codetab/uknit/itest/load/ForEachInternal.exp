@@ -18,6 +18,8 @@ class ForEachInternalTest {
         int key = 1;
         foos.add(key);
         forEachInternal.callListForEach(foos);
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -26,6 +28,8 @@ class ForEachInternalTest {
         int key2 = 1;
         foos.add(key2);
         forEachInternal.callListForEachTwice(foos);
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -34,6 +38,8 @@ class ForEachInternalTest {
         int key = 1;
         foos.add(key);
         forEachInternal.callListForEachDiffName(foos);
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test

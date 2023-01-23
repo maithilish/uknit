@@ -268,3 +268,4 @@ parenthesized
 loadable
 decl
 realish
+eq

@@ -26,5 +26,7 @@ class TypeChangeTest {
 
         when(((TypeChange) ((other))).getCount()).thenReturn(count);
         typeChange.aggregate(other);
+
+        fail("unable to assert, STEPIN");
     }
 }

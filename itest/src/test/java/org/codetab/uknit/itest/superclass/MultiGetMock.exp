@@ -26,6 +26,7 @@ class MultiGetMockTest {
         long actual = multiGetMock.getMulti();
 
         assertEquals(grape, actual);
+
         verify(jobInfo).setId(1L);
     }
 
@@ -44,6 +45,7 @@ class MultiGetMockTest {
         long actual = multiGetMock.getMultiWithSuper();
 
         assertEquals(grape, actual);
+
         verify(jobInfo).setId(1L);
     }
 
@@ -69,6 +71,7 @@ class MultiGetMockTest {
         long actual = multiGetMock.getMulti(step);
 
         assertEquals(grape, actual);
+
         verify(jobInfo).setId(1L);
     }
 
@@ -88,6 +91,7 @@ class MultiGetMockTest {
         long actual = multiGetMock.getMulti(payload);
 
         assertEquals(grape, actual);
+
         verify(jobInfo).setId(1L);
     }
 }

@@ -8,8 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.lamda.AnonymousProcessor;
-import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
+import org.codetab.uknit.core.make.method.anon.AnonProcessor;
 import org.codetab.uknit.core.make.model.ArgCapture;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -30,9 +29,7 @@ public class VerifyCreator {
     @Inject
     private ModelFactory modelFactory;
     @Inject
-    private AnonymousProcessor anonymousProcessor;
-    @Inject
-    private LambdaProcessor lambdaProcessor;
+    private AnonProcessor anonProcessor;
     @Inject
     private Nodes nodes;
     @Inject
@@ -55,14 +52,14 @@ public class VerifyCreator {
 
         boolean inCtlPath = invoke.isInCtlPath();
 
-        List<ArgCapture> anonCaptures = anonymousProcessor
-                .patchAnonymousArgsWithCaptures(patchedMi, heap);
-        List<ArgCapture> lambdaCaptures = lambdaProcessor
-                .patchLambdaArgsWithCaptures(patchedMi, mi, heap);
+        List<ArgCapture> anonCaptures =
+                anonProcessor.processVerifyArgs(mi, patchedMi, heap);
+        // List<ArgCapture> lambdaCaptures = lambdaProcessor
+        // .patchLambdaArgsWithCaptures(patchedMi, mi, heap);
 
         Verify verify = modelFactory.createVerify(patchedMi, inCtlPath);
         verify.getArgCaptures().addAll(anonCaptures);
-        verify.getArgCaptures().addAll(lambdaCaptures);
+        // verify.getArgCaptures().addAll(lambdaCaptures);
 
         invoke.setVerify(Optional.of(verify));
 

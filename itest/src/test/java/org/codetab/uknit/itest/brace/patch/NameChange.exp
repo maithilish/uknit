@@ -56,6 +56,7 @@ class NameChangeTest {
         Foo actual = nameChange.varNameChangeInExpInvoke();
 
         assertSame(otherFoo, actual);
+
         verify(bar).baz();
     }
 }

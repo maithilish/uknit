@@ -71,6 +71,7 @@ public class Writer {
     /**
      * Insert line breaks by brute force. Adding comments is very difficult with
      * ASTRewrite, so just a workaround till better solution is found.
+     *
      * @param code
      * @return
      */
@@ -80,10 +81,11 @@ public class Writer {
         boolean mockBlock = false;
         boolean beforeMethod = false;
         boolean testMethod = false;
-        boolean verifyBlock = false;
-        boolean callBlock = false;
         boolean whenBlock = false;
+        boolean callBlock = false;
+        boolean assertBlock = false;
         boolean argCaptureBlock = false;
+        boolean verifyBlock = false;
 
         String[] lines = code.split("\\R");
         StringBuilder sb = new StringBuilder();
@@ -107,6 +109,8 @@ public class Writer {
                 sb.append(br);
                 whenBlock = false;
                 callBlock = false;
+                assertBlock = false;
+                argCaptureBlock = false;
                 verifyBlock = false;
             } else if (Pattern.matches(".*when\\(.*", line) && !whenBlock) {
                 sb.append(br);
@@ -123,9 +127,12 @@ public class Writer {
                 sb.append(br);
                 verifyBlock = true;
             } else if (Pattern.matches(".*assert.*\\(.*", line)
-                    && !verifyBlock) {
+                    && !assertBlock) {
                 sb.append(br);
-                verifyBlock = true;
+                assertBlock = true;
+            } else if (Pattern.matches(".*fail\\(.*", line) && !assertBlock) {
+                sb.append(br);
+                assertBlock = true;
             }
             sb.append(line);
             sb.append(System.lineSeparator());

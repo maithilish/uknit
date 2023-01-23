@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.getter;
 
+import static java.util.Objects.isNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,6 +149,26 @@ public class GetterSetter {
                     }
                 }
             }
+        }
+    }
+
+    public boolean isGetter(final Clz clz, final MethodDeclaration testMethod) {
+        List<Holder> list = getters.get(clz);
+        if (isNull(list)) {
+            return false;
+        } else {
+            return list.stream()
+                    .anyMatch(h -> h.testMethodDecl.equals(testMethod));
+        }
+    }
+
+    public boolean isSetter(final Clz clz, final MethodDeclaration testMethod) {
+        List<Holder> list = setters.get(clz);
+        if (isNull(list)) {
+            return false;
+        } else {
+            return list.stream()
+                    .anyMatch(h -> h.testMethodDecl.equals(testMethod));
         }
     }
 

@@ -30,6 +30,8 @@ class ForEachMapsTest {
         when(collectorHolder.getDates()).thenReturn(collector);
         when(date.after(date2)).thenReturn(apple);
         forEachMaps.putVarFromGet(holder);
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -42,6 +44,8 @@ class ForEachMapsTest {
 
         when(holder.getDates()).thenReturn(dates);
         forEachMaps.putVarFromKeySet(holder);
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -54,5 +58,7 @@ class ForEachMapsTest {
 
         when(holder.getDates()).thenReturn(dates);
         forEachMaps.putVarFromValues(holder);
+
+        fail("unable to assert, STEPIN");
     }
 }

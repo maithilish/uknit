@@ -201,4 +201,30 @@ Here array is created and accessed within the method and test method can't acces
   - The objects returned by accessible mocks are also accessible.
   - The objects returned by accessible real are accessbile only if it is field or parameters or return var. (1st rule takes care of this)
 
+## Anonymous and Lambda
+
+Anon and Lambda are treated in same fashion. For brevity, we just explain the logic of anon, and same applies to lambda.
+
+In when stmts, the anon args are replaced with any(type name) and other args with matcher eq(arg). 
+
+        when(calc.op(6, 3, (a, b) -> a * b)              becomes     when(calc.op(eq(6), eq(3), any(Op.class))).thenReturn(..)
+        when(button.add(new new ActionListener() {...})  becomes     when(button.add(any(ActionListener.class)).thenReturn(..)
+
+In verify stmts, if config uknit.anonymous.class.capture is true (default) then in anon args are replaced with ArgumentCapture and other args with matchers.
+
+        verify(calc.op(6, 3, (a, b) -> a * b)              becomes
+               ArgumentCaptor<OperationA> captorA = ArgumentCaptor.forClass(Op.class);
+               verify(calc).op(eq(6), eq(3), captorA.capture());
+        
+        verify(button.add(new new ActionListener() {...})  becomes
+               ArgumentCaptor<ActionListener> captorA = ArgumentCaptor.forClass(ActionListener.class);
+               verify(button.add(captorA.capture());
+
+User may use captures for further testing. In case capture config is false then in anon args are replaced with any(type name) and other args with matchers.
+
+        verify(calc.op(6, 3, (a, b) -> a * b)              becomes               
+               verify(calc).op(eq(6), eq(3), any(Op.class);
+        verify(button.add(new new ActionListener() {...})  becomes
+                verify(button).addActionListener(any(ActionListener.class));
+
 

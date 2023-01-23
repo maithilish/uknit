@@ -22,6 +22,8 @@ class MultiCallTest {
 
         when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5).thenReturn(jobInfo6);
         multiCall.call();
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -86,6 +88,8 @@ class MultiCallTest {
         when((payload).getJobInfo(jobInfo10)).thenReturn(jobInfo11);
         when((payload).getJobInfo(jobInfo11)).thenReturn(jobInfo12);
         multiCall.callNestedArg();
+
+        fail("unable to assert, STEPIN");
     }
 
     @Test

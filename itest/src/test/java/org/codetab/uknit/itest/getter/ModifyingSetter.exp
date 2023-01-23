@@ -51,6 +51,7 @@ class ModifyingSetterTest {
         long actual = modifyingSetter.setBirthday(birthday);
 
         assertEquals(apple, actual);
+
         verify(birthday).setTime(100);
     }
 }

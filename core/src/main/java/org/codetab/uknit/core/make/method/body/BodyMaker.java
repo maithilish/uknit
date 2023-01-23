@@ -23,8 +23,8 @@ public class BodyMaker {
     private WhenStmt whenStmt;
     @Inject
     private VerifyStmt verifyStmt;
-    // @Inject
-    // private ArgCaptureStmt argCaptureStmt;
+    @Inject
+    private ArgCaptureStmt argCaptureStmt;
     @Inject
     private ReturnVarStmt returnVarStmt;
 
@@ -78,12 +78,11 @@ public class BodyMaker {
         verifyStmt.addStmts(methodDecl, stmts);
     }
 
-    /*
-     * public void generateArgCaptureStmts(final MethodDeclaration methodDecl,
-     * final Heap heap) { List<Statement> stmts =
-     * argCaptureStmt.createStmts(heap); argCaptureStmt.addStmts(methodDecl,
-     * stmts); }
-     */
+    public void generateArgCaptureStmts(final MethodDeclaration methodDecl,
+            final Heap heap) {
+        List<Statement> stmts = argCaptureStmt.createStmts(heap);
+        argCaptureStmt.addStmts(methodDecl, stmts);
+    }
 
     public void generateReturnVarStmt(final MethodDeclaration methodDecl,
             final Heap heap) {

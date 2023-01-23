@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.visit;
 
+import static java.util.Objects.isNull;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.Assignment;
@@ -28,6 +31,7 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
@@ -41,6 +45,7 @@ import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
@@ -168,7 +173,11 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ClassInstanceCreation node) {
-        packer.packExp(node, inCtlPath, heap);
+        if (isNull(node.getAnonymousClassDeclaration())) {
+            packer.packExp(node, inCtlPath, heap);
+        } else {
+            packer.packAnon(node, inCtlPath, heap);
+        }
     }
 
     @Override
@@ -244,6 +253,22 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final EnhancedForStatement node) {
         heap.getLoader().collectEnhancedFor(node, imc);
+    }
+
+    @Override
+    public boolean visit(final LambdaExpression node) {
+        packer.packAnon(node, inCtlPath, heap);
+        return false; // don't visit child nodes
+    }
+
+    @Override
+    public boolean visit(final AnonymousClassDeclaration node) {
+        return false; // don't visit child nodes
+    }
+
+    @Override
+    public boolean visit(final TypeDeclaration node) {
+        return false; // for now don't process local class inside a method
     }
 
     /**

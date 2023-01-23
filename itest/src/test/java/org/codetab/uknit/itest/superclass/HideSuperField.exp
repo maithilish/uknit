@@ -32,5 +32,7 @@ class HideSuperFieldTest {
     public void testUpdateLicensePlate() {
         String license = "Baz";
         hideSuperField.updateLicensePlate(license);
+
+        fail("unable to assert, STEPIN");
     }
 }

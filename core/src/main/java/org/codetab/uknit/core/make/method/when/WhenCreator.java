@@ -8,8 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.lamda.AnonymousProcessor;
-import org.codetab.uknit.core.make.method.lamda.LambdaProcessor;
+import org.codetab.uknit.core.make.method.anon.AnonProcessor;
 import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -32,9 +31,7 @@ public class WhenCreator {
     @Inject
     private ModelFactory modelFactory;
     @Inject
-    private AnonymousProcessor anonymousProcessor;
-    @Inject
-    private LambdaProcessor lambdaProcessor;
+    private AnonProcessor anonProcessor;
     @Inject
     private VerifyCreator verifyCreator;
     @Inject
@@ -69,14 +66,8 @@ public class WhenCreator {
                 (MethodInvocation) heap.getPatcher().copyAndPatch(invoke, heap);
 
         boolean anonReplaced =
-                anonymousProcessor.patchAnonymousArgs(patchedMi, heap);
+                anonProcessor.processWhenArgs(mi, patchedMi, heap);
         if (anonReplaced) {
-            verifyCreator.createVerify(invoke, heap);
-        }
-
-        boolean lambdaReplaced =
-                lambdaProcessor.patchLambdaArgs(patchedMi, mi, heap);
-        if (lambdaReplaced) {
             verifyCreator.createVerify(invoke, heap);
         }
 

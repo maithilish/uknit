@@ -20,7 +20,7 @@ import com.google.inject.assistedinject.Assisted;
 public class Pack {
 
     public enum Nature {
-        STATIC_CALL
+        STATIC_CALL, ANONYMOUS
     }
 
     private IVar var;

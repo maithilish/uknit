@@ -15,14 +15,17 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 
 /**
@@ -82,6 +85,10 @@ public class NodeGroups {
             CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
             StringLiteral.class, TypeLiteral.class);
 
+    private List<Class<? extends Expression>> uninferableNodes =
+            List.of(SimpleName.class, SuperMethodInvocation.class,
+                    ThisExpression.class, LambdaExpression.class);
+
     /**
      * Instance creation new Foo(), Array creation, Literals "foo", 5 etc.,
      */
@@ -112,6 +119,10 @@ public class NodeGroups {
 
     public List<Class<? extends Expression>> inferableNodes() {
         return inferableNodes;
+    }
+
+    public List<Class<? extends Expression>> uninferableNodes() {
+        return uninferableNodes;
     }
 
     public List<Class<? extends Expression>> creationNodes() {

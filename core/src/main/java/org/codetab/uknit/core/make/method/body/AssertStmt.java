@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.body;
 
+import static java.util.Objects.nonNull;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -12,6 +14,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
@@ -30,12 +33,19 @@ public class AssertStmt {
     private Vars vars;
     @Inject
     private Nodes nodes;
+    @Inject
+    private AssertExcludes excludes;
 
     public Optional<Statement> createStmt(final Heap heap) {
         Optional<Statement> stmt = Optional.empty();
         Optional<Pack> returnPackO =
                 packs.findByVarName("return", heap.getPacks());
         Optional<IVar> expectedVarO = vars.getExpectedVar(returnPackO, heap);
+
+        if (excludes.exclude(returnPackO, expectedVarO)) {
+            return Optional.empty();
+        }
+
         if (expectedVarO.isPresent()) {
             IVar expectedVar = expectedVarO.get();
             Type retType = heap.getCall().getReturnType();
@@ -85,6 +95,7 @@ public class AssertStmt {
 
     /**
      * Create fail assertion when there is no assert or verify statement.
+     *
      * @param heap
      * @return
      */
@@ -104,5 +115,35 @@ public class AssertStmt {
         if (stmt.isPresent()) {
             methodDecl.getBody().statements().add(stmt.get());
         }
+    }
+}
+
+class AssertExcludes {
+
+    @Inject
+    private Types types;
+
+    public boolean exclude(final Optional<Pack> returnPackO,
+            final Optional<IVar> expectedVarO) {
+
+        // exclude if returns anonymous
+        if (returnPackO.isPresent()) {
+            IVar var = returnPackO.get().getVar();
+            if (nonNull(var) && types.isBoolean(var.getType())) {
+                return false;
+            }
+            if (returnPackO.get().is(Nature.ANONYMOUS)) {
+                return true;
+            }
+        }
+
+        // exclude if expected var is disabled and not field
+        if (expectedVarO.isPresent() && !expectedVarO.get().isEnable()) {
+            if (!expectedVarO.get().isField()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

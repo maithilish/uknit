@@ -1,10 +1,6 @@
 package org.codetab.uknit.itest.statics;
 
 import org.codetab.uknit.itest.statics.MetricRegistry.name;
-
-
-// FIX errors
-
 class FieldMethodCallTest {
     @InjectMocks
     private FieldMethodCall fieldMethodCall;
@@ -43,6 +39,6 @@ class FieldMethodCallTest {
         String[] names = {};
         fieldMethodCall.registerGuage(value, clz, names);
 
-        assertEquals(value, actual);
+        fail("unable to assert, STEPIN");
     }
 }

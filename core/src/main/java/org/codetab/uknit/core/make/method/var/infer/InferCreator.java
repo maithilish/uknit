@@ -15,17 +15,16 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SuperMethodInvocation;
-import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.Type;
 
 public class InferCreator {
@@ -44,6 +43,8 @@ public class InferCreator {
     private ModelFactory modelFactory;
     @Inject
     private NodeFactory nodeFactory;
+    @Inject
+    private NodeGroups nodeGroups;
 
     /**
      * Create and set infer var for all packs in the list. The packs in the list
@@ -100,11 +101,10 @@ public class InferCreator {
 
         Expression exp = returnPack.getExp();
         /*
-         * Don't create infer for SimpleName or SMI. The SMI is replaced by IMC
-         * packs, so infer is not created.
+         * Don't create infer for SimpleName, SMI, ThisExp and LambdaExp. The
+         * SMI is replaced by IMC packs, so infer is not created.
          */
-        if (nodes.is(exp, SimpleName.class, SuperMethodInvocation.class,
-                ThisExpression.class)) {
+        if (nodes.is(exp, nodeGroups.uninferableNodes())) {
             return;
         }
 
@@ -159,6 +159,9 @@ public class InferCreator {
                             modelFactory.createPack(inferVar, exp, inCtlPath);
                     // var: return, exp: apple
                     returnPack.setExp(varName);
+                }
+                if (expressions.isAnonOrLambda(exp)) {
+                    inferPack.addNature(Nature.ANONYMOUS);
                 }
                 heap.addPack(inferPack);
             }

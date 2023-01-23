@@ -73,6 +73,7 @@ class CallInternalTest {
         Person actual = callInternal.processSameName(qFactory);
 
         assertSame(person, actual);
+
         verify(q2).clear();
     }
 
@@ -90,6 +91,7 @@ class CallInternalTest {
         Person actual = callInternal.processDiffName(qFactory);
 
         assertSame(person, actual);
+
         verify(q2).clear();
     }
 }

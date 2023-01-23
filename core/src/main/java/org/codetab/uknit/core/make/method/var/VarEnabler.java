@@ -22,6 +22,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.eclipse.jdt.core.dom.Expression;
 
 public class VarEnabler {
@@ -242,5 +243,26 @@ public class VarEnabler {
         List<IVar> varList = heap.getVars();
         varList.stream().filter(v -> names.contains(v.getName()))
                 .forEach(v -> v.setEnable(false));
+    }
+
+    /**
+     * Get names of vars assigned with anonymous or lambda.
+     *
+     * @param heap
+     * @return
+     */
+    public Set<String> collectAnonNames(final Heap heap) {
+        Set<String> names = new HashSet<>();
+        List<Pack> enabledPacks = heap.getPacks().stream().filter(p -> {
+            return nonNull(p.getVar()) && p.getVar().isEnable()
+                    && !p.getVar().isField();
+        }).collect(Collectors.toList());
+
+        for (Pack enabledPack : enabledPacks) {
+            if (enabledPack.is(Nature.ANONYMOUS)) {
+                names.add(enabledPack.getVar().getName());
+            }
+        }
+        return names;
     }
 }

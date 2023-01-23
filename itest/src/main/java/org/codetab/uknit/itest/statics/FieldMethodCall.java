@@ -2,12 +2,6 @@ package org.codetab.uknit.itest.statics;
 
 import static org.codetab.uknit.itest.statics.MetricRegistry.name;
 
-/**
- * STASH - fix the error after annon refactor
- *
- * @author Maithilish
- *
- */
 public class FieldMethodCall {
 
     public static final MetricRegistry METRICS =

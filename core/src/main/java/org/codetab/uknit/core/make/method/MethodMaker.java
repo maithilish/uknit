@@ -242,8 +242,13 @@ public class MethodMaker {
         bodyMaker.generateWhenStmts(testMethod, heap);
         bodyMaker.generateCallStmt(testMethod, heap);
         bodyMaker.generateAssertStmt(testMethod, heap);
-        // bodyMaker.generateArgCaptureStmts(testMethod, heap);
+        bodyMaker.generateArgCaptureStmts(testMethod, heap);
         bodyMaker.generateVerifyStmts(testMethod, heap);
+
+        if (!getterSetter.isGetter(clz, testMethod)
+                && !getterSetter.isSetter(clz, testMethod)) {
+            bodyMaker.generateFailAssertStmt(testMethod, heap);
+        }
 
         methodMakers.addMethod(clzDecl, testMethod);
     }

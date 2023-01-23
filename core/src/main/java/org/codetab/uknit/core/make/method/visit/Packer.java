@@ -120,6 +120,14 @@ public class Packer {
         heap.addPack(pack);
     }
 
+    public void packAnon(final Expression exp, final boolean inCtlPath,
+            final Heap heap) {
+        IVar var = null; // yet to be assigned so null
+        Pack pack = modelFactory.createPack(var, exp, inCtlPath);
+        pack.addNature(Nature.ANONYMOUS);
+        heap.addPack(pack);
+    }
+
     public Invoke createInvoke(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null

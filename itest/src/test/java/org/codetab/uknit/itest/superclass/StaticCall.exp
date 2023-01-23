@@ -30,6 +30,7 @@ class StaticCallTest {
         long actual = staticCall.mockField(mockPayload);
 
         assertEquals(id, actual);
+
         verify(jobInfo2).setId(1);
     }
 
@@ -46,6 +47,7 @@ class StaticCallTest {
         long actual = staticCall.returnMockField(mockPayload);
 
         assertEquals(apple, actual);
+
         verify(jobInfo).setId(1);
     }
 
@@ -62,6 +64,7 @@ class StaticCallTest {
         long actual = staticCall.mockFieldCreated(mockPayload);
 
         assertEquals(id, actual);
+
         verify(jobInfo2).setId(1);
     }
 
@@ -78,6 +81,7 @@ class StaticCallTest {
         long actual = staticCall.returnMockFieldCreated(mockPayload);
 
         assertEquals(apple, actual);
+
         verify(jobInfo).setId(1);
     }
 
@@ -119,6 +123,7 @@ class StaticCallTest {
         Payload actual = staticCall.assignStaticInternal(mockPayload);
 
         assertSame(iPayload, actual);
+
         verify(jobInfo2).setId(1);
     }
 
@@ -169,6 +174,7 @@ class StaticCallTest {
         Payload actual = staticCall.assignStaticSuperMockParameterWithoutSuper(mockPayload);
 
         assertSame(mpay, actual);
+
         verify(jobInfo).setId(1);
     }
 
@@ -196,6 +202,7 @@ class StaticCallTest {
         Payload actual = staticCall.assignStaticSuperMockParameter(mockPayload);
 
         assertSame(mpay, actual);
+
         verify(jobInfo).setId(1);
     }
 

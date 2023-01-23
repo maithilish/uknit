@@ -38,6 +38,7 @@ class MultiLevelExtendTest {
         Person actual = multiLevelExtend.processSameName(qFactory);
 
         assertSame(person, actual);
+
         verify(q2).clear();
     }
 
@@ -55,6 +56,7 @@ class MultiLevelExtendTest {
         Person actual = multiLevelExtend.processDiffName(qFactory);
 
         assertSame(person, actual);
+
         verify(q2).clear();
     }
 }

@@ -3,13 +3,18 @@ package org.codetab.uknit.core.make.method.var;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.nonNull;
+import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
@@ -24,6 +29,10 @@ public class VarAssignor {
     private Vars vars;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Packs packs;
+    @Inject
+    private Patcher patcher;
     @Inject
     private NodeFactory nodeFactory;
 
@@ -47,22 +56,63 @@ public class VarAssignor {
         var.setName(newName);
     }
 
-    // no harm in assigning new name node as name is not, so far, resolved
-    // in case required then add resolvable exp field in Pack
+    /**
+     * Set old name of reassigned vars to name of its previous state.
+     *
+     * <code>
+     *  V1 [name=state, oldName=state]
+     *  V2 [name=state2, oldName=state]
+     *  V3 [name=state3, oldName=state]
+     *
+     *  to
+     *
+     *  V1 [name=state, oldName=state]
+     *  V2 [name=state2, oldName=state]
+     *  V3 [name=state3, oldName=state2]
+     * </code>
+     *
+     * @param reassignedVars
+     * @param heap
+     */
+    public void updateOldNames(final List<IVar> reassignedVars,
+            final Heap heap) {
+
+        Map<String, List<IVar>> varMap = reassignedVars.stream()
+                .collect(Collectors.groupingBy(v -> v.getOldName(),
+                        Collectors.mapping(v -> v, Collectors.toList())));
+
+        for (List<IVar> varList : varMap.values()) {
+            if (varList.size() > 1) {
+                for (int i = 1; i < varList.size(); i++) {
+                    IVar var = varList.get(i);
+                    IVar previousVar = varList.get(i - 1);
+                    var.setOldName(previousVar.getName());
+                }
+            }
+        }
+    }
 
     /**
      * Reassigned var gets new name and update any assignment that uses it. Ex:
+     *
      * <code>
-     * Object obj = foo.obj();
-     * obj = new Locale("");
-     * Object obj2 = obj;
-     * Object obj3 = obj2;
+     * String message = "foo";
+     *   if (pathA) {
+     *       message = duck.fly("if canSwim");
+     *       duck.dive(message);
+     *   } else if (pathB) {
+     *       message = duck.fly("else if canDive");
+     *       duck.dive(message);
+     *   }
+     *   return message;
      * </code>
      *
-     * The obj is renamed as obj4 on reassignment in second stmt. Update third
-     * stmt exp to obj4.
+     * The exp of return pack and duck.dive() pack are initially set to message.
+     * In pathA test, message is reassigned as message2 and both pack's exp are
+     * updated as message2. In PathB test, message is reassigned as message3 and
+     * both exps are updated to message3. More complex examples in itest:
+     * ifelse.when.IfElseIf.java
      *
-     * Ref itest: linked.Created.isCreated2()
      * @param var
      * @param heap
      */
@@ -71,10 +121,53 @@ public class VarAssignor {
         checkNotNull(var);
         checkNotNull(heap);
 
+        // do nothing and return, if var pack is not in ctl path.
+        Optional<Pack> varPackO =
+                packs.findByVarName(var.getName(), heap.getPacks());
+        if (varPackO.isPresent()) {
+            if (!varPackO.get().isInCtlPath()) {
+                return;
+            }
+        } else {
+            throw new IllegalStateException(
+                    spaceit("unable to find pack for", var.getName()));
+        }
+
+        /**
+         * <code>
+         * V1 [name=state, oldName=state]
+         * V2 [name=state2, oldName=state]
+         * V3 [name=state3, oldName=state2]
+         * V3 [name=state4, oldName=state3]
+         * </code>
+         *
+         * The original name of V1, V2 and V3 is state and old names are state3,
+         * state2 and state.
+         */
+        String originalName = var.getDefinedName();
+        List<String> oldNames = vars.getOldNames(var, heap);
+
+        /*
+         * Get packs whose exp refers a reassigned var. Filter either using
+         * original name or if exp is already updated with another reassigned
+         * name then filter on old names. Ex: If var is V2, packs whose exp is
+         * state are filtered and exp is update to state2. If next var is V3
+         * then no pack is matched for original name state as exp is already
+         * updated to state2, so filter using the old name state2. In case V3 is
+         * not in ctl path then next var would be V4 and again filtered using
+         * old name state2.
+         */
         List<Pack> referredPacks = heap.getPacks().stream().filter(p -> {
             Expression exp = p.getExp();
-            return nonNull(exp) && nodes.isName(exp)
-                    && nodes.getQualifiedName(exp).equals(var.getOldName());
+            if (nonNull(exp)) {
+                exp = patcher.copyAndPatch(p, heap);
+                String name = "";
+                if (nodes.isName(exp)) {
+                    name = nodes.getQualifiedName(exp);
+                }
+                return name.equals(originalName) || oldNames.contains(name);
+            }
+            return false;
         }).collect(Collectors.toList());
 
         for (Pack refPack : referredPacks) {
@@ -88,5 +181,4 @@ public class VarAssignor {
             refPack.setExp(reassignedName);
         }
     }
-
 }

@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.statics;
 
 import static org.codetab.uknit.itest.statics.MetricRegistry.name;
 
-public class FieldMethodCall {
+class FieldMethodCall {
 
     public static final MetricRegistry METRICS =
             SharedMetricRegistries.getOrCreate("scoopi");

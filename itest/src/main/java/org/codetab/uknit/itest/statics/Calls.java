@@ -9,10 +9,10 @@ import org.codetab.uknit.itest.statics.Model.DriverWait;
  *
  * TODO - analyze the issue and resolve.
  *
- * @author m
+ * @author Maithilish
  *
  */
-public class Calls {
+class Calls {
 
     public DriverWait staticCallInInit(final Driver driver,
             final String timeout) {

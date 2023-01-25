@@ -30,7 +30,7 @@ public interface ModelFactory {
     Invoke createInvoke(IVar var, Expression exp, boolean inCtlPath);
 
     Patch createPatch(org.codetab.uknit.core.make.model.Patch.Kind kind,
-            IVar var, int index);
+            String definedName, IVar var, int index);
 
     Call createCall(TypeDeclaration clz, SimpleName name, Type returnType,
             MethodDeclaration methodDecl);

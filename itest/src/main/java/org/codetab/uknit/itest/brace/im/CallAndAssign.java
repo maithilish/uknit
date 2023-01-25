@@ -5,7 +5,7 @@ import org.codetab.uknit.itest.brace.im.Model.WebClient;
 
 /**
  * Internal Method Call and assign to same or different var names.
- * @author m
+ * @author Maithilish
  *
  */
 class CallAndAssign {

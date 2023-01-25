@@ -24,7 +24,7 @@ class CastQNameTest {
     @Test
     public void testReturnQName() {
         Person person = Mockito.mock(Person.class);
-        int apple = person.lid;
+        int apple = (int) person.lid;
 
         int actual = castQName.returnQName(person);
 

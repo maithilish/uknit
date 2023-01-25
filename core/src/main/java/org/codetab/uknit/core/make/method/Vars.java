@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -172,5 +173,34 @@ public class Vars {
     public boolean isCreated(final String name, final List<IVar> varList) {
         return varList.stream().anyMatch(v -> v.getName().equals(name)
                 && (v.isCreated() || v.is(Nature.REALISH)));
+    }
+
+    /**
+     * Return list of reassigned var stack for a var.
+     *
+     * <code>
+     * V1 [name=state, oldName=state]
+     * V2 [name=state2, oldName=state]
+     * V3 [name=state3, oldName=state2]
+     * </code>
+     *
+     * For V3, list V3, V2, V1 is returned. For V2, list of V2, V1 is returned.
+     *
+     * @param var
+     * @param heap
+     * @return
+     */
+    public List<String> getOldNames(final IVar var, final Heap heap) {
+        List<IVar> vars = new ArrayList<>();
+        String oldName = var.getOldName();
+        vars.add(var);
+        for (int i = heap.getVars().size() - 1; i >= 0; i--) {
+            IVar rVar = heap.getVars().get(i);
+            if (oldName.equals(rVar.getName())) {
+                oldName = rVar.getOldName();
+                vars.add(rVar);
+            }
+        }
+        return vars.stream().map(IVar::getOldName).collect(Collectors.toList());
     }
 }

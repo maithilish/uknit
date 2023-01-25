@@ -44,11 +44,11 @@ IM the arg overrides the parameter. If arg and param name are named same then ar
 
 In many situations the exp in a node needs to be replaced by a var name. To generate a test class uKnit may process a MUT multiple times - internal methods such as private or super method may be called one or more times and the ctl flow path in MUT may result processing of MUT. Any direct  modification to node makes it useless for subsequent processing. To avoid modification to the original node, uKnit copies the node and patches its exp with relavent var name. Whenever a patched view of a node is required, a copy of original node is created and patch is applied to the copy. Bottom line is that in no circumstance the node parsed from source is modified.
 
-When an IM is called multiple times, separate Packs (or Invoke) are created for each invoke. The packs for same statement from multiple calls are distint and are not equal, but the exp held by the packs points to same ast node as all IM invokes uses the same source tree. For example, if IM has one statement String name = foo.get() and IM is called twice. On first invoke P1 [var=name, exp=foo.get()] and in second invoke P2 [var=name2, exp=foo.get()] are created. The P1 is not equal to P2, but P1.exp == P2.exp as both exps, foo.get(), are one and same instance as it comes from single parsed source. Keep this aspect in mind while tinkering with patch logic.
+When an IM is called multiple times, separate Packs (or Invoke) are created for each invoke. The packs for same statement from multiple calls are distint and are not equal, but the exp held by the packs points to same ast node as all IM invokes uses the same source tree. For example, if IM has one statement String name = foo.get() and IM is called twice. On first invoke P1 [var=name, exp=foo.get()] and in second invoke P2 [var=name2, exp=foo.get()] are created. The P1 != P2, but P1.exp == P2.exp as both exps, foo.get(), are one and same instance as it comes from single parsed source. Keep this aspect in mind while tinkering with patch logic.
 
 At present patch is done in three ways
 
- - Invoke exps in any exp, including in another invoke exp, is replaced with corresponding var name. No separate patch is created for this, instead the pack list in heap is searched for relavent var and its name is patched.
+ - Invoke exps in any exp (including another invoke exp), is replaced with corresponding var name. No separate patch is created for this, instead the pack list in heap is searched for the invoke pack and its var name is used to patch the invoke in exp.
  - A var may be renamed in case of name conflict and all depending exp are patched with new name. It is not possible to search for relavent var such renames instead Patch is created and added to patch list of the Pack.
  - IM invoke is packed as exp in a dedicated Pack during visit phase, but the IM invoke exp is replaced with IM's return var name exp on IM merge. To patch any chained IM call the IM invoke exp and relavent retunr var is collected in patches map in Patcher.
  
@@ -73,7 +73,7 @@ Details are as below,
     I0 [var=foo, exp=configure()] -- IM invoke
        I1 [var=foo2, exp=factory.getFoo()]
        I2 [var=options, exp=foo.getOptions()]
-          Patch [rename foo -> foo2]
+          Patch [kind=VAR, rename foo -> foo2]
        P3 [var=--, exp=foo.getOptions().setEnabled(false)]
 
     I4 [var=foo1, exp=configure()] -- IM invoke
@@ -86,7 +86,7 @@ The IMC configure() is invoked twice and the packs are I0 and I4. When copyAndPa
 
 Similarly, when copyAndPatch() is called for P7, all the packs before are reverse traversed to find first matching pack for its exp part foo.getOptions(). The matching pack is I6 and its var options is patched and copy of P7 exp becomes options2.setEnabled(true). Even though I2 also perfectly matches it is never considered as search terminates on the first match and I6 is used for patch. It is important to note that I2 and I6 are different packs and not equal but the exp of both I2 and I6 are one and the same instance as it comes from same MethodDeclaration node of single compilatation unit. In other words, both exp of I2 and I6 point to same instance of MI exp foo.options().
 
-This logic eliminates complexcities associated with patch maintainace, but it depends on ordering of pack and it is important that packs in the list are in same order as they appear in source.
+The logic eliminates complexcities associated with patch maintainace, but it depends on ordering of pack and it is important that packs in the list are in same order as they appear in source.
 
 ### Var Rename Patch
 
@@ -135,9 +135,15 @@ Var rename patch is also used whenever there is var name conflict.
           Patch [kind=VAR, rename foo -> foo2]
     I4 [var=otherFoo, exp=foo2]
 
-Above, calling method creates an instance of Foo and assign it var named foo. The IM also creates and assign another instance of Foo to var named foo within it scope. But when statements of IM is merged with calling method there is conflict as there are two vars named foo. To resolve the conflict on merge the IM foo is renamed as foo2 and a patch is added to I3 whoes exp used local var foo. With the patch, I3 exp becomes foo2.bar().
+Above, calling method creates an instance of Foo and assign it var named foo. The IM also creates and assign another instance of Foo to var named foo within it scope. But when statements of IM is merged with calling method there is conflict as there are two vars named foo. To resolve the conflict, on merge the IM foo is renamed as foo2 and a patch is added to I3 whose exp used local var foo. With the patch, I3 exp becomes foo2.bar().
 
 In case of renamed vars it is possible to patch exp with the logic used in case of invoke patches, but same is not true in case of arg-param name mismatch where pack level patch is essential. For uniformity in both cases pack level patch is implemented.
+
+While applying var patch the value of the arg is not compared instead it is applied based on arg index. In following pack, the exp becomes foo.format(name4, dept2) even though patch is for name3 to name4. This is because the name and old names fields in the var held by the patch are updated on reassign.
+
+    Invoke Var [name=name4, [name3], type=String, L, Real] Exp [exp=foo.format(name,dept)]
+        Patch [kind=VAR, rename dept -> dept2]
+        Patch [kind=VAR, rename name3 -> name4]
 
 ### IM Patch
  

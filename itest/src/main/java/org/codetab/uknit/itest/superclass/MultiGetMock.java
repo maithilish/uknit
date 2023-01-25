@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.superclass;
 
 /**
  * Get same mock object multi times.
- * @author m
+ * @author Maithilish
  *
  */
 class MultiGetMock extends Step {

@@ -10,10 +10,10 @@ import java.util.Optional;
  *
  * TODO - Refactor to fix the issue.
  *
- * @author m
+ * @author Maithilish
  *
  */
-public class Ops {
+class Ops {
 
     static class Dates {
         public Optional<List<Date>> getDates() {

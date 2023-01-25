@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Methods similar to getter but not POJO getter.
  *
- * @author m
+ * @author Maithilish
  *
  */
 class PseudoGetter {

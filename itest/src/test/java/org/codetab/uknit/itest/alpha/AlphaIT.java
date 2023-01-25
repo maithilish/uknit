@@ -35,7 +35,7 @@ class AlphaIT extends ITBase {
 
         configure();
 
-        addTransientConfig("uknit.createInstance.Canvas", "new Canvas()");
+        // addTransientConfig("uknit.createInstance.Canvas", "new Canvas()");
 
         try {
             generateTestClass();

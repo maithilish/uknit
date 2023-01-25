@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.process;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import org.codetab.uknit.core.make.method.var.infer.InferProcessor;
 import org.codetab.uknit.core.make.method.verify.VerifyProcessor;
 import org.codetab.uknit.core.make.method.when.WhenProcessor;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.IVar;
 
 /**
  * Post visit routines to process packs collected by method visitor.
@@ -108,12 +110,17 @@ public class Processor {
      *
      * @param heap
      */
-    public void processVarNameChange(final Heap heap) {
+    public void processVarPatches(final Heap heap) {
         patchProcessor.createVarPatches(heap);
     }
 
-    public void processVarReassign(final Heap heap) {
-        varProcessor.processReassign(heap);
+    public List<IVar> processVarReassign(final Heap heap) {
+        return varProcessor.processReassign(heap);
+    }
+
+    public void updateVarReassign(final List<IVar> reassignedVars,
+            final Heap heap) {
+        varProcessor.updateReassign(reassignedVars, heap);
     }
 
     public void processEnhancedFor(final Heap heap) {

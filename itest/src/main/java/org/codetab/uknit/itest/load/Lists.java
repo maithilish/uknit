@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * To test object Insertion to lists.
- * @author m
+ * @author Maithilish
  *
  */
 class Lists {

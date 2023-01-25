@@ -10,10 +10,10 @@ import java.util.Optional;
  * TODO L - refactor for proper initialization of Optional. Add more test cases.
  * Load list if any of misuse such as equals is called.
  *
- * @author m
+ * @author Maithilish
  *
  */
-public class Lists {
+class Lists {
 
     public boolean collect(final OptionalListHolder holder, final Date inDate) {
         Optional<List<Date>> dates = holder.getDates();

@@ -89,7 +89,7 @@ public class Heaps {
             if (pack.getPatches().size() > 0) {
                 for (Patch patch : pack.getPatches()) {
                     LOG.debug("           Patch [kind={}, rename {} -> {}]",
-                            patch.getKind(), patch.getVar().getOldName(),
+                            patch.getKind(), patch.getDefinedName(),
                             patch.getVar().getName());
                 }
             }

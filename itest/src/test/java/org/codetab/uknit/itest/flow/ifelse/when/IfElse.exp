@@ -1,0 +1,811 @@
+package org.codetab.uknit.itest.flow.ifelse.when;
+
+import org.codetab.uknit.itest.flow.ifelse.when.Model.Duck;
+class IfElseTest {
+    @InjectMocks
+    private IfElse ifElse;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testIfFooIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+
+        String actual = ifElse.ifFoo(duck, canSwim);
+
+        assertEquals(state, actual);
+
+        verify(duck).swim("start");
+        verify(duck).dive(state);
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+
+        String actual = ifElse.ifFoo(duck, canSwim);
+
+        assertEquals(state, actual);
+
+        verify(duck).swim("start");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).dive(state);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseFooIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state2 = "Bar";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+
+        String actual = ifElse.ifElseFoo(duck, canSwim);
+
+        assertEquals(state, actual);
+
+        verify(duck).swim("start");
+        verify(duck).dive(state);
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state2);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state2 = "Bar";
+
+        when(duck.fly("else canSwim")).thenReturn(state2);
+
+        String actual = ifElse.ifElseFoo(duck, canSwim);
+
+        assertEquals(state2, actual);
+
+        verify(duck).swim("start");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).dive(state);
+        verify(duck).swim("else canSwim");
+        verify(duck).dive(state2);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("if done nest")).thenReturn(state2);
+
+        String actual = ifElse.ifNestIfFoo(duck, canSwim, done);
+
+        assertEquals(state2, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck).swim("if done nest");
+        verify(duck).dive(state2);
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).dive(state3);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state4);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("else done nest")).thenReturn(state3);
+
+        String actual = ifElse.ifNestIfFoo(duck, canSwim, done);
+
+        assertEquals(state3, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck, never()).dive(state2);
+        verify(duck).swim("else done nest");
+        verify(duck).dive(state3);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state4);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("else canSwim")).thenReturn(state4);
+
+        String actual = ifElse.ifNestIfFoo(duck, canSwim, done);
+
+        assertEquals(state4, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).dive(state);
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck, never()).dive(state2);
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).dive(state3);
+        verify(duck).swim("else canSwim");
+        verify(duck).dive(state4);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("if done")).thenReturn(state3);
+
+        String actual = ifElse.ifIfFoo(duck, canSwim, done);
+
+        assertEquals(state3, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state2);
+        verify(duck).swim("if done");
+        verify(duck).dive(state3);
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).fly("else done");
+        verify(duck, never()).dive(state4);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("else done")).thenReturn(state4);
+
+        String actual = ifElse.ifIfFoo(duck, canSwim, done);
+
+        assertEquals(state4, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state2);
+        verify(duck, never()).swim("if done");
+        verify(duck, never()).fly("if done");
+        verify(duck, never()).dive(state3);
+        verify(duck).swim("else done");
+        verify(duck).dive(state4);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("if done")).thenReturn(state3);
+
+        String actual = ifElse.ifIfFoo(duck, canSwim, done);
+
+        assertEquals(state3, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).dive(state);
+        verify(duck).swim("else canSwim");
+        verify(duck).dive(state2);
+        verify(duck).swim("if done");
+        verify(duck).dive(state3);
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).fly("else done");
+        verify(duck, never()).dive(state4);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfFooIfCanSwimIfCanDiveIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+        String state5 = "Quux";
+        String state6 = "Corge";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("if canDive nest")).thenReturn(state2);
+        when(duck.fly("if done nest")).thenReturn(state4);
+
+        String actual = ifElse.ifNestIfIfFoo(duck, canSwim, canDive, done);
+
+        assertEquals(state4, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck).swim("if canDive nest");
+        verify(duck).dive(state2);
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).fly("else canDive nest");
+        verify(duck, never()).dive(state3);
+        verify(duck).swim("if done nest");
+        verify(duck).dive(state4);
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).dive(state5);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state6);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfFooIfCanSwimIfCanDiveElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+        String state5 = "Quux";
+        String state6 = "Corge";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("if canDive nest")).thenReturn(state2);
+        when(duck.fly("else done nest")).thenReturn(state5);
+
+        String actual = ifElse.ifNestIfIfFoo(duck, canSwim, canDive, done);
+
+        assertEquals(state5, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck).swim("if canDive nest");
+        verify(duck).dive(state2);
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).fly("else canDive nest");
+        verify(duck, never()).dive(state3);
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck, never()).dive(state4);
+        verify(duck).swim("else done nest");
+        verify(duck).dive(state5);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state6);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfFooIfCanSwimElseCanDive() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+        String state5 = "Quux";
+        String state6 = "Corge";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("else canDive nest")).thenReturn(state3);
+        when(duck.fly("if done nest")).thenReturn(state4);
+
+        String actual = ifElse.ifNestIfIfFoo(duck, canSwim, canDive, done);
+
+        assertEquals(state4, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state);
+        verify(duck, never()).swim("if canDive nest");
+        verify(duck, never()).fly("if canDive nest");
+        verify(duck, never()).dive(state2);
+        verify(duck).swim("else canDive nest");
+        verify(duck).dive(state3);
+        verify(duck).swim("if done nest");
+        verify(duck).dive(state4);
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).dive(state5);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state6);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+        String state5 = "Quux";
+        String state6 = "Corge";
+
+        when(duck.fly("else canSwim")).thenReturn(state6);
+
+        String actual = ifElse.ifNestIfIfFoo(duck, canSwim, canDive, done);
+
+        assertEquals(state6, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).dive(state);
+        verify(duck, never()).swim("if canDive nest");
+        verify(duck, never()).fly("if canDive nest");
+        verify(duck, never()).dive(state2);
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).fly("else canDive nest");
+        verify(duck, never()).dive(state3);
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck, never()).dive(state4);
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).dive(state5);
+        verify(duck).swim("else canSwim");
+        verify(duck).dive(state6);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNoAssignFooIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String grape = "Bar";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.toString()).thenReturn(grape);
+
+        String actual = ifElse.ifNoAssignFoo(duck, canSwim);
+
+        assertEquals(grape, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNoAssignFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String grape = "Bar";
+
+        when(duck.toString()).thenReturn(grape);
+
+        String actual = ifElse.ifNoAssignFoo(duck, canSwim);
+
+        assertEquals(grape, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseNoAssignFooIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String orange = "Baz";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.toString()).thenReturn(orange);
+
+        String actual = ifElse.ifElseNoAssignFoo(duck, canSwim);
+
+        assertEquals(orange, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseNoAssignFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String grape = "Bar";
+        String orange = "Baz";
+
+        when(duck.fly("else canSwim")).thenReturn(grape);
+        when(duck.toString()).thenReturn(orange);
+
+        String actual = ifElse.ifElseNoAssignFoo(duck, canSwim);
+
+        assertEquals(orange, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfNoAssignFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String apple = "Foo";
+        String grape = "Bar";
+        String mango = "Quux";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("if done nest")).thenReturn(grape);
+        when(duck.toString()).thenReturn(mango);
+
+        String actual = ifElse.ifNestIfNoAssignFoo(duck, canSwim, done);
+
+        assertEquals(mango, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfNoAssignFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String mango = "Quux";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("else done nest")).thenReturn(orange);
+        when(duck.toString()).thenReturn(mango);
+
+        String actual = ifElse.ifNestIfNoAssignFoo(duck, canSwim, done);
+
+        assertEquals(mango, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck).swim("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfNoAssignFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String kiwi = "Qux";
+        String mango = "Quux";
+
+        when(duck.fly("else canSwim")).thenReturn(kiwi);
+        when(duck.toString()).thenReturn(mango);
+
+        String actual = ifElse.ifNestIfNoAssignFoo(duck, canSwim, done);
+
+        assertEquals(mango, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfNoAssignFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String mango = "Quux";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("if done")).thenReturn(orange);
+        when(duck.toString()).thenReturn(mango);
+
+        String actual = ifElse.ifIfNoAssignFoo(duck, canSwim, done);
+
+        assertEquals(mango, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).fly("else done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfNoAssignFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String apple = "Foo";
+        String kiwi = "Qux";
+        String mango = "Quux";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("else done")).thenReturn(kiwi);
+        when(duck.toString()).thenReturn(mango);
+
+        String actual = ifElse.ifIfNoAssignFoo(duck, canSwim, done);
+
+        assertEquals(mango, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).swim("if done");
+        verify(duck, never()).fly("if done");
+        verify(duck).swim("else done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfNoAssignFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String grape = "Bar";
+        String orange = "Baz";
+        String mango = "Quux";
+
+        when(duck.fly("else canSwim")).thenReturn(grape);
+        when(duck.fly("if done")).thenReturn(orange);
+        when(duck.toString()).thenReturn(mango);
+
+        String actual = ifElse.ifIfNoAssignFoo(duck, canSwim, done);
+
+        assertEquals(mango, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).fly("else done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNoAssignFooIfCanSwimIfCanDiveIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+        String grape = "Bar";
+        String kiwi = "Qux";
+        String cherry = "Grault";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("if canDive nest")).thenReturn(grape);
+        when(duck.fly("if done nest")).thenReturn(kiwi);
+        when(duck.toString()).thenReturn(cherry);
+
+        String actual = ifElse.ifNestIfIfNoAssignFoo(duck, canSwim, canDive, done);
+
+        assertEquals(cherry, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive nest");
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).fly("else canDive nest");
+        verify(duck).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNoAssignFooIfCanSwimIfCanDiveElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+        String grape = "Bar";
+        String mango = "Quux";
+        String cherry = "Grault";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("if canDive nest")).thenReturn(grape);
+        when(duck.fly("else done nest")).thenReturn(mango);
+        when(duck.toString()).thenReturn(cherry);
+
+        String actual = ifElse.ifNestIfIfNoAssignFoo(duck, canSwim, canDive, done);
+
+        assertEquals(cherry, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive nest");
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).fly("else canDive nest");
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck).swim("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNoAssignFooIfCanSwimElseCanDive() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String cherry = "Grault";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("else canDive nest")).thenReturn(orange);
+        when(duck.fly("if done nest")).thenReturn(kiwi);
+        when(duck.toString()).thenReturn(cherry);
+
+        String actual = ifElse.ifNestIfIfNoAssignFoo(duck, canSwim, canDive, done);
+
+        assertEquals(cherry, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if canDive nest");
+        verify(duck, never()).fly("if canDive nest");
+        verify(duck).swim("else canDive nest");
+        verify(duck).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNoAssignFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String banana = "Corge";
+        String cherry = "Grault";
+
+        when(duck.fly("else canSwim")).thenReturn(banana);
+        when(duck.toString()).thenReturn(cherry);
+
+        String actual = ifElse.ifNestIfIfNoAssignFoo(duck, canSwim, canDive, done);
+
+        assertEquals(cherry, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck, never()).swim("if canDive nest");
+        verify(duck, never()).fly("if canDive nest");
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).fly("else canDive nest");
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).fly("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).fly("else done nest");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("end");
+    }
+}

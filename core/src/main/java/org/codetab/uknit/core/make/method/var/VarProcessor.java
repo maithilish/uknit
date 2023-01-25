@@ -93,8 +93,9 @@ public class VarProcessor {
      * Renames reassigned vars and update any reference.
      *
      * @param heap
+     * @return
      */
-    public void processReassign(final Heap heap) {
+    public List<IVar> processReassign(final Heap heap) {
         /*
          * IM packs are processed before the merge, so don't process them again
          * while processing the calling heap. While processing the internal heap
@@ -105,10 +106,23 @@ public class VarProcessor {
                 .filter(p -> !p.isIm()).map(p -> p.getVar())
                 .filter(v -> nonNull(v) && v.getName().endsWith("-reassigned"))
                 .collect(Collectors.toList());
-        reassignedVars.stream()
-                .forEach(v -> varAssignor.renameAssigns(v, heap));
-        reassignedVars.stream()
-                .forEach(v -> varAssignor.updateAssigns(v, heap));
+        for (IVar v : reassignedVars) {
+            varAssignor.renameAssigns(v, heap);
+        }
+        return reassignedVars;
+    }
+
+    /**
+     * Update old names and any reassign references.
+     *
+     * @param heap
+     */
+    public void updateReassign(final List<IVar> reassignedVars,
+            final Heap heap) {
+        varAssignor.updateOldNames(reassignedVars, heap);
+        for (IVar var : reassignedVars) {
+            varAssignor.updateAssigns(var, heap);
+        }
     }
 
     /**

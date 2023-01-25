@@ -1,0 +1,352 @@
+package org.codetab.uknit.itest.flow.ifelse.when;
+
+import org.codetab.uknit.itest.flow.ifelse.when.Model.Duck;
+class IfTryTest {
+    @InjectMocks
+    private IfTry ifTry;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testIfTryFooIfCanSwimTry() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state3 = "Baz";
+        String state5 = "Quux";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("try")).thenReturn(state3);
+        when(duck.fly("finally")).thenReturn(state5);
+
+        String actual = ifTry.ifTryFoo(duck, canSwim);
+
+        assertEquals(state5, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTryFooIfCanSwimTryCatchIllegalStateException() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state3 = "Baz";
+        String state4 = "Qux";
+        String state5 = "Quux";
+
+        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("try")).thenReturn(state3);
+        when(duck.fly("catch")).thenReturn(state4);
+        when(duck.fly("finally")).thenReturn(state5);
+
+        String actual = ifTry.ifTryFoo(duck, canSwim);
+
+        assertEquals(state5, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("try");
+        verify(duck).swim("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTryFooElseCanSwimTry() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state5 = "Quux";
+
+        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("try")).thenReturn(state3);
+        when(duck.fly("finally")).thenReturn(state5);
+
+        String actual = ifTry.ifTryFoo(duck, canSwim);
+
+        assertEquals(state5, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testTryIfFooTryIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("try")).thenReturn(state);
+        when(duck.fly("finally")).thenReturn(state3);
+        when(duck.fly("if canSwim")).thenReturn(state4);
+
+        String actual = ifTry.tryIfFoo(duck, canSwim);
+
+        assertEquals(state4, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testTryIfFooTryElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state3 = "Baz";
+        String state5 = "Quux";
+
+        when(duck.fly("try")).thenReturn(state);
+        when(duck.fly("finally")).thenReturn(state3);
+        when(duck.fly("else canSwim")).thenReturn(state5);
+
+        String actual = ifTry.tryIfFoo(duck, canSwim);
+
+        assertEquals(state5, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testTryIfFooTryCatchIllegalStateException() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String state = "Foo";
+        String state2 = "Bar";
+        String state3 = "Baz";
+        String state4 = "Qux";
+
+        when(duck.fly("try")).thenReturn(state);
+        when(duck.fly("catch")).thenReturn(state2);
+        when(duck.fly("finally")).thenReturn(state3);
+        when(duck.fly("if canSwim")).thenReturn(state4);
+
+        String actual = ifTry.tryIfFoo(duck, canSwim);
+
+        assertEquals(state4, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("try");
+        verify(duck).swim("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTryNoAssignFooIfCanSwimTry() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String mango = "Quux";
+        String banana = "Corge";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("try")).thenReturn(orange);
+        when(duck.fly("finally")).thenReturn(mango);
+        when(duck.toString()).thenReturn(banana);
+
+        String actual = ifTry.ifTryNoAssignFoo(duck, canSwim);
+
+        assertEquals(banana, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTryNoAssignFooIfCanSwimTryCatchIllegalStateException() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String mango = "Quux";
+        String banana = "Corge";
+
+        when(duck.fly("if canSwim")).thenReturn(apple);
+        when(duck.fly("try")).thenReturn(orange);
+        when(duck.fly("catch")).thenReturn(kiwi);
+        when(duck.fly("finally")).thenReturn(mango);
+        when(duck.toString()).thenReturn(banana);
+
+        String actual = ifTry.ifTryNoAssignFoo(duck, canSwim);
+
+        assertEquals(banana, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("try");
+        verify(duck).swim("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTryNoAssignFooElseCanSwimTry() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String grape = "Bar";
+        String orange = "Baz";
+        String mango = "Quux";
+        String banana = "Corge";
+
+        when(duck.fly("else canSwim")).thenReturn(grape);
+        when(duck.fly("try")).thenReturn(orange);
+        when(duck.fly("finally")).thenReturn(mango);
+        when(duck.toString()).thenReturn(banana);
+
+        String actual = ifTry.ifTryNoAssignFoo(duck, canSwim);
+
+        assertEquals(banana, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testTryIfNoAssignFooTryIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String banana = "Corge";
+
+        when(duck.fly("try")).thenReturn(apple);
+        when(duck.fly("finally")).thenReturn(orange);
+        when(duck.fly("if canSwim")).thenReturn(kiwi);
+        when(duck.toString()).thenReturn(banana);
+
+        String actual = ifTry.tryIfNoAssignFoo(duck, canSwim);
+
+        assertEquals(banana, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testTryIfNoAssignFooTryElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String orange = "Baz";
+        String mango = "Quux";
+        String banana = "Corge";
+
+        when(duck.fly("try")).thenReturn(apple);
+        when(duck.fly("finally")).thenReturn(orange);
+        when(duck.fly("else canSwim")).thenReturn(mango);
+        when(duck.toString()).thenReturn(banana);
+
+        String actual = ifTry.tryIfNoAssignFoo(duck, canSwim);
+
+        assertEquals(banana, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("try");
+        verify(duck, never()).swim("catch");
+        verify(duck, never()).fly("catch");
+        verify(duck).swim("finally");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).fly("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testTryIfNoAssignFooTryCatchIllegalStateException() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String banana = "Corge";
+
+        when(duck.fly("try")).thenReturn(apple);
+        when(duck.fly("catch")).thenReturn(grape);
+        when(duck.fly("finally")).thenReturn(orange);
+        when(duck.fly("if canSwim")).thenReturn(kiwi);
+        when(duck.toString()).thenReturn(banana);
+
+        String actual = ifTry.tryIfNoAssignFoo(duck, canSwim);
+
+        assertEquals(banana, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("try");
+        verify(duck).swim("catch");
+        verify(duck).swim("finally");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck).swim("end");
+    }
+}

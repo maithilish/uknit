@@ -1,6 +1,6 @@
 package org.codetab.uknit.itest.lambda;
 
-public class LambdaInArg {
+class LambdaInArg {
 
     public int calculate(final CalcA calcA) {
         calcA.op(1, 2, (a, b) -> a + b);

@@ -76,6 +76,12 @@ class MockExcludes {
             exclude = true;
         }
 
+        // generic type variables such as T, U, E etc.,
+        if (nonNull(var.getTypeBinding())
+                && var.getTypeBinding().isTypeVariable()) {
+            exclude = true;
+        }
+
         return exclude;
     }
 }

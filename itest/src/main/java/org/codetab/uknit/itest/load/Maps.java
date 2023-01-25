@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * To test object Insertion to lists.
- * @author m
+ * @author Maithilish
  *
  */
 class Maps {

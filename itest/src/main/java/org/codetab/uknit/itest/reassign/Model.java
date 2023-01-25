@@ -14,5 +14,13 @@ class Model {
         Object obj();
 
         String get(int index);
+
+        String format(String name);
+
+        void append(String name);
+
+        String format(String name, String city);
+
+        void append(String name, String city);
     }
 }

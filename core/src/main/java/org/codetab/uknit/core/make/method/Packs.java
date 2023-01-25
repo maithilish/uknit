@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -259,6 +260,76 @@ public class Packs {
                     && !p.getVar().isReturnVar() && predicate.test(p);
         }).collect(Collectors.toList());
         return list;
+    }
+
+    /**
+     * Filter packs up to the next rename.
+     *
+     * <code>
+     *  P4 [var=state2 (state) ...]
+     *  P5 [var=x ...]
+     *  P6 [var=state3 (state2) ...]
+     *  P7 [var=y ...]
+     *  P8 [var=z ...]
+     * </code>
+     *
+     * For tail list P4-P8, the scoped list is P4-P5 as name changes in P6. For
+     * tail list P6-P8, the scoped list is P6-P8.
+     *
+     * @param renamedPack
+     * @param tailList
+     * @return
+     */
+    public List<Pack> filterScopePacks(final Pack renamedPack,
+            final List<Pack> tailList) {
+        List<Pack> scopeList = new ArrayList<>();
+        boolean skip = false;
+        scopeList.add(tailList.get(0));
+        if (tailList.size() > 1) {
+            String definedName = renamedPack.getVar().getDefinedName();
+            for (int i = 1; i < tailList.size(); i++) {
+                Pack tailPack = tailList.get(i);
+                // skip all packs once new incarnation of renamed var is found
+                if (nonNull(tailPack.getVar()) && tailPack.getVar()
+                        .getDefinedName().equals(definedName)) {
+                    skip = true;
+                }
+                if (!skip) {
+                    scopeList.add(tailPack);
+                }
+            }
+        }
+        return scopeList;
+    }
+
+    /**
+     * Filter list of packs that contains vars with same defined name.
+     *
+     * <code>
+     * P1 var[name=id, oldName=id, definedName=id]
+     * P2 var[name=id2, oldName=id, definedName=id]
+     * P3 var[name=date, oldName=date, definedName=date]
+     * P4 var[name=id3, oldName=id2, definedName=id]
+     * </code>
+     *
+     * For P1/P2/P4 with defined name id, returns list of P1,P2 and P4. For P3
+     * with defined name date, returns list of P3.
+     *
+     * @param pack
+     * @param heap
+     * @return
+     */
+    public List<Pack> filterByDefinedName(final Pack pack, final Heap heap) {
+        if (isNull(pack.getVar())) {
+            return List.of(pack);
+        }
+
+        String definedName = pack.getVar().getDefinedName();
+        List<Pack> packs = heap.getPacks().stream().filter(p -> {
+            return nonNull(p.getVar())
+                    && p.getVar().getDefinedName().equals(definedName);
+        }).collect(Collectors.toList());
+        return packs;
     }
 
     /**

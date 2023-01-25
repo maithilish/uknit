@@ -142,6 +142,11 @@ public class FieldMakers {
                 return false;
             }
         }
+
+        // disable if field is real. Ref itest: variable.StandinVar.java
+        if (!mock) {
+            return false;
+        }
         return true;
     }
 

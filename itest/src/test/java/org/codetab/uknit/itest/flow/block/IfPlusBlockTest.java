@@ -1,0 +1,678 @@
+package org.codetab.uknit.itest.flow.block;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codetab.uknit.itest.flow.block.Model.Duck;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+class IfPlusBlockTest {
+    @InjectMocks
+    private IfPlusBlock ifPlusBlock;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testIfPlusBlockFooIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifPlusBlockFoo(duck, canSwim, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfPlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifPlusBlockFoo(duck, canSwim, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElsePlusBlockFooIfCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifElsePlusBlockFoo(duck, canSwim, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElsePlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifElsePlusBlockFoo(duck, canSwim, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfPlusBlockFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifNestIfPlusBlockFoo(duck, canSwim, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfPlusBlockFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifNestIfPlusBlockFoo(duck, canSwim, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if done nest");
+        verify(duck).swim("else done nest");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfPlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        boolean done = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifNestIfPlusBlockFoo(duck, canSwim, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfPlusBlockFooIfCanSwimIfCanDive() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifIfPlusBlockFoo(duck, canSwim, canDive, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfPlusBlockFooIfCanSwimElseCanDive() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifIfPlusBlockFoo(duck, canSwim, canDive, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if canDive");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfIfPlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        boolean canDive = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifIfPlusBlockFoo(duck, canSwim, canDive, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck).swim("if canDive");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseTwicePlusBlockFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifElseTwicePlusBlockFoo(duck, canSwim, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseTwicePlusBlockFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifElseTwicePlusBlockFoo(duck, canSwim, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).swim("if done");
+        verify(duck).swim("else done");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseTwicePlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        boolean done = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifPlusBlock.ifElseTwicePlusBlockFoo(duck, canSwim, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfPlusBlockFooIfCanSwimIfCanDiveIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfPlusBlockFoo(duck, canSwim,
+                canDive, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive nest");
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfPlusBlockFooIfCanSwimIfCanDiveElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfPlusBlockFoo(duck, canSwim,
+                canDive, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive nest");
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).swim("if done");
+        verify(duck).swim("else done");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfPlusBlockFooIfCanSwimElseCanDive() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = false;
+        boolean done = true;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfPlusBlockFoo(duck, canSwim,
+                canDive, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if canDive nest");
+        verify(duck).swim("else canDive nest");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfPlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        boolean canDive = false;
+        boolean done = false;
+        List<String> names = new ArrayList<>();
+        String name = "Foo";
+        String apple = "Bar";
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfPlusBlockFoo(duck, canSwim,
+                canDive, done, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).swim("if canDive nest");
+        verify(duck, never()).swim("else canDive nest");
+        verify(duck, never()).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfNestBlockPlusBlockFooIfCanSwimIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfNestBlockPlusBlockFoo(duck, canSwim,
+                done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck).swim(lane);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfNestBlockPlusBlockFooIfCanSwimElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = false;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfNestBlockPlusBlockFoo(duck, canSwim,
+                done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if done nest");
+        verify(duck).swim("else done nest");
+        verify(duck).swim(lane);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfNestBlockPlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        boolean done = false;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfNestBlockPlusBlockFoo(duck, canSwim,
+                done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).swim("if done nest");
+        verify(duck, never()).swim("else done nest");
+        verify(duck, never()).swim(lane);
+        verify(duck).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNestBlockPlusBlockFooIfCanSwimIfCanDiveIfDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfNestBlockPlusBlockFoo(duck,
+                canSwim, canDive, done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive");
+        verify(duck, never()).swim("else canDive");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck).swim(lane);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNestBlockPlusBlockFooIfCanSwimIfCanDiveElseDone() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = false;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfNestBlockPlusBlockFoo(duck,
+                canSwim, canDive, done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck).swim("if canDive");
+        verify(duck, never()).swim("else canDive");
+        verify(duck, never()).swim("if done");
+        verify(duck).swim("else done");
+        verify(duck).swim(lane);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNestBlockPlusBlockFooIfCanSwimElseCanDive() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = false;
+        boolean done = true;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfNestBlockPlusBlockFoo(duck,
+                canSwim, canDive, done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("if canDive");
+        verify(duck).swim("else canDive");
+        verify(duck).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck).swim(lane);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfNestIfIfNestBlockPlusBlockFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        boolean canDive = false;
+        boolean done = false;
+        List<String> lanes = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String lane = "Foo";
+        String name = "Bar";
+        String apple = "Baz";
+        lanes.add(lane);
+        names.add(name);
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifPlusBlock.ifNestIfIfNestBlockPlusBlockFoo(duck,
+                canSwim, canDive, done, lanes, names);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck, never()).swim("if canSwim");
+        verify(duck, never()).swim("if canDive");
+        verify(duck, never()).swim("else canDive");
+        verify(duck, never()).swim("if done");
+        verify(duck, never()).swim("else done");
+        verify(duck, never()).swim(lane);
+        verify(duck).swim("else canSwim");
+        verify(duck).swim(name);
+        verify(duck).swim("end");
+    }
+}

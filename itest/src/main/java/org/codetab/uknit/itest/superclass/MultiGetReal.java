@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.superclass;
 
 /**
  * Get same real object multi times.
- * @author m
+ * @author Maithilish
  *
  */
 class MultiGetReal extends Task {

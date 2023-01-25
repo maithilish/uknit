@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.lambda;
 
 import java.util.Properties;
 
-public class LambdaInArgGeneric {
+class LambdaInArgGeneric {
 
     public Integer calculate(final CalcB calcB) {
         calcB.op(1, 2, (a, b) -> a + b);

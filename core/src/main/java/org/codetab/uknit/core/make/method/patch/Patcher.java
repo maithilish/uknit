@@ -155,9 +155,11 @@ public class Patcher {
         List<Expression> exps = patchService.getExps(exp);
         for (int i = 0; i < exps.size(); i++) {
             Expression expression = exps.get(i);
-            if (nodes.isName(expression) && nodes.getName(expression)
-                    .equals(renamedVar.getOldName())) {
-                Patch patch = modelFactory.createPatch(Kind.VAR, renamedVar, i);
+            String definedName = renamedVar.getDefinedName();
+            if (nodes.isName(expression)
+                    && nodes.getName(expression).equals(definedName)) {
+                Patch patch = modelFactory.createPatch(Kind.VAR, definedName,
+                        renamedVar, i);
                 pack.addPatch(patch);
             }
         }

@@ -15,8 +15,7 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.getter.GetterSetter;
-import org.codetab.uknit.core.make.method.imc.Merger;
-import org.codetab.uknit.core.make.method.process.Processor;
+import org.codetab.uknit.core.make.method.process.PostProcessor;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -47,7 +46,7 @@ public class MethodMaker {
     @Inject
     private MethodMakers methodMakers;
     @Inject
-    private Processor processor;
+    private PostProcessor postProcessor;
     @Inject
     private CallCreator callCreator;
     @Inject
@@ -60,8 +59,6 @@ public class MethodMaker {
     private Classes classes;
     @Inject
     private VarNames varNames;
-    @Inject
-    private Merger merger;
     @Inject
     private Heaps heaps;
     @Inject
@@ -129,31 +126,14 @@ public class MethodMaker {
                 .createFieldPacks(clzMap.getFieldsCopy(testClzName)));
         method.accept(visitor);
 
-        processor.processInfers(heap);
-        processor.processVarReassign(heap);
-        processor.processVarNameChange(heap);
+        postProcessor.process(heap);
 
-        processor.processIM(heap);
-
-        processor.processVars(heap);
-        processor.processInvokes(heap);
-
-        processor.processEnhancedFor(heap);
-        processor.processLoads(heap);
-
-        processor.processOfflimits(heap);
-
-        processor.processWhenVerify(heap);
-
-        processor.processInitializer(heap);
-        processor.processVarState(heap);
+        clzMap.updateFieldState(testClzName,
+                vars.getVarsOfKind(heap, Kind.FIELD));
 
         heaps.debugPacks("[ Heap after MUT processing ]", heap);
 
         heaps.debugPatches("[ Patch Map ]", heap);
-
-        clzMap.updateFieldState(testClzName,
-                vars.getVarsOfKind(heap, Kind.FIELD));
 
         methodMakers.addThrowsException(testMethod, heap);
 
@@ -206,26 +186,7 @@ public class MethodMaker {
 
         method.accept(visitor);
 
-        /*
-         * process infer, returnInfer, IMC etc., but when, verify and var state
-         * are not processed here and these are later processed by caller.
-         */
-        processor.processInfers(internalHeap);
-
-        processor.processIM(internalHeap);
-
-        processor.processVars(internalHeap);
-
-        // merge packs of internal heap to the caller heap.
-        merger.merge(invoke, heap, internalHeap);
-
-        merger.processInvokes(internalHeap);
-        processor.processEnhancedFor(internalHeap);
-        merger.mergeLoader(heap, internalHeap);
-
-        // after merge, resolve any var name conflict
-        processor.processVarNameChange(internalHeap);
-        merger.mergePatcher(heap, internalHeap);
+        postProcessor.processInternalMethod(invoke, internalHeap, heap);
 
         heaps.debugPacks("[ Heap after IM processing ]", heap);
 

@@ -1,0 +1,102 @@
+package org.codetab.uknit.itest.stream;
+
+import java.util.stream.Collectors.maxBy;
+import java.util.stream.Collectors.toList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.codetab.uknit.itest.stream.Model.Album;
+import org.codetab.uknit.itest.stream.Model.Artist;
+import org.codetab.uknit.itest.stream.Model.Track;
+class RealStreamTest {
+    @InjectMocks
+    private RealStream realStream;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testStreamCount() {
+        long count = 1L;
+
+        long actual = realStream.streamCount();
+
+        assertEquals(count, actual);
+    }
+
+    @Test
+    public void testStreamCountList() {
+        List<String> strings = new ArrayList<>();
+        Stream<String> stream = Stream.of(STEPIN);
+        Stream<String> stream2 = stream.filter(string -> string.isEmpty());
+        long count = stream2.count();
+
+        long actual = realStream.streamCount(strings);
+
+        assertEquals(count, actual);
+    }
+
+    @Test
+    public void testStreamCollect() {
+        List<String> collected = STEPIN;
+
+        List<String> actual = realStream.streamCollect();
+
+        assertEquals(collected, actual);
+    }
+
+    @Test
+    public void testStreamMapCollect() {
+        List<String> collected = STEPIN;
+
+        List<String> actual = realStream.streamMapCollect();
+
+        assertEquals(collected, actual);
+    }
+
+    @Test
+    public void testStreamFlatMapCollect() {
+        List<Integer> together = STEPIN;
+
+        List<Integer> actual = realStream.streamFlatMapCollect();
+
+        assertEquals(together, actual);
+    }
+
+    @Test
+    public void testCompare() {
+        Track shortestTrack = STEPIN;
+
+        Track actual = realStream.compare();
+
+        assertEquals(shortestTrack, actual);
+    }
+
+    @Test
+    public void testFindLongTracks() {
+        List<Album> albums = new ArrayList<>();
+        Set<String> trackNames = new HashSet<>();
+
+        Set<String> actual = realStream.findLongTracks(albums);
+
+        assertEquals(trackNames, actual);
+    }
+
+    @Test
+    public void testBiggestGroup() {
+        Stream<Artist> artists = Stream.of(STEPIN);
+        Optional<Artist> apple = artists.collect(maxBy(Comparator.comparing(getCount)));
+
+        Optional<Artist> actual = realStream.biggestGroup(artists);
+
+        assertEquals(apple, actual);
+    }
+}

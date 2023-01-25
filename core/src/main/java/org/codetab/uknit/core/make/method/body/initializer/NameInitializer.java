@@ -14,6 +14,8 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 
 /**
@@ -42,9 +44,18 @@ class NameInitializer implements IInitializer {
         Expression patchedExp = patcher.copyAndPatch(pack, heap);
 
         if (nodes.isName(wrappers.unpack(patchedExp))) {
+            ASTNode parent = wrappers.stripAndGetParent(iniPack.getExp());
+            if (nodes.is(parent, CastExpression.class)) {
+                /*
+                 * Ex: return (int) person.lid; the initializer is parent cast
+                 * exp and not inner name exp.
+                 */
+                patchedExp = (Expression) parent;
+            } else {
+                patchedExp = patcher.copyAndPatch(iniPack, heap);
+            }
             Initializer initializer =
                     modelFactory.createInitializer(Kind.NAME, patchedExp);
-
             LOG.debug("Var [name={}] {}", pack.getVar().getName(), initializer);
 
             return Optional.of(initializer);

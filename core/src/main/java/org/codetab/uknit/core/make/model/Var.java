@@ -20,11 +20,28 @@ public class Var implements IVar {
 
     protected Kind kind;
 
-    // present name
+    /**
+     * Var is renamed on var conflict or a new instance of var is created when
+     * new value is assigned to var. Three name fields keep track of name
+     * changes.
+     *
+     * Var name - current name
+     *
+     * oldName - name before change
+     *
+     * definedName - name given when var is defined, useful to group the
+     * reassigned vars.
+     *
+     * <code>
+     *  var [name=id, oldName=id, definedName=id]
+     *  var [name=id2, oldName=id, definedName=id]
+     *  var [name=id3, oldName=id2, definedName=id]
+     *  var [name=id4, oldName=id3, definedName=id]
+     * </code>
+     */
     protected String name;
-
-    // original name before any name change
     protected String oldName;
+    protected final String definedName;
 
     protected Type type;
     protected ITypeBinding typeBinding;
@@ -43,6 +60,7 @@ public class Var implements IVar {
         this.kind = kind;
         this.name = name;
         this.oldName = name;
+        this.definedName = name;
         this.type = type;
         this.mock = mock;
         this.enable = true; // enable by default
@@ -72,6 +90,11 @@ public class Var implements IVar {
     @Override
     public void setOldName(final String oldName) {
         this.oldName = oldName;
+    }
+
+    @Override
+    public String getDefinedName() {
+        return definedName;
     }
 
     @Override
@@ -202,8 +225,12 @@ public class Var implements IVar {
 
     @Override
     public String toString() {
-        return "Var [name=" + name + ", type=" + type + ", kind=" + kind
-                + ", mock=" + mock + ", created=" + created + "]";
+        String oldNameStr = "";
+        if (!name.equals(oldName)) {
+            oldNameStr = " (" + oldName + ") ";
+        }
+        return "Var [name=" + name + oldNameStr + ", type=" + type + ", kind="
+                + kind + ", mock=" + mock + ", created=" + created + "]";
     }
 
     @Override

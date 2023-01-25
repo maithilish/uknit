@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
@@ -62,7 +63,8 @@ public class Assignor {
                     Optional<Pack> varPackO = packs
                             .findByVarName(nodes.getName(lhs), heap.getPacks());
                     if (varPackO.isPresent()) {
-                        if (isNull(varPackO.get().getExp())) {
+                        Expression exp = varPackO.get().getExp();
+                        if (isNull(exp) || exp instanceof NullLiteral) {
                             /*
                              * Var definition and assign are done in different
                              * stmts. Ex: Date foo; foo = bar(); results in two

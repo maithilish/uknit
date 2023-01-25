@@ -8,7 +8,7 @@ import java.util.List;
  * Access list from super. Notes: This feature is fully implemented needs
  * refactor. Analyze whether to add super private field as @Mock in test class.
  *
- * @author m
+ * @author Maithilish
  *
  */
 class SuperGet extends SuperGetHolder {

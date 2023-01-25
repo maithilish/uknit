@@ -34,7 +34,7 @@ class FieldMethodCallTest {
 
     @Test
     public void testRegisterGuage() throws Exception {
-        T value = Mockito.mock(T.class);
+        T value = STEPIN;
         Object clz = Mockito.mock(Object.class);
         String[] names = {};
         fieldMethodCall.registerGuage(value, clz, names);

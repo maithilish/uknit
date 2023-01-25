@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 
-public class Lambda {
+class Lambda {
 
     // STEPIN - in below tests, test return lambda
     public FileFilter returnLambdaVar() {

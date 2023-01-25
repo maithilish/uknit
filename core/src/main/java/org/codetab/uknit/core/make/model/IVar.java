@@ -30,6 +30,8 @@ public interface IVar {
 
     void setOldName(String name);
 
+    String getDefinedName();
+
     Type getType();
 
     void setType(Type type);

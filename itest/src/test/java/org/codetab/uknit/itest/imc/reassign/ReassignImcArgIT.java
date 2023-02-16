@@ -1,4 +1,4 @@
-package org.codetab.uknit.itest.reassign;
+package org.codetab.uknit.itest.imc.reassign;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
-class InternalIT extends ITBase {
+class ReassignImcArgIT extends ITBase {
 
     @Test
     public void test() throws IOException {

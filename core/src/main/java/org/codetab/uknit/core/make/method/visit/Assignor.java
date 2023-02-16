@@ -10,6 +10,7 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
@@ -89,14 +90,22 @@ public class Assignor {
                              * the second pack. The new var is clone of var i
                              * with name changed as i-reassigned and the name
                              * will be changed to i2 by
-                             * Processor.processVarReassign(). Illegal token
-                             * dash in the name ensures that it doesn't clash
-                             * with any legal var in MUT.
+                             * Processor.processVarReassign(). The dash in the
+                             * name which is illegal ensures that it doesn't
+                             * clash with any legal var in MUT.
                              */
                             IVar newVar = varPackO.get().getVar().clone();
                             String newVarName =
                                     newVar.getName() + "-reassigned";
                             newVar.setName(newVarName);
+                            /*
+                             * The IM parameter without final keyword may be
+                             * reassigned in the IM. Make the reassigned var
+                             * local as the new var is not a parameter.
+                             */
+                            if (newVar.isParameter()) {
+                                newVar.setKind(Kind.LOCAL);
+                            }
                             pack.setVar(newVar);
                         }
                     }

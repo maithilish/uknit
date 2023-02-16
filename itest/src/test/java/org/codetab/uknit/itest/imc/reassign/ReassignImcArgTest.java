@@ -1,18 +1,18 @@
-package org.codetab.uknit.itest.reassign;
+package org.codetab.uknit.itest.imc.reassign;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.codetab.uknit.itest.reassign.Model.Foo;
+import org.codetab.uknit.itest.imc.reassign.Model.Foo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-class InternalTest {
+class ReassignImcArgTest {
     @InjectMocks
-    private Internal internal;
+    private ReassignImcArg reassignImcArg;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -28,7 +28,7 @@ class InternalTest {
 
         when(foo.get(index)).thenReturn(y);
 
-        String actual = internal.defineAndAssign(foo);
+        String actual = reassignImcArg.defineAndAssign(foo);
 
         assertEquals(x, actual);
     }
@@ -42,7 +42,7 @@ class InternalTest {
 
         when(foo.get(index2)).thenReturn(y2);
 
-        String actual = internal.reassignBeforeVarUse(foo);
+        String actual = reassignImcArg.reassignBeforeVarUse(foo);
 
         assertEquals(y, actual);
     }
@@ -61,7 +61,7 @@ class InternalTest {
         when(foo.get(index)).thenReturn(y2);
         when(foo.get(index2)).thenReturn(y3);
 
-        String actual = internal.reassignAfterVarUse(foo);
+        String actual = reassignImcArg.reassignAfterVarUse(foo);
 
         assertEquals(apple, actual);
     }
@@ -78,7 +78,7 @@ class InternalTest {
         when(foo.get(index)).thenReturn(y2);
         when(foo.get(index2)).thenReturn(y3);
 
-        String actual = internal.reassignAfterVarUse2(foo);
+        String actual = reassignImcArg.reassignAfterVarUse2(foo);
 
         assertEquals(y, actual);
     }
@@ -97,7 +97,7 @@ class InternalTest {
         when(foo.get(index)).thenReturn(y2);
         when(foo.get(index3)).thenReturn(y3);
 
-        String actual = internal.reassignNameVarConflicts(foo);
+        String actual = reassignImcArg.reassignNameVarConflicts(foo);
 
         assertEquals(apple, actual);
     }

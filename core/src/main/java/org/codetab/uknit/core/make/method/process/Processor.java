@@ -114,10 +114,22 @@ public class Processor {
         patchProcessor.createVarPatches(heap);
     }
 
+    /**
+     * Rename reassigned vars and update old names.
+     *
+     * @param heap
+     * @return
+     */
     public List<IVar> processVarReassign(final Heap heap) {
         return varProcessor.processReassign(heap);
     }
 
+    /**
+     * Update any references of reassigned vars in RHS name exps.
+     *
+     * @param reassignedVars
+     * @param heap
+     */
     public void updateVarReassign(final List<IVar> reassignedVars,
             final Heap heap) {
         varProcessor.updateReassign(reassignedVars, heap);

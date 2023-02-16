@@ -116,7 +116,7 @@ public class VarAssignor {
      * @param var
      * @param heap
      */
-    public void updateAssigns(final IVar var, final Heap heap) {
+    public void updateReferredRHSExps(final IVar var, final Heap heap) {
 
         checkNotNull(var);
         checkNotNull(heap);

@@ -1,8 +1,8 @@
-package org.codetab.uknit.itest.reassign;
+package org.codetab.uknit.itest.imc.reassign;
 
-import org.codetab.uknit.itest.reassign.Model.Foo;
+import org.codetab.uknit.itest.imc.reassign.Model.Foo;
 
-class Internal {
+class ReassignImcArg {
 
     public String defineAndAssign(final Foo foo) {
         int index = 1;

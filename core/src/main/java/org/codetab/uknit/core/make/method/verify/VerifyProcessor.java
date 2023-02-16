@@ -17,6 +17,8 @@ public class VerifyProcessor {
 
     public void createVerifys(final Heap heap) {
         List<Invoke> invokes = packs.filterInvokes(heap.getPacks());
-        invokes.forEach(invoke -> verifyCreator.createVerify(invoke, heap));
+        for (Invoke invoke : invokes) {
+            verifyCreator.createVerify(invoke, heap);
+        }
     }
 }

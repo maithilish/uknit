@@ -79,7 +79,7 @@ public class VarProcessor {
      * @param heap
      */
     public void propagateRealish(final Heap heap) {
-        List<Invoke> packList = heap.getPacks().stream().filter(p -> !p.isIm())
+        List<Invoke> packList = heap.getPacks().stream()
                 .filter(p -> nonNull(p.getVar()) && p.getVar().isMock())
                 .filter(p -> p instanceof Invoke && nonNull(p.getExp())
                         && p.getExp() instanceof MethodInvocation)
@@ -90,38 +90,34 @@ public class VarProcessor {
     }
 
     /**
-     * Renames reassigned vars and update any reference.
+     * Rename reassigned vars and update old names.
      *
      * @param heap
      * @return
      */
     public List<IVar> processReassign(final Heap heap) {
-        /*
-         * IM packs are processed before the merge, so don't process them again
-         * while processing the calling heap. While processing the internal heap
-         * all its packs are processed as processReassign is called before merge
-         * and marking the packs as IM packs.
-         */
         List<IVar> reassignedVars = heap.getPacks().stream()
-                .filter(p -> !p.isIm()).map(p -> p.getVar())
+                .map(p -> p.getVar())
                 .filter(v -> nonNull(v) && v.getName().endsWith("-reassigned"))
                 .collect(Collectors.toList());
         for (IVar v : reassignedVars) {
             varAssignor.renameAssigns(v, heap);
         }
+
+        varAssignor.updateOldNames(reassignedVars, heap);
+
         return reassignedVars;
     }
 
     /**
-     * Update old names and any reassign references.
+     * Update any references of reassigned vars in RHS name exps.
      *
      * @param heap
      */
     public void updateReassign(final List<IVar> reassignedVars,
             final Heap heap) {
-        varAssignor.updateOldNames(reassignedVars, heap);
         for (IVar var : reassignedVars) {
-            varAssignor.updateAssigns(var, heap);
+            varAssignor.updateReferredRHSExps(var, heap);
         }
     }
 

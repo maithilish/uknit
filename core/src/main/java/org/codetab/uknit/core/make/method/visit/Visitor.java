@@ -141,6 +141,7 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final MethodInvocation node) {
         Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
+        invoke.setIm(imc);
         packer.setupInvokes(invoke, imc, heap);
         heap.addPack(invoke);
     }

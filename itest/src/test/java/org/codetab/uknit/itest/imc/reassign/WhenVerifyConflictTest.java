@@ -1,0 +1,283 @@
+package org.codetab.uknit.itest.imc.reassign;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.codetab.uknit.itest.imc.reassign.Model.Foo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+class WhenVerifyConflictTest {
+    @InjectMocks
+    private WhenVerifyConflict whenVerifyConflict;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCallReassignWhenVerify() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String name5 = "Foo";
+        String name3 = name5;
+
+        when(foo.format(name4)).thenReturn(name5);
+
+        String actual = whenVerifyConflict.callReassignWhenVerify(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name5);
+    }
+
+    @Test
+    public void testCallReassignVerifyWhen() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String name5 = "Foo";
+        String name3 = name5;
+
+        when(foo.format(name4)).thenReturn(name5);
+
+        String actual = whenVerifyConflict.callReassignVerifyWhen(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name4);
+    }
+
+    @Test
+    public void testCallReassignOnceWhenVerify() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String name5 = "Foo";
+        String name6 = "foo2";
+        String name7 = "Bar";
+        String name3 = name7;
+
+        when(foo.format(name4)).thenReturn(name5);
+        when(foo.format(name6)).thenReturn(name7);
+
+        String actual = whenVerifyConflict.callReassignOnceWhenVerify(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name5);
+        verify(foo).append(name7);
+    }
+
+    @Test
+    public void testCallReassignOnceVerifyWhen() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String name5 = "Foo";
+        String name6 = "foo2";
+        String name7 = "Bar";
+        String name3 = name7;
+
+        when(foo.format(name4)).thenReturn(name5);
+        when(foo.format(name6)).thenReturn(name7);
+
+        String actual = whenVerifyConflict.callReassignOnceVerifyWhen(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name4);
+        verify(foo).append(name6);
+    }
+
+    @Test
+    public void testCallReassignTwiceWhenVerify() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String name5 = "Foo";
+        String name6 = "foo2";
+        String name7 = "Bar";
+        String name8 = "foo3";
+        String name9 = "Baz";
+        String name3 = name9;
+
+        when(foo.format(name4)).thenReturn(name5);
+        when(foo.format(name6)).thenReturn(name7);
+        when(foo.format(name8)).thenReturn(name9);
+
+        String actual = whenVerifyConflict.callReassignTwiceWhenVerify(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name5);
+        verify(foo).append(name7);
+        verify(foo).append(name9);
+    }
+
+    @Test
+    public void testCallReassignTwiceVerifyWhen() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String name5 = "Foo";
+        String name6 = "foo2";
+        String name7 = "Bar";
+        String name8 = "foo3";
+        String name9 = "Baz";
+        String name3 = name9;
+
+        when(foo.format(name4)).thenReturn(name5);
+        when(foo.format(name6)).thenReturn(name7);
+        when(foo.format(name8)).thenReturn(name9);
+
+        String actual = whenVerifyConflict.callReassignTwiceVerifyWhen(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name4);
+        verify(foo).append(name6);
+        verify(foo).append(name8);
+    }
+
+    @Test
+    public void testCallReassignTwiceTwoArgsWhenVerify() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String city = "bar";
+        String name5 = "Foo";
+        String name6 = "foo2";
+        String city2 = "bar2";
+        String name7 = "Bar";
+        String name8 = "foo3";
+        String city3 = "bar3";
+        String name9 = "Baz";
+        String name3 = name9;
+
+        when(foo.format(name4, city)).thenReturn(name5);
+        when(foo.format(name6, city2)).thenReturn(name7);
+        when(foo.format(name8, city3)).thenReturn(name9);
+
+        String actual = whenVerifyConflict.callReassignTwiceTwoArgsWhenVerify(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name5, city);
+        verify(foo).append(name7, city2);
+        verify(foo).append(name9, city3);
+    }
+
+    @Test
+    public void testCallReassignTwiceTwoArgsVerifyWhen() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name4 = "foo";
+        String city = "bar";
+        String name5 = "Foo";
+        String name6 = "foo2";
+        String city2 = "bar2";
+        String name7 = "Bar";
+        String name8 = "foo3";
+        String city3 = "bar3";
+        String name9 = "Baz";
+        String name3 = name9;
+
+        when(foo.format(name4, city)).thenReturn(name5);
+        when(foo.format(name6, city2)).thenReturn(name7);
+        when(foo.format(name8, city3)).thenReturn(name9);
+
+        String actual = whenVerifyConflict.callReassignTwiceTwoArgsVerifyWhen(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name4, city);
+        verify(foo).append(name6, city2);
+        verify(foo).append(name8, city3);
+    }
+
+    @Test
+    public void testCallMultiVarWhenVerify() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String name2 = "Foo";
+        String street = "boo";
+        String street2 = "Bar";
+        String street3 = "boo2";
+        String street4 = "Baz";
+        String city4 = "bar";
+        String city5 = "Qux";
+        String city6 = "bar2";
+        String city7 = "Quux";
+        String city8 = "baz3";
+        String city9 = "Corge";
+        String city10 = "baz4";
+        String city11 = "Grault";
+        String city12 = "baz5";
+        String city13 = "Garply";
+        String city3 = city13;
+
+        when(foo.format(name)).thenReturn(name2);
+        when(foo.format(street)).thenReturn(street2);
+        when(foo.format(street3)).thenReturn(street4);
+        when(foo.format(city4)).thenReturn(city5);
+        when(foo.format(city6)).thenReturn(city7);
+        when(foo.format(city8)).thenReturn(city9);
+        when(foo.format(city10)).thenReturn(city11);
+        when(foo.format(city12)).thenReturn(city13);
+
+        String actual = whenVerifyConflict.callMultiVarWhenVerify(foo);
+
+        assertEquals(city3, actual);
+
+        verify(foo).append(name2);
+        verify(foo).append(street2);
+        verify(foo).append(street4);
+        verify(foo).append(city5);
+        verify(foo).append(city7);
+        verify(foo).append(city9);
+        verify(foo).append(city11);
+        verify(foo).append(city13);
+    }
+
+    @Test
+    public void testCallMultiVarVerifyWhen() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String name2 = "Foo";
+        String street = "boo";
+        String street2 = "Bar";
+        String street3 = "boo2";
+        String street4 = "Baz";
+        String city4 = "bar";
+        String city5 = "Qux";
+        String city6 = "bar2";
+        String city7 = "Quux";
+        String city8 = "baz3";
+        String city9 = "Corge";
+        String city10 = "baz4";
+        String city11 = "Grault";
+        String city12 = "baz5";
+        String city13 = "Garply";
+        String city3 = city13;
+
+        when(foo.format(name)).thenReturn(name2);
+        when(foo.format(street)).thenReturn(street2);
+        when(foo.format(street3)).thenReturn(street4);
+        when(foo.format(city4)).thenReturn(city5);
+        when(foo.format(city6)).thenReturn(city7);
+        when(foo.format(city8)).thenReturn(city9);
+        when(foo.format(city10)).thenReturn(city11);
+        when(foo.format(city12)).thenReturn(city13);
+
+        String actual = whenVerifyConflict.callMultiVarVerifyWhen(foo);
+
+        assertEquals(city3, actual);
+
+        verify(foo).append(name);
+        verify(foo).append(street);
+        verify(foo).append(street3);
+        verify(foo).append(city4);
+        verify(foo).append(city6);
+        verify(foo).append(city8);
+        verify(foo).append(city10);
+        verify(foo).append(city12);
+    }
+}

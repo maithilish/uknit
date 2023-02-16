@@ -20,7 +20,6 @@ public class PostProcessor {
         processor.processInfers(heap);
 
         List<IVar> reassignedVars = processor.processVarReassign(heap);
-
         processor.updateVarReassign(reassignedVars, heap);
 
         processor.processVarPatches(heap);
@@ -48,6 +47,11 @@ public class PostProcessor {
          * are not processed here and these are later processed by caller.
          */
         processor.processInfers(internalHeap);
+
+        List<IVar> reassignedVars = processor.processVarReassign(internalHeap);
+        processor.updateVarReassign(reassignedVars, internalHeap);
+
+        processor.processVarPatches(internalHeap);
 
         processor.processIM(internalHeap);
 

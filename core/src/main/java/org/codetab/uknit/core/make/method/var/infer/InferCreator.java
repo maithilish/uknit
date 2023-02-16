@@ -63,7 +63,10 @@ public class InferCreator {
              * FIXME Pack - kinds FIELD, PARAMETER and infer for LOCAL reassign
              */
             IVar var = pack.getVar();
-            if (var.isReturnVar() || var.isLocalVar() || var.isField()) {
+            if (var.isReturnVar() || var.isLocalVar() || var.isField()
+                    || var.isParameter()) {
+                return;
+            } else if (var.isParameter() && pack.isIm()) {
                 return;
             } else {
                 throw new IllegalStateException(nodes.exMessage(

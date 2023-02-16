@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
 class WhenVerifyConflictTest {
     @InjectMocks
     private WhenVerifyConflict whenVerifyConflict;
@@ -157,7 +158,8 @@ class WhenVerifyConflictTest {
         when(foo.format(name6, city2)).thenReturn(name7);
         when(foo.format(name8, city3)).thenReturn(name9);
 
-        String actual = whenVerifyConflict.callReassignTwiceTwoArgsWhenVerify(foo);
+        String actual =
+                whenVerifyConflict.callReassignTwiceTwoArgsWhenVerify(foo);
 
         assertEquals(name3, actual);
 
@@ -184,7 +186,8 @@ class WhenVerifyConflictTest {
         when(foo.format(name6, city2)).thenReturn(name7);
         when(foo.format(name8, city3)).thenReturn(name9);
 
-        String actual = whenVerifyConflict.callReassignTwiceTwoArgsVerifyWhen(foo);
+        String actual =
+                whenVerifyConflict.callReassignTwiceTwoArgsVerifyWhen(foo);
 
         assertEquals(name3, actual);
 

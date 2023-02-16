@@ -3,7 +3,6 @@ package org.codetab.uknit.core.parse;
 import static java.util.Objects.nonNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -222,59 +221,54 @@ public class SourceVisitor extends ASTVisitor {
             boolean splitMethodsOnControlFlow =
                     configs.getConfig("uknit.controlFlow.method.split", true);
 
+            // separate method for each control flow path
+            PathFinder ctlFlowVisitor = di.instance(PathFinder.class);
+            ctlFlowVisitor.setup();
+            node.accept(ctlFlowVisitor);
+
+            // ctlFlowVisitor.enableNodes(ctlFlowVisitor.getTree(), true);
+            ctlFlowVisitor.enableUncoveredNodes(ctlFlowVisitor.getTree());
+
+            LOG.debug("Flow Tree [+ enabled path]{}", trees
+                    .prettyPrintTree(ctlFlowVisitor.getTree(), "", "", null));
+
+            List<TreeNode<ASTNode>> leaves =
+                    trees.findEnabledLeaves(ctlFlowVisitor.getTree());
+
+            LOG.info("method {}, ctl flow paths {}", node.getName(),
+                    leaves.size());
+
+            /*
+             * when uknit.controlFlow.method.split is false, process first
+             * branch otherwise process all branches.
+             */
+            int noOfBranches = 1;
             if (splitMethodsOnControlFlow) {
+                noOfBranches = leaves.size();
+            }
+            // for each control path create a test method
+            for (int i = 0; i < noOfBranches; i++) {
 
-                // separate method for each control flow path
-                PathFinder ctlFlowVisitor = di.instance(PathFinder.class);
-                ctlFlowVisitor.setup();
-                node.accept(ctlFlowVisitor);
+                // get ctlPath for a leaf.
+                TreeNode<ASTNode> leaf = leaves.get(i);
+                List<TreeNode<ASTNode>> ctlPath = trees.getPathFromRoot(leaf);
 
-                // ctlFlowVisitor.enableNodes(ctlFlowVisitor.getTree(), true);
-                ctlFlowVisitor.enableUncoveredNodes(ctlFlowVisitor.getTree());
+                LOG.debug("==== generate test method for flow path ===={}",
+                        trees.prettyPrintPath(ctlFlowVisitor.getTree(), ctlPath,
+                                "", "", null));
 
-                LOG.debug("Flow Tree [+ enabled path]{}", trees.prettyPrintTree(
-                        ctlFlowVisitor.getTree(), "", "", null));
-
-                List<TreeNode<ASTNode>> leaves =
-                        trees.findEnabledLeaves(ctlFlowVisitor.getTree());
-
-                LOG.info("method {}, ctl flow paths {}", node.getName(),
-                        leaves.size());
-
-                // for each control path create a test method
-                for (int i = 0; i < leaves.size(); i++) {
-
-                    // get ctlPath for a leaf.
-                    TreeNode<ASTNode> leaf = leaves.get(i);
-                    List<TreeNode<ASTNode>> ctlPath =
-                            trees.getPathFromRoot(leaf);
-
-                    LOG.debug("==== generate test method for flow path ===={}",
-                            trees.prettyPrintPath(ctlFlowVisitor.getTree(),
-                                    ctlPath, "", "", null));
-
-                    // suffix such as IfDone, ElseFlag etc.,
-                    String suffix = methodMaker.getTestMethodNameSuffix(ctlPath,
-                            ctlFlowVisitor.getTree());
-
-                    Heap heap = di.instance(Heap.class);
-                    // class under test - CUT
-                    heap.setCutName(clzMaker.getCutName());
-
-                    // finally stage and generate the test method.
-                    if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
-                        methodMaker.generateTestMethod(heap);
-                    }
-                }
-            } else {
-                LOG.debug(
-                        "ctl flow path disabled, generate single test method");
-                @SuppressWarnings("unchecked")
-                List<TreeNode<ASTNode>> ctlPath = di.instance(ArrayList.class);
                 String suffix = "";
+                if (splitMethodsOnControlFlow) {
+                    // suffix such as IfDone, ElseFlag etc.,
+                    suffix = methodMaker.getTestMethodNameSuffix(ctlPath,
+                            ctlFlowVisitor.getTree());
+                }
+
                 Heap heap = di.instance(Heap.class);
-                // set class under test name
+                // class under test - CUT
                 heap.setCutName(clzMaker.getCutName());
+
+                // finally stage and generate the test method.
                 if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
                     methodMaker.generateTestMethod(heap);
                 }

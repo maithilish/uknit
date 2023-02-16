@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
 class WhenVerifyReassignArgTest {
     @InjectMocks
     private WhenVerifyReassignArg whenVerifyReassignArg;
@@ -156,7 +157,8 @@ class WhenVerifyReassignArgTest {
         when(foo.format(name5, city2)).thenReturn(name6);
         when(foo.format(name7, city3)).thenReturn(name8);
 
-        String actual = whenVerifyReassignArg.callReassignTwiceTwoArgsWhenVerify(foo);
+        String actual =
+                whenVerifyReassignArg.callReassignTwiceTwoArgsWhenVerify(foo);
 
         assertEquals(name3, actual);
 
@@ -183,7 +185,8 @@ class WhenVerifyReassignArgTest {
         when(foo.format(name5, city2)).thenReturn(name6);
         when(foo.format(name7, city3)).thenReturn(name8);
 
-        String actual = whenVerifyReassignArg.callReassignTwiceTwoArgsVerifyWhen(foo);
+        String actual =
+                whenVerifyReassignArg.callReassignTwiceTwoArgsVerifyWhen(foo);
 
         assertEquals(name3, actual);
 

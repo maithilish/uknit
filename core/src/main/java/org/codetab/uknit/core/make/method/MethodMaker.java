@@ -112,9 +112,14 @@ public class MethodMaker {
         visitor.setHeap(heap);
         visitor.setImc(false);
         visitor.setCtlPath(ctlPath);
-        visitor.setSplitOnControlFlow(
-                configs.getConfig("uknit.controlFlow.method.split", true));
         visitor.setMethodReturnType(method.getReturnType2());
+
+        /*
+         * when uknit.controlFlow.method.split is false, uKnit outputs test for
+         * first branch. Even if config is false, treat is as true so that
+         * verifies in other branches are marked with never().
+         */
+        visitor.setSplitOnControlFlow(true);
 
         heap.setup();
 

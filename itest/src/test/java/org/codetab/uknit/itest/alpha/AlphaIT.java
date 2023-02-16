@@ -35,6 +35,7 @@ class AlphaIT extends ITBase {
 
         configure();
 
+        addTransientConfig("uknit.controlFlow.method.split", "false");
         // addTransientConfig("uknit.createInstance.Canvas", "new Canvas()");
 
         try {

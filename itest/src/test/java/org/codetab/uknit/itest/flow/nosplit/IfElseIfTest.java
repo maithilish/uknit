@@ -1,0 +1,233 @@
+package org.codetab.uknit.itest.flow.nosplit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.codetab.uknit.itest.flow.nosplit.Model.Duck;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+class IfElseIfTest {
+    @InjectMocks
+    private IfElseIf ifElseIf;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testIfElseIf() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifElseIf(duck, canSwim, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canSwim");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseIfElse() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifElseIfElse(duck, canSwim, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if done");
+        verify(duck, never()).swim("else canSwim done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTwiceElseIf() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifTwiceElseIf(duck, canSwim, canDive, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if  canDive");
+        verify(duck, never()).swim("else if done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTwiceElseIfElse() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifElseIf.ifTwiceElseIfElse(duck, canSwim, canDive, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canDive");
+        verify(duck, never()).swim("else if done");
+        verify(duck, never()).swim("else");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseIfTwice() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean canSwim2 = true;
+        boolean canDive2 = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifElseIfTwice(duck, canSwim, canDive, canSwim2,
+                canDive2);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canDive");
+        verify(duck).swim("if canSwim2");
+        verify(duck, never()).swim("else if canSwim2");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfTwiceElseIfElseTwice() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        boolean canSwim2 = true;
+        boolean canDive2 = true;
+        boolean done2 = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifTwiceElseIfElseTwice(duck, canSwim, canDive,
+                done, canSwim2, canDive2, done2);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canDive");
+        verify(duck, never()).swim("else if done");
+        verify(duck, never()).swim("else");
+        verify(duck).swim("if canSwim2");
+        verify(duck, never()).swim("else if canDive2");
+        verify(duck, never()).swim("else if done2");
+        verify(duck, never()).swim("else 2");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseIfPlusIf() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifElseIfPlusIf(duck, canSwim, canDive, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canDive");
+        verify(duck).swim("plus if done");
+        verify(duck, never()).swim("plus else done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseIfElsePlusIf() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual =
+                ifElseIf.ifElseIfElsePlusIf(duck, canSwim, canDive, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canDive");
+        verify(duck, never()).swim("else");
+        verify(duck).swim("plus if done");
+        verify(duck, never()).swim("plus else done");
+        verify(duck).swim("end");
+    }
+
+    @Test
+    public void testIfElseIfPlusIfDuckBooleanBooleanBooleanBooleanBoolean() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = true;
+        boolean canDive = true;
+        boolean canFlip = true;
+        boolean canFly = true;
+        boolean done = true;
+        String apple = "Foo";
+
+        when(duck.toString()).thenReturn(apple);
+
+        String actual = ifElseIf.ifElseIfPlusIf(duck, canSwim, canDive, canFlip,
+                canFly, done);
+
+        assertEquals(apple, actual);
+
+        verify(duck).swim("start");
+        verify(duck).swim("if canSwim");
+        verify(duck, never()).swim("else if canDive");
+        verify(duck, never()).swim("if canFlip nest");
+        verify(duck, never()).swim("else if canFly nest");
+        verify(duck).swim("plus if done");
+        verify(duck, never()).swim("plus else done");
+        verify(duck).swim("end");
+    }
+}

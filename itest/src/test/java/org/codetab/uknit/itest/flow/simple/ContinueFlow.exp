@@ -1,0 +1,44 @@
+package org.codetab.uknit.itest.flow.simple;
+class ContinueFlowTest {
+    @InjectMocks
+    private ContinueFlow continueFlow;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPlainContinueIfSearchMeCharAt() {
+        int numPs = 0;
+
+        int actual = continueFlow.plainContinue();
+
+        assertEquals(numPs, actual);
+    }
+
+    @Test
+    public void testPlainContinueElseSearchMeCharAt() {
+        int numPs = 0;
+
+        int actual = continueFlow.plainContinue();
+
+        assertEquals(numPs, actual);
+    }
+
+    @Test
+    public void testLabeledContinueIfSearchMeCharAt() {
+
+        boolean actual = continueFlow.labeledContinue();
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testLabeledContinueElseSearchMeCharAt() {
+
+        boolean actual = continueFlow.labeledContinue();
+
+        assertTrue(actual);
+    }
+}

@@ -1,0 +1,42 @@
+package org.codetab.uknit.itest.nested.inner;
+
+import org.codetab.uknit.itest.nested.inner.Model.Duck;
+class AccessEnclosingTest {
+    @InjectMocks
+    private AccessEnclosing accessEnclosing;
+
+    @Mock
+    private Duck duck;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCreateOuterAndInner() {
+        String apple = "Bar";
+
+        String actual = accessEnclosing.createOuterAndInner();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testCreateInner() {
+        String apple = "Bar";
+
+        String actual = accessEnclosing.createInner();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testCreateInner2() {
+        String apple = "Bar";
+
+        String actual = accessEnclosing.createInner2();
+
+        assertEquals(apple, actual);
+    }
+}

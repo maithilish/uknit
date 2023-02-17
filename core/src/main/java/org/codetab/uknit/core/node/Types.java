@@ -85,9 +85,7 @@ public class Types {
         try {
             Method getNameMethod = namedType.getClass().getMethod("getName");
             Name name = (Name) getNameMethod.invoke(namedType);
-            if (nodes.is(name, QualifiedName.class)) {
-                name = nodes.as(name, QualifiedName.class).getName();
-            }
+            // simple or qualified types such as (Arc2D.Float)
             return name.getFullyQualifiedName();
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException

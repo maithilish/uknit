@@ -1,0 +1,31 @@
+package org.codetab.uknit.itest.nested.statics;
+
+import java.awt.geom.Arc2D;
+import java.awt.geom.Arc2D.Float;
+class CreationTest {
+    @InjectMocks
+    private Creation creation;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCreateArc() {
+        Float arc = new Float(0, 1, 2, 3, 4, 5, Arc2D.CHORD);
+
+        Arc2D actual = creation.createArc();
+
+        assertEquals(arc, actual);
+    }
+
+    @Test
+    public void testCreateArcQualified() {
+        Arc2D.Float arc = new Arc2D.Float(0, 1, 2, 3, 4, 5, Arc2D.CHORD);
+
+        Arc2D.Float actual = creation.createArcQualified();
+
+        assertEquals(arc, actual);
+    }
+}

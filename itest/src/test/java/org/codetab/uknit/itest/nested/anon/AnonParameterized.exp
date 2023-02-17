@@ -1,0 +1,23 @@
+package org.codetab.uknit.itest.nested.anon;
+class AnonParameterizedTest {
+    @InjectMocks
+    private AnonParameterized anonParameterized;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAdd() {
+        Calc2 calc = Mockito.mock(Calc2.class);
+        Integer apple = Integer.valueOf(1);
+
+        when(calc.op(eq(1), eq(2), any(IAddable.class))).thenReturn(apple);
+        anonParameterized.add(calc);
+
+        ArgumentCaptor<IAddable<Integer>> captorA = ArgumentCaptor.forClass(IAddable.class);
+
+        verify(calc).op(eq(1), eq(2), captorA.capture());
+    }
+}

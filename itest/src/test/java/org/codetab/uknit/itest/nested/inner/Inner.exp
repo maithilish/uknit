@@ -1,0 +1,23 @@
+package org.codetab.uknit.itest.nested.inner;
+
+import org.codetab.uknit.itest.nested.inner.Model.Logger;
+class InnerTest {
+    @InjectMocks
+    private Inner inner;
+
+    @Mock
+    private Logger logger;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testPrintEven() {
+        Integer grape = Integer.valueOf(1);
+        inner.printEven();
+
+        verify(logger).log(grape + " ");
+    }
+}

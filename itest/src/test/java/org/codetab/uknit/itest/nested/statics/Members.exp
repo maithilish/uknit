@@ -1,0 +1,40 @@
+package org.codetab.uknit.itest.nested.statics;
+
+import java.io.File;
+import java.util.Objects;
+class MembersTest {
+    @InjectMocks
+    private Members members;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetFileStatic() {
+        File file = STEPIN;
+
+        File actual = Members.getFileStatic();
+
+        assertEquals(file, actual);
+    }
+
+    @Test
+    public void testGetFile() {
+        File file = STEPIN;
+
+        File actual = members.getFile();
+
+        assertEquals(file, actual);
+    }
+
+    @Test
+    public void testGetAttributes() {
+        Attributes attributes = new Attributes();
+
+        Attributes actual = members.getAttributes();
+
+        assertEquals(attributes, actual);
+    }
+}

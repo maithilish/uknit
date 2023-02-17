@@ -1,0 +1,30 @@
+package org.codetab.uknit.itest.nested.statics;
+
+import org.codetab.uknit.itest.nested.statics.Model.Duck;
+class AccessEnclosingTest {
+    @InjectMocks
+    private AccessEnclosing accessEnclosing;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAccessNestedStaticMethod() {
+        String apple = "Bar";
+
+        String actual = AccessEnclosing.accessNestedStaticMethod();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testFly() {
+        String grape = "Baz";
+
+        String actual = accessEnclosing.fly();
+
+        assertEquals(grape, actual);
+    }
+}

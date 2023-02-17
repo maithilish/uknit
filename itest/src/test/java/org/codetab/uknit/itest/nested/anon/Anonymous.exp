@@ -1,0 +1,102 @@
+package org.codetab.uknit.itest.nested.anon;
+
+import java.io.File;
+import java.io.FileFilter;
+class AnonymousTest {
+    @InjectMocks
+    private Anonymous anonymous;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignAnon() {
+        File file = Mockito.mock(File.class);
+
+        FileFilter actual = anonymous.assignAnon(file);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testReturnAnon() {
+        File file = Mockito.mock(File.class);
+
+        FileFilter actual = anonymous.returnAnon(file);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testAnonArg() {
+        File file = Mockito.mock(File.class);
+        File[] hiddenFiles = {};
+
+        when(file.listFiles(any(FileFilter.class))).thenReturn(hiddenFiles);
+
+        File[] actual = anonymous.anonArg(file);
+
+        assertArrayEquals(hiddenFiles, actual);
+
+        ArgumentCaptor<FileFilter> captorA = ArgumentCaptor.forClass(FileFilter.class);
+
+        verify(file).listFiles(captorA.capture());
+    }
+
+    @Test
+    public void testAnonVarAsArg() {
+        File file = Mockito.mock(File.class);
+        File[] hiddenFiles = {};
+
+        when(file.listFiles(any(FileFilter.class))).thenReturn(hiddenFiles);
+
+        File[] actual = anonymous.anonVarAsArg(file);
+
+        assertArrayEquals(hiddenFiles, actual);
+
+        ArgumentCaptor<FileFilter> captorA = ArgumentCaptor.forClass(FileFilter.class);
+
+        verify(file).listFiles(captorA.capture());
+    }
+
+    @Test
+    public void testVerifyAnon() {
+        File file = Mockito.mock(File.class);
+        File[] apple = {};
+
+        when(file.listFiles(any(FileFilter.class))).thenReturn(apple);
+        anonymous.verifyAnon(file);
+
+        ArgumentCaptor<FileFilter> captorA = ArgumentCaptor.forClass(FileFilter.class);
+
+        verify(file).listFiles(captorA.capture());
+    }
+
+    @Test
+    public void testVerifyAnonVar() {
+        File file = Mockito.mock(File.class);
+        File[] apple = {};
+
+        when(file.listFiles(any(FileFilter.class))).thenReturn(apple);
+        anonymous.verifyAnonVar(file);
+
+        ArgumentCaptor<FileFilter> captorA = ArgumentCaptor.forClass(FileFilter.class);
+
+        verify(file).listFiles(captorA.capture());
+    }
+
+    @Test
+    public void testMockFunctionalInterface() {
+        File file = Mockito.mock(File.class);
+        FileFilter filter = Mockito.mock(FileFilter.class);
+        File[] hiddenFiles = {};
+
+        when(file.listFiles(filter)).thenReturn(hiddenFiles);
+
+        File[] actual = anonymous.mockFunctionalInterface(file, filter);
+
+        assertArrayEquals(hiddenFiles, actual);
+    }
+}

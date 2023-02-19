@@ -115,8 +115,8 @@ class ArgParams {
                          * packs for literals are not created by visitor so
                          * create it which is specific to IM call.
                          */
-                        Pack argPack = modelFactory.createPack(null, argExp,
-                                invoke.isInCtlPath());
+                        Pack argPack = modelFactory.createPack(packs.getId(),
+                                null, argExp, invoke.isInCtlPath());
                         heap.addPack(argPack);
                         args.add(Optional.of(argPack));
                     }
@@ -150,7 +150,7 @@ class ArgParams {
                  * renaming with value 10, but for second call parameter is
                  * renamed as index2 with value 20.
                  */
-                IVar aVar = param.getVar().clone();
+                IVar aVar = param.getVar().deepCopy();
                 aVar.setKind(Kind.LOCAL);
                 argO.get().setVar(aVar);
 

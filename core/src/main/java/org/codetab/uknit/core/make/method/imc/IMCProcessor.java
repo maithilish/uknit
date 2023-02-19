@@ -21,6 +21,8 @@ public class IMCProcessor {
         List<Invoke> invokes = packs.filterInvokes(heap.getPacks());
         List<Invoke> imcInvokes =
                 internalCalls.filterInternalInvokes(invokes, heap);
-        imcInvokes.forEach(invoke -> imcInvoker.process(invoke, heap));
+        for (Invoke invoke : imcInvokes) {
+            imcInvoker.process(invoke, heap);
+        }
     }
 }

@@ -30,15 +30,15 @@ public class Heaps {
         List<Pack> packs = heap.getPacks();
         for (Pack pack : packs) {
             StringBuilder s = new StringBuilder();
-            String packKind = "Pack  ";
+            String suffix = String.format("Pack   %2d", pack.getId());
             if (pack instanceof Invoke) {
-                packKind = "Invoke";
+                suffix = String.format("Invoke %2d", pack.getId());
             }
             if (isNull(pack.getVar())) {
-                s.append("Pack   Var [--");
+                s.append(String.format("%s   Var [--", suffix));
             } else {
                 IVar v = pack.getVar();
-                s.append(String.format("%s Var [name=%s", packKind,
+                s.append(String.format("%s   Var [name=%s", suffix,
                         v.getName()));
                 if (!v.getOldName().equals(v.getName())) {
                     s.append(String.format(", [%s]", v.getOldName()));
@@ -88,9 +88,10 @@ public class Heaps {
 
             if (pack.getPatches().size() > 0) {
                 for (Patch patch : pack.getPatches()) {
-                    LOG.debug("           Patch [kind={}, rename {} -> {}]",
+                    LOG.debug(
+                            "                Patch [kind={}, rename {} -> {}, index: {}]",
                             patch.getKind(), patch.getDefinedName(),
-                            patch.getVar().getName());
+                            patch.getVar().getName(), patch.getIndex());
                 }
             }
         }

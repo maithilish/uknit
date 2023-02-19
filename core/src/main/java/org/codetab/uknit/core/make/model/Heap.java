@@ -39,6 +39,10 @@ public class Heap implements Listener {
      */
     private MethodDeclaration mut;
 
+    private String testClzName;
+
+    private String testMethodName;
+
     // test method call
     private Call call;
 
@@ -141,5 +145,21 @@ public class Heap implements Listener {
 
     public void setMut(final MethodDeclaration mut) {
         this.mut = mut;
+    }
+
+    public String getTestClzName() {
+        return testClzName;
+    }
+
+    public void setTestClzName(final String testClzName) {
+        this.testClzName = testClzName;
+    }
+
+    public String getTestMethodName() {
+        return testMethodName;
+    }
+
+    public void setTestMethodName(final String testMethodName) {
+        this.testMethodName = testMethodName;
     }
 }

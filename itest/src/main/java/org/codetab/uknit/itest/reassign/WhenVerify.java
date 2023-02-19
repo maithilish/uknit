@@ -8,7 +8,7 @@ import org.codetab.uknit.itest.reassign.Model.Foo;
  * @author Maithilish
  *
  */
-public class WhenVerify {
+class WhenVerify {
 
     public void reassignWhenVerify(final Foo foo) {
         String name = "foo";

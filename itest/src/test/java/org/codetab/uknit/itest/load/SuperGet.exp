@@ -14,8 +14,8 @@ class SuperGetTest {
 
     @Test
     public void testGetSuperField() {
-        List<File> list = fieldList;
-        List<File> fieldList = new ArrayList<>();
+        List<File> fieldList2 = new ArrayList<>();
+        List<File> list = fieldList2;
 
         List<File> actual = superGet.getSuperField();
 

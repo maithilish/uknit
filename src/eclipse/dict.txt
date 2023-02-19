@@ -269,3 +269,4 @@ loadable
 decl
 realish
 eq
+avatar

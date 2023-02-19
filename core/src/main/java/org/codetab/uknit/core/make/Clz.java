@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.codetab.uknit.core.make.model.Field;
@@ -21,7 +22,19 @@ public class Clz {
     private TypeDeclaration testTypeDecl; // test class
     private PackageDeclaration packageDecl;
     private List<ImportDeclaration> imports;
-    private List<Field> fields = new ArrayList<>();
+
+    /*
+     * Fields defined in source. The method, IM and super method gets a copy of
+     * this. In parsing phase, fields are added to definedFields and no further
+     * changes are made to it.
+     */
+    private List<Field> definedFields = new ArrayList<>();
+    /*
+     * Working copy of defined fields. It working copy for a class. Once method,
+     * IM and super method is processed, they update this and generation phase
+     * uses it to output.
+     */
+    private List<Field> fields;
 
     public String getTestClzName() {
         return testClzName;
@@ -67,8 +80,21 @@ public class Clz {
         return fields;
     }
 
+    public void setFields(final List<Field> fields) {
+        this.fields = fields;
+    }
+
+    public void addDefinedField(final Field field) {
+        definedFields.add(field);
+    }
+
+    public List<Field> getDefinedFields() {
+        return Collections.unmodifiableList(definedFields);
+    }
+
     @Override
     public String toString() {
         return "Clz [name=" + testClzName + "]";
     }
+
 }

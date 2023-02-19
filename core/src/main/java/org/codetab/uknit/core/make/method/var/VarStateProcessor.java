@@ -40,8 +40,9 @@ public class VarStateProcessor {
         return usedNames;
     }
 
+    // REVIEW - move this
     public List<Pack> processStandinVars(final Set<String> usedNames,
             final Heap heap) {
-        return varEnabler.addLocalVarForDisabledField(usedNames, heap);
+        return varEnabler.addStandinVarsForUsedFields(usedNames, heap);
     }
 }

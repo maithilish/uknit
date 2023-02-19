@@ -1,0 +1,29 @@
+package org.codetab.uknit.itest.internal;
+class NullReturnTest {
+    @InjectMocks
+    private NullReturn nullReturn;
+
+    @Mock
+    private Connection connection;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFooIfFlag() {
+
+        Connection actual = nullReturn.foo();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testFooElseFlag() {
+
+        Connection actual = nullReturn.foo();
+
+        fail("unable to assert, STEPIN");
+    }
+}

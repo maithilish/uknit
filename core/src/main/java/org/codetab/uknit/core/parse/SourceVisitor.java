@@ -72,16 +72,28 @@ public class SourceVisitor extends ASTVisitor {
      */
     public void preProcess() {
         testable = true;
+
         CompilationUnit srcCu = ctl.getSrcCompilationUnit();
         IProblem[] problems = srcCu.getProblems();
         if (problems.length > 0) {
-            for (IProblem problem : problems) {
-                LOG.error("{}", problem);
-            }
-            throw new CriticalException(
-                    "source has errors, unable to generate test case.");
+            LOG.info("{} errors found in source cu", problems.length);
         } else {
             LOG.info("no errors found in source cu");
+        }
+
+        if (problems.length > 0) {
+            boolean ignoreErrors =
+                    configs.getConfig("uknit.source.error.ignore", false);
+            if (ignoreErrors) {
+                LOG.info(
+                        "config uknit.source.error.ignore is true, ignoring errors");
+            } else {
+                for (IProblem problem : problems) {
+                    LOG.error("{}", problem);
+                }
+                throw new CriticalException(
+                        "source has errors, unable to generate test case.");
+            }
         }
 
         clzMaker = ctl.getClzMaker();
@@ -213,6 +225,17 @@ public class SourceVisitor extends ASTVisitor {
         if (!testable) {
             return true;
         }
+
+        /*
+         * If user config uknit.source.method is defined then process only if
+         * the method name matches the config, other methods are not processed.
+         */
+        String sourceMethod = configs.getConfig("uknit.source.method");
+        String methodName = node.getName().getFullyQualifiedName();
+        if (nonNull(sourceMethod) && !sourceMethod.equals(methodName)) {
+            return true;
+        }
+
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
 

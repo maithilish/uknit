@@ -81,8 +81,8 @@ public class PatchProcessor {
                      */
                     Pack firstPack = scopeList.remove(0);
                     Pack previousPack = reassignedPacks.get(index - 1);
-                    patcher.addVarRenamePatch(firstPack, previousPack.getVar(),
-                            heap);
+                    patcher.addVarRenamePatch(renamedPack, firstPack,
+                            previousPack.getVar(), heap);
                 }
                 /*
                  * For other packs in scope list use renamed var as patch. In
@@ -90,7 +90,8 @@ public class PatchProcessor {
                  * renamed var for it also.
                  */
                 for (Pack pack : scopeList) {
-                    patcher.addVarRenamePatch(pack, renamedPack.getVar(), heap);
+                    patcher.addVarRenamePatch(renamedPack, pack,
+                            renamedPack.getVar(), heap);
                 }
             }
         }

@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.method.visit;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class Assignor {
     private Nodes nodes;
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private Reassigns reassigns;
 
     /**
      *
@@ -64,21 +67,7 @@ public class Assignor {
                     Optional<Pack> varPackO = packs
                             .findByVarName(nodes.getName(lhs), heap.getPacks());
                     if (varPackO.isPresent()) {
-                        Expression exp = varPackO.get().getExp();
-                        if (isNull(exp) || exp instanceof NullLiteral) {
-                            /*
-                             * Var definition and assign are done in different
-                             * stmts. Ex: Date foo; foo = bar(); results in two
-                             * packs, search for foo pack, assign its var to bar
-                             * pack and remove bar pack. Another example, Locale
-                             * locale = foo.locale(); locale = new Locale(); the
-                             * first pack is removed once second pack is
-                             * assigned.
-                             */
-                            IVar leftVar = varPackO.get().getVar();
-                            pack.setVar(leftVar);
-                            heap.removePack(varPackO.get());
-                        } else {
+                        if (reassigns.isReassign(varPackO.get())) {
                             /*
                              * Var is defined and value assigned to var and then
                              * var is reassigned with new value. Create new var
@@ -94,19 +83,36 @@ public class Assignor {
                              * name which is illegal ensures that it doesn't
                              * clash with any legal var in MUT.
                              */
-                            IVar newVar = varPackO.get().getVar().clone();
+                            IVar var = varPackO.get().getVar();
+                            IVar newVar = var.deepCopy();
                             String newVarName =
                                     newVar.getName() + "-reassigned";
                             newVar.setName(newVarName);
                             /*
-                             * The IM parameter without final keyword may be
-                             * reassigned in the IM. Make the reassigned var
-                             * local as the new var is not a parameter.
+                             * The parameter without final keyword or field may
+                             * be reassigned. The new var of parameter and field
+                             * are local in nature, so set its kind to local.
+                             * The field may be in disable state, enable its
+                             * local copy.
                              */
-                            if (newVar.isParameter()) {
+                            if (newVar.isParameter() || newVar.isField()) {
                                 newVar.setKind(Kind.LOCAL);
+                                newVar.setEnable(true);
                             }
                             pack.setVar(newVar);
+                        } else {
+                            /*
+                             * Var definition and assign are done in different
+                             * stmts. Ex: Date foo; foo = bar(); results in two
+                             * packs, search for foo pack, assign its var to bar
+                             * pack and remove bar pack. Another example, Locale
+                             * locale = foo.locale(); locale = new Locale(); the
+                             * first pack is removed once second pack is
+                             * assigned.
+                             */
+                            IVar leftVar = varPackO.get().getVar();
+                            pack.setVar(leftVar);
+                            heap.removePack(varPackO.get());
                         }
                     }
                 }
@@ -129,4 +135,26 @@ public class Assignor {
         }
     }
 
+}
+
+class Reassigns {
+
+    public boolean isReassign(final Pack pack) {
+        Expression exp = pack.getExp();
+        IVar var = pack.getVar();
+
+        /**
+         * if var defined pack is <code>
+         * Pack [var=x, exp=    ] exp is not set, reassign
+         * Pack [var=x, exp=null] exp is null, reassign
+         * Pack [var=x, kind=
+         * </code>
+         *
+         */
+        if (nonNull(var) && (var.is(Kind.FIELD) || var.is(Kind.PARAMETER))) {
+            return true;
+        } else {
+            return !(isNull(exp) || exp instanceof NullLiteral);
+        }
+    }
 }

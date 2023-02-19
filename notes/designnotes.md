@@ -233,4 +233,7 @@ User may use captures for further testing. In case capture config is false then 
         verify(button.add(new new ActionListener() {...})  becomes
                 verify(button).addActionListener(any(ActionListener.class));
 
+## Standin Fields
+
+The mock fields are injected with @Mock annotations. Apart from these, method may use other fields and standin local vars are created for such fields. In debug log pack listing, the packs for standin vars appear in the end after the return pack.
 

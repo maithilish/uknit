@@ -9,10 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -33,6 +35,8 @@ public class Packs {
 
     @Inject
     private Nodes nodes;
+    @Inject
+    private PackIDGenerator idGenerator;
 
     /**
      * Find first pack matching the expression.
@@ -46,6 +50,26 @@ public class Packs {
         return packs.stream().filter(p -> {
             return nonNull(p.getExp()) && p.getExp().equals(exp);
         }).findFirst();
+    }
+
+    /**
+     * Find first pack with matching the expression. If exp is name then find
+     * first pack with matching name.
+     *
+     * @param packs
+     * @param exp
+     * @return
+     */
+    public Optional<Pack> findByExpOrExpName(final Expression exp,
+            final List<Pack> packs) {
+        Optional<Pack> pack = findByExp(exp, packs);
+        if (pack.isEmpty() && nodes.isName(exp)) {
+            pack = packs.stream().filter(p -> {
+                return nonNull(p.getExp()) && nodes.isName(p.getExp())
+                        && p.getExp().toString().equals(exp.toString());
+            }).findFirst();
+        }
+        return pack;
     }
 
     /**
@@ -283,18 +307,17 @@ public class Packs {
     public List<Pack> filterScopePacks(final Pack renamedPack,
             final List<Pack> tailList) {
         List<Pack> scopeList = new ArrayList<>();
-        boolean skip = false;
         scopeList.add(tailList.get(0));
         if (tailList.size() > 1) {
             String definedName = renamedPack.getVar().getDefinedName();
             for (int i = 1; i < tailList.size(); i++) {
                 Pack tailPack = tailList.get(i);
-                // skip all packs once new incarnation of renamed var is found
+                // break on new avatar of renamed var
                 if (nonNull(tailPack.getVar()) && tailPack.getVar()
                         .getDefinedName().equals(definedName)) {
-                    skip = true;
-                }
-                if (!skip) {
+                    scopeList.add(tailPack);
+                    break;
+                } else {
                     scopeList.add(tailPack);
                 }
             }
@@ -419,5 +442,27 @@ public class Packs {
             }
         }
         return Optional.empty();
+    }
+
+    public int getId() {
+        return idGenerator.getId();
+    }
+
+    public void resetIdGenerator() {
+        idGenerator.reset();
+    }
+}
+
+@Singleton
+class PackIDGenerator {
+
+    private AtomicInteger seq = new AtomicInteger();
+
+    public int getId() {
+        return seq.incrementAndGet();
+    }
+
+    public void reset() {
+        seq.set(0);
     }
 }

@@ -99,7 +99,8 @@ public class VarEnablers {
         List<String> names = new ArrayList<>();
 
         for (Expression ini : initializerList) {
-            Optional<Pack> packO = packs.findByExp(ini, heap.getPacks());
+            Optional<Pack> packO =
+                    packs.findByExpOrExpName(ini, heap.getPacks());
             if (packO.isPresent()) {
                 ini = heap.getPatcher().copyAndPatch(packO.get(), heap);
             }
@@ -190,6 +191,17 @@ public class VarEnablers {
         localVars.forEach(v -> {
             if (!names.contains(v.getName())) {
                 v.setEnable(false);
+            }
+        });
+    }
+
+    public void enableFields(final Set<String> names, final Heap heap) {
+
+        List<IVar> fields = vars.filterVars(heap, v -> (v.isField()));
+
+        fields.forEach(v -> {
+            if (names.contains(v.getName())) {
+                v.setEnable(true);
             }
         });
     }

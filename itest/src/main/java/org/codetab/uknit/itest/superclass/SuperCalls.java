@@ -35,6 +35,10 @@ class SuperCalls extends SuperBar {
         return super.getBar(factory, name);
     }
 
+    public void invokeTypeLiteral() {
+        super.invokeTypeLiteral("foo");
+    }
+
 }
 
 class SuperBar {
@@ -51,4 +55,10 @@ class SuperBar {
         Factory factory = new Factory();
         return factory.instance(name);
     }
+
+    public void invokeTypeLiteral(final Object source) {
+        // String.class is TypeLiteral
+        String.class.cast(source).charAt(0);
+    }
+
 }

@@ -101,11 +101,11 @@ class StandinVarTest {
 
     @Test
     public void testGetRealFieldIfIsNull() {
-        Map<String, Object> realField = new HashMap<>();
+        Map<String, Object> realField2 = new HashMap<>();
 
         Map<String, Object> actual = standinVar.getRealField();
 
-        assertEquals(realField, actual);
+        assertEquals(realField2, actual);
     }
 
     @Test

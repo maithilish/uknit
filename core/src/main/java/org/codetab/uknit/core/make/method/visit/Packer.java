@@ -106,8 +106,8 @@ public class Packer {
             if (packO.isPresent()) {
                 packO.get().setVar(var);
             } else {
-                Pack pack =
-                        modelFactory.createPack(var, initializer, inCtlPath);
+                Pack pack = modelFactory.createPack(packs.getId(), var,
+                        initializer, inCtlPath);
                 heap.addPack(pack);
             }
         }
@@ -116,14 +116,14 @@ public class Packer {
     public void packExp(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
-        Pack pack = modelFactory.createPack(var, exp, inCtlPath);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
         heap.addPack(pack);
     }
 
     public void packAnon(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
-        Pack pack = modelFactory.createPack(var, exp, inCtlPath);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
         pack.addNature(Nature.ANONYMOUS);
         heap.addPack(pack);
     }
@@ -131,7 +131,8 @@ public class Packer {
     public Invoke createInvoke(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
-        Invoke invoke = modelFactory.createInvoke(var, exp, inCtlPath);
+        Invoke invoke =
+                modelFactory.createInvoke(packs.getId(), var, exp, inCtlPath);
         return invoke;
     }
 
@@ -145,7 +146,8 @@ public class Packer {
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
         if (literals.ofInterest(exp)) {
-            Pack pack = modelFactory.createPack(var, exp, inCtlPath);
+            Pack pack =
+                    modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
             heap.addPack(pack);
         }
     }
@@ -153,7 +155,7 @@ public class Packer {
     public Pack packStandinVar(final IVar var, final boolean inCtlPath,
             final Heap heap) {
         Expression exp = null; // no exp
-        Pack pack = modelFactory.createPack(var, exp, inCtlPath);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
         heap.addPack(pack);
         return pack;
     }

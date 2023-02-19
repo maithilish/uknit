@@ -148,19 +148,49 @@ public class Patcher {
      * @param renamedVar
      * @param heap
      */
-    public void addVarRenamePatch(final Pack pack, final IVar renamedVar,
-            final Heap heap) {
+    public void addVarRenamePatch(final Pack renamedPack, final Pack pack,
+            final IVar renamedVar, final Heap heap) {
+        /**
+         * Create patch only if both renamed pack and pack are in same path. If
+         * renamed var is in a path then patch any applicable packs in that path
+         * but do not patch any applicable pack in other paths. <code>
+         *
+         * P1 path A (renamed pack)
+         * P2 path A (applicable pack)
+         * P3 path B (applicable pack)
+         *
+         * In path A test, both P1 and P2 are in ctl path so create patch
+         * for P2 (P1 true == P2 true) but P3 is not in ctl path so don't
+         * create patch for P3 (P1 true != P3 false)
+         *
+         * In path B test, both P1 and P2 are not in ctl path then also create
+         * patch for P2 (P1 false == P2 false), however P3 is in ctl path but
+         * don't create patch for P3 (P1 false != P3 true)         *
+         * </code>
+         *
+         * Ref itest IfElseTest.testIfElseFooIfCanSwim()
+         */
+        if (renamedPack.isInCtlPath() != pack.isInCtlPath()) {
+            return;
+        }
         Expression exp = pack.getExp();
         PatchService patchService = serviceLoader.loadService(exp);
         List<Expression> exps = patchService.getExps(exp);
         for (int i = 0; i < exps.size(); i++) {
             Expression expression = exps.get(i);
             String definedName = renamedVar.getDefinedName();
-            if (nodes.isName(expression)
-                    && nodes.getName(expression).equals(definedName)) {
-                Patch patch = modelFactory.createPatch(Kind.VAR, definedName,
-                        renamedVar, i);
-                pack.addPatch(patch);
+            String oldName = renamedVar.getOldName();
+            if (nodes.isName(expression)) {
+                String expName = nodes.getName(expression);
+                if (expName.equals(definedName)) {
+                    Patch patch = modelFactory.createPatch(Kind.VAR,
+                            definedName, renamedVar, i);
+                    pack.addPatch(patch);
+                } else if (expName.equals(oldName)) {
+                    Patch patch = modelFactory.createPatch(Kind.VAR, oldName,
+                            renamedVar, i);
+                    pack.addPatch(patch);
+                }
             }
         }
     }

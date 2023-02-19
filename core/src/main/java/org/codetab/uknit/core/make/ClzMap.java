@@ -24,6 +24,11 @@ public class ClzMap extends HashMap<String, Clz> {
         return clz.getTestTypeDecl();
     }
 
+    public void addDefinedField(final String clzName, final Field field) {
+        Clz clz = get(clzName);
+        clz.addDefinedField(field);
+    }
+
     /**
      * Get the deep copy of class fields. Within a method field may change its
      * characteristics. For example, when a mock field is initialized in a
@@ -32,18 +37,23 @@ public class ClzMap extends HashMap<String, Clz> {
      * @param clzName
      * @return
      */
-    public List<Field> getFieldsCopy(final String clzName) {
+    public List<Field> getDefinedFieldsCopy(final String clzName) {
         Clz clz = get(clzName);
-        List<Field> copies = new ArrayList<>();
-        for (Field field : clz.getFields()) {
-            copies.add(field.deepCopy());
+        List<Field> copy = new ArrayList<>();
+        for (Field field : clz.getDefinedFields()) {
+            copy.add(field.fieldDeepCopy());
         }
-        return copies;
+        return copy;
     }
 
-    public void addField(final String clzName, final Field field) {
+    /**
+     * Create copy of defined fields and set if fields (working copy)
+     * @param clzName
+     */
+    public void setFields(final String clzName) {
+        List<Field> copy = getDefinedFieldsCopy(clzName);
         Clz clz = get(clzName);
-        clz.getFields().add(field);
+        clz.setFields(copy);
     }
 
     public Clz getClz(final String clzName) {
@@ -64,11 +74,14 @@ public class ClzMap extends HashMap<String, Clz> {
         List<Field> fields = clz.getFields();
         for (IVar var : vars) {
             if (var instanceof Field) {
+                /*
+                 * mock and created fields are not updated as the global value
+                 * are preserved
+                 */
                 Field fieldCopy = (Field) var;
                 Optional<Field> field = fields.stream()
                         .filter(f -> f.getName().equals(fieldCopy.getName()))
                         .findAny();
-                // mock, created are not set as the global value are preserved
                 field.ifPresent(f -> {
                     f.setEnable(fieldCopy.isEnable());
                     f.setDeepStub(fieldCopy.isDeepStub());
@@ -77,4 +90,5 @@ public class ClzMap extends HashMap<String, Clz> {
             }
         }
     }
+
 }

@@ -1,0 +1,99 @@
+package org.codetab.uknit.itest.imc.reassign;
+
+import org.codetab.uknit.itest.imc.reassign.Model.Bar;
+import org.codetab.uknit.itest.imc.reassign.Model.Foo;
+class ParameterTest {
+    @InjectMocks
+    private Parameter parameter;
+
+    @Mock
+    private Bar bar;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testReassignReal() {
+        Foo foo = Mockito.mock(Foo.class);
+        String city = "Bar";
+        String city3 = "a";
+        String city4 = "Baz";
+        String city5 = "b";
+        String city6 = "Qux";
+        String city2 = city6;
+
+        when(foo.format(city3)).thenReturn(city4);
+        when(foo.format(city5)).thenReturn(city6);
+
+        String actual = parameter.reassignReal(foo, city);
+
+        assertEquals(city2, actual);
+
+        verify(foo).append(city3);
+        verify(foo).append(city5);
+        verify(foo).append(city2);
+    }
+
+    @Test
+    public void testReassignRealInitialized() {
+        Foo foo = Mockito.mock(Foo.class);
+        String town = "Bar";
+        String town3 = "aaa";
+        String town4 = "Baz";
+        String town5 = "bbb";
+        String town6 = "Qux";
+        String town2 = town6;
+
+        when(foo.format(town3)).thenReturn(town4);
+        when(foo.format(town5)).thenReturn(town6);
+
+        String actual = parameter.reassignRealInitialized(foo, town);
+
+        assertEquals(town2, actual);
+
+        verify(foo).append(town3);
+        verify(foo).append(town5);
+        verify(foo).append(town2);
+    }
+
+    @Test
+    public void testReassignMock() {
+        Foo foo = Mockito.mock(Foo.class);
+        Bar bar = Mockito.mock(Bar.class);
+        Bar bar3 = Mockito.mock(Bar.class);
+        Bar bar4 = Mockito.mock(Bar.class);
+        Bar bar2 = bar4;
+
+        when(bar.format(foo)).thenReturn(bar3);
+        when(bar3.format(foo)).thenReturn(bar4);
+
+        Bar actual = parameter.reassignMock(foo, bar);
+
+        assertSame(bar2, actual);
+
+        verify(bar).append(foo);
+        verify(bar3).append(foo);
+        verify(bar2).append(foo);
+    }
+
+    @Test
+    public void testReassignMock2() {
+        Bar bar = Mockito.mock(Bar.class);
+        Bar bar3 = Mockito.mock(Bar.class);
+        Bar bar4 = Mockito.mock(Bar.class);
+        Bar bar2 = bar4;
+
+        when(bar.format(bar)).thenReturn(bar3);
+        when(bar3.format(bar3)).thenReturn(bar4);
+
+        Bar actual = parameter.reassignMock2(bar);
+
+        assertSame(bar2, actual);
+
+        verify(bar).append(bar);
+        verify(bar3).append(bar3);
+        verify(bar2).append(bar2);
+    }
+}

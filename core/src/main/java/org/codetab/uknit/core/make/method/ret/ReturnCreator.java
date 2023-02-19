@@ -45,7 +45,8 @@ public class ReturnCreator {
      * @param heap
      */
     public void createReturnVar(final ReturnStatement rs,
-            final Type methodReturnType, final Heap heap) {
+            final Type methodReturnType, final boolean inCtlPath,
+            final Heap heap) {
 
         /*
          * strip any outer exp such as Cast, Parentheses etc., Ex: return
@@ -66,8 +67,8 @@ public class ReturnCreator {
                 IVar var = modelFactory.createVar(Kind.RETURN, retVarName,
                         methodReturnType, isMock);
                 var.setTypeBinding(exp.resolveTypeBinding());
-                Pack pack = modelFactory.createPack(var, exp,
-                        packO.get().isInCtlPath());
+                Pack pack = modelFactory.createPack(packs.getId(), var, exp,
+                        inCtlPath);
                 heap.addPack(pack);
             } else {
                 throw new IllegalStateException(

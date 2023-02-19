@@ -1,12 +1,14 @@
 package org.codetab.uknit.core.make.method.imc;
 
 import static java.util.Objects.isNull;
+import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.di.DInjector;
+import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -27,6 +29,8 @@ public class InternalCallProcessor {
     private DInjector di;
     @Inject
     private Resolver resolver;
+    @Inject
+    private IMFinder imFinder;
 
     /**
      * Process the internal method in a new method maker, without creating the
@@ -70,17 +74,13 @@ public class InternalCallProcessor {
             return false;
         }
 
-        // get invoked IMC
-        String key = methodBinding.getKey();
+        // get internal method decl
         MethodDeclaration methodDecl =
-                (MethodDeclaration) cu.get().findDeclaringNode(key);
-        /*
-         * method parameter with type parameter results in key mismatch, try to
-         * find node through IMethodBinding.
-         */
+                imFinder.findMethodDecl(methodBinding, cu.get());
         if (isNull(methodDecl)) {
-            methodDecl = (MethodDeclaration) cu.get()
-                    .findDeclaringNode(methodBinding);
+            throw new CriticalException(
+                    spaceit("unable to find internal method declaration for",
+                            invoke.getExp().toString()));
         }
         /*
          * Create new MethodMaker and Heap. The new internalHeap, initialized

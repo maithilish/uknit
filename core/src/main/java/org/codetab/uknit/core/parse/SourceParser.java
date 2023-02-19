@@ -181,16 +181,22 @@ public class SourceParser {
      * @param clzName
      * @return {@link CompilationUnit} - optional
      */
+
     public Optional<CompilationUnit> fetchCu(final ITypeBinding declClz) {
 
         checkNotNull(declClz);
 
         String clzName = declClz.getName();
         String clzPkg = declClz.getPackage().getName();
+        // without generic type
+        String binaryClzName =
+                declClz.getBinaryName().replace(clzPkg + ".", "");
 
-        Optional<Cu> cu =
-                ctl.getCuCache().stream().filter(c -> c.getPkg().equals(clzPkg)
-                        && c.getClzNames().contains(clzName)).findAny();
+        Optional<Cu> cu = ctl.getCuCache().stream()
+                .filter(c -> c.getPkg().equals(clzPkg)
+                        && (c.getClzNames().contains(clzName)
+                                || c.getClzNames().contains(binaryClzName)))
+                .findAny();
         if (cu.isPresent()) {
             return Optional.of(cu.get().getCu());
         } else {

@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.util.StringUtils;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -24,6 +26,7 @@ import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CatchClause;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -48,11 +51,15 @@ public class MethodMakers {
     @Inject
     private Nodes nodes;
     @Inject
+    private Packs packs;
+    @Inject
     private NodeFactory nodeFactory;
     @Inject
     private ModelFactory modelFactory;
     @Inject
     private Configs configs;
+    @Inject
+    private Variables variables;
 
     public String getClzName(final TypeDeclaration clzDecl) {
         return clzDecl.getName().getFullyQualifiedName();
@@ -276,10 +283,29 @@ public class MethodMakers {
         }
     }
 
+    /**
+     * Create packs for list of fields.
+     *
+     * @param fieldsCopy
+     * @return
+     */
     public List<Pack> createFieldPacks(final List<Field> fieldsCopy) {
-        List<Pack> fieldPacks = fieldsCopy.stream()
-                .map(f -> modelFactory.createPack(f, null, true))
-                .collect(Collectors.toList());
+        List<Pack> fieldPacks = new ArrayList<>();
+        for (Field fieldCopy : fieldsCopy) {
+            Expression exp = null;
+            /*
+             * if field is real, use initializer as exp. Ex: String city="foo".
+             * The initializer is not set in Field.fieldDecl, so initializer is
+             * obtained from Field.srcFieldDecl.
+             */
+            if (!fieldCopy.isMock()) {
+                exp = variables.getInitializer(fieldCopy.getSrcFieldDecl());
+            }
+            boolean inCtlPath = true; // field is always in ctlPath
+            Pack pack = modelFactory.createPack(packs.getId(), fieldCopy, exp,
+                    inCtlPath);
+            fieldPacks.add(pack);
+        }
         return fieldPacks;
     }
 }

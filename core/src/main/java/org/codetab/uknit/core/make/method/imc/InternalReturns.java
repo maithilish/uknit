@@ -11,6 +11,7 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Var;
@@ -77,11 +78,15 @@ class InternalReturns {
      * conflict the merge assign new name to returnVar.
      *
      * @param invoke
+     * @param internalHeap
      * @param heap
      */
-    public void updateExp(final Invoke invoke) {
+    public void updateExp(final Invoke invoke, final Heap internalHeap) {
         if (nonNull(returnVar) && nonNull(returnVarName)) {
             String varName = returnVar.getName();
+
+            IVar lhsVar = invoke.getVar();
+            IVar rhsVar = returnVar;
 
             if (varName.equals(returnVarName)) {
                 /*
@@ -90,10 +95,22 @@ class InternalReturns {
                  * name.
                  */
                 if (returnPackO.isPresent()) {
-                    invoke.setExp(returnPackO.get().getExp());
+                    if (lhsVar.getName().equals(rhsVar.getName())
+                            && lhsVar.getKind().equals(rhsVar.getKind())
+                            && lhsVar.getType().equals(rhsVar.getType())) {
+                        Optional<Initializer> ini = rhsVar.getInitializer();
+                        if (ini.isPresent()) {
+                            // REVIEW - cleanup after field reassign in IM
+                            System.lineSeparator();
+                        }
+                    } else {
+                        invoke.setExp(returnPackO.get().getExp());
+                    }
                 }
             } else {
                 invoke.setExp(nodeFactory.createName(varName));
+                // clear patches as the exp is set to var name
+                invoke.getPatches().clear();
             }
         }
     }

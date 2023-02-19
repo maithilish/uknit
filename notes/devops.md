@@ -11,3 +11,12 @@ Full Javadoc jar is missing from JDT artifact. Copy /cherry/backup/archived/org.
 ## Debugging Internal Call
 
 Internal call processor visit separate instance of Visitor and debug step through may not become recursive. Set additional brake point after the recursive step to break once returned from internal visitor to main visitor.
+
+## Bulk Generator
+
+Derives modules and java class file from the configs - uknit.source.base (project base dir) and uknit.source.dir (src/main/java) and generates tests  for all java class files in project or its modules.
+
+The generated test files lands in uknit/bulk folder under the respective module/project instead of src/test/java dir and doesn't overwrite if test exists in uknit/bulk.
+
+Import the project in Eclipse and add the project to uknit/core class path using Build Path -> Configure Build Path -> Projects -> Classpath.
+

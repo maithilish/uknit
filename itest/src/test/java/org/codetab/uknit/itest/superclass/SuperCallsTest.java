@@ -85,4 +85,11 @@ class SuperCallsTest {
 
         assertSame(bar, actual);
     }
+
+    @Test
+    public void testInvokeTypeLiteral() {
+        superCalls.invokeTypeLiteral();
+
+        // fail("unable to assert, STEPIN");
+    }
 }

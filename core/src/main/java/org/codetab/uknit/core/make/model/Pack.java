@@ -23,6 +23,7 @@ public class Pack {
         STATIC_CALL, ANONYMOUS
     }
 
+    private int id;
     private IVar var;
     private Expression exp;
     private List<Patch> patches;
@@ -41,15 +42,20 @@ public class Pack {
     private Listener listener;
 
     @Inject
-    public Pack(@Assisted @Nullable final IVar var,
+    public Pack(@Assisted final int id, @Assisted @Nullable final IVar var,
             @Assisted @Nullable final Expression exp,
             @Assisted final boolean inCtlPath) {
+        this.id = id;
         this.var = var;
         this.exp = exp;
         patches = new ArrayList<>();
         leftExp = Optional.empty();
         this.inCtlPath = inCtlPath;
         natures = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public IVar getVar() {
@@ -82,7 +88,11 @@ public class Pack {
     }
 
     public void addPatch(final Patch patch) {
-        patches.add(patch);
+        // remove any existing similar patch
+        if (patches.contains(patch)) {
+            patches.remove(patch);
+        }
+        patches.add(0, patch);
     }
 
     public boolean isInCtlPath() {
@@ -118,11 +128,10 @@ public class Pack {
     @Override
     public String toString() {
         if (leftExp.isPresent()) {
-            return "Pack [var=" + var + ", exp=" + exp + ", leftExp=" + leftExp
-                    + "]";
+            return "Pack " + id + " [var=" + var + ", exp=" + exp + ", leftExp="
+                    + leftExp + "]";
         } else {
-            return "Pack [var=" + var + ", exp=" + exp + "]";
+            return "Pack " + id + " [var=" + var + ", exp=" + exp + "]";
         }
     }
-
 }

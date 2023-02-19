@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.model;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
@@ -46,5 +48,27 @@ public class Patch {
     public String toString() {
         return "Patch [kind=" + kind + ", var=" + var + ", index=" + index
                 + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(definedName, index, kind, var);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Patch other = (Patch) obj;
+        return Objects.equals(definedName, other.definedName)
+                && index == other.index && kind == other.kind
+                && Objects.equals(var, other.var);
     }
 }

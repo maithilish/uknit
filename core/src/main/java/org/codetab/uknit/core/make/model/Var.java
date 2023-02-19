@@ -183,7 +183,7 @@ public class Var implements IVar {
     }
 
     @Override
-    public IVar clone() {
+    public IVar deepCopy() {
         Var clone = new Var(kind, name, type, mock);
         clone.setCreated(created);
         clone.setDeepStub(deepStub);

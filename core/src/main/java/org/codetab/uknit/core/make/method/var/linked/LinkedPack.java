@@ -13,7 +13,9 @@ import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
+import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 
 /**
  * Methods to get packs are linked in some way.
@@ -26,12 +28,14 @@ public class LinkedPack {
     @Inject
     private Packs packs;
     @Inject
+    private Nodes nodes;
+    @Inject
     private Expressions expressions;
     @Inject
     private Patcher patcher;
 
     /**
-     * Returns list of packs where vars are linked. Ex: <code>
+     * Returns list of packs where vars are linked from head list. Ex: <code>
      *  Date date = foo.date();
         Date date2 = foo.date();
         Date date3 = date2;
@@ -55,17 +59,29 @@ public class LinkedPack {
         List<Pack> linkedPacks = new ArrayList<>();
         linkedPacks.add(pack);
 
-        if (nonNull(pack.getExp())) {
+        /*
+         * no linked packs if exp is FieldAccess such as return this.city; Pack
+         * [var="apple", exp=this.city]
+         */
+        if (nonNull(pack.getExp())
+                && !nodes.is(pack.getExp(), FieldAccess.class)) {
             // as long as exp is Name or SimpleName continues else terminates
             Expression patchedExp = patcher.copyAndPatch(pack, heap);
             String name = expressions.getName(patchedExp);
             if (nonNull(name)) {
+                // get linked packs from head list
+                List<Pack> headList = packs.headList(pack, heap.getPacks());
                 Optional<Pack> linkedPackO =
-                        packs.findByVarName(name, heap.getPacks());
+                        packs.findByVarName(name, headList);
                 if (linkedPackO.isPresent()) {
-                    // recursively find matching packs and on return add
-                    linkedPacks
-                            .addAll(getLinkedVarPacks(linkedPackO.get(), heap));
+                    /*
+                     * if pack is not linkedPack (cyclic, to avoid
+                     * StackOverflow), recursively find matching packs and add
+                     */
+                    if (!linkedPackO.get().equals(pack)) {
+                        linkedPacks.addAll(
+                                getLinkedVarPacks(linkedPackO.get(), heap));
+                    }
                 }
             }
         }

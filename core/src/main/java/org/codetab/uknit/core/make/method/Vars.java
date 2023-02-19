@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.VarNotFoundException;
+import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -18,6 +19,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
+import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.ThisExpression;
 
@@ -80,6 +82,23 @@ public class Vars {
     }
 
     /**
+     * Find first field matching the var name.
+     *
+     * @param packs
+     * @param name
+     * @return
+     */
+    public Field findFieldByName(final String name, final Heap heap) {
+        Optional<IVar> varO = heap.getVars().stream().filter(v -> v.isField())
+                .filter(v -> v.getName().equals(name)).findFirst();
+        if (varO.isPresent()) {
+            return (Field) varO.get();
+        } else {
+            throw new VarNotFoundException(name);
+        }
+    }
+
+    /**
      *
      * Find first var whose old name matches the name.
      *
@@ -115,7 +134,7 @@ public class Vars {
                 String name = nodes.getName(exp);
                 return Optional.ofNullable(findVarByName(name, heap));
             } else if (nodes.is(returnPack.get().getExp(), ThisExpression.class,
-                    LambdaExpression.class)) {
+                    LambdaExpression.class, NullLiteral.class)) {
                 /*
                  * if return exp is this, then CUT is the expected var. But for
                  * CUT there is no pack and CUT var only exists in test class.
@@ -173,6 +192,13 @@ public class Vars {
     public boolean isCreated(final String name, final List<IVar> varList) {
         return varList.stream().anyMatch(v -> v.getName().equals(name)
                 && (v.isCreated() || v.is(Nature.REALISH)));
+    }
+
+    public boolean isLocalVarDefined(final IVar var, final Heap heap) {
+        List<IVar> vars = heap.getVars();
+        return vars.stream().filter(
+                v -> v.isLocalVar() || v.isParameter() || v.isInferVar())
+                .anyMatch(v -> v.getName().equals(var.getName()));
     }
 
     /**

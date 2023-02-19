@@ -15,9 +15,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.VarNotFoundException;
+import org.codetab.uknit.core.make.Clz;
+import org.codetab.uknit.core.make.Controller;
+import org.codetab.uknit.core.make.clz.FieldMakers;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
 import org.codetab.uknit.core.make.method.visit.Packer;
+import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -37,6 +41,10 @@ public class VarEnabler {
     private Packer packer;
     @Inject
     private LinkedPack linkedPack;
+    @Inject
+    private Controller ctl;
+    @Inject
+    private FieldMakers fieldMakers;
 
     /**
      * Update enable field of vars.
@@ -54,6 +62,7 @@ public class VarEnabler {
 
         // disable vars that are not used in when, verify and return
         varEnablers.disableVars(names, heap);
+        varEnablers.enableFields(names, heap);
     }
 
     /**
@@ -126,39 +135,40 @@ public class VarEnabler {
     }
 
     /**
-     * Add stand-in local var for disabled but used field.
+     * Add stand-in local var for the fields that are used but not added to the
+     * test class body.
      *
-     * FIXME N - review this later and add tests
-     *
-     * @param names
+     * @param usedNames
      * @param heap
      * @return
      */
-    public List<Pack> addLocalVarForDisabledField(final Set<String> names,
+    public List<Pack> addStandinVarsForUsedFields(final Set<String> usedNames,
             final Heap heap) {
+
+        Clz testClz =
+                ctl.getClzMaker().getClzMap().getClz(heap.getTestClzName());
+
         List<Pack> standinPacks = new ArrayList<>();
 
-        for (String name : names) {
-            Optional<IVar> varO;
+        for (String name : usedNames) {
+            Field field;
             try {
-                varO = Optional.of(vars.findVarByName(name, heap));
+                field = vars.findFieldByName(name, heap);
             } catch (VarNotFoundException e) {
-                varO = Optional.empty();
+                field = null;
             }
-            if (varO.isPresent() && varO.get().isField()) {
-                IVar field = varO.get();
-                boolean createStandin = false;
-                if (field.isEnable() && !field.isMock()) {
-                    createStandin = true;
-                }
-                if (!field.isEnable()) {
-                    createStandin = true;
-                }
-                if (createStandin) {
-                    IVar var = varEnablers.createStandinVar(varO.get());
-                    Pack standinPack = packer.packStandinVar(var, true, heap);
-                    standinPacks.add(standinPack);
-                }
+            /*
+             * if field doesn't exist in the test body or local var is not
+             * defined, create stand in var and pack.
+             */
+            if (nonNull(field)
+                    && fieldMakers.fieldNotExists(name,
+                            testClz.getTestTypeDecl())
+                    && !vars.isLocalVarDefined(field, heap)) {
+                IVar standinVar = varEnablers.createStandinVar(field);
+                Pack standinPack =
+                        packer.packStandinVar(standinVar, true, heap);
+                standinPacks.add(standinPack);
             }
         }
         return standinPacks;

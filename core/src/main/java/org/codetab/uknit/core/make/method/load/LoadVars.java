@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.VarNames;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -43,6 +44,8 @@ public class LoadVars {
     private Nodes nodes;
     @Inject
     private Types types;
+    @Inject
+    private Packs packs;
     @Inject
     private VarNames varNames;
     @Inject
@@ -85,7 +88,7 @@ public class LoadVars {
 
         checkNotNull(exp);
         checkNotNull(var);
-        Pack pack = modelFactory.createPack(var, exp, false);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, false);
         return pack;
     }
 

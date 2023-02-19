@@ -10,7 +10,7 @@ class CallSuperMethodTest {
 
     @Test
     public void testSetLicensePlate() {
-        String license = "Bar";
+        String license = "Foo";
         callSuperMethod.setLicensePlate(license);
     }
 }

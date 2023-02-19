@@ -8,7 +8,7 @@ import org.codetab.uknit.itest.imc.reassign.Model.Foo;
  * @author Maithilish
  *
  */
-public class WhenVerifyConflict {
+class WhenVerifyConflict {
 
     public String callReassignWhenVerify(final Foo foo) {
         String name = "zoo";

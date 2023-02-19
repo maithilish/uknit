@@ -105,7 +105,9 @@ public class Visitor extends ASTVisitor {
 
         // svd may be parameter or local var (catch clause)
         if (nodes.is(node.getParent(), MethodDeclaration.class)) {
-            packer.packVars(Kind.PARAMETER, type, vdList, inCtlPath, heap);
+            boolean paramIsInCtlPath = true; // parameter is always in ctlPath
+            packer.packVars(Kind.PARAMETER, type, vdList, paramIsInCtlPath,
+                    heap);
         } else {
             packer.packVars(Kind.LOCAL, type, vdList, inCtlPath, heap);
         }
@@ -155,7 +157,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ReturnStatement node) {
-        returnCreator.createReturnVar(node, methodReturnType, heap);
+        returnCreator.createReturnVar(node, methodReturnType, inCtlPath, heap);
     }
 
     @Override

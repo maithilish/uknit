@@ -22,5 +22,24 @@ class Model {
         String format(String name, String city);
 
         void append(String name, String city);
+
+        String cntry();
+    }
+
+    interface Bar {
+
+        Bar format(Foo foo);
+
+        void append(Foo foo);
+
+        void append(Bar bar);
+
+        Bar format(Bar bar);
+    }
+
+    interface Baz {
+        Foo format(Foo foo);
+
+        void append(Foo foo);
     }
 }

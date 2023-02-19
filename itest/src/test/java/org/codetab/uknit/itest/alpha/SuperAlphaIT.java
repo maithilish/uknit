@@ -35,6 +35,8 @@ class SuperAlphaIT extends ITBase {
 
         configure();
 
+        clearConfig("uknit.source.method");
+
         // addTransientConfig("uknit.createInstance.PayloadReal",
         // "new PayloadReal();");
         // addTransientConfig("uknit.createInstance.InfoReal", "new
@@ -44,6 +46,7 @@ class SuperAlphaIT extends ITBase {
         // addTransientConfig("uknit.createInstance.Stream", "mock");
 
         try {
+
             generateTestClass();
         } finally {
             restoreTransientConfigs();

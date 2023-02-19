@@ -41,6 +41,10 @@ public class ITBase {
         configure(testCasePkg, className);
     }
 
+    protected void clearConfig(final String key) {
+        configs.clearProperty(key);
+    }
+
     protected void configure(final String testCasePkg, final String clzName) {
         String testClzName = clzName.concat("Test");
         String expFile = clzName.concat(".exp");

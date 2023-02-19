@@ -6,9 +6,10 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.Controller;
+import org.codetab.uknit.core.make.method.MethodMakers;
+import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.make.model.Heap;
-import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Methods;
@@ -19,7 +20,9 @@ public class InternalCalls {
     @Inject
     private Methods methods;
     @Inject
-    private Packs packs;
+    private MethodMakers methodMakers;
+    @Inject
+    private Controller ctl;
 
     public List<Invoke> filterInternalInvokes(final List<Invoke> invokes,
             final Heap heap) {
@@ -45,8 +48,10 @@ public class InternalCalls {
      * @param internalHeap
      */
     public void initInternalHeap(final Heap heap, final Heap internalHeap) {
-        List<Pack> fieldPacks =
-                packs.filterByVarKinds(heap.getPacks(), Kind.FIELD);
-        internalHeap.addPacks(fieldPacks);
+        internalHeap.setTestClzName(heap.getTestClzName());
+        List<Field> fieldsCopy = ctl.getClzMaker().getClzMap()
+                .getDefinedFieldsCopy(heap.getTestClzName());
+        List<Pack> packsCopy = methodMakers.createFieldPacks(fieldsCopy);
+        internalHeap.addPacks(packsCopy);
     }
 }

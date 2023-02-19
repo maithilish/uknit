@@ -201,7 +201,9 @@ public class FieldMakers {
     }
 
     public boolean fieldNotExists(final String fieldName,
-            final List<BodyDeclaration> body) {
+            final TypeDeclaration testClz) {
+        @SuppressWarnings("unchecked")
+        List<BodyDeclaration> body = testClz.bodyDeclarations();
         for (BodyDeclaration bd : body) {
             if (nodes.is(bd, FieldDeclaration.class)) {
                 List<VariableDeclarationFragment> fragments =

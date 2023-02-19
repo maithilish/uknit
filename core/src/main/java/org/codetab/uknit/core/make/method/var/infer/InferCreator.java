@@ -148,8 +148,8 @@ public class InferCreator {
                      */
 
                     // var: returnVar exp: apple, morphed as returnPack
-                    inferPack = modelFactory.createPack(returnPack.getVar(),
-                            varName, inCtlPath);
+                    inferPack = modelFactory.createPack(packs.getId(),
+                            returnPack.getVar(), varName, inCtlPath);
                     // var: apple exp: foo.bar(), morphed as inferPack
                     returnPack.setVar(inferVar);
                 } else {
@@ -158,8 +158,8 @@ public class InferCreator {
                      * returnPack exp to inferVar name.
                      */
                     // var: apple, exp: new Foo()
-                    inferPack =
-                            modelFactory.createPack(inferVar, exp, inCtlPath);
+                    inferPack = modelFactory.createPack(packs.getId(), inferVar,
+                            exp, inCtlPath);
                     // var: return, exp: apple
                     returnPack.setExp(varName);
                 }

@@ -12,8 +12,8 @@ class LocalTest {
 
     @Test
     public void testValidatePhoneNumberIfCurrentNumberLength() {
-        String phoneNumber1 = "Bar";
-        String phoneNumber2 = "Baz";
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
         Local.validatePhoneNumber(phoneNumber1, phoneNumber2);
 
         fail("unable to assert, STEPIN");
@@ -21,8 +21,8 @@ class LocalTest {
 
     @Test
     public void testValidatePhoneNumberElseCurrentNumberLength() {
-        String phoneNumber1 = "Bar";
-        String phoneNumber2 = "Baz";
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
         Local.validatePhoneNumber(phoneNumber1, phoneNumber2);
 
         fail("unable to assert, STEPIN");
@@ -30,8 +30,8 @@ class LocalTest {
 
     @Test
     public void testValidatePhoneNumber() {
-        String phoneNumber1 = "Bar";
-        String phoneNumber2 = "Baz";
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
         Local.validatePhoneNumber(phoneNumber1, phoneNumber2);
 
         fail("unable to assert, STEPIN");
@@ -39,8 +39,8 @@ class LocalTest {
 
     @Test
     public void testValidatePhoneNumberStringString() {
-        String phoneNumber1 = "Bar";
-        String phoneNumber2 = "Baz";
+        String phoneNumber1 = "Foo";
+        String phoneNumber2 = "Bar";
         Local.validatePhoneNumber(phoneNumber1, phoneNumber2);
 
         fail("unable to assert, STEPIN");

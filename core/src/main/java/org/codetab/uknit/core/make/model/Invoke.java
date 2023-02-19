@@ -38,10 +38,10 @@ public class Invoke extends Pack {
     private Optional<Verify> verify;
 
     @Inject
-    public Invoke(@Assisted @Nullable final IVar var,
+    public Invoke(@Assisted final int id, @Assisted @Nullable final IVar var,
             @Assisted @Nullable final Expression exp,
             @Assisted final boolean inCtlPath) {
-        super(var, exp, inCtlPath);
+        super(id, var, exp, inCtlPath);
 
         if (nonNull(exp)) {
             checkExpState(exp);
@@ -108,10 +108,11 @@ public class Invoke extends Pack {
     @Override
     public String toString() {
         if (getLeftExp().isPresent()) {
-            return "Invoke [var=" + getVar() + ", exp=" + getExp()
-                    + ", leftExp=" + getLeftExp() + "]";
+            return "Invoke " + getId() + " [var=" + getVar() + ", exp="
+                    + getExp() + ", leftExp=" + getLeftExp() + "]";
         } else {
-            return "Invoke [var=" + getVar() + ", exp=" + getExp() + "]";
+            return "Invoke " + getId() + " [var=" + getVar() + ", exp="
+                    + getExp() + "]";
         }
     }
 }

@@ -9,7 +9,7 @@ import java.awt.geom.Arc2D.Float;
  * @author Maithilish
  *
  */
-public class Creation {
+class Creation {
 
     public Arc2D createArc() {
         Arc2D arc = new Float(0, 1, 2, 3, 4, 5, Arc2D.CHORD);

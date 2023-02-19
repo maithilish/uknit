@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
@@ -25,6 +26,8 @@ public class ForEachStrategy {
     private Loaders loaders;
     @Inject
     private LoadVars loadVars;
+    @Inject
+    private Packs packs;
     @Inject
     private ModelFactory modelFactory;
 
@@ -79,8 +82,8 @@ public class ForEachStrategy {
                     inferVarO = loadVars.createPutInferVar(var, rExp, heap);
                     // create new pack for inferVar and exp.
                     if (inferVarO.isPresent()) {
-                        Pack pack = modelFactory.createPack(inferVarO.get(),
-                                rExp, false);
+                        Pack pack = modelFactory.createPack(packs.getId(),
+                                inferVarO.get(), rExp, false);
                         heap.addPack(pack);
                     }
                 }

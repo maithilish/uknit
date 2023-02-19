@@ -64,6 +64,8 @@ public class MethodMaker {
     @Inject
     private Vars vars;
     @Inject
+    private Packs packs;
+    @Inject
     private GetterSetter getterSetter;
 
     private ClzMap clzMap;
@@ -89,10 +91,12 @@ public class MethodMaker {
         clzDecl = clzMap.getTypeDecl(testClzName);
         clz = clzMap.getClz(testClzName);
 
-        heap.setMut(method);
-
         String testMethodName =
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
+
+        heap.setMut(method);
+        heap.setTestClzName(testClzName);
+        heap.setTestMethodName(testMethodName);
 
         String mutSignature = methods.getMethodSignature(method);
         ctl.setMUTSignature(mutSignature);
@@ -105,7 +109,7 @@ public class MethodMaker {
 
         if (configs.getConfig("uknit.detect.getterSetter", true)) {
             getterSetter.detect(clz, method, testMethod,
-                    clzMap.getFieldsCopy(testClzName));
+                    clzMap.getDefinedFieldsCopy(testClzName));
         }
 
         Visitor visitor = di.instance(Visitor.class);
@@ -122,13 +126,14 @@ public class MethodMaker {
         visitor.setSplitOnControlFlow(true);
 
         heap.setup();
+        packs.resetIdGenerator();
 
         // add method under test call
         callCreator.createCall(method, heap);
 
         // to set deep stub, create field packs
         heap.addPacks(methodMakers
-                .createFieldPacks(clzMap.getFieldsCopy(testClzName)));
+                .createFieldPacks(clzMap.getDefinedFieldsCopy(testClzName)));
         method.accept(visitor);
 
         postProcessor.process(heap);

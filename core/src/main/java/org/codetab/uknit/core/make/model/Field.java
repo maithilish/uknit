@@ -38,17 +38,27 @@ public class Field extends Var {
     }
 
     /**
-     * Deep copy of the field. However, fieldDecl and srcFieldDecl are not deep
-     * copy but points to the originals.
+     * Deep copy of the field. The fieldDecl and srcFieldDecl are not deep
+     * copies but points to the originals.
+     *
+     * Field supports deepCopy() (implemented in super Var) and fieldDeepCopy().
+     * The deepCopy() returns instance of Var, whereas fieldDeepCopy() returns
+     * instance of Field.
+     *
      * @return
      */
-    public Field deepCopy() {
-        Field field = new Field(name, type, mock, fieldDecl, srcFieldDecl);
-        field.setCreated(created);
-        field.setEnable(enable);
-        enforce.ifPresent(e -> field.setEnforce(e));
-        field.setDeepStub(deepStub);
-        return field;
+    public Field fieldDeepCopy() {
+        Field clone = new Field(name, type, mock, fieldDecl, srcFieldDecl);
+        clone.setCreated(created);
+        clone.setDeepStub(deepStub);
+        clone.setEnable(enable);
+        if (enforce.isPresent()) {
+            clone.setEnforce(enforce.get());
+        }
+        clone.setOldName(oldName);
+        properties.forEach((k, v) -> clone.setProperty(k, v));
+        natures.forEach(n -> clone.addNature(n));
+        return clone;
     }
 
     @Override

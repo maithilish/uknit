@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -122,6 +123,9 @@ public class Expressions {
             if (nonNull(postExp)) {
                 name = getName(postExp);
             }
+        } else if (nodes.is(exp, FieldAccess.class)) {
+            Expression fieldAccess = nodes.as(exp, FieldAccess.class).getName();
+            name = nodes.getName(fieldAccess);
         }
         return name;
     }

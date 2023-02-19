@@ -41,6 +41,8 @@ import com.google.common.graph.Traverser;
  * respective module instead of src/test/java dir and doesn't overwrite if test
  * exists in uknit/bulk.
  *
+ * Import project in IDE and add it to classpath of uknit/core.
+ *
  * This runner is not for the users and it is mainly to test the uknit against
  * arbitrary projects.
  *
@@ -68,15 +70,19 @@ public class BulkGenerator {
         DInjector di = new DInjector(module).instance(DInjector.class);
         Configs configs = di.instance(Configs.class);
 
+        configs.clearProperty("uknit.source.method"); // process all methods
+        configs.setProperty("uknit.source.error.ignore", "true");
+
         String baseDir = configs.getConfig("uknit.source.base");
         String srcDir = configs.getConfig("uknit.source.dir");
+        String packg = configs.getConfig("uknit.source.package");
         Set<String> modulePaths = getModulePaths(baseDir, srcDir);
 
         errorCount = 0;
         errors = new HashMap<>();
         for (String modulePath : modulePaths) {
             List<File> filePaths =
-                    getJavaFilePaths(baseDir, modulePath, srcDir);
+                    getJavaFilePaths(baseDir, modulePath, srcDir, packg);
 
             // System.out.printf("Module: %s No. of Java Files: %d%n",
             // modulePath,
@@ -198,13 +204,26 @@ public class BulkGenerator {
     }
 
     private List<File> getJavaFilePaths(final String baseDir,
-            final String modulePath, final String srcDir) {
+            final String modulePath, final String srcDir, final String packg) {
         List<File> fileList = new ArrayList<>();
         File dir = Paths.get(baseDir, modulePath, srcDir).toFile();
         Traverser<File> traverser = com.google.common.io.Files.fileTraverser();
         for (File file : traverser.breadthFirst(dir)) {
-            if (file.isFile() && file.toString().endsWith(".java")) {
-                fileList.add(file);
+            if (file.isFile()) {
+                String fileName = file.toString();
+                if (packg.equals("org.codetab.uknit.itest.example")) {
+                    // package config is not set, add all java files
+                    if (fileName.endsWith(".java")) {
+                        fileList.add(file);
+                    }
+                } else {
+                    // package config is set, add only java files of package
+                    String packgPath = packg.replace(".", File.separator);
+                    if (fileName.endsWith(".java")
+                            && fileName.contains(packgPath)) {
+                        fileList.add(file);
+                    }
+                }
             }
         }
         return fileList;

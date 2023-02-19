@@ -12,6 +12,7 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.ClzNodeFactory;
 import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.node.Variables;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -32,6 +33,8 @@ public class FieldMaker {
     private NodeFactory nodeFactory;
     @Inject
     private ClzNodeFactory clzNodeFactory;
+    @Inject
+    private Variables variables;
 
     public List<Field> getSrcFields(final TypeDeclaration srcClz) {
         List<FieldDeclaration> fieldDecls =
@@ -49,22 +52,25 @@ public class FieldMaker {
         for (Field srcField : fieldList) {
             String fieldName = srcField.getName();
             Type type = srcField.getType();
-            Modifier modifier =
-                    nodeFactory.createModifier(ModifierKeyword.PRIVATE_KEYWORD);
 
-            @SuppressWarnings("unchecked")
-            List<BodyDeclaration> body = testClz.bodyDeclarations();
-            if (fieldMakers.fieldNotExists(fieldName, body)) {
-                // new fieldDecl for clzDecl (test class)
+            if (fieldMakers.fieldNotExists(fieldName, testClz)) {
+                /*
+                 * Add new fieldDecl for clzDecl (test class). The new fieldDecl
+                 * is without initializer and if required, obtain initializer
+                 * from Field.srcFieldDecl.
+                 *
+                 * If enabled, add field to clzDecl tree (test class). Ex:
+                 * static File file; the src field is static so it is disabled
+                 * (see FieldMakers.enable()). However, it is added to
+                 * testFields list as method maker needs it.
+                 */
                 FieldDeclaration fieldDecl =
                         clzNodeFactory.createFieldDecl(type, fieldName);
-
-                @SuppressWarnings("unchecked")
-                List<Modifier> modifiers = fieldDecl.modifiers();
-                modifiers.add(modifier);
-
-                // if enabled, add field to clzDecl tree (test class)
+                variables.addModifier(fieldDecl,
+                        ModifierKeyword.PRIVATE_KEYWORD);
                 if (srcField.isEnable()) {
+                    @SuppressWarnings("unchecked")
+                    List<BodyDeclaration> body = testClz.bodyDeclarations();
                     body.add(fieldDecl);
                 }
 
@@ -79,9 +85,12 @@ public class FieldMaker {
 
     public void addFieldsToClzMap(final List<Field> fields,
             final String testClzName, final ClzMap clzMap) {
+        // add fields to definedFields list
         for (Field field : fields) {
-            clzMap.addField(testClzName, field);
+            clzMap.addDefinedField(testClzName, field);
         }
+        // copy definedField list to fields (working copy)
+        clzMap.setFields(testClzName);
     }
 
     public void annotateFields(final Clz clz,

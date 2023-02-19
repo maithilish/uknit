@@ -237,4 +237,10 @@ public class Nodes {
         return spaceit("no implmentation for node type:",
                 node.getClass().getSimpleName(), "-", node.toString());
     }
+
+    /**
+     * Dummy call.
+     */
+    public void doNothing() {
+    }
 }

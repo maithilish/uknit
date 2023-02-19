@@ -16,6 +16,12 @@ public class Configs {
 
     private Configuration configuration = Configuration.INSTANCE;
 
+    /**
+     * Get config or null if not found.
+     *
+     * @param key
+     * @return
+     */
     public String getConfig(final String key) {
         return configuration.getProperty(key);
     }

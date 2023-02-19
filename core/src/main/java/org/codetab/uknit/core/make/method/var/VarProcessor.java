@@ -140,6 +140,8 @@ public class VarProcessor {
     public void processOfflimits(final Heap heap) {
         List<Pack> packList = heap.getPacks().stream()
                 .filter(p -> nonNull(p.getVar())).collect(Collectors.toList());
-        packList.forEach(p -> offlimits.addNature(p, heap));
+        for (Pack pack : packList) {
+            offlimits.addNature(pack, heap);
+        }
     }
 }

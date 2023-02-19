@@ -68,7 +68,7 @@ public interface IVar {
 
     boolean is(Nature nature);
 
-    IVar clone();
+    IVar deepCopy();
 
     ITypeBinding getTypeBinding();
 

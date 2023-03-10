@@ -63,4 +63,8 @@ class Real {
     public File returnRealCollectionReturnsMock(final List<File> files) {
         return files.get(0);
     }
+
+    public String realOfObjectClass(final String base) {
+        return ((Object) base).toString();
+    }
 }

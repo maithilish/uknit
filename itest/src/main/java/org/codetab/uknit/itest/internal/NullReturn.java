@@ -2,11 +2,27 @@ package org.codetab.uknit.itest.internal;
 
 class NullReturn extends Delegating {
 
-    private final boolean flag = false;
+    public String internalCall(final boolean flag) {
+        if (flag) {
+            return imc();
+        }
+        return null;
+    }
 
-    public Connection foo() {
+    private String imc() {
+        return "a";
+    }
+
+    public Connection superCall(final boolean flag) {
         if (flag) {
             return getDelegateInternal();
+        }
+        return null;
+    }
+
+    public Connection superCallWithSuper(final boolean flag) {
+        if (flag) {
+            return super.getDelegateInternal();
         }
         return null;
     }

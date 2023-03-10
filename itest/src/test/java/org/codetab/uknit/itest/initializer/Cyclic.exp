@@ -1,0 +1,22 @@
+package org.codetab.uknit.itest.initializer;
+class CyclicTest {
+    @InjectMocks
+    private Cyclic cyclic;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCyclicInInitializers() {
+        Object value2 = (Object) base;
+        String grape = "Bar";
+        Object base = (String) value2;
+
+        when(value2.toString()).thenReturn(grape);
+        cyclic.cyclicInInitializers();
+
+        fail("unable to assert, STEPIN");
+    }
+}

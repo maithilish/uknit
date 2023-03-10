@@ -48,8 +48,8 @@ When an IM is called multiple times, separate Packs (or Invoke) are created for 
 
 At present patch is done in three ways
 
- - Invoke exps in any exp (including another invoke exp), is replaced with corresponding var name. No separate patch is created for this, instead the pack list in heap is searched for the invoke pack and its var name is used to patch the invoke in exp.
- - A var may be renamed in case of name conflict and all depending exp are patched with new name. It is not possible to search for relavent var such renames instead Patch is created and added to patch list of the Pack.
+ - Invoke exps in any exp (including another invoke exp) is replaced with corresponding var name. No separate patch is created for this, instead the pack list in heap is searched for the invoke pack and its var name is used to patch the invoke in exp.
+ - A var may be renamed in case of name conflict and all depending exp are patched with new name. It is not possible to search for relevant var such renames instead Patch is created and added to patch list of the Pack.
  - IM invoke is packed as exp in a dedicated Pack during visit phase, but the IM invoke exp is replaced with IM's return var name exp on IM merge. To patch any chained IM call the IM invoke exp and relavent retunr var is collected in patches map in Patcher.
  
 Details are as below,

@@ -64,4 +64,19 @@ class CallInternal {
         q.clear();
         return q;
     }
+
+    // TODO L - fix renamed vars order
+    public String callSimilarlyNamedMethods() {
+        String a = imc("a");
+        int b = imc(2);
+        return b + a;
+    }
+
+    private String imc(final String name) {
+        return name;
+    }
+
+    private int imc(final int name) {
+        return name;
+    }
 }

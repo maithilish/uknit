@@ -5,14 +5,20 @@ import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.codetab.uknit.core.exception.CriticalException;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class IMFinder {
+
+    @Inject
+    private MethodComparator methodComparator;
 
     /**
      * Find method decl for IM call.
@@ -58,14 +64,13 @@ public class IMFinder {
                         MethodDeclaration md = ((MethodDeclaration) body);
                         IMethodBinding mb2 =
                                 md.resolveBinding().getMethodDeclaration();
-                        String methodName2 = mb2.getName();
 
                         String clzName = mb.getDeclaringClass().getBinaryName();
                         String clzName2 =
                                 mb2.getDeclaringClass().getBinaryName();
 
                         if (clzName.equals(clzName2)
-                                && methodName.equals(methodName2.toString())) {
+                                && methodComparator.isEqual(mb, mb2)) {
                             if (isNull(methodDecl)) {
                                 methodDecl = md;
                             } else {
@@ -82,4 +87,44 @@ public class IMFinder {
         return methodDecl;
     }
 
+}
+
+/**
+ * Compare two method bindings by name and parameters.
+ *
+ * @author Maithilish
+ *
+ */
+class MethodComparator {
+
+    public boolean isEqual(final IMethodBinding mb, final IMethodBinding mb2) {
+
+        String clzName1 = mb.getDeclaringClass().getBinaryName();
+        String clzName2 = mb2.getDeclaringClass().getBinaryName();
+        if (!clzName1.equals(clzName2)) {
+            return false;
+        }
+
+        String name1 = mb.getName();
+        String name2 = mb2.getName();
+        if (!name1.equals(name2)) {
+            return false;
+        }
+
+        boolean paramsEqual = true;
+        ITypeBinding[] params1 = mb.getParameterTypes();
+        ITypeBinding[] params2 = mb2.getParameterTypes();
+        if (params1.length == params2.length) {
+            for (int i = 0; i < params1.length; i++) {
+                ITypeBinding param1 = params1[i];
+                ITypeBinding param2 = params2[i];
+                if (!param1.getBinaryName().equals(param2.getBinaryName())) {
+                    paramsEqual = false;
+                }
+            }
+        } else {
+            paramsEqual = false;
+        }
+        return paramsEqual;
+    }
 }

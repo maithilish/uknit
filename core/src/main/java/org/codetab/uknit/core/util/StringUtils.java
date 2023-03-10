@@ -53,16 +53,22 @@ public class StringUtils {
             return str;
         }
 
+        boolean allUpper = str.chars().noneMatch(Character::isLowerCase);
+
         char firstCodepoint = (char) str.codePointAt(0);
         char newCodePoint = Character.toTitleCase(firstCodepoint);
-        if (firstCodepoint == newCodePoint) {
+        if (firstCodepoint == newCodePoint && !allUpper) {
             return str;
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(newCodePoint);
         if (strLen > 1) {
-            sb.append(str.substring(1));
+            if (allUpper) {
+                sb.append(str.substring(1).toLowerCase());
+            } else {
+                sb.append(str.substring(1));
+            }
         }
         return sb.toString();
     }

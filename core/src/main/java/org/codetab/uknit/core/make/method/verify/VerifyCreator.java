@@ -124,6 +124,10 @@ public class VerifyCreator {
                 }
             }
 
+            if (misuses.isVerifyMisuse(invoke)) {
+                return true;
+            }
+
             return false;
         }
 

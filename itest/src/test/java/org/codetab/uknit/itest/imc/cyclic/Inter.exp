@@ -1,0 +1,105 @@
+package org.codetab.uknit.itest.imc.cyclic;
+
+import org.codetab.uknit.itest.imc.cyclic.Model.Foo;
+class InterTest {
+    @InjectMocks
+    private Inter inter;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCallInterNoCyclic11() {
+        Foo foo = Mockito.mock(Foo.class);
+        String orange = "Foo";
+        String grape = "Bar";
+        String apple = "Baz";
+        String banana = "Qux";
+        String mango = "Quux";
+        String kiwi = "Corge";
+
+        when(foo.format("imc14 after")).thenReturn(orange).thenReturn(banana);
+        when(foo.format("imc13 after")).thenReturn(grape);
+        when(foo.format("imc12 after")).thenReturn(apple);
+        when(foo.format("imc17 after")).thenReturn(mango);
+        when(foo.format("imc16 after")).thenReturn(kiwi);
+        inter.callInterNoCyclic11(foo);
+
+        verify(foo).append("imc12 before");
+        verify(foo).append("imc13 before");
+        verify(foo, times(2)).append("imc14 before");
+        verify(foo, times(2)).append("imc15");
+        verify(foo, times(2)).append("imc14 after");
+        verify(foo).append("imc13 after");
+        verify(foo).append("imc12 after");
+        verify(foo).append("imc16 before");
+        verify(foo).append("imc17 before");
+        verify(foo).append("imc17 after");
+        verify(foo).append("imc16 after");
+    }
+
+    @Test
+    public void testCallInterCyclic21() {
+        Foo foo = Mockito.mock(Foo.class);
+        String kiwi = "Foo";
+        String orange = "Bar";
+        String grape = "Baz";
+        String apple = "Qux";
+        String peach = "Quux";
+        String apricot = "Corge";
+        String cherry = "Grault";
+        String banana = "Garply";
+        String mango = "Waldo";
+
+        when(foo.format("imc25 after")).thenReturn(kiwi).thenReturn(peach);
+        when(foo.format("imc24 after")).thenReturn(orange).thenReturn(apricot);
+        when(foo.format("imc23 after")).thenReturn(grape).thenReturn(cherry);
+        when(foo.format("imc22 after")).thenReturn(apple);
+        when(foo.format("imc27 after")).thenReturn(banana);
+        when(foo.format("imc26 after")).thenReturn(mango);
+        inter.callInterCyclic21(foo);
+
+        verify(foo).append("imc22 before");
+        verify(foo, times(2)).append("imc23 before");
+        verify(foo, times(2)).append("imc24 before");
+        verify(foo, times(2)).append("imc25 before");
+        verify(foo, times(2)).append("imc25 after");
+        verify(foo, times(2)).append("imc24 after");
+        verify(foo, times(2)).append("imc23 after");
+        verify(foo).append("imc22 after");
+        verify(foo).append("imc26 before");
+        verify(foo).append("imc27 before");
+        verify(foo).append("imc27 after");
+        verify(foo).append("imc26 after");
+    }
+
+    @Test
+    public void testCallZigZagCyclic21() {
+        Foo foo = Mockito.mock(Foo.class);
+        String kiwi = "Foo";
+        String orange = "Bar";
+        String grape = "Baz";
+        String apple = "Qux";
+        String apricot = "Quux";
+        String cherry = "Corge";
+        String banana = "Grault";
+        String mango = "Garply";
+
+        when(foo.format("imc37 after")).thenReturn(kiwi).thenReturn(banana);
+        when(foo.format("imc36 after")).thenReturn(orange).thenReturn(mango);
+        when(foo.format("imc33 after")).thenReturn(grape).thenReturn(apricot);
+        when(foo.format("imc32 after")).thenReturn(apple).thenReturn(cherry);
+        inter.callZigZagCyclic21(foo);
+
+        verify(foo, times(2)).append("imc32 before");
+        verify(foo, times(2)).append("imc33 before");
+        verify(foo, times(2)).append("imc36 before");
+        verify(foo, times(2)).append("imc37 before");
+        verify(foo, times(2)).append("imc37 after");
+        verify(foo, times(2)).append("imc36 after");
+        verify(foo, times(2)).append("imc33 after");
+        verify(foo, times(2)).append("imc32 after");
+    }
+}

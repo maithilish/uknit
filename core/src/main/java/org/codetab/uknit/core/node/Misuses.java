@@ -64,4 +64,25 @@ public class Misuses {
 
         return false;
     }
+
+    /**
+     * Mockito throws verify errors for
+     *
+     * Mockito cannot verify toString(). It is too often used behind of scenes
+     * (i.e. during String concatenation, in IDE debugging views). Verifying it
+     * may give inconsistent or hard to understand results.
+     *
+     * @param invoke
+     * @return
+     */
+    public boolean isVerifyMisuse(final Invoke invoke) {
+        MethodInvocation mi = invoke.getMi();
+        if (nonNull(mi)) {
+            String methodName = nodes.getName(mi.getName());
+            if (methodName.equals("toString")) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

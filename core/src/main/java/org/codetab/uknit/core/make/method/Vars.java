@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method;
 
+import static java.util.Objects.nonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,7 +129,7 @@ public class Vars {
      */
     public Optional<IVar> getExpectedVar(final Optional<Pack> returnPack,
             final Heap heap) {
-        if (returnPack.isPresent()) {
+        if (returnPack.isPresent() && nonNull(returnPack.get().getExp())) {
             if (nodes.is(returnPack.get().getExp(), SimpleName.class)) {
                 Expression exp =
                         heap.getPatcher().copyAndPatch(returnPack.get(), heap);

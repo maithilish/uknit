@@ -155,4 +155,14 @@ class RealTest {
 
         assertSame(file, actual);
     }
+
+    @Test
+    public void testRealOfObjectClass() {
+        Object base = STEPIN;
+        String apple = ((Object) base).toString();
+
+        String actual = real.realOfObjectClass(base);
+
+        assertEquals(apple, actual);
+    }
 }

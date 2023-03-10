@@ -25,7 +25,7 @@ public class Heaps {
             return;
         }
 
-        LOG.debug("{}", header);
+        LOG.debug("[ {} ]", header);
 
         List<Pack> packs = heap.getPacks();
         for (Pack pack : packs) {
@@ -100,7 +100,7 @@ public class Heaps {
 
     public void debugPatches(final String header, final Heap heap) {
         Map<Expression, IVar> patches = heap.getPatcher().getPatches();
-        LOG.debug("{}", header);
+        LOG.debug("[ {} ]", header);
         for (Expression exp : patches.keySet()) {
             IVar var = patches.get(exp);
             LOG.debug("Patch [exp={}, var={}]", exp, var.getName());

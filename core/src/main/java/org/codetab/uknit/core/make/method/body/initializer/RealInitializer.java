@@ -59,8 +59,14 @@ class RealInitializer {
 
             ini = varNames.replaceMetaSyntantics(ini);
 
-            Initializer initializer =
-                    modelFactory.createInitializer(Kind.REAL, ini);
+            /*
+             * The ini is null for real but no config createInstance such as
+             * Object class. Ref itest: initializer.Real.realOfObjectClass()
+             */
+            Initializer initializer = null;
+            if (nonNull(ini)) {
+                initializer = modelFactory.createInitializer(Kind.REAL, ini);
+            }
 
             LOG.debug("Var [name={}] {}", var.getName(), initializer);
 

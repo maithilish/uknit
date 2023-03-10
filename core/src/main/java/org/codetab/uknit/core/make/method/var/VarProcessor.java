@@ -3,6 +3,7 @@ package org.codetab.uknit.core.make.method.var;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -22,6 +23,8 @@ public class VarProcessor {
     private VarAssignor varAssignor;
     @Inject
     private Offlimits offlimits;
+    @Inject
+    private StandinVarCreator standinVarCreator;
 
     /**
      * Propagate create to all linked packs.
@@ -143,5 +146,10 @@ public class VarProcessor {
         for (Pack pack : packList) {
             offlimits.addNature(pack, heap);
         }
+    }
+
+    public List<Pack> processStandinVars(final Set<String> usedNames,
+            final Heap heap) {
+        return standinVarCreator.addStandinVarsForUsedFields(usedNames, heap);
     }
 }

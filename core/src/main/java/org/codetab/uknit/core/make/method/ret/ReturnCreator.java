@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.method.ret;
 
+import static java.util.Objects.isNull;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -54,7 +56,16 @@ public class ReturnCreator {
          */
         Expression exp = wrappers.unpack(rs.getExpression());
 
-        if (nodes.is(exp, SimpleName.class)) {
+        if (isNull(exp)) {
+            // Method return is void. Ex: return;
+            String retVarName = "return";
+            boolean isMock = false;
+            IVar var = modelFactory.createVar(Kind.RETURN, retVarName,
+                    methodReturnType, isMock);
+            Pack pack =
+                    modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
+            heap.addPack(pack);
+        } else if (nodes.is(exp, SimpleName.class)) {
             /*
              * Exp maps to var. Pack for var already exists, create new return
              * var and pack for it. Ex: return paramA; return localVarB; etc.,

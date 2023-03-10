@@ -14,20 +14,13 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.exception.CodeException;
-import org.codetab.uknit.core.exception.VarNotFoundException;
-import org.codetab.uknit.core.make.Clz;
-import org.codetab.uknit.core.make.Controller;
-import org.codetab.uknit.core.make.clz.FieldMakers;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
-import org.codetab.uknit.core.make.method.visit.Packer;
-import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Pack.Nature;
-import org.eclipse.jdt.core.dom.Expression;
 
 public class VarEnabler {
 
@@ -38,13 +31,7 @@ public class VarEnabler {
     @Inject
     private Vars vars;
     @Inject
-    private Packer packer;
-    @Inject
     private LinkedPack linkedPack;
-    @Inject
-    private Controller ctl;
-    @Inject
-    private FieldMakers fieldMakers;
 
     /**
      * Update enable field of vars.
@@ -86,9 +73,10 @@ public class VarEnabler {
      */
     public List<String> enableVarsUsedInInitializers(final Heap heap) {
         // enable vars used in initializer assigned to vars enabled above
-        List<Expression> exps = varEnablers.getInitializers(heap);
-        List<String> names =
-                varEnablers.collectNamesUsedInInitializers(exps, heap);
+        LOG.debug("collect used var names in initializers");
+        List<Pack> iniPacks = varEnablers.getInitializers(heap);
+        List<String> names = new ArrayList<>();
+        varEnablers.collectNamesUsedInInitializers(iniPacks, names, heap);
         varEnablers.enabledVarsUsedInInitializers(names, heap);
         return names;
     }
@@ -132,46 +120,6 @@ public class VarEnabler {
             final Heap heap) {
         IVar var = vars.findVarByName(name, heap);
         var.setEnforce(value.get());
-    }
-
-    /**
-     * Add stand-in local var for the fields that are used but not added to the
-     * test class body.
-     *
-     * @param usedNames
-     * @param heap
-     * @return
-     */
-    public List<Pack> addStandinVarsForUsedFields(final Set<String> usedNames,
-            final Heap heap) {
-
-        Clz testClz =
-                ctl.getClzMaker().getClzMap().getClz(heap.getTestClzName());
-
-        List<Pack> standinPacks = new ArrayList<>();
-
-        for (String name : usedNames) {
-            Field field;
-            try {
-                field = vars.findFieldByName(name, heap);
-            } catch (VarNotFoundException e) {
-                field = null;
-            }
-            /*
-             * if field doesn't exist in the test body or local var is not
-             * defined, create stand in var and pack.
-             */
-            if (nonNull(field)
-                    && fieldMakers.fieldNotExists(name,
-                            testClz.getTestTypeDecl())
-                    && !vars.isLocalVarDefined(field, heap)) {
-                IVar standinVar = varEnablers.createStandinVar(field);
-                Pack standinPack =
-                        packer.packStandinVar(standinVar, true, heap);
-                standinPacks.add(standinPack);
-            }
-        }
-        return standinPacks;
     }
 
     public Set<String> collectUsedVarNames(final Heap heap) {

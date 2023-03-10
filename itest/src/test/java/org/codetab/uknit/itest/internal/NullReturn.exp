@@ -12,18 +12,62 @@ class NullReturnTest {
     }
 
     @Test
-    public void testFooIfFlag() {
+    public void testInternalCallIfFlag() {
+        boolean flag = true;
+        String grape = "a";
+        String apple = grape;
 
-        Connection actual = nullReturn.foo();
+        String actual = nullReturn.internalCall(flag);
 
-        fail("unable to assert, STEPIN");
+        assertEquals(apple, actual);
     }
 
     @Test
-    public void testFooElseFlag() {
+    public void testInternalCallElseFlag() {
+        boolean flag = true;
+        String grape = null;
 
-        Connection actual = nullReturn.foo();
+        String actual = nullReturn.internalCall(flag);
 
-        fail("unable to assert, STEPIN");
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testSuperCallIfFlag() {
+        boolean flag = true;
+        Connection connection2 = connection;
+
+        Connection actual = nullReturn.superCall(flag);
+
+        assertSame(connection2, actual);
+    }
+
+    @Test
+    public void testSuperCallElseFlag() {
+        boolean flag = true;
+        Connection connection3 = null;
+
+        Connection actual = nullReturn.superCall(flag);
+
+        assertEquals(connection3, actual);
+    }
+
+    @Test
+    public void testSuperCallWithSuperIfFlag() {
+        boolean flag = true;
+
+        Connection actual = nullReturn.superCallWithSuper(flag);
+
+        assertSame(connection, actual);
+    }
+
+    @Test
+    public void testSuperCallWithSuperElseFlag() {
+        boolean flag = true;
+        Connection connection3 = null;
+
+        Connection actual = nullReturn.superCallWithSuper(flag);
+
+        assertEquals(connection3, actual);
     }
 }

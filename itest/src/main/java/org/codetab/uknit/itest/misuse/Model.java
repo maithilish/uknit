@@ -8,4 +8,17 @@ class Model {
             return foo.compareTo(bar);
         }
     }
+
+    class Duck {
+
+        public void swim(final String time) {
+        }
+
+        public String fly(final String speed) {
+            return null;
+        }
+
+        public void dive(final String state) {
+        }
+    }
 }

@@ -17,6 +17,7 @@ import org.codetab.uknit.core.make.method.patch.service.PatchService;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
@@ -87,57 +88,96 @@ public class VarEnablers {
     }
 
     /**
+     * Get initializers in infer, local and return vars.
+     *
+     * @param heap
+     * @return
+     */
+    public List<Pack> getInitializers(final Heap heap) {
+
+        List<Pack> iniPacks = new ArrayList<>();
+        for (Pack pack : heap.getPacks()) {
+            IVar var = pack.getVar();
+            if (nonNull(var) && var.isEnable() && (var.isInferVar()
+                    || var.isLocalVar() || var.isReturnVar())) {
+                Optional<Initializer> iniO = var.getInitializer();
+                if (iniO.isPresent()
+                        && iniO.get().getInitializer() instanceof Expression) {
+                    iniPacks.add(pack);
+                }
+            }
+        }
+        return iniPacks;
+    }
+
+    /**
      * Collect var names used in initializers.
      *
-     * @param initializerList
+     * @param iniPacks
      * @param heap
      * @return
      */
     public List<String> collectNamesUsedInInitializers(
-            final List<Expression> initializerList, final Heap heap) {
+            final List<Pack> iniPacks, final List<String> names,
+            final Heap heap) {
 
-        List<String> names = new ArrayList<>();
+        for (Pack pack : iniPacks) {
 
-        for (Expression ini : initializerList) {
+            Expression ini = (Expression) pack.getVar().getInitializer().get()
+                    .getInitializer();
+
             Optional<Pack> packO =
                     packs.findByExpOrExpName(ini, heap.getPacks());
             if (packO.isPresent()) {
                 ini = heap.getPatcher().copyAndPatch(packO.get(), heap);
             }
+
+            // get exps in initializer
             PatchService srv = serviceLoader.loadService(ini);
             List<Expression> expsOfIni = srv.getExps(ini);
-            List<Expression> linkedInis = new ArrayList<>();
+
+            List<Pack> linkedIniPacks = new ArrayList<>();
             for (Expression expOfIni : expsOfIni) {
                 if (nodes.isSimpleName(expOfIni)) {
                     String name = nodes.getName(expOfIni);
-                    names.add(name);
                     /*
-                     * Process linked initializers. Find the pack for the name
-                     * and collect its initializer if present. Ref itest:
-                     * internal.InternalNestedArg.realDiffNameE(). Exclude the
-                     * initializer that already exists in initializerList to
-                     * avoid cyclic. Ref itest: qname.QName.assignQName().
+                     * If names already contains name then don't check its
+                     * linked ini to avoid cyclic. Ref itest:
+                     * cyclic.cyclicInInitializers().
                      */
-                    Optional<Pack> varPackO =
-                            packs.findByVarName(name, heap.getPacks());
-                    if (varPackO.isPresent() && nonNull(varPackO.get().getVar())
-                            && varPackO.get().getVar().getInitializer()
-                                    .isPresent()) {
-                        Object varIni = varPackO.get().getVar().getInitializer()
-                                .get().getInitializer();
-                        if (varIni instanceof Expression
-                                && !initializerList.contains(varIni)) {
-                            linkedInis.add((Expression) varIni);
+                    if (!names.contains(name)) {
+                        names.add(name);
+                        /*
+                         * Process linked initializers. Find the pack for the
+                         * name and collect its initializer if present. Ref
+                         * itest: internal.InternalNestedArg.realDiffNameE().
+                         * Exclude the initializer that already exists in
+                         * initializerList to avoid cyclic. Ref itest:
+                         * qname.QName.assignQName().
+                         */
+                        Optional<Pack> linkedPackO =
+                                packs.findByVarName(name, heap.getPacks());
+                        if (linkedPackO.isPresent()
+                                && !iniPacks.contains(linkedPackO.get())) {
+                            IVar linkedVar = linkedPackO.get().getVar();
+                            if (nonNull(linkedVar)
+                                    && linkedVar.getInitializer().isPresent()) {
+                                Object linkedIni = linkedPackO.get().getVar()
+                                        .getInitializer().get()
+                                        .getInitializer();
+                                if (linkedIni instanceof Expression) {
+                                    linkedIniPacks.add(linkedPackO.get());
+                                }
+                            }
                         }
                     }
                 }
             }
-            // recursively process linked initializers.
-            List<String> varNames =
-                    collectNamesUsedInInitializers(linkedInis, heap);
-            names.addAll(varNames);
+            if (!linkedIniPacks.isEmpty()) {
+                // recursively collect names till linkedIniPacks is empty.
+                collectNamesUsedInInitializers(linkedIniPacks, names, heap);
+            }
         }
-
         return names;
     }
 
@@ -159,28 +199,6 @@ public class VarEnablers {
                 }
             }
         }
-    }
-
-    /**
-     * Get initializers in infer, local and return vars.
-     *
-     * @param heap
-     * @return
-     */
-    public List<Expression> getInitializers(final Heap heap) {
-        List<Expression> list = new ArrayList<>();
-        List<IVar> usedVars = vars.filterVars(heap,
-                v -> (v.isInferVar() || v.isLocalVar() || v.isReturnVar())
-                        && v.isEnable());
-
-        for (IVar usedVar : usedVars) {
-            usedVar.getInitializer().ifPresent(i -> {
-                if (i.getInitializer() instanceof Expression) {
-                    list.add((Expression) i.getInitializer());
-                }
-            });
-        }
-        return list;
     }
 
     public void disableVars(final Set<String> names, final Heap heap) {

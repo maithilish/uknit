@@ -15,6 +15,7 @@ import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.method.body.BodyMaker;
 import org.codetab.uknit.core.make.method.getter.GetterSetter;
+import org.codetab.uknit.core.make.method.imc.Cyclic;
 import org.codetab.uknit.core.make.method.process.PostProcessor;
 import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
@@ -24,6 +25,7 @@ import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.tree.TreeNode;
+import org.codetab.uknit.core.util.StringUtils;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -67,6 +69,10 @@ public class MethodMaker {
     private Packs packs;
     @Inject
     private GetterSetter getterSetter;
+    @Inject
+    private MethodContext methodContext;
+    @Inject
+    private Cyclic cyclic;
 
     private ClzMap clzMap;
 
@@ -98,8 +104,15 @@ public class MethodMaker {
         heap.setTestClzName(testClzName);
         heap.setTestMethodName(testMethodName);
 
+        // initialize method call tree and save it in method context
+        methodContext.init();
+        TreeNode<MethodDeclaration> rootCallNode =
+                cyclic.createCallHierarchy(method);
+        methodContext.setCallHierarchy(rootCallNode);
+
         String mutSignature = methods.getMethodSignature(method);
         ctl.setMUTSignature(mutSignature);
+        LOG.debug("CUT: {}", StringUtils.capitalize(heap.getCutName()));
         LOG.debug("Method: {}", mutSignature);
         LOG.debug("Test Method: {}", testMethodName);
 
@@ -116,6 +129,7 @@ public class MethodMaker {
         visitor.setHeap(heap);
         visitor.setImc(false);
         visitor.setCtlPath(ctlPath);
+        visitor.setReturned(false);
         visitor.setMethodReturnType(method.getReturnType2());
 
         /*
@@ -132,8 +146,8 @@ public class MethodMaker {
         callCreator.createCall(method, heap);
 
         // to set deep stub, create field packs
-        heap.addPacks(methodMakers
-                .createFieldPacks(clzMap.getDefinedFieldsCopy(testClzName)));
+        heap.addPacks(methodMakers.createFieldPacks(
+                clzMap.getDefinedFieldsCopy(testClzName), heap));
         method.accept(visitor);
 
         postProcessor.process(heap);
@@ -141,9 +155,11 @@ public class MethodMaker {
         clzMap.updateFieldState(testClzName,
                 vars.getVarsOfKind(heap, Kind.FIELD));
 
-        heaps.debugPacks("[ Heap after MUT processing ]", heap);
+        heaps.debugPacks("Heap after process", heap);
 
-        heaps.debugPatches("[ Patch Map ]", heap);
+        heaps.debugPatches("Patch Map", heap);
+
+        cyclic.debugCallHierarchy(methodContext.getCallHierarchy());
 
         methodMakers.addThrowsException(testMethod, heap);
 
@@ -181,8 +197,14 @@ public class MethodMaker {
         checkNotNull(heap);
         checkNotNull(internalHeap);
 
-        LOG.debug("= process internal method: {} =",
-                methods.getMethodName(method));
+        String methodName = methods.getMethodName(method);
+        LOG.debug("= process internal method: {} =", methodName);
+
+        // if IM is cyclic then return without processing it
+        if (cyclic.isCyclic(heap.getMut(), method,
+                methodContext.getCallHierarchy())) {
+            return true;
+        }
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(internalHeap);
@@ -191,6 +213,10 @@ public class MethodMaker {
 
         internalHeap.setup();
 
+        // IM is not cyclic, add it to call hierarchy and continue to process
+        cyclic.addCallHierarchyNode(internalHeap.getMut(), heap.getMut(),
+                methodContext.getCallHierarchy());
+
         // stage call for this method
         callCreator.createCall(method, internalHeap);
 
@@ -198,9 +224,9 @@ public class MethodMaker {
 
         postProcessor.processInternalMethod(invoke, internalHeap, heap);
 
-        heaps.debugPacks("[ Heap after IM processing ]", heap);
+        heaps.debugPacks("Heap after IM process", heap);
 
-        heaps.debugPatches("[ Patch Map ]", heap);
+        heaps.debugPatches("Patch Map", heap);
 
         return true;
     }

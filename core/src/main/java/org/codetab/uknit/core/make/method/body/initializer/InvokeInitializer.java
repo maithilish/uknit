@@ -46,7 +46,7 @@ class InvokeInitializer implements IInitializer {
     public Optional<Initializer> getInitializer(final Pack pack,
             final Pack iniPack, final Heap heap) {
 
-        checkState(iniPack instanceof Invoke);
+        checkState(iniPack instanceof Invoke, "initializer pack is not Invoke");
 
         Invoke iniInvoke = (Invoke) iniPack;
 

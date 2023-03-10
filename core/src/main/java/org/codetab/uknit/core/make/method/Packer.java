@@ -1,4 +1,4 @@
-package org.codetab.uknit.core.make.method.visit;
+package org.codetab.uknit.core.make.method;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.VarNotFoundException;
-import org.codetab.uknit.core.make.method.Packs;
-import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;

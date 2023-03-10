@@ -18,6 +18,11 @@ public class Verify {
     private MethodInvocation mi;
     private boolean inCtlFlowPath;
     private List<ArgCapture> argCaptures;
+    /*
+     * -1 unprocessed, 0 processed but another similar verify's times is
+     * incremented and this verify is ignored, > 0 verify is called n times
+     */
+    private int times;
 
     @Inject
     public Verify(@Assisted final MethodInvocation mi,
@@ -25,6 +30,7 @@ public class Verify {
         this.mi = mi;
         this.inCtlFlowPath = inCtlFlowPath;
         argCaptures = new ArrayList<>();
+        times = -1;
     }
 
     public MethodInvocation getMi() {
@@ -37,6 +43,14 @@ public class Verify {
 
     public boolean isInCtlFlowPath() {
         return inCtlFlowPath;
+    }
+
+    public int getTimes() {
+        return times;
+    }
+
+    public void setTimes(final int times) {
+        this.times = times;
     }
 
     @Override

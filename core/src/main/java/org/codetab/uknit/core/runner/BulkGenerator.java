@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
@@ -28,23 +29,17 @@ import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.di.UknitModule;
 import org.codetab.uknit.core.exception.CodeException;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
 import com.google.common.graph.Traverser;
 
 /**
  * Generates tests for the project.
- * <p>
- * Derives modules and java class file from the configs - uknit.source.base
- * (project base dir) and uknit.source.dir (src/main/java) and generates tests
- * for all java class files in project or its modules.
- * <p>
- * As a precaution the generated test files lands in uknit/bulk folder under the
- * respective module instead of src/test/java dir and doesn't overwrite if test
- * exists in uknit/bulk.
- *
- * Import project in IDE and add it to classpath of uknit/core.
  *
  * This runner is not for the users and it is mainly to test the uknit against
  * arbitrary projects.
+ *
+ * Refer devops.md for usage.
  *
  * @author Maithilish
  *
@@ -53,8 +48,10 @@ public class BulkGenerator {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private int errorCount;
+    private int errorCount, clzCount;
     private Map<String, Exception> errors;
+
+    private Map<String, Long> timings;
 
     public static void main(final String[] args)
             throws URISyntaxException, IOException {
@@ -64,13 +61,19 @@ public class BulkGenerator {
 
     public void process() {
 
+        Stopwatch runStopwatch = Stopwatch.createStarted();
+
+        timings = new HashMap<>();
+
         changeLogFilterToInfo();
 
         UknitModule module = new UknitModule();
         DInjector di = new DInjector(module).instance(DInjector.class);
         Configs configs = di.instance(Configs.class);
 
-        configs.clearProperty("uknit.source.method"); // process all methods
+        // process all methods
+        configs.clearProperty("uknit.source.method");
+        configs.clearProperty("uknit.source.clz");
         configs.setProperty("uknit.source.error.ignore", "true");
 
         String baseDir = configs.getConfig("uknit.source.base");
@@ -79,15 +82,13 @@ public class BulkGenerator {
         Set<String> modulePaths = getModulePaths(baseDir, srcDir);
 
         errorCount = 0;
+        clzCount = 0;
         errors = new HashMap<>();
         for (String modulePath : modulePaths) {
+
             List<File> filePaths =
                     getJavaFilePaths(baseDir, modulePath, srcDir, packg);
-
-            // System.out.printf("Module: %s No. of Java Files: %d%n",
-            // modulePath,
-            // filePaths.size());
-
+            clzCount += filePaths.size();
             LOG.info("Module: {} No. of Java Files: {}", modulePath,
                     filePaths.size());
 
@@ -104,8 +105,16 @@ public class BulkGenerator {
                     if (i == filePaths.size() - 1) {
                         shutdownLogger = true;
                     }
+                    String fqName = String.format("%s.%s", pkg, fileName);
+                    LOG.info("generate test for {}, file #{}", fqName, i);
+                    Stopwatch testStopwatch = Stopwatch.createStarted();
                     runUknit(baseDir, modulePath, srcDir, pkg, fileName,
                             shutdownLogger);
+                    testStopwatch.stop();
+                    timings.put(fqName,
+                            testStopwatch.elapsed(TimeUnit.MILLISECONDS));
+                    LOG.info("generated test, time taken {}s",
+                            testStopwatch.elapsed(TimeUnit.SECONDS));
                 } catch (Exception e) {
                     final int repeat = 15;
                     String dash = "=".repeat(repeat);
@@ -115,10 +124,38 @@ public class BulkGenerator {
                     errors.put(String.join(".", pkg, fileName), e);
                     errorCount++;
                 }
-
             }
         }
-        System.out.printf("%n%nNo. of Errors: %d%n", errorCount);
+
+        runStopwatch.stop();
+
+        outputSummary(runStopwatch);
+
+        if (configs.getConfig("uknit.logger.shutdown", true)) {
+            LogManager.shutdown();
+        }
+    }
+
+    private void outputSummary(final Stopwatch runStopwatch) {
+        final int dashCount = 20;
+        String dashes = Strings.repeat("-", dashCount);
+
+        LOG.info("");
+        LOG.info("{} Timing {}", dashes, dashes);
+
+        List<Entry<String, Long>> sortedTimings =
+                timings.entrySet().stream().sorted((e1, e2) -> {
+                    Long t1 = e1.getValue();
+                    Long t2 = e2.getValue();
+                    return t1.compareTo(t2);
+                }).collect(Collectors.toList());
+
+        sortedTimings.forEach(e -> {
+            LOG.info("{} : {}ms", e.getKey(), e.getValue());
+        });
+
+        LOG.info("");
+        LOG.info("{} Errors {}", dashes, dashes);
 
         // sort on exception message and output errors
         List<Entry<String, Exception>> sortedErrors =
@@ -132,8 +169,15 @@ public class BulkGenerator {
                     }
                 }).collect(Collectors.toList());
 
-        sortedErrors.forEach(e -> System.out.printf("%s %s%n", e.getKey(),
-                e.getValue().getMessage()));
+        sortedErrors.forEach(e -> {
+            LOG.info("{}", e.getKey());
+            LOG.info("    -> {}", e.getValue().getMessage());
+        });
+
+        LOG.info("");
+        LOG.info("{} Summary {}", dashes, dashes);
+        LOG.info("Total Classes: {}, errors: {}", clzCount, errorCount);
+        LOG.info("Time taken: {}s", runStopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     private void runUknit(final String baseDir, final String modulePath,

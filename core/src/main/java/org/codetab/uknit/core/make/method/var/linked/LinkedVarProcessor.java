@@ -271,6 +271,15 @@ class CastPropagator {
             return true;
         }
 
+        /*
+         * Ex: return (String) clz.newInstance("Foo"), the type bind is
+         * capture#2-of ?. Ref itest: generic.CaptureTypeBind.
+         */
+        if (packVar.getTypeBinding().isCapture()
+                || linkVar.getTypeBinding().isCapture()) {
+            return true;
+        }
+
         try {
             Class<?> packVarClass =
                     Class.forName(packVar.getTypeBinding().getBinaryName());

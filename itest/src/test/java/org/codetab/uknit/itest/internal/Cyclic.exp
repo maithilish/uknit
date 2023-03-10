@@ -1,0 +1,40 @@
+package org.codetab.uknit.itest.internal;
+class CyclicTest {
+    @InjectMocks
+    private Cyclic cyclic;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testImCallsImCallerA() {
+        cyclic.imCallsImCallerA();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testImCallsImCallerB() {
+        cyclic.imCallsImCallerB();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testImCallsBaseC() {
+        int c = 1;
+        cyclic.imCallsBaseC(c);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testImCallsBaseD() {
+        int c = 1;
+        cyclic.imCallsBaseD(c);
+
+        fail("unable to assert, STEPIN");
+    }
+}

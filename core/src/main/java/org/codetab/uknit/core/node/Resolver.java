@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -158,6 +159,10 @@ public class Resolver {
                     nodes.as(node, MethodDeclaration.class).resolveBinding();
         } else {
             throw new CodeException(nodes.noImplmentationMessage(node));
+        }
+        if (isNull(methodBinding)) {
+            throw new CriticalException(
+                    "unable to get declaring class, methodBinding is null");
         }
         return methodBinding.getDeclaringClass();
     }

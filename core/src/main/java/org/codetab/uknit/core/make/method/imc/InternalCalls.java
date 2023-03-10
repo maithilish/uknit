@@ -51,7 +51,7 @@ public class InternalCalls {
         internalHeap.setTestClzName(heap.getTestClzName());
         List<Field> fieldsCopy = ctl.getClzMaker().getClzMap()
                 .getDefinedFieldsCopy(heap.getTestClzName());
-        List<Pack> packsCopy = methodMakers.createFieldPacks(fieldsCopy);
+        List<Pack> packsCopy = methodMakers.createFieldPacks(fieldsCopy, heap);
         internalHeap.addPacks(packsCopy);
     }
 }

@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
@@ -307,7 +308,9 @@ public class Packs {
     public List<Pack> filterScopePacks(final Pack renamedPack,
             final List<Pack> tailList) {
         List<Pack> scopeList = new ArrayList<>();
-        scopeList.add(tailList.get(0));
+        if (tailList.size() > 0) {
+            scopeList.add(tailList.get(0));
+        }
         if (tailList.size() > 1) {
             String definedName = renamedPack.getVar().getDefinedName();
             for (int i = 1; i < tailList.size(); i++) {
@@ -450,6 +453,16 @@ public class Packs {
 
     public void resetIdGenerator() {
         idGenerator.reset();
+    }
+
+    public Optional<Pack> findByInitializer(final Initializer initializer,
+            final List<Pack> packs) {
+        return packs.stream()
+                .filter(p -> nonNull(p.getVar())
+                        && p.getVar().getInitializer().isPresent())
+                .filter(p -> p.getVar().getInitializer().get()
+                        .equals(initializer))
+                .findAny();
     }
 }
 

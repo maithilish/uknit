@@ -1,0 +1,19 @@
+package org.codetab.uknit.itest.generic;
+class CaptureTypeBindTest {
+    @InjectMocks
+    private CaptureTypeBind captureTypeBind;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() throws Exception {
+        String apple = "Foo";
+
+        String actual = captureTypeBind.foo();
+
+        assertEquals(apple, actual);
+    }
+}

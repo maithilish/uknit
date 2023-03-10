@@ -17,16 +17,70 @@ class MultiReturnPathNoSplitTest {
     }
 
     @Test
-    public void testTwoReturnPathsIfFlag() {
+    public void testTwoReturnIfElse() {
+        boolean flag = true;
         String apple = "foo";
 
-        String actual = multiReturnPathNoSplit.twoReturnPaths();
+        String actual = multiReturnPathNoSplit.twoReturnIfElse(flag);
 
         assertEquals(apple, actual);
     }
 
     @Test
-    public void testTwoReturnPathsElseFlag() {
+    public void testTwoReturnNoElse() {
+        boolean flag = true;
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.twoReturnNoElse(flag);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testTwoNullNoElse() {
+        boolean flag = true;
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.twoNullNoElse(flag);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testMultiReturnIfElse() {
+        boolean flag1 = true;
+        boolean flag2 = true;
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.multiReturnIfElse(flag1, flag2);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testMultiReturnNoElse() {
+        boolean flag1 = true;
+        boolean flag2 = true;
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.multiReturnNoElse(flag1, flag2);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testMultiNullNoElse() {
+        boolean flag1 = true;
+        boolean flag2 = true;
+        String apple = "foo";
+
+        String actual = multiReturnPathNoSplit.multiNullNoElse(flag1, flag2);
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testTwoReturnPaths() {
         String apple = "foo";
 
         String actual = multiReturnPathNoSplit.twoReturnPaths();

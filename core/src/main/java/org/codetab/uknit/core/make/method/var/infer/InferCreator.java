@@ -104,10 +104,11 @@ public class InferCreator {
 
         Expression exp = returnPack.getExp();
         /*
-         * Don't create infer for SimpleName, SMI, ThisExp and LambdaExp. The
-         * SMI is replaced by IMC packs, so infer is not created.
+         * Don't create infer for SimpleName, SMI, ThisExp, LambdaExp and void.
+         * The SMI is replaced by IMC packs, so infer is not created. If exp is
+         * null then return is void.
          */
-        if (nodes.is(exp, nodeGroups.uninferableNodes())) {
+        if (isNull(exp) || nodes.is(exp, nodeGroups.uninferableNodes())) {
             return;
         }
 

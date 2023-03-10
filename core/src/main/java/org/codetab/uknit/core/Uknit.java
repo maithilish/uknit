@@ -52,11 +52,13 @@ public class Uknit {
             }
             LOG.error("{}: {}", e.getClass().getSimpleName(), e.getMessage());
             LOG.error(String.join(", ", message, "see log."));
+
             if (configs.getConfig("uknit.mode.dev", false)) {
-                LOG.error("", e);
+                LOG.error("------ Stacktrace ------", e);
             } else {
                 LOG.debug("{}", e);
             }
+
             if (configs.getConfig("uknit.logger.shutdown", true)) {
                 LogManager.shutdown();
             }

@@ -14,9 +14,18 @@ Internal call processor visit separate instance of Visitor and debug step throug
 
 ## Bulk Generator
 
-Derives modules and java class file from the configs - uknit.source.base (project base dir) and uknit.source.dir (src/main/java) and generates tests  for all java class files in project or its modules.
+Derives modules and java class file from the configs to generate tests for all java class files in project or its modules. Set following configs in uknit.properties,
 
-The generated test files lands in uknit/bulk folder under the respective module/project instead of src/test/java dir and doesn't overwrite if test exists in uknit/bulk.
+uknit.source.base=/orange/work/bulk/commons-dbcp
+uknit.source.dir=src/main/java
+uknit.source.package=org.apache.commons.dbcp2
 
-Import the project in Eclipse and add the project to uknit/core class path using Build Path -> Configure Build Path -> Projects -> Classpath.
+Next, import the project in Eclipse and add the project to uknit/core class path using Build Path -> Configure Build Path -> Projects -> Classpath. Form maven projects, import using **Existing Maven project** option. Use mvn -U clean install to force download dependencies.
 
+Run BulkRunner as Java Application. The generated test files lands in uknit/bulk folder under the respective module/project instead of src/test/java dir and doesn't overwrite if test exists in uknit/bulk. The BulkRunner unset uknit.source.clz and uknit.source.method configs and generate test for all classes in the package. It sets the config uknit.source.error.ignore to true and ignores any error in source.
+
+To generate test for single class file and method set uknit.source.clz and uknit.source.method configs and run uKnit app.
+
+Usual routine is to run BulkRunner for a base package of project or for a sub package. Next, run uknit for each problematic class to know method which has error and run uknit for that method. Once method is fixed again run uknit for class to find out any other error in the class.
+
+Multi module project - update this section later.

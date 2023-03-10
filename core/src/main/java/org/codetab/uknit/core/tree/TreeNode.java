@@ -195,6 +195,20 @@ public class TreeNode<T>
     }
 
     /**
+     * Get valid name, remove qualifiers java.lang.Exception etc.,
+     *
+     * @return
+     */
+    public String cleanName() {
+        String cleanName = name;
+        int index = name.lastIndexOf(".");
+        if (index >= 0) {
+            cleanName = name.substring(index + 1);
+        }
+        return cleanName;
+    }
+
+    /**
      * Returns true if other node is ancestor of this node.
      * @param other
      * @return

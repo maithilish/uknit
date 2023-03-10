@@ -1,0 +1,44 @@
+package org.codetab.uknit.itest.generic;
+
+import java.io.Closeable;
+import java.sql.Connection;
+import java.util.HashMap;
+class WildcardTest {
+    @InjectMocks
+    private Wildcard wildcard;
+
+    @Mock
+    private HashMap<String, ObjectPool<? extends Connection>> pools;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testConnect() {
+        String name = "Foo";
+        ObjectPool<? extends Connection> pool2 = Mockito.mock(ObjectPool.class);
+        ObjectPool<? extends Connection> pool = pool2;
+        Connection conn = Mockito.mock(Connection.class);
+
+        when(pools.get(name)).thenReturn(pool2);
+        when(pool.borrow()).thenReturn(conn);
+
+        Connection actual = wildcard.connect(name);
+
+        assertSame(conn, actual);
+    }
+
+    @Test
+    public void testGetConnectionPool() {
+        String name = "Foo";
+        ObjectPool<? extends Connection> pool = Mockito.mock(ObjectPool.class);
+
+        when(pools.get(name)).thenReturn(pool);
+
+        ObjectPool<? extends Connection> actual = wildcard.getConnectionPool(name);
+
+        assertSame(pool, actual);
+    }
+}

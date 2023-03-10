@@ -11,7 +11,6 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
-import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Var;
@@ -53,7 +52,8 @@ class InternalReturns {
                 if (varPackO.isPresent()) {
                     returnVar = varPackO.get().getVar();
                 }
-            } catch (CodeException e) {
+            } catch (CodeException | NullPointerException e) {
+                // void return exp is null
                 returnVarName = null;
                 returnVar = null;
             }
@@ -85,9 +85,6 @@ class InternalReturns {
         if (nonNull(returnVar) && nonNull(returnVarName)) {
             String varName = returnVar.getName();
 
-            IVar lhsVar = invoke.getVar();
-            IVar rhsVar = returnVar;
-
             if (varName.equals(returnVarName)) {
                 /*
                  * Saved returnVarName and name of merged returnVar are same,
@@ -95,17 +92,7 @@ class InternalReturns {
                  * name.
                  */
                 if (returnPackO.isPresent()) {
-                    if (lhsVar.getName().equals(rhsVar.getName())
-                            && lhsVar.getKind().equals(rhsVar.getKind())
-                            && lhsVar.getType().equals(rhsVar.getType())) {
-                        Optional<Initializer> ini = rhsVar.getInitializer();
-                        if (ini.isPresent()) {
-                            // REVIEW - cleanup after field reassign in IM
-                            System.lineSeparator();
-                        }
-                    } else {
-                        invoke.setExp(returnPackO.get().getExp());
-                    }
+                    invoke.setExp(returnPackO.get().getExp());
                 }
             } else {
                 invoke.setExp(nodeFactory.createName(varName));

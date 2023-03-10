@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.TypeNameException;
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
@@ -147,9 +148,13 @@ public class Loader {
     public List<IVar> filterLoadableVars(final List<IVar> varList) {
         List<IVar> loadableVars = new ArrayList<>();
         for (IVar var : varList) {
-            Optional<Class<?>> clz = loaders.getClz(var);
-            if (clz.isPresent() && loaders.isCollection(var, clz.get())) {
-                loadableVars.add(var);
+            try {
+                Optional<Class<?>> clz = loaders.getClz(var);
+                if (clz.isPresent() && loaders.isCollection(var, clz.get())) {
+                    loadableVars.add(var);
+                }
+            } catch (TypeNameException e) {
+                System.out.println();
             }
         }
         return loadableVars;

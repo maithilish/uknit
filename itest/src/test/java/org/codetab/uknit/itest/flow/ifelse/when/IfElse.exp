@@ -23,9 +23,8 @@ class IfElseTest {
         assertEquals(state, actual);
 
         verify(duck).swim("start");
-        verify(duck).dive(state);
+        verify(duck, times(2)).dive(state);
         verify(duck).swim("if canSwim");
-        verify(duck).dive(state);
         verify(duck).swim("end");
     }
 
@@ -61,9 +60,8 @@ class IfElseTest {
         assertEquals(state, actual);
 
         verify(duck).swim("start");
-        verify(duck).dive(state);
+        verify(duck, times(2)).dive(state);
         verify(duck).swim("if canSwim");
-        verify(duck).dive(state);
         verify(duck, never()).swim("else canSwim");
         verify(duck, never()).fly("else canSwim");
         verify(duck, never()).dive(state2);

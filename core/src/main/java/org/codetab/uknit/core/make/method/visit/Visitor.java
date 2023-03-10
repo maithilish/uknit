@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.Packer;
 import org.codetab.uknit.core.make.method.ret.ReturnCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -85,6 +86,7 @@ public class Visitor extends ASTVisitor {
     private List<TreeNode<ASTNode>> ctlPath;
     private Deque<Boolean> inCtlFlowPathState = new ArrayDeque<>();
     private boolean inCtlPath;
+    private boolean returnProcessed;
 
     /*
      * return type of method under test
@@ -157,7 +159,12 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ReturnStatement node) {
-        returnCreator.createReturnVar(node, methodReturnType, inCtlPath, heap);
+        // if return exists in ctl path then set returnProcessed as true
+        if (inCtlPath) {
+            returnCreator.createReturnVar(node, methodReturnType, inCtlPath,
+                    heap);
+            returnProcessed = true;
+        }
     }
 
     @Override
@@ -292,9 +299,17 @@ public class Visitor extends ASTVisitor {
         if (splitOnControlFlow) {
             // save the enclosing block state and set new state
             inCtlFlowPathState.push(inCtlPath);
-            inCtlPath = ctlPath.stream()
-                    .anyMatch(treeNode -> treeNode.getObject().equals(node)
-                            && treeNode.isEnable());
+            /*
+             * if return processed then subsequent blocks are not in ctl path,
+             * otherwise get inCtlPath from ctlPath tree.
+             */
+            if (returnProcessed) {
+                inCtlPath = false;
+            } else {
+                inCtlPath = ctlPath.stream()
+                        .anyMatch(treeNode -> treeNode.getObject().equals(node)
+                                && treeNode.isEnable());
+            }
             return true;
         } else {
             // for combined test method process all blocks.
@@ -309,6 +324,9 @@ public class Visitor extends ASTVisitor {
         try {
             // restore previous state - enclosing block state
             state = inCtlFlowPathState.pop();
+            if (returnProcessed) {
+                state = false;
+            }
         } catch (NoSuchElementException e) {
             state = true;
         }
@@ -336,5 +354,9 @@ public class Visitor extends ASTVisitor {
 
     public void setMethodReturnType(final Type returnType) {
         this.methodReturnType = returnType;
+    }
+
+    public void setReturned(final boolean returned) {
+        this.returnProcessed = returned;
     }
 }

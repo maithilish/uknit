@@ -189,6 +189,53 @@ public class Trees {
     }
 
     /**
+     * Returns tree as string similar to Linux tree cmd output. Object type and
+     * id are excluded from output.
+     *
+     * @param <T>
+     * @param tree
+     * @param prefix
+     * @param childrenPrefix
+     * @param sb
+     * @return
+     */
+    public <T> String prettyPrintBasicTree(final TreeNode<T> tree,
+            final String prefix, final String childrenPrefix,
+            final StringBuilder sb) {
+
+        List<TreeNode<T>> children = tree.getChildren();
+
+        StringBuilder buffer = sb;
+        if (isNull(buffer)) {
+            buffer = new StringBuilder();
+            buffer.append(System.lineSeparator());
+        }
+        buffer.append(prefix);
+
+        if (!tree.getName().isBlank()) {
+            buffer.append(tree.getName());
+            buffer.append(" ");
+        }
+
+        buffer.append(System.lineSeparator());
+
+        if (nonNull(children)) {
+            Iterator<TreeNode<T>> it = children.iterator();
+            while (it.hasNext()) {
+                TreeNode<T> next = it.next();
+                if (it.hasNext()) {
+                    prettyPrintBasicTree(next, childrenPrefix + "├── ",
+                            childrenPrefix + "│   ", buffer);
+                } else {
+                    prettyPrintBasicTree(next, childrenPrefix + "└── ",
+                            childrenPrefix + "    ", buffer);
+                }
+            }
+        }
+        return buffer.toString();
+    }
+
+    /**
      * Returns a path of a tree as string similar to Linux tree cmd output.
      * @param <T>
      * @param tree
@@ -238,5 +285,22 @@ public class Trees {
             }
         }
         return buffer.toString();
+    }
+
+    /**
+     * Returns string representation of depth first visit of the tree.
+     *
+     * @param <T>
+     * @param tree
+     * @return
+     */
+    public <T> String depthFirstCallOrder(final TreeNode<T> tree) {
+        StringBuffer sb = new StringBuffer();
+        Iterator<TreeNode<T>> it = tree.iterator();
+        while (it.hasNext()) {
+            sb.append(it.next().getName());
+            sb.append(" ");
+        }
+        return sb.toString();
     }
 }

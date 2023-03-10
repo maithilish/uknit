@@ -94,4 +94,17 @@ class CallInternalTest {
 
         verify(q2).clear();
     }
+
+    @Test
+    public void testCallSimilarlyNamedMethods() {
+        String a = name;
+        int b = name2;
+        String apple = b + a;
+        String name = "a";
+        int name2 = 2;
+
+        String actual = callInternal.callSimilarlyNamedMethods();
+
+        assertEquals(apple, actual);
+    }
 }

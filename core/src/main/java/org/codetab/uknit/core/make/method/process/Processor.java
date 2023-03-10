@@ -97,7 +97,7 @@ public class Processor {
      */
     public void processVarState(final Heap heap) {
         Set<String> usedNames = varStateProcessor.process(heap);
-        varStateProcessor.processStandinVars(usedNames, heap);
+        varProcessor.processStandinVars(usedNames, heap);
     }
 
     /**

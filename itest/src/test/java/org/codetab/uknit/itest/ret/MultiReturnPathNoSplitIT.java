@@ -17,6 +17,9 @@ class MultiReturnPathNoSplitIT extends ITBase {
         configure();
 
         try {
+
+            addTransientConfig("uknit.controlFlow.method.split", "false");
+
             generateTestClass();
 
             File actualFile = getActualFile();

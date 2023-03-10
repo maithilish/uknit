@@ -31,6 +31,15 @@ public class Patchers {
     @Inject
     private Methods methods;
 
+    /**
+     * Patch invokes in an expression.
+     *
+     * @param pack
+     * @param node
+     * @param copy
+     * @param heap
+     * @param consumer
+     */
     public void patchExpWithName(final Pack pack, final Expression node,
             final Expression copy, final Heap heap,
             final Consumer<Expression> consumer) {
@@ -84,10 +93,11 @@ public class Patchers {
     }
 
     /**
-     * Patch list of exps such as mi.arguments(). The expsCopy list should be
-     * the list obtained from the copy and not any other list otherwise patch is
-     * not reflected in node copy. The function passed to the method
-     * patchExpWithName() removes the exp and inserts name in its place.
+     * Same as above but patches list of exps such as mi.arguments(). The
+     * expsCopy list should be the list obtained from the copy and not any other
+     * list otherwise patch is not reflected in node copy. The function passed
+     * to the method patchExpWithName() removes the exp and inserts name in its
+     * place.
      *
      * @param pack
      * @param exps
@@ -135,8 +145,8 @@ public class Patchers {
     }
 
     /**
-     * Apply patches as done above but for a list of exps. The index starts from
-     * the offset.
+     * Apply pack level patches as done above but for a list of exps. The index
+     * starts from the offset.
      *
      * Ex: for MI the getExpression() the index is 0 and for arguments() the
      * offset is 1 and effective index starts from 1 i.e from first arg index is

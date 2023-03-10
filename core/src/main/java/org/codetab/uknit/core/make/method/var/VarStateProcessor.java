@@ -1,12 +1,10 @@
 package org.codetab.uknit.core.make.method.var;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
-import org.codetab.uknit.core.make.model.Pack;
 
 public class VarStateProcessor {
 
@@ -38,11 +36,5 @@ public class VarStateProcessor {
         varEnabler.enableFromEnforce(heap);
 
         return usedNames;
-    }
-
-    // REVIEW - move this
-    public List<Pack> processStandinVars(final Set<String> usedNames,
-            final Heap heap) {
-        return varEnabler.addStandinVarsForUsedFields(usedNames, heap);
     }
 }

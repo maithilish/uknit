@@ -190,18 +190,23 @@ public class NodeFactory {
      * <p>
      * verify(foo.bar()).baz();
      * @param mi
+     * @param i
      * @param format
      * @return
      */
     public Statement createVerifyStatement(final MethodInvocation mi,
-            final String format) {
+            final int times, final String format) {
         String varName = mi.getExpression().toString();
         String methodName = mi.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
         String args = (String) mi.arguments().stream().map(n -> n.toString())
                 .collect(Collectors.joining(","));
-
-        String verify = String.format(format, varName, methodName, args);
+        String verify;
+        if (times > 1) {
+            verify = String.format(format, varName, times, methodName, args);
+        } else {
+            verify = String.format(format, varName, methodName, args);
+        }
         Statement verifyStmt = snippetParser.parseStatement(verify);
 
         return (Statement) ASTNode.copySubtree(ast, verifyStmt);

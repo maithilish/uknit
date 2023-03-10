@@ -104,6 +104,17 @@ public class Types {
                 Type ft = (Type) ut.types().get(0);
                 return ft.toString();
             }
+            /*
+             * Wildcard types such as ObjectPool<? extends Connection> pool; Ref
+             * itest: generic.Wildcard
+             */
+            if (type.isWildcardType()) {
+                WildcardType wt = (WildcardType) type;
+                Type bound = wt.getBound();
+                if (nonNull(bound)) {
+                    return bound.toString();
+                }
+            }
             throw new TypeNameException(
                     spaceit(type.getClass().getName(), "has no name"));
         }

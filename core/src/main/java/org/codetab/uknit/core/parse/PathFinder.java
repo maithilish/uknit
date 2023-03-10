@@ -32,11 +32,10 @@ import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.Type;
 
 /**
- * Creates Control Flow Path (CFP) Tree. Visits the method and creates control
- * flow path tree. The tree is partial representation of the AST. Only the
- * interesting statements and blocks are added to the tree skipping statements
- * such as ForStatement etc., At present control paths for only If and Try
- * constructs are implemented.
+ * Creates Control Flow Path (CFP) Tree by visiting the method nodes. The tree
+ * is partial representation of the AST. Only the interesting statements and
+ * blocks are added to the tree skipping statements such as ForStatement etc.,
+ * At present control paths for only If and Try constructs are implemented.
  * @author Maithilish
  *
  */

@@ -28,6 +28,7 @@ import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 
 /**
@@ -61,9 +62,10 @@ public class Merger {
     public void merge(final Invoke invoke, final Heap heap,
             final Heap internalHeap) {
 
-        LOG.debug("Merge IM Heap {}", invoke);
-        heaps.debugPacks("[ Heap Packs ]", heap);
-        heaps.debugPacks("[ IM Heap Packs ]", internalHeap);
+        debugIM(invoke);
+
+        heaps.debugPacks("Heap", heap);
+        heaps.debugPacks("IM Heap", internalHeap);
 
         // save states
         internalReturns = di.instance(InternalReturns.class);
@@ -165,7 +167,7 @@ public class Merger {
         internalPacks.forEach(p -> p.setIm(true));
         heap.addPacks(invokeIndex, internalPacks);
 
-        heaps.debugPacks("[ Heap Packs after merge ]", heap);
+        heaps.debugPacks("Heap after merge", heap);
     }
 
     /**
@@ -193,19 +195,20 @@ public class Merger {
             if (patchedCallExpO.isPresent()) {
                 // if var for name is not found then find var for old name
                 String name = expressions.getName(patchedCallExpO.get());
-                if (isNull(name)) {
+                if (invoke.is(Nature.STATIC_CALL)) {
+                    nodes.doNothing();
+                } else if (isNull(name)) {
                     /*
-                     * String.class.cast(source), ignore type literal such as
-                     * String.class as there is no call var for it.
+                     * this.foo() or String.class.cast(source), ignore
+                     * ThisExpression and TypeLiteral as there is no call var in
+                     * method invoke.
                      */
-                    if (!nodes.is(patchedCallExpO.get(), TypeLiteral.class)) {
+                    if (!nodes.is(patchedCallExpO.get(), TypeLiteral.class,
+                            ThisExpression.class)) {
                         throw new VarNotFoundException(
                                 nodes.exMessage("call var name is null",
                                         patchedCallExpO.get()));
                     }
-                } else if (invoke.is(Nature.STATIC_CALL)) {
-                    // REVIEW - stackoverflow, restore datasources git path
-                    nodes.doNothing();
                 } else {
                     try {
                         callVarO = Optional.of(vars.findVarByName(name, heap));
@@ -242,5 +245,16 @@ public class Merger {
      */
     public void mergePatcher(final Heap heap, final Heap internalHeap) {
         heap.getPatcher().merge(internalHeap.getPatcher());
+    }
+
+    private void debugIM(final Invoke invoke) {
+        String varName = "";
+        if (nonNull(invoke.getVar())) {
+            varName = invoke.getVar().getName();
+        }
+        LOG.debug("Merge - Invoke {} Var [name={}], Exp [exp={}]",
+                invoke.getId(), varName, invoke.getExp());
+        LOG.debug("");
+        LOG.debug("IMC method: {}", invoke.getExp());
     }
 }

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Methods;
@@ -30,10 +31,12 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -52,6 +55,8 @@ public class MethodMakers {
     private Nodes nodes;
     @Inject
     private Packs packs;
+    @Inject
+    private Packer packer;
     @Inject
     private NodeFactory nodeFactory;
     @Inject
@@ -254,9 +259,9 @@ public class MethodMakers {
              */
             if (nodes.is(tNode.getObject(), IfStatement.class)) {
                 int ifBlkIndex = ctlPath.indexOf(tNode) + 1;
-                buffer.insert(0, tNode.getName());
+                buffer.insert(0, StringUtils.capitalize(tNode.cleanName()));
                 if (ctlPath.size() > ifBlkIndex) {
-                    String ifOrElse = ctlPath.get(ifBlkIndex).getName();
+                    String ifOrElse = ctlPath.get(ifBlkIndex).cleanName();
                     if (ifOrElse.equals("empty else")) {
                         ifOrElse = "else";
                     }
@@ -265,10 +270,10 @@ public class MethodMakers {
             }
 
             if (nodes.is(tNode.getObject(), TryStatement.class)) {
-                buffer.insert(0, StringUtils.capitalize(tNode.getName()));
+                buffer.insert(0, StringUtils.capitalize(tNode.cleanName()));
             }
             if (nodes.is(tNode.getObject(), CatchClause.class)) {
-                buffer.insert(0, StringUtils.capitalize(tNode.getName()));
+                buffer.insert(0, StringUtils.capitalize(tNode.cleanName()));
             }
         }
         return buffer.toString();
@@ -287,9 +292,11 @@ public class MethodMakers {
      * Create packs for list of fields.
      *
      * @param fieldsCopy
+     * @param heap
      * @return
      */
-    public List<Pack> createFieldPacks(final List<Field> fieldsCopy) {
+    public List<Pack> createFieldPacks(final List<Field> fieldsCopy,
+            final Heap heap) {
         List<Pack> fieldPacks = new ArrayList<>();
         for (Field fieldCopy : fieldsCopy) {
             Expression exp = null;
@@ -302,10 +309,20 @@ public class MethodMakers {
                 exp = variables.getInitializer(fieldCopy.getSrcFieldDecl());
             }
             boolean inCtlPath = true; // field is always in ctlPath
-            Pack pack = modelFactory.createPack(packs.getId(), fieldCopy, exp,
-                    inCtlPath);
+            Pack pack;
+            if (nodes.is(exp, MethodInvocation.class,
+                    SuperMethodInvocation.class)) {
+                pack = modelFactory.createInvoke(packs.getId(), fieldCopy, exp,
+                        inCtlPath);
+                boolean imc = false;
+                packer.setupInvokes((Invoke) pack, imc, heap);
+            } else {
+                pack = modelFactory.createPack(packs.getId(), fieldCopy, exp,
+                        inCtlPath);
+            }
             fieldPacks.add(pack);
         }
         return fieldPacks;
     }
+
 }

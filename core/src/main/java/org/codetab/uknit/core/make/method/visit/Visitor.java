@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.ExpressionMethodReference;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
@@ -267,6 +268,15 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public boolean visit(final LambdaExpression node) {
+        packer.packAnon(node, inCtlPath, heap);
+        return false; // don't visit child nodes
+    }
+
+    /**
+     * ExpressionMethodReference - Boolean::parseBoolean
+     */
+    @Override
+    public boolean visit(final ExpressionMethodReference node) {
         packer.packAnon(node, inCtlPath, heap);
         return false; // don't visit child nodes
     }

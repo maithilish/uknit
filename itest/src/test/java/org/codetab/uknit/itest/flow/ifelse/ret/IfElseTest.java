@@ -25,18 +25,19 @@ class IfElseTest {
     public void testIfFooIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
-        String state = "Foo";
+        String state = null;
+        String state2 = "Foo";
 
-        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("if canSwim")).thenReturn(state2);
 
         String actual = ifElse.ifFoo(duck, canSwim);
 
-        assertEquals(state, actual);
+        assertEquals(state2, actual);
 
         verify(duck).swim("start");
         verify(duck).dive(state);
         verify(duck).swim("if canSwim");
-        verify(duck).dive(state);
+        verify(duck).dive(state2);
         verify(duck, never()).swim("end");
     }
 
@@ -45,6 +46,7 @@ class IfElseTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         String state = null;
+        String state2 = "Foo";
 
         String actual = ifElse.ifFoo(duck, canSwim);
 
@@ -54,7 +56,7 @@ class IfElseTest {
         verify(duck).dive(state);
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        // verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck).swim("end");
     }
 
@@ -62,32 +64,11 @@ class IfElseTest {
     public void testIfElseFooIfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
-        String state = "Foo";
-        String state2 = "Bar";
-
-        when(duck.fly("if canSwim")).thenReturn(state);
-
-        String actual = ifElse.ifElseFoo(duck, canSwim);
-
-        assertEquals(state, actual);
-
-        verify(duck).swim("start");
-        verify(duck).dive(state);
-        verify(duck).swim("if canSwim");
-        verify(duck).dive(state);
-        verify(duck, never()).swim("else canSwim");
-        verify(duck, never()).fly("else canSwim");
-        verify(duck, never()).dive(state2);
-    }
-
-    @Test
-    public void testIfElseFooElseCanSwim() {
-        Duck duck = Mockito.mock(Duck.class);
-        boolean canSwim = false;
         String state = null;
-        String state2 = "Bar";
+        String state2 = "Foo";
+        String state3 = "Bar";
 
-        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("if canSwim")).thenReturn(state2);
 
         String actual = ifElse.ifElseFoo(duck, canSwim);
 
@@ -95,33 +76,57 @@ class IfElseTest {
 
         verify(duck).swim("start");
         verify(duck).dive(state);
+        verify(duck).swim("if canSwim");
+        verify(duck).dive(state2);
+        verify(duck, never()).swim("else canSwim");
+        verify(duck, never()).fly("else canSwim");
+        verify(duck, never()).dive(state3);
+    }
+
+    @Test
+    public void testIfElseFooElseCanSwim() {
+        Duck duck = Mockito.mock(Duck.class);
+        boolean canSwim = false;
+        String state = null;
+        String state2 = "Foo";
+        String state3 = "Bar";
+
+        when(duck.fly("else canSwim")).thenReturn(state3);
+
+        String actual = ifElse.ifElseFoo(duck, canSwim);
+
+        assertEquals(state3, actual);
+
+        verify(duck).swim("start");
+        verify(duck).dive(state);
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        // verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state2);
+        verify(duck).dive(state3);
     }
 
     @Test
     public void testIfElseFoo2IfCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
-        String state = "Foo";
-        String state2 = "Bar";
+        String state = null;
+        String state2 = "Foo";
+        String state3 = "Bar";
 
-        when(duck.fly("if canSwim")).thenReturn(state);
+        when(duck.fly("if canSwim")).thenReturn(state2);
 
         String actual = ifElse.ifElseFoo2(duck, canSwim);
 
-        assertEquals(state, actual);
+        assertEquals(state2, actual);
 
         verify(duck).swim("start");
         verify(duck).dive(state);
         verify(duck).swim("if canSwim");
-        verify(duck).dive(state);
+        verify(duck).dive(state2);
         verify(duck, never()).swim("else canSwim");
         verify(duck, never()).fly("else canSwim");
-        verify(duck, never()).dive(state2);
+        verify(duck, never()).dive(state3);
         verify(duck, never()).swim("end");
     }
 
@@ -130,21 +135,22 @@ class IfElseTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         String state = null;
-        String state2 = "Bar";
+        String state2 = "Foo";
+        String state3 = "Bar";
 
-        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("else canSwim")).thenReturn(state3);
 
         String actual = ifElse.ifElseFoo2(duck, canSwim);
 
-        assertEquals(state2, actual);
+        assertEquals(state3, actual);
 
         verify(duck).swim("start");
         verify(duck).dive(state);
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        // verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state2);
+        verify(duck).dive(state3);
         verify(duck).swim("end");
     }
 
@@ -213,29 +219,29 @@ class IfElseTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         boolean done = true;
-        String state = "Foo";
-        String state2 = "Bar";
-        String state3 = "Baz";
-        String state4 = "Qux";
+        String state2 = "Foo";
+        String state3 = "Bar";
+        String state4 = "Baz";
+        String state = "Qux";
 
-        when(duck.fly("else canSwim")).thenReturn(state4);
+        when(duck.fly("else canSwim")).thenReturn(state);
 
         String actual = ifElse.ifNestIfFoo(duck, canSwim, done);
 
-        assertEquals(state4, actual);
+        assertEquals(state, actual);
 
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck, never()).swim("if done nest");
         verify(duck, never()).fly("if done nest");
-        verify(duck, never()).dive(state2);
+        verify(duck, never()).dive(state3);
         verify(duck, never()).swim("else done nest");
         verify(duck, never()).fly("else done nest");
-        verify(duck, never()).dive(state3);
+        verify(duck, never()).dive(state4);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state4);
+        verify(duck).dive(state);
     }
 
     @Test
@@ -305,29 +311,29 @@ class IfElseTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         boolean done = true;
-        String state = "Foo";
-        String state2 = "Bar";
-        String state3 = "Baz";
-        String state4 = "Qux";
+        String state2 = "Foo";
+        String state3 = "Bar";
+        String state4 = "Baz";
+        String state = "Qux";
 
-        when(duck.fly("else canSwim")).thenReturn(state4);
+        when(duck.fly("else canSwim")).thenReturn(state);
 
         String actual = ifElse.ifNestIfFoo2(duck, canSwim, done);
 
-        assertEquals(state4, actual);
+        assertEquals(state, actual);
 
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck, never()).swim("if done nest");
         verify(duck, never()).fly("if done nest");
-        verify(duck, never()).dive(state2);
+        verify(duck, never()).dive(state3);
         verify(duck, never()).swim("else done nest");
         verify(duck, never()).fly("else done nest");
-        verify(duck, never()).dive(state3);
+        verify(duck, never()).dive(state4);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state4);
+        verify(duck).dive(state);
         verify(duck).swim("end");
     }
 
@@ -365,7 +371,7 @@ class IfElseTest {
     public void testIfIfFooIfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
-        boolean done = false;
+        boolean done = true;
         String state = "Foo";
         String state2 = "Bar";
         String state3 = "Baz";
@@ -396,12 +402,12 @@ class IfElseTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         boolean done = true;
-        String state = "Foo";
-        String state2 = "Bar";
+        String state2 = "Foo";
+        String state = "Bar";
         String state3 = "Baz";
         String state4 = "Qux";
 
-        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("else canSwim")).thenReturn(state);
         when(duck.fly("if done")).thenReturn(state3);
 
         String actual = ifElse.ifIfFoo(duck, canSwim, done);
@@ -411,9 +417,9 @@ class IfElseTest {
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state2);
+        verify(duck).dive(state);
         verify(duck).swim("if done");
         verify(duck).dive(state3);
         verify(duck, never()).swim("else done");
@@ -456,7 +462,7 @@ class IfElseTest {
     public void testIfIfFoo2IfCanSwimElseDone() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
-        boolean done = false;
+        boolean done = true;
         String state = "Foo";
         String state2 = "Bar";
         String state3 = "Baz";
@@ -488,12 +494,12 @@ class IfElseTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         boolean done = true;
-        String state = "Foo";
-        String state2 = "Bar";
+        String state2 = "Foo";
+        String state = "Bar";
         String state3 = "Baz";
         String state4 = "Qux";
 
-        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("else canSwim")).thenReturn(state);
         when(duck.fly("if done")).thenReturn(state3);
 
         String actual = ifElse.ifIfFoo2(duck, canSwim, done);
@@ -503,9 +509,9 @@ class IfElseTest {
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state2);
+        verify(duck).dive(state);
         verify(duck).swim("if done");
         verify(duck).dive(state3);
         verify(duck, never()).swim("else done");
@@ -637,37 +643,37 @@ class IfElseTest {
         boolean canSwim = false;
         boolean canDive = true;
         boolean done = true;
-        String state = "Foo";
-        String state2 = "Bar";
-        String state3 = "Baz";
-        String state4 = "Qux";
-        String state5 = "Quux";
-        String state6 = "Corge";
+        String state2 = "Foo";
+        String state3 = "Bar";
+        String state4 = "Baz";
+        String state5 = "Qux";
+        String state6 = "Quux";
+        String state = "Corge";
 
-        when(duck.fly("else canSwim")).thenReturn(state6);
+        when(duck.fly("else canSwim")).thenReturn(state);
 
         String actual = ifElse.ifNestIfIfFoo(duck, canSwim, canDive, done);
 
-        assertEquals(state6, actual);
+        assertEquals(state, actual);
 
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck, never()).swim("if canDive nest");
         verify(duck, never()).fly("if canDive nest");
-        verify(duck, never()).dive(state2);
+        verify(duck, never()).dive(state3);
         verify(duck, never()).swim("else canDive nest");
         verify(duck, never()).fly("else canDive nest");
-        verify(duck, never()).dive(state3);
+        verify(duck, never()).dive(state4);
         verify(duck, never()).swim("if done nest");
         verify(duck, never()).fly("if done nest");
-        verify(duck, never()).dive(state4);
+        verify(duck, never()).dive(state5);
         verify(duck, never()).swim("else done nest");
         verify(duck, never()).fly("else done nest");
-        verify(duck, never()).dive(state5);
+        verify(duck, never()).dive(state6);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state6);
+        verify(duck).dive(state);
     }
 
     @Test
@@ -796,37 +802,37 @@ class IfElseTest {
         boolean canSwim = false;
         boolean canDive = true;
         boolean done = true;
-        String state = "Foo";
-        String state2 = "Bar";
-        String state3 = "Baz";
-        String state4 = "Qux";
-        String state5 = "Quux";
-        String state6 = "Corge";
+        String state2 = "Foo";
+        String state3 = "Bar";
+        String state4 = "Baz";
+        String state5 = "Qux";
+        String state6 = "Quux";
+        String state = "Corge";
 
-        when(duck.fly("else canSwim")).thenReturn(state6);
+        when(duck.fly("else canSwim")).thenReturn(state);
 
         String actual = ifElse.ifNestIfIfFoo2(duck, canSwim, canDive, done);
 
-        assertEquals(state6, actual);
+        assertEquals(state, actual);
 
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).dive(state);
+        verify(duck, never()).dive(state2);
         verify(duck, never()).swim("if canDive nest");
         verify(duck, never()).fly("if canDive nest");
-        verify(duck, never()).dive(state2);
+        verify(duck, never()).dive(state3);
         verify(duck, never()).swim("else canDive nest");
         verify(duck, never()).fly("else canDive nest");
-        verify(duck, never()).dive(state3);
+        verify(duck, never()).dive(state4);
         verify(duck, never()).swim("if done nest");
         verify(duck, never()).fly("if done nest");
-        verify(duck, never()).dive(state4);
+        verify(duck, never()).dive(state5);
         verify(duck, never()).swim("else done nest");
         verify(duck, never()).fly("else done nest");
-        verify(duck, never()).dive(state5);
+        verify(duck, never()).dive(state6);
         verify(duck).swim("else canSwim");
-        verify(duck).dive(state6);
+        verify(duck).dive(state);
         verify(duck, never()).swim("end");
     }
 

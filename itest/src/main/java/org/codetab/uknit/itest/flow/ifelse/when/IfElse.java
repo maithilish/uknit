@@ -4,14 +4,6 @@ import org.codetab.uknit.itest.flow.ifelse.when.Model.Duck;
 
 class IfElse {
 
-    /**
-     * STEPIN - In else path two contradictory stmts are generated
-     * verify(duck).dive(state); and verify(duck, never()).dive(state); user has
-     * to remove the second verify.
-     * @param duck
-     * @param canSwim
-     * @return
-     */
     public String ifFoo(final Duck duck, final boolean canSwim) {
         duck.swim("start");
         String state = null;

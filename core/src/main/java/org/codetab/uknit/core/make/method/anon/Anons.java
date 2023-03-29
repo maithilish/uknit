@@ -15,6 +15,7 @@ import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionMethodReference;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -45,6 +46,9 @@ public class Anons {
                 type = cic.getType();
             }
         } else if (nodes.is(exp, LambdaExpression.class)) {
+            type = types.getType(resolver.resolveTypeBinding(exp),
+                    exp.getAST());
+        } else if (nodes.is(exp, ExpressionMethodReference.class)) {
             type = types.getType(resolver.resolveTypeBinding(exp),
                     exp.getAST());
         } else if (nodes.isName(exp)) {

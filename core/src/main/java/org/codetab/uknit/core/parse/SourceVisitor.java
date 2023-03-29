@@ -226,16 +226,6 @@ public class SourceVisitor extends ASTVisitor {
             return true;
         }
 
-        /*
-         * If user config uknit.source.method is defined then process only if
-         * the method name matches the config, other methods are not processed.
-         */
-        String sourceMethod = configs.getConfig("uknit.source.method");
-        String methodName = node.getName().getFullyQualifiedName();
-        if (nonNull(sourceMethod) && !sourceMethod.equals(methodName)) {
-            return true;
-        }
-
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
 

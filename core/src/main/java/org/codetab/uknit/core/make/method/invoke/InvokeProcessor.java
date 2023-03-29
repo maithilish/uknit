@@ -20,17 +20,18 @@ public class InvokeProcessor {
     private Methods methods;
 
     /**
-     * Set call var. The call var of MI is expression and its var is known only
-     * after infer var and patch is created for it in visit post process.
+     * Set invoke call var. The MI expression is the call var and it is known
+     * only after infer var and patch is created in visit post process.
+     *
+     * The Packer.setupInvokes() sets call var if it is known and IM merger also
+     * tries to set it but they are overridden and again set here.
      *
      * @param heap
      */
     public void process(final Heap heap) {
 
-        // process all invokes where callVar is not yet set
         List<Invoke> invokeList = packs.filterInvokes(heap.getPacks()).stream()
-                .filter(i -> i.getCallVar().isEmpty()
-                        && methods.isInvokable(i.getExp()))
+                .filter(i -> methods.isInvokable(i.getExp()))
                 .collect(Collectors.toList());
 
         for (Invoke invoke : invokeList) {

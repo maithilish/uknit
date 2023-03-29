@@ -6,20 +6,42 @@ class MethodReferenceTest {
     @InjectMocks
     private MethodReference methodReference;
 
+    @Mock
+    private External external;
+
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testFoo() {
-        Properties properties = Mockito.mock(Properties.class);
-        V v = STEPIN;
-        Function<String, V> func = STEPIN;
-        String value = "true";
+    public void testInExternalArg() {
+        boolean apple = true;
 
-        when(func.apply(value)).thenReturn(v);
-        methodReference.foo(properties);
+        when(external.apply(eq("true"), any(Function.class))).thenReturn(apple);
+
+        boolean actual = methodReference.inExternalArg();
+
+        assertTrue(actual);
+
+        ArgumentCaptor<Function<String, Boolean>> captorA = ArgumentCaptor.forClass(Function.class);
+
+        verify(external).apply(eq("true"), captorA.capture());
+    }
+
+    @Test
+    public void testInInternalArg() {
+        Properties properties = Mockito.mock(Properties.class);
+        String value = "Foo";
+        methodReference.inInternalArg(properties, value);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testInNestedInternal() {
+        Properties properties = Mockito.mock(Properties.class);
+        methodReference.inNestedInternal(properties);
 
         fail("unable to assert, STEPIN");
     }

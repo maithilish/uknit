@@ -10,6 +10,7 @@ import org.codetab.uknit.core.make.method.imc.IMCProcessor;
 import org.codetab.uknit.core.make.method.invoke.InvokeProcessor;
 import org.codetab.uknit.core.make.method.load.LoadProcessor;
 import org.codetab.uknit.core.make.method.patch.PatchProcessor;
+import org.codetab.uknit.core.make.method.var.Reassignor;
 import org.codetab.uknit.core.make.method.var.VarProcessor;
 import org.codetab.uknit.core.make.method.var.VarStateProcessor;
 import org.codetab.uknit.core.make.method.var.infer.InferProcessor;
@@ -34,6 +35,8 @@ public class Processor {
     private PatchProcessor patchProcessor;
     @Inject
     private VarProcessor varProcessor;
+    @Inject
+    private Reassignor reassignor;
     @Inject
     private WhenProcessor whenProcessor;
     @Inject
@@ -121,7 +124,7 @@ public class Processor {
      * @return
      */
     public List<IVar> processVarReassign(final Heap heap) {
-        return varProcessor.processReassign(heap);
+        return reassignor.processReassign(heap);
     }
 
     /**
@@ -132,7 +135,7 @@ public class Processor {
      */
     public void updateVarReassign(final List<IVar> reassignedVars,
             final Heap heap) {
-        varProcessor.updateReassign(reassignedVars, heap);
+        reassignor.updateReassign(reassignedVars, heap);
     }
 
     public void processEnhancedFor(final Heap heap) {

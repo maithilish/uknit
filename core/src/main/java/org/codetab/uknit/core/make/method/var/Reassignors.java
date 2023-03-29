@@ -23,7 +23,13 @@ import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
 
-public class VarAssignor {
+/**
+ * Var Reassign helper methods.
+ *
+ * @author Maithilish
+ *
+ */
+public class Reassignors {
 
     @Inject
     private Vars vars;

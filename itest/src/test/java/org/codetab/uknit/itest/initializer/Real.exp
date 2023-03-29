@@ -158,7 +158,7 @@ class RealTest {
 
     @Test
     public void testRealOfObjectClass() {
-        Object base = STEPIN;
+        String base = "Foo";
         String apple = ((Object) base).toString();
 
         String actual = real.realOfObjectClass(base);

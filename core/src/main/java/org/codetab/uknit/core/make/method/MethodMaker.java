@@ -1,6 +1,7 @@
 package org.codetab.uknit.core.make.method;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.nonNull;
 
 import java.util.List;
 
@@ -99,6 +100,19 @@ public class MethodMaker {
 
         String testMethodName =
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
+
+        /*
+         * If user config uknit.source.method is defined then process only if
+         * the method name matches the config, other methods are not processed.
+         */
+        String methodNameFilter = configs.getConfig("uknit.source.method");
+        if (nonNull(methodNameFilter)
+                && !methodNameFilter.equals(testMethodName)) {
+            LOG.debug(
+                    "config uknit.source.method is enabled, test not generated for {}",
+                    testMethodName);
+            return false;
+        }
 
         heap.setMut(method);
         heap.setTestClzName(testClzName);

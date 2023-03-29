@@ -38,6 +38,7 @@ class CallAndAssignTest {
         WebClient actual = callAndAssign.callAndAssignToSameName();
 
         assertSame(webClient, actual);
+
         verify(options).setJavaScriptEnabled(false);
     }
 
@@ -53,6 +54,7 @@ class CallAndAssignTest {
         WebClient actual = callAndAssign.callAndAssignToDifferentName();
 
         assertSame(otherWebClient, actual);
+
         verify(options).setJavaScriptEnabled(false);
     }
 
@@ -114,6 +116,7 @@ class CallAndAssignTest {
                 callAndAssign.callAndAssignToDifferentNameInitialized();
 
         assertSame(otherWebClient, actual);
+
         verify(options).setJavaScriptEnabled(false);
     }
 
@@ -130,6 +133,7 @@ class CallAndAssignTest {
                 callAndAssign.callAndAssignToDifferentNameNullInitialized();
 
         assertSame(otherWebClient, actual);
+
         verify(options).setJavaScriptEnabled(false);
     }
 
@@ -149,6 +153,7 @@ class CallAndAssignTest {
         WebClient actual = callAndAssign.callAndAssignToSameNameMultipleCalls();
 
         assertSame(webClient, actual);
+
         verify(options).setJavaScriptEnabled(false);
         verify(options2).setJavaScriptEnabled(false);
     }
@@ -170,6 +175,7 @@ class CallAndAssignTest {
                 callAndAssign.callAndAssignToDifferentNameMultipleCalls();
 
         assertSame(otherWebClient, actual);
+
         verify(options).setJavaScriptEnabled(false);
         verify(options2).setJavaScriptEnabled(false);
     }

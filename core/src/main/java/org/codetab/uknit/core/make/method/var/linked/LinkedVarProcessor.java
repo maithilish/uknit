@@ -1,6 +1,5 @@
 package org.codetab.uknit.core.make.method.var.linked;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
@@ -22,6 +21,7 @@ import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
+import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Type;
@@ -211,6 +211,8 @@ class CastPropagator {
 
     @Inject
     private LinkedPack linkedPack;
+    @Inject
+    private Types types;
 
     /**
      * Selectively propagates the pack var's type to link vars.
@@ -230,28 +232,43 @@ class CastPropagator {
      * @param pack
      * @param packList
      * @param ePack
-     * @param type
+     * @param targetType
      */
-    public void propogate(final Pack pack, final Pack ePack, final Type type,
-            final Heap heap) {
+    public void propogate(final Pack pack, final Pack ePack,
+            final Type targetType, final Heap heap) {
         List<Pack> linkedPacks = linkedPack.getLinkedVarPacks(ePack, heap);
         for (Pack linkPack : linkedPacks) {
-            if (nonNull(linkPack.getVar()) && isAssignable(pack, linkPack)) {
-                linkPack.getVar().setType(type);
-                linkPack.getVar()
-                        .setTypeBinding(pack.getVar().getTypeBinding());
+            if (nonNull(linkPack.getVar())) {
+                IVar linkVar = linkPack.getVar();
+                /*
+                 * String (targetType) is subclass of Object (linkType), change
+                 * link var type from Object to String.
+                 *
+                 * Object (targetType) is not subclass of String (linkType),
+                 * don't change link var type from String to Object;
+                 */
+                if (isSubclass(targetType, linkVar.getType())) {
+                    linkPack.getVar().setType(targetType);
+                    linkPack.getVar()
+                            .setTypeBinding(pack.getVar().getTypeBinding());
+                }
             }
         }
     }
 
     /**
-     * Is pack var is assignable to link var.
+     * Is targetType is subclass of type.
      *
-     * Useful allot highest possible type to a var. Ex: Dog is subclass of Pet
-     * which is subclass of Object. Suppose we want to assign highest possible
-     * type to a link var Object obj. If its present type is Object then we can
-     * assign Dog or Pet; if present type is Pet then we can assign Dog but not
-     * Object; if present type is Dog then we can't assign either Pet or Object.
+     * String (targetType) is subclass Object (type)
+     *
+     * Object (targetType) is not subclass String (type)
+     *
+     * Useful to allot highest possible type to a var. Ex: Dog is subclass of
+     * Pet which is subclass of Object. Suppose we want to assign highest
+     * possible type to a link var Object obj. If its present type is Object
+     * then we can assign Dog or Pet; if present type is Pet then we can assign
+     * Dog but not Object; if present type is Dog then we can't assign either
+     * Pet or Object.
      *
      * Note: it is a best effort method and when it is not possible to ascertain
      * the assignability, true is returned so that calling operation goes
@@ -261,46 +278,20 @@ class CastPropagator {
      * @param linkPack
      * @return
      */
-    public boolean isAssignable(final Pack pack, final Pack linkPack) {
-
-        IVar packVar = pack.getVar();
-        IVar linkVar = linkPack.getVar();
-
-        if ((nonNull(packVar) && isNull(packVar.getTypeBinding()))
-                || (nonNull(linkVar) && isNull(linkVar.getTypeBinding()))) {
-            return true;
-        }
-
-        /*
-         * Ex: return (String) clz.newInstance("Foo"), the type bind is
-         * capture#2-of ?. Ref itest: generic.CaptureTypeBind.
-         */
-        if (packVar.getTypeBinding().isCapture()
-                || linkVar.getTypeBinding().isCapture()) {
-            return true;
-        }
-
+    private boolean isSubclass(final Type targetType, final Type type) {
         try {
-            Class<?> packVarClass =
-                    Class.forName(packVar.getTypeBinding().getBinaryName());
-            Class<?> linkVarClass =
-                    Class.forName(linkVar.getTypeBinding().getBinaryName());
+            String targetClzName = types.getClzName(targetType);
+            String typeClzName = types.getClzName(type);
 
-            /*
-             * is pack var is assignable to link var. Ex: link var obj (Object)
-             * and pack var date (Date).
-             *
-             * if obj is link and date is pack var returns true as obj = date;
-             *
-             * if date is link and obj is pack var returns false as date = obj
-             * is not allowed
-             */
-            return linkVarClass.isAssignableFrom(packVarClass);
+            Class<?> targetClz = Class.forName(targetClzName);
+            Class<?> typeClz = Class.forName(typeClzName);
 
-        } catch (ClassNotFoundException e) {
+            // is targetClz is subclass of typeClz
+            boolean isSubClass = typeClz.isAssignableFrom(targetClz);
+
+            return isSubClass;
+        } catch (ClassNotFoundException | NullPointerException e) {
         }
-
         return true;
     }
-
 }

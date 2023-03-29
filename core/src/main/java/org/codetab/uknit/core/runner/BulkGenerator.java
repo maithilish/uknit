@@ -170,8 +170,8 @@ public class BulkGenerator {
                 }).collect(Collectors.toList());
 
         sortedErrors.forEach(e -> {
-            LOG.info("{}", e.getKey());
-            LOG.info("    -> {}", e.getValue().getMessage());
+            LOG.error("{}", e.getKey());
+            LOG.error("    -> {}", e.getValue().getMessage());
         });
 
         LOG.info("");

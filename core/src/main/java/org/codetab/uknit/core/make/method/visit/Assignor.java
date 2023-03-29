@@ -3,12 +3,16 @@ package org.codetab.uknit.core.make.method.visit;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.patch.ExpService;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
@@ -19,6 +23,7 @@ import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -67,7 +72,7 @@ public class Assignor {
                     Optional<Pack> varPackO = packs
                             .findByVarName(nodes.getName(lhs), heap.getPacks());
                     if (varPackO.isPresent()) {
-                        if (reassigns.isReassign(varPackO.get())) {
+                        if (reassigns.isReassign(varPackO.get(), pack, heap)) {
                             /*
                              * Var is defined and value assigned to var and then
                              * var is reassigned with new value. Create new var
@@ -139,22 +144,73 @@ public class Assignor {
 
 class Reassigns {
 
-    public boolean isReassign(final Pack pack) {
-        Expression exp = pack.getExp();
-        IVar var = pack.getVar();
+    @Inject
+    private ExpService expService;
+    @Inject
+    private Nodes nodes;
 
-        /**
-         * if var defined pack is <code>
-         * Pack [var=x, exp=    ] exp is not set, reassign
-         * Pack [var=x, exp=null] exp is null, reassign
-         * Pack [var=x, kind=
-         * </code>
-         *
-         */
+    public boolean isReassign(final Pack varPack, final Pack pack,
+            final Heap heap) {
+
+        Expression exp = varPack.getExp();
+        IVar var = varPack.getVar();
+
         if (nonNull(var) && (var.is(Kind.FIELD) || var.is(Kind.PARAMETER))) {
             return true;
+        } else if (nonNull(var)) {
+            int varPackIndex = heap.getPacks().indexOf(varPack);
+            int packIndex = heap.getPacks().indexOf(pack);
+
+            /*
+             * Whether var is used in any exp between pack and var pack
+             */
+            List<Pack> scopePacks = new ArrayList<>(
+                    heap.getPacks().subList(varPackIndex, packIndex));
+            scopePacks.remove(varPack);
+            scopePacks.add(pack);
+            scopePacks = scopePacks.stream().filter(p -> p.isInCtlPath())
+                    .collect(Collectors.toList());
+
+            boolean used = false;
+            for (Pack scopePack : scopePacks) {
+                if (nonNull(scopePack.getExp())) {
+                    List<Name> names = expService.listNames(scopePack.getExp());
+                    if (names.stream().anyMatch(
+                            n -> nodes.getName(n).equals(var.getName()))) {
+                        used = true;
+                    }
+                }
+            }
+
+            /*
+             * If var is used then reassign else if var is null/null initialized
+             * then don't reassign otherwise reassign.
+             */
+            if (used) {
+                // reassign if var is used
+                return true;
+            } else {
+                if (pack.isInCtlPath()) {
+                    /*
+                     * if var is null/null initialized then don't reassign to
+                     * avoid unused var otherwise reassign
+                     */
+                    boolean isNullOrNullInitialized =
+                            isNull(exp) || exp instanceof NullLiteral;
+                    return !isNullOrNullInitialized;
+                } else {
+                    /*
+                     * If not in ctl path then reassign. Otherwise, if not
+                     * reassigned then var pack is removed and its var is
+                     * assigned to current pack and stmts in any other block in
+                     * ctl path reassigns current pack instead of var pack. Ref
+                     * itest: ifelse.when.ElsePath.ifFoo() else path.
+                     */
+                    return true;
+                }
+            }
         } else {
-            return !(isNull(exp) || exp instanceof NullLiteral);
+            return true;
         }
     }
 }

@@ -10,9 +10,9 @@ class CyclicTest {
 
     @Test
     public void testCyclicInInitializers() {
-        Object value2 = (Object) base;
+        String value2 = (Object) base;
         String grape = "Bar";
-        Object base = (String) value2;
+        String base = (String) value2;
 
         when(value2.toString()).thenReturn(grape);
         cyclic.cyclicInInitializers();

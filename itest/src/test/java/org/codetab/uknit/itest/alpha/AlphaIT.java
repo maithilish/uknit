@@ -36,8 +36,13 @@ class AlphaIT extends ITBase {
         configure();
 
         clearConfig("uknit.source.method");
+
+        // addTransientConfig("uknit.source.method",
+        // "testIfPlusIfFooIfCanSwimElseDone");
+
         addTransientConfig("uknit.controlFlow.method.split", "true");
-        // addTransientConfig("uknit.createInstance.Canvas", "new Canvas()");
+        // addTransientConfig("uknit.createInstance.PrintPayload",
+        // "new PrintPayload()");
 
         try {
             generateTestClass();

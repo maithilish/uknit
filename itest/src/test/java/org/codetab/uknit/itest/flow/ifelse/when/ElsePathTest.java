@@ -100,13 +100,13 @@ class ElsePathTest {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
         boolean done = true;
-        String state2 = "Bar";
+        String state = "Bar";
 
-        when(duck.fly("if done")).thenReturn(state2);
+        when(duck.fly("if done")).thenReturn(state);
 
         String actual = elsePath.ifPlusIfFoo(duck, canSwim, done);
 
-        assertEquals(state2, actual);
+        assertEquals(state, actual);
 
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
@@ -264,31 +264,31 @@ class ElsePathTest {
     public void testIfIfPlusIfFooElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
-        boolean done = false;
+        boolean done = true;
         boolean eof = true;
-        String state = "Foo";
-        String state2 = "Baz";
-        String state3 = "Quux";
+        String state2 = "Foo";
+        String state3 = "Baz";
+        String state = "Quux";
         String orange = "Corge";
 
-        when(duck.fly("if eof")).thenReturn(state3);
-        when(duck.fly(state3)).thenReturn(orange);
+        when(duck.fly("if eof")).thenReturn(state);
+        when(duck.fly(state)).thenReturn(orange);
 
         String actual = elsePath.ifIfPlusIfFoo(duck, canSwim, done, eof);
 
-        assertEquals(state3, actual);
+        assertEquals(state, actual);
 
         verify(duck).swim("start");
         verify(duck, never()).swim("if canSwim");
         verify(duck, never()).fly("if canSwim");
-        verify(duck, never()).fly(state);
-        verify(duck, never()).dive(state);
-        verify(duck, never()).swim("if done");
-        verify(duck, never()).fly("if done");
         verify(duck, never()).fly(state2);
         verify(duck, never()).dive(state2);
+        verify(duck, never()).swim("if done");
+        verify(duck, never()).fly("if done");
+        verify(duck, never()).fly(state3);
+        verify(duck, never()).dive(state3);
         verify(duck).swim("if eof");
-        verify(duck).dive(state3);
+        verify(duck).dive(state);
         verify(duck).swim("end");
     }
 
@@ -372,12 +372,12 @@ class ElsePathTest {
     public void testAssignAndReturnElseCanSwim() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = false;
-        boolean done = false;
+        boolean done = true;
         boolean eof = true;
-        String state3 = "Baz";
-        String result = state3;
+        String state = "Baz";
+        String result = state;
 
-        when(duck.fly("if eof")).thenReturn(state3);
+        when(duck.fly("if eof")).thenReturn(state);
 
         String actual = elsePath.assignAndReturn(duck, canSwim, done, eof);
 

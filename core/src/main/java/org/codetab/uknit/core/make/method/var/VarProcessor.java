@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.var.linked.LinkedVarProcessor;
 import org.codetab.uknit.core.make.model.Heap;
-import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -19,8 +18,6 @@ public class VarProcessor {
 
     @Inject
     private LinkedVarProcessor linkedVarProcessor;
-    @Inject
-    private VarAssignor varAssignor;
     @Inject
     private Offlimits offlimits;
     @Inject
@@ -93,45 +90,14 @@ public class VarProcessor {
     }
 
     /**
-     * Rename reassigned vars and update old names.
-     *
-     * @param heap
-     * @return
-     */
-    public List<IVar> processReassign(final Heap heap) {
-        List<IVar> reassignedVars = heap.getPacks().stream()
-                .map(p -> p.getVar())
-                .filter(v -> nonNull(v) && v.getName().endsWith("-reassigned"))
-                .collect(Collectors.toList());
-        for (IVar v : reassignedVars) {
-            varAssignor.renameAssigns(v, heap);
-        }
-
-        varAssignor.updateOldNames(reassignedVars, heap);
-
-        return reassignedVars;
-    }
-
-    /**
-     * Update any references of reassigned vars in RHS name exps.
-     *
-     * @param heap
-     */
-    public void updateReassign(final List<IVar> reassignedVars,
-            final Heap heap) {
-        for (IVar var : reassignedVars) {
-            varAssignor.updateReferredRHSExps(var, heap);
-        }
-    }
-
-    /**
      * Propagate cast type to all linked packs.
      *
      * @param heap
      */
     public void processCastType(final Heap heap) {
-        heap.getPacks().forEach(
-                pack -> linkedVarProcessor.propogateCastType(pack, heap));
+        for (Pack pack : heap.getPacks()) {
+            linkedVarProcessor.propogateCastType(pack, heap);
+        }
     }
 
     /**

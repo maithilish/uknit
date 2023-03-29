@@ -91,6 +91,7 @@ public class Offlimits {
 
         if (pack instanceof Invoke) {
             Invoke invoke = (Invoke) pack;
+
             Optional<IVar> callVarO = invoke.getCallVar();
             if (callVarO.isPresent()) {
                 IVar callVar = callVarO.get();

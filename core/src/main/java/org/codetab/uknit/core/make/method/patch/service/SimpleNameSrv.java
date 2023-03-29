@@ -22,7 +22,6 @@ public class SimpleNameSrv implements PatchService {
     @Override
     public void patchName(final Pack pack, final Expression node,
             final Expression copy) {
-
         checkState(node instanceof SimpleName);
         checkState(pack.getPatches().size() > 0);
 
@@ -32,6 +31,7 @@ public class SimpleNameSrv implements PatchService {
 
     @Override
     public List<Expression> getExps(final Expression exp) {
+        checkState(exp instanceof SimpleName);
         return List.of(exp);
     }
 }

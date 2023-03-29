@@ -1,0 +1,165 @@
+package org.codetab.uknit.itest.reassign;
+
+import org.codetab.uknit.itest.reassign.Model.Foo;
+class IsUsedTest {
+    @InjectMocks
+    private IsUsed isUsed;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testNullLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = null;
+        String name2 = "Foo";
+
+        when(foo.format(name)).thenReturn(name2);
+
+        String actual = isUsed.nullLiteral(foo);
+
+        assertEquals(name2, actual);
+
+        verify(foo).append(name2);
+    }
+
+    @Test
+    public void testNullLiteralNoReassign() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = null;
+
+        String actual = isUsed.nullLiteralNoReassign(foo);
+
+        assertEquals(name, actual);
+
+        verify(foo).append(name);
+    }
+
+    @Test
+    public void testStringLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String name2 = "Foo";
+
+        when(foo.format(name)).thenReturn(name2);
+
+        String actual = isUsed.stringLiteral(foo);
+
+        assertEquals(name2, actual);
+
+        verify(foo).append(name2);
+    }
+
+    @Test
+    public void testStringLiteralNoReassign() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+
+        String actual = isUsed.stringLiteralNoReassign(foo);
+
+        assertEquals(name, actual);
+
+        verify(foo).append(name);
+    }
+
+    @Test
+    public void testStringLiteralDiscardedByCreate() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name2 = new String("bar");
+
+        String actual = isUsed.stringLiteralDiscardedByCreate(foo);
+
+        assertEquals(name2, actual);
+
+        verify(foo).append(name2);
+    }
+
+    @Test
+    public void testStringLiteralThenCreate() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String name2 = "Foo";
+        String name3 = new String("bar");
+
+        when(foo.format(name)).thenReturn(name2);
+
+        String actual = isUsed.stringLiteralThenCreate(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name3);
+    }
+
+    @Test
+    public void testStringLiteralDiscardedByInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name2 = "bar" + "baz";
+
+        String actual = isUsed.stringLiteralDiscardedByInfix(foo);
+
+        assertEquals(name2, actual);
+
+        verify(foo).append(name2);
+    }
+
+    @Test
+    public void testStringLiteralDiscardedByInfix2() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "Foo";
+        String name2 = "bar" + "baz";
+
+        when(foo.format("foo")).thenReturn(name);
+
+        String actual = isUsed.stringLiteralDiscardedByInfix2(foo);
+
+        assertEquals(name2, actual);
+
+        verify(foo).append(name2);
+    }
+
+    @Test
+    public void testStringLiteralThenInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String name2 = "Foo";
+        String name3 = "bar" + "baz";
+
+        when(foo.format(name)).thenReturn(name2);
+
+        String actual = isUsed.stringLiteralThenInfix(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name3);
+    }
+
+    @Test
+    public void testStringLiteralDiscardedByCreateInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name2 = new String("bar" + "baz");
+
+        String actual = isUsed.stringLiteralDiscardedByCreateInfix(foo);
+
+        assertEquals(name2, actual);
+
+        verify(foo).append(name2);
+    }
+
+    @Test
+    public void testStringLiteralThenCreateInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String name2 = "Foo";
+        String name3 = new String("bar" + "baz");
+
+        when(foo.format(name)).thenReturn(name2);
+
+        String actual = isUsed.stringLiteralThenCreateInfix(foo);
+
+        assertEquals(name3, actual);
+
+        verify(foo).append(name3);
+    }
+}

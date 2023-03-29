@@ -69,11 +69,11 @@ class IfTryTest {
     public void testIfTryFooElseCanSwimTry() {
         Duck duck = Mockito.mock(Duck.class);
         boolean canSwim = true;
-        String state2 = "Bar";
+        String state = "Bar";
         String state3 = "Baz";
         String state5 = "Quux";
 
-        when(duck.fly("else canSwim")).thenReturn(state2);
+        when(duck.fly("else canSwim")).thenReturn(state);
         when(duck.fly("try")).thenReturn(state3);
         when(duck.fly("finally")).thenReturn(state5);
 

@@ -25,6 +25,7 @@ import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
@@ -73,6 +74,13 @@ public class Packer {
             boolean isMock = mocks.isMockable(type);
             IVar var = modelFactory.createVar(kind, name, type, isMock);
             var.setTypeBinding(type.resolveBinding());
+            // If parameter is var arg add nature to var
+            if (nodes.is(vd, SingleVariableDeclaration.class)) {
+                if (((SingleVariableDeclaration) vd).isVarargs()) {
+                    var.addNature(
+                            org.codetab.uknit.core.make.model.IVar.Nature.VARARG);
+                }
+            }
             Expression initializer = wrappers.strip(vd.getInitializer());
 
             /*

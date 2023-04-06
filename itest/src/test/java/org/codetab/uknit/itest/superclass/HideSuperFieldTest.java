@@ -19,7 +19,7 @@ class HideSuperFieldTest {
 
     @Test
     public void testSetLicensePlate() {
-        String license = "Baz";
+        String license = "Foo";
         hideSuperField.setLicensePlate(license);
 
         Object actual = hideSuperField.getLicensePlate();
@@ -29,17 +29,21 @@ class HideSuperFieldTest {
 
     @Test
     public void testGetLicensePlate() {
-        String licensePlate = "Foo";
+
+        String licensePlate = null;
+        String apple = licensePlate;
         hideSuperField.setLicensePlate(licensePlate);
 
         String actual = hideSuperField.getLicensePlate();
 
-        assertEquals(licensePlate, actual);
+        assertEquals(apple, actual);
     }
 
     @Test
     public void testUpdateLicensePlate() {
-        String license = "Baz";
+        String license = "Foo";
         hideSuperField.updateLicensePlate(license);
+
+        // fail("unable to assert, STEPIN");
     }
 }

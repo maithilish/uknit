@@ -209,10 +209,11 @@ class StaticCallTest {
     @Test
     public void testReturnStaticSuperRealParameter() {
         Payload realPayload = new Payload();
+        Payload payload2 = realPayload;
 
         Payload actual = staticCall.returnStaticSuperRealParameter();
 
-        assertEquals(realPayload, actual);
+        assertEquals(payload2, actual);
     }
 
     @Test
@@ -248,10 +249,11 @@ class StaticCallTest {
     @Test
     public void testReturnStaticSuperMockParameter() {
         Payload mockPayload = Mockito.mock(Payload.class);
+        Payload payload2 = mockPayload;
 
         Payload actual = staticCall.returnStaticSuperMockParameter(mockPayload);
 
-        assertSame(mockPayload, actual);
+        assertSame(payload2, actual);
     }
 
     @Test

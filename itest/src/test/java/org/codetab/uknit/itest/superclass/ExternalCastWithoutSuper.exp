@@ -1,0 +1,22 @@
+package org.codetab.uknit.itest.superclass;
+
+import java.time.LocalDate;
+import java.util.EventObject;
+class ExternalCastWithoutSuperTest {
+    @InjectMocks
+    private ExternalCastWithoutSuper externalCastWithoutSuper;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetSourceWithoutSuper() {
+        LocalDate localDate = STEPIN;
+
+        LocalDate actual = externalCastWithoutSuper.getSourceWithoutSuper();
+
+        assertEquals(localDate, actual);
+    }
+}

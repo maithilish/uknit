@@ -72,7 +72,6 @@ public class LinkedVarProcessor {
      * @param pack
      * @param packList
      */
-    // REVIEW - what about linked anon vars
     public void propagateCreationForLinkedVars(final Pack pack,
             final Heap heap) {
         Expression exp = pack.getExp();

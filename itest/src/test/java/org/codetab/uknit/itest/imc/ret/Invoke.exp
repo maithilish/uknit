@@ -1,0 +1,19 @@
+package org.codetab.uknit.itest.imc.ret;
+class InvokeTest {
+    @InjectMocks
+    private Invoke invoke;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testInvokeOnFieldAccess() {
+        Zoo zoo = Mockito.mock(Zoo.class);
+
+        boolean actual = invoke.invokeOnFieldAccess(zoo);
+
+        assertTrue(actual);
+    }
+}

@@ -1,0 +1,22 @@
+package org.codetab.uknit.itest.imc.ret;
+
+import org.codetab.uknit.itest.imc.ret.Model.Person;
+class NoVarTest {
+    @InjectMocks
+    private NoVar noVar;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() {
+        String grape = "Foo";
+        String apple = grape;
+
+        String actual = noVar.foo();
+
+        assertEquals(apple, actual);
+    }
+}

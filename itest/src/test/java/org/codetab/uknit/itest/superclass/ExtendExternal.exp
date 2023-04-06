@@ -1,0 +1,21 @@
+package org.codetab.uknit.itest.superclass;
+
+import java.util.EventObject;
+class ExtendExternalTest {
+    @InjectMocks
+    private ExtendExternal extendExternal;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetSource() {
+        Object apple = STEPIN;
+
+        Object actual = extendExternal.getSource();
+
+        assertEquals(apple, actual);
+    }
+}

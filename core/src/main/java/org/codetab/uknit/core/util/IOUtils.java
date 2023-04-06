@@ -1,11 +1,12 @@
 package org.codetab.uknit.core.util;
 
-import java.io.BufferedReader;
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -75,35 +76,31 @@ public class IOUtils {
         return java.nio.file.Paths.get(base, more);
     }
 
+    /**
+     * Search the regex in all the files of the ext in the dir and return list
+     * of matching files.
+     *
+     * @param dirName
+     * @param ext
+     * @param regex
+     * @return
+     */
     public List<File> searchSource(final String dirName, final String ext,
             final String regex) {
-        File dir = new File(dirName);
+
         List<File> fileList = new ArrayList<>();
 
         Pattern pattern = Pattern.compile(regex);
-        String suffix = "." + ext;
-        File[] files = dir.listFiles((d, name) -> name.endsWith(suffix));
+
+        File dir = new File(dirName);
+        File[] files = dir.listFiles((d, name) -> name.endsWith("." + ext));
+
         for (File file : files) {
             if (file.isFile()) {
-                try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(new FileInputStream(file)))) {
-                    String line;
-                    boolean inBlockComment = false;
-                    while ((line = br.readLine()) != null) {
-                        boolean processLine = true;
-                        if (line.contains("/*")) {
-                            inBlockComment = true;
-                        }
-                        if (line.contains("//") || inBlockComment) {
-                            processLine = false;
-                        }
-                        if (processLine && pattern.matcher(line).find()) {
-                            fileList.add(file);
-                            break;
-                        }
-                        if (line.contains("*/")) {
-                            inBlockComment = false;
-                        }
+                try {
+                    StringBuilder content = readFile(file);
+                    if (pattern.matcher(content).find()) {
+                        fileList.add(file);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -111,10 +108,55 @@ public class IOUtils {
             }
         }
         return fileList;
-
     }
 
+    /**
+     * Read a text file and collect and return the contents as a StringBuilder.
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public StringBuilder readFile(final File file) throws IOException {
+        StringBuilder content = new StringBuilder();
+        final int size = 4 * 1024;
+        char[] buffer = new char[size];
+        try (Reader reader = new InputStreamReader(new FileInputStream(file))) {
+            int length = -1;
+            while ((length = reader.read(buffer, 0, buffer.length)) >= 0) {
+                content.append(buffer, 0, length);
+            }
+        }
+        return content;
+    }
+
+    /**
+     * Is dir exists.
+     *
+     * @param dir
+     * @return
+     */
     public boolean dirExists(final String dir) {
         return new File(dir).exists();
+    }
+
+    /**
+     * Find java file and if exists return its path
+     *
+     * @param searchDir
+     * @param clzName
+     * @return
+     * @throws FileNotFoundException
+     */
+    public String findFile(final String searchDir, final String clzName)
+            throws FileNotFoundException {
+        Path path = Path.of(searchDir, clzName);
+        path = path.resolveSibling(path.getFileName() + ".java");
+        File javaFile = path.toFile();
+        if (javaFile.exists() && javaFile.isFile()) {
+            return javaFile.toString();
+        } else {
+            throw new FileNotFoundException(path.toString());
+        }
     }
 }

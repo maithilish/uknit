@@ -1,0 +1,29 @@
+package org.codetab.uknit.itest.file;
+
+import java.util.Date;
+import org.codetab.uknit.itest.file.Model.Foo;
+import org.codetab.uknit.itest.file.sub.ISubAnotherHierarchicalBuilderParameter;
+import org.codetab.uknit.itest.file.sub.SubHierarchicalBuilderParameterImpl;
+class ExtendsSubTest {
+    @InjectMocks
+    private ExtendsSub extendsSub;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFoo() {
+        Foo foo = Mockito.mock(Foo.class);
+        String grape = null;
+        String config = grape;
+        String apple = "Foo";
+
+        when(foo.format(config)).thenReturn(apple);
+
+        String actual = extendsSub.foo(foo);
+
+        assertEquals(apple, actual);
+    }
+}

@@ -113,6 +113,9 @@ public class Types {
                 Type bound = wt.getBound();
                 if (nonNull(bound)) {
                     return bound.toString();
+                } else {
+                    // No bound ? then Object. Ex: Map<String, ?> source
+                    return "Object";
                 }
             }
             throw new TypeNameException(

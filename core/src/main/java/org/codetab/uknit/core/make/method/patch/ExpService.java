@@ -16,10 +16,8 @@ import org.eclipse.jdt.core.dom.Name;
 /**
  * Get exps of an exp.
  *
- * FIXME N - move this and srv.getExps() to method package as visit package uses
- * this. May be cached for performance.
- *
- * REVIEW - the above
+ * REVIEW Z - move this and srv.getExps() to method package as visit package
+ * uses this. May be cached for performance.
  *
  * @author Maithilish
  *

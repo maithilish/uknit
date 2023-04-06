@@ -19,7 +19,7 @@ import org.codetab.uknit.core.node.NodeFactory;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-// REVIEW - rename it as ClzContext and move any method related item to
+// REVIEW Z - rename it as ClzContext and move any method related item to
 // MethodContext
 
 @Singleton

@@ -272,3 +272,5 @@ eq
 avatar
 unset
 ini
+regex
+parameterized

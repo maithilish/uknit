@@ -13,7 +13,7 @@ public interface IVar {
     }
 
     enum Nature {
-        REALISH, COLLECTION, OFFLIMIT
+        REALISH, COLLECTION, OFFLIMIT, VARARG
     }
 
     void setKind(Kind kind);

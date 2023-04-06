@@ -1,0 +1,21 @@
+package org.codetab.uknit.itest.superclass;
+
+import java.util.EventObject;
+class ExternalWithoutSuperTest {
+    @InjectMocks
+    private ExternalWithoutSuper externalWithoutSuper;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetSourceWithoutSuper() {
+        Object apple = STEPIN;
+
+        Object actual = externalWithoutSuper.getSourceWithoutSuper();
+
+        assertEquals(apple, actual);
+    }
+}

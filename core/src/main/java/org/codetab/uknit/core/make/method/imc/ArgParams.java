@@ -15,6 +15,7 @@ import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
@@ -47,9 +48,9 @@ class ArgParams {
 
     /**
      * Init list of parameters and args of IM. Normally, IM arguments are
-     * collapsed to var names but inline args such as literals doesn't have
-     * vars. If var exists find its pack and add it arg list else create new
-     * pack and set arg exp as the exp. The var is created and set by
+     * collapsed to var names but inline args such as literals don't have vars.
+     * If var exists find its pack and add it arg list else create new pack and
+     * set arg exp as the exp. The var is created and set by
      * createVarsForInlineArgs() for such packs.
      *
      * @param invoke
@@ -136,7 +137,18 @@ class ArgParams {
         for (int i = 0; i < params.size(); i++) {
 
             Pack param = params.get(i);
-            Optional<Pack> argO = args.get(i);
+            Optional<Pack> argO;
+            if (param.getVar().getNatures().contains(Nature.VARARG)
+                    && i >= args.size()) {
+                /*
+                 * If last param is var arg and arg doesn't exist for var arg
+                 * param then arg is empty. Ref itest:
+                 * imc.vararg.VarArgParameter.noArgForVarArgParam()
+                 */
+                argO = Optional.empty();
+            } else {
+                argO = args.get(i);
+            }
 
             // arg var doesn't exists
             if (argO.isPresent() && isNull(argO.get().getVar())
@@ -189,7 +201,13 @@ class ArgParams {
         for (int i = 0; i < params.size(); i++) {
 
             Pack param = params.get(i);
-            Optional<Pack> argO = args.get(i);
+            Optional<Pack> argO;
+            if (param.getVar().getNatures().contains(Nature.VARARG)
+                    && i >= args.size()) {
+                argO = Optional.empty();
+            } else {
+                argO = args.get(i);
+            }
 
             if (argO.isPresent() && nonNull(argO.get().getVar())
                     && nonNull(param.getVar())) {
@@ -220,8 +238,15 @@ class ArgParams {
 
             IVar param = params.get(i).getVar();
             IVar arg = null;
-            if (args.get(i).isPresent()) {
-                arg = args.get(i).get().getVar();
+            Optional<Pack> argO;
+            if (param.getNatures().contains(Nature.VARARG)
+                    && i >= args.size()) {
+                argO = Optional.empty();
+            } else {
+                argO = args.get(i);
+            }
+            if (argO.isPresent()) {
+                arg = argO.get().getVar();
             }
 
             if (nonNull(param) && nonNull(arg)

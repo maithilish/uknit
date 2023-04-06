@@ -17,6 +17,7 @@ import org.codetab.uknit.core.dump.EndDumper;
 import org.codetab.uknit.core.exception.CriticalException;
 import org.codetab.uknit.core.make.Controller;
 import org.codetab.uknit.core.make.clz.ClzMaker;
+import org.codetab.uknit.core.make.method.Heaps;
 import org.codetab.uknit.core.make.method.MethodMaker;
 import org.codetab.uknit.core.make.method.getter.GetterSetter;
 import org.codetab.uknit.core.make.model.Heap;
@@ -60,6 +61,8 @@ public class SourceVisitor extends ASTVisitor {
     private Trees trees;
     @Inject
     private Console console;
+    @Inject
+    private Heaps heaps;
 
     private ClzMaker clzMaker;
 
@@ -226,6 +229,15 @@ public class SourceVisitor extends ASTVisitor {
             return true;
         }
 
+        String sourceFilter = configs.getConfig("uknit.source.filter");
+        String methodName = node.getName().getFullyQualifiedName();
+        if (nonNull(sourceFilter) && !sourceFilter.equals(methodName)) {
+            LOG.debug(
+                    "config uknit.source.filter is enabled, test not generated for {}",
+                    methodName);
+            return false;
+        }
+
         MethodMaker methodMaker = di.instance(MethodMaker.class);
         methodMaker.setClzMap(ctl.getClzMaker().getClzMap());
 
@@ -282,8 +294,13 @@ public class SourceVisitor extends ASTVisitor {
                 heap.setCutName(clzMaker.getCutName());
 
                 // finally stage and generate the test method.
-                if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
-                    methodMaker.generateTestMethod(heap);
+                try {
+                    if (methodMaker.stageMethod(node, ctlPath, suffix, heap)) {
+                        methodMaker.generateTestMethod(heap);
+                    }
+                } catch (Exception e) {
+                    heaps.debugPacks("Dump Packs on exception", heap);
+                    throw e;
                 }
             }
         }

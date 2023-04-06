@@ -73,21 +73,20 @@ public class NodeGroups {
             StringLiteral.class, TypeLiteral.class);
 
     /**
-     * Nodes for which infer vars can be created. SMI is not included as as it
-     * is replaced by IMC packs and infer is not created.
+     * Nodes for which infer vars can be created. SMI is also included as it is
+     * replaced by IMC packs and infer is required.
      */
     private List<Class<? extends Expression>> inferableNodes = List.of(
             ClassInstanceCreation.class, MethodInvocation.class,
-            ArrayCreation.class, ArrayAccess.class, ArrayInitializer.class,
-            InfixExpression.class, PostfixExpression.class,
-            PrefixExpression.class, ConditionalExpression.class,
-            QualifiedName.class, FieldAccess.class, BooleanLiteral.class,
-            CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
-            StringLiteral.class, TypeLiteral.class);
+            SuperMethodInvocation.class, ArrayCreation.class, ArrayAccess.class,
+            ArrayInitializer.class, InfixExpression.class,
+            PostfixExpression.class, PrefixExpression.class,
+            ConditionalExpression.class, QualifiedName.class, FieldAccess.class,
+            BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
+            NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
 
-    private List<Class<? extends Expression>> uninferableNodes =
-            List.of(SimpleName.class, SuperMethodInvocation.class,
-                    ThisExpression.class, LambdaExpression.class);
+    private List<Class<? extends Expression>> uninferableNodes = List
+            .of(SimpleName.class, ThisExpression.class, LambdaExpression.class);
 
     /**
      * Instance creation new Foo(), Array creation, Literals "foo", 5 etc.,

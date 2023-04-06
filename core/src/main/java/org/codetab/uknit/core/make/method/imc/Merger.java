@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.uknit.core.di.DInjector;
-import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Heaps;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
@@ -23,13 +22,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.make.model.Pack.Nature;
-import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
-import org.codetab.uknit.core.node.Nodes;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ThisExpression;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 
 /**
  * Merges IM Heap on return of IM with Invoker Heap.
@@ -52,9 +45,7 @@ public class Merger {
     @Inject
     private Methods methods;
     @Inject
-    private Expressions expressions;
-    @Inject
-    private Nodes nodes;
+    private Invokes invokes;
 
     private ArgParams argParams;
     private InternalReturns internalReturns;
@@ -189,38 +180,10 @@ public class Merger {
                 .collect(Collectors.toList());
 
         for (Invoke invoke : invokeList) {
-            Optional<IVar> callVarO = Optional.empty();
-            Optional<Expression> patchedCallExpO =
-                    heap.getPatcher().copyAndPatchCallExp(invoke, heap);
-            if (patchedCallExpO.isPresent()) {
-                // if var for name is not found then find var for old name
-                String name = expressions.getName(patchedCallExpO.get());
-                if (invoke.is(Nature.STATIC_CALL)) {
-                    nodes.doNothing();
-                } else if (isNull(name)) {
-                    /*
-                     * this.foo() or String.class.cast(source), ignore
-                     * ThisExpression and TypeLiteral as there is no call var in
-                     * method invoke.
-                     */
-                    if (!nodes.is(patchedCallExpO.get(), TypeLiteral.class,
-                            ThisExpression.class)) {
-                        throw new VarNotFoundException(
-                                nodes.exMessage("call var name is null",
-                                        patchedCallExpO.get()));
-                    }
-                } else {
-                    try {
-                        callVarO = Optional.of(vars.findVarByName(name, heap));
-                    } catch (VarNotFoundException e) {
-                        callVarO =
-                                Optional.of(vars.findVarByOldName(name, heap));
-                    }
-                }
-                // call var is param's corresponding arg
-                if (callVarO.isPresent()) {
-                    callVarO = argParams.getArg(callVarO.get());
-                }
+            Optional<IVar> callVarO = invokes.getCallVar(invoke, heap);
+            // call var is param's corresponding arg
+            if (callVarO.isPresent()) {
+                callVarO = argParams.getArg(callVarO.get());
             }
             invoke.setCallVar(callVarO);
         }

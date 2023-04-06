@@ -65,10 +65,11 @@ class NullReturnTest {
     @Test
     public void testSuperCallWithSuperIfFlag() {
         boolean flag = true;
+        Connection connection2 = connection;
 
         Connection actual = nullReturn.superCallWithSuper(flag);
 
-        assertSame(connection, actual);
+        assertSame(connection2, actual);
     }
 
     @Test

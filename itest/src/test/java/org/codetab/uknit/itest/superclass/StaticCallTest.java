@@ -42,6 +42,7 @@ class StaticCallTest {
         long actual = staticCall.mockField(mockPayload);
 
         assertEquals(id, actual);
+
         verify(jobInfo2).setId(1);
     }
 
@@ -58,6 +59,7 @@ class StaticCallTest {
         long actual = staticCall.returnMockField(mockPayload);
 
         assertEquals(apple, actual);
+
         verify(jobInfo).setId(1);
     }
 
@@ -74,6 +76,7 @@ class StaticCallTest {
         long actual = staticCall.mockFieldCreated(mockPayload);
 
         assertEquals(id, actual);
+
         verify(jobInfo2).setId(1);
     }
 
@@ -90,6 +93,7 @@ class StaticCallTest {
         long actual = staticCall.returnMockFieldCreated(mockPayload);
 
         assertEquals(apple, actual);
+
         verify(jobInfo).setId(1);
     }
 
@@ -131,6 +135,7 @@ class StaticCallTest {
         Payload actual = staticCall.assignStaticInternal(mockPayload);
 
         assertSame(iPayload, actual);
+
         verify(jobInfo2).setId(1);
     }
 
@@ -182,6 +187,7 @@ class StaticCallTest {
                 .assignStaticSuperMockParameterWithoutSuper(mockPayload);
 
         assertSame(mpay, actual);
+
         verify(jobInfo).setId(1);
     }
 
@@ -210,16 +216,18 @@ class StaticCallTest {
         Payload actual = staticCall.assignStaticSuperMockParameter(mockPayload);
 
         assertSame(mpay, actual);
+
         verify(jobInfo).setId(1);
     }
 
     @Test
     public void testReturnStaticSuperRealParameter() {
         Payload realPayload = new Payload();
+        Payload payload2 = realPayload;
 
         Payload actual = staticCall.returnStaticSuperRealParameter();
 
-        assertEquals(realPayload, actual);
+        assertEquals(payload2, actual);
     }
 
     @Test
@@ -259,10 +267,11 @@ class StaticCallTest {
     @Test
     public void testReturnStaticSuperMockParameter() {
         Payload mockPayload = Mockito.mock(Payload.class);
+        Payload payload2 = mockPayload;
 
         Payload actual = staticCall.returnStaticSuperMockParameter(mockPayload);
 
-        assertSame(mockPayload, actual);
+        assertSame(payload2, actual);
     }
 
     @Test

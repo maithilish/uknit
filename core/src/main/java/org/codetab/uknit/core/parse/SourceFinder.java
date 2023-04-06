@@ -3,6 +3,7 @@ package org.codetab.uknit.core.parse;
 import static org.codetab.uknit.core.util.StringUtils.spaceit;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,15 +32,26 @@ public class SourceFinder {
      */
     public String find(final String searchDir, final String clzName) {
 
-        // remove any type parameter from class name
-        String clzNameNoTypeParam = clzName.replaceFirst("(<.*>)", "");
+        // find file by name (top level public classes)
+        try {
+            String filePath = ioUtils.findFile(searchDir, clzName);
+            return filePath;
+        } catch (FileNotFoundException e) {
+        }
 
-        // class name(opt type param)(opt space+extends/implements/super) {
-        String searchRegex =
-                String.format("class %s(<.*>)?( .*)? \\{", clzNameNoTypeParam);
+        // find file by scanning file content (non public classes in a file)
+        StringBuilder classRegex = new StringBuilder();
+        classRegex.append(
+                "((|public|final|abstract|private|static|protected)(\\\\s+))?");
+        classRegex.append("(class)(\\s+)");
+        classRegex.append(clzName);
+        classRegex.append("(<.*>)?");
+        classRegex.append("(\\s+extends\\s+\\w+)?(<.*>)?");
+        classRegex.append("(\\s+implements\\s+)?(.*)?(<.*>)?");
+        classRegex.append("(\\s*)\\{");
 
         List<File> srcFiles =
-                ioUtils.searchSource(searchDir, "java", searchRegex);
+                ioUtils.searchSource(searchDir, "java", classRegex.toString());
         if (srcFiles.size() == 0) {
             String message = spaceit("unable to find source file for", clzName,
                     "in", searchDir);

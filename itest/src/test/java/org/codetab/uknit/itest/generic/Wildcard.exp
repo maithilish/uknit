@@ -3,6 +3,7 @@ package org.codetab.uknit.itest.generic;
 import java.io.Closeable;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Map;
 class WildcardTest {
     @InjectMocks
     private Wildcard wildcard;
@@ -40,5 +41,17 @@ class WildcardTest {
         ObjectPool<? extends Connection> actual = wildcard.getConnectionPool(name);
 
         assertSame(pool, actual);
+    }
+
+    @Test
+    public void testNoBoundWildcard() {
+        Map<String, ?> source = new HashMap<>();
+        Object apple = Mockito.mock(Object.class);
+        String grape = "foo";
+        source.put(grape, apple);
+
+        Object actual = wildcard.noBoundWildcard(source);
+
+        assertSame(apple, actual);
     }
 }

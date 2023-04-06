@@ -32,10 +32,11 @@ class SuperVsInternalCallTest {
 
     @Test
     public void testGetSuperFooBar() {
+        StringBuilder stringBuilder2 = bar;
 
         StringBuilder actual = superVsInternalCall.getSuperFooBar();
 
-        assertSame(bar, actual);
+        assertSame(stringBuilder2, actual);
     }
 
     @Test

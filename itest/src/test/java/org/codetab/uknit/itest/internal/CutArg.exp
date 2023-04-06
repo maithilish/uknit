@@ -1,0 +1,32 @@
+package org.codetab.uknit.itest.internal;
+
+import java.util.Date;
+class CutArgTest {
+    @InjectMocks
+    private CutArg cutArg;
+
+    @Mock
+    private Date date;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCopy() {
+        CutArg target = Mockito.mock(CutArg.class);
+        cutArg.copy(target);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testCopyCutArgDate() {
+        CutArg target = Mockito.mock(CutArg.class);
+        Date date = Mockito.mock(Date.class);
+        cutArg.copy(target, date);
+
+        fail("unable to assert, STEPIN");
+    }
+}

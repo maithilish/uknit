@@ -20,12 +20,13 @@ class HideSuperFieldTest {
 
     @Test
     public void testGetLicensePlate() {
+        String apple = licensePlate;
         String licensePlate = null;
         hideSuperField.setLicensePlate(licensePlate);
 
         String actual = hideSuperField.getLicensePlate();
 
-        assertEquals(licensePlate, actual);
+        assertEquals(apple, actual);
     }
 
     @Test

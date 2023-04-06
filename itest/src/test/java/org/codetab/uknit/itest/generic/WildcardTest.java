@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,5 +54,17 @@ class WildcardTest {
                 wildcard.getConnectionPool(name);
 
         assertSame(pool, actual);
+    }
+
+    @Test
+    public void testNoBoundWildcard() {
+        Map<String, Object> source = new HashMap<>();
+        Object apple = Mockito.mock(Object.class);
+        String grape = "foo";
+        source.put(grape, apple);
+
+        Object actual = wildcard.noBoundWildcard(source);
+
+        assertSame(apple, actual);
     }
 }

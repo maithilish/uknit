@@ -31,7 +31,8 @@ class SuperCallsTest {
 
     @Test
     public void testReturnFromSuperCreate() {
-        Bar bar = new Bar();
+        Bar bar2 = new Bar();
+        Bar bar = bar2;
 
         Bar actual = superCalls.returnFromSuperCreate();
 
@@ -42,6 +43,7 @@ class SuperCallsTest {
     public void testAssignFromSuperCreateAndMock() throws Exception {
         String name = "Foo";
         Bar bar2 = new Bar(name);
+        ;
         Bar bar = bar2;
 
         Bar actual = superCalls.assignFromSuperCreateAndMock(name);
@@ -52,7 +54,9 @@ class SuperCallsTest {
     @Test
     public void testReturnFromSuperCreateAndMock() throws Exception {
         String name = "Foo";
-        Bar bar = new Bar(name);
+        Bar bar2 = new Bar(name);
+
+        Bar bar = bar2;
 
         Bar actual = superCalls.returnFromSuperCreateAndMock(name);
 
@@ -77,9 +81,10 @@ class SuperCallsTest {
     public void testReturnFromMock() throws Exception {
         Factory factory = Mockito.mock(Factory.class);
         String name = "Foo";
-        Bar bar = Mockito.mock(Bar.class);
+        Bar bar2 = Mockito.mock(Bar.class);
+        Bar bar = bar2;
 
-        when(factory.instance(name)).thenReturn(bar);
+        when(factory.instance(name)).thenReturn(bar2);
 
         Bar actual = superCalls.returnFromMock(factory, name);
 

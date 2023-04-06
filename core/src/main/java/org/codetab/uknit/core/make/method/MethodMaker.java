@@ -102,14 +102,14 @@ public class MethodMaker {
                 methodMakers.getTestMethodName(method, clzDecl, testNameSuffix);
 
         /*
-         * If user config uknit.source.method is defined then process only if
-         * the method name matches the config, other methods are not processed.
+         * If user config uknit.output.filter is defined then process only if
+         * the test method name matches the filter, other methods are not
+         * processed. Use this to output only one of the ctl path.
          */
-        String methodNameFilter = configs.getConfig("uknit.source.method");
-        if (nonNull(methodNameFilter)
-                && !methodNameFilter.equals(testMethodName)) {
+        String testFilter = configs.getConfig("uknit.output.filter");
+        if (nonNull(testFilter) && !testFilter.equals(testMethodName)) {
             LOG.debug(
-                    "config uknit.source.method is enabled, test not generated for {}",
+                    "config uknit.output.filter is enabled, test not generated for {}",
                     testMethodName);
             return false;
         }

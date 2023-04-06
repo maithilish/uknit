@@ -40,12 +40,13 @@ class BlendVarTest {
     public void testInvokeWithSuperMock() {
         AFactory aFactory = Mockito.mock(AFactory.class);
         Date date = Mockito.mock(Date.class);
+        Date date2 = date;
 
         when(aFactory.getDate()).thenReturn(date);
 
         Date actual = blendVar.invokeWithSuperMock(aFactory);
 
-        assertSame(date, actual);
+        assertSame(date2, actual);
     }
 
     @Test
@@ -78,11 +79,12 @@ class BlendVarTest {
     public void testInvokeWithSuperReal() {
         AFactory aFactory = Mockito.mock(AFactory.class);
         String apple = "Foo";
+        String grape = apple;
 
         when(aFactory.getString()).thenReturn(apple);
 
         String actual = blendVar.invokeWithSuperReal(aFactory);
 
-        assertEquals(apple, actual);
+        assertEquals(grape, actual);
     }
 }

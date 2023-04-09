@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.codetab.uknit.itest.ITBase;
 import org.junit.jupiter.api.Test;
 
-class EnumsIT extends ITBase {
+class UseEnumIT extends ITBase {
 
     @Test
     public void test() throws IOException {

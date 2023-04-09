@@ -3,13 +3,13 @@ package org.codetab.uknit.core.make.model;
 import java.util.List;
 
 import org.codetab.uknit.core.make.model.IVar.Kind;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.google.inject.assistedinject.Assisted;
 
@@ -32,8 +32,8 @@ public interface ModelFactory {
     Patch createPatch(org.codetab.uknit.core.make.model.Patch.Kind kind,
             String definedName, IVar var, int index);
 
-    Call createCall(TypeDeclaration clz, SimpleName name, Type returnType,
-            MethodDeclaration methodDecl);
+    Call createCall(AbstractTypeDeclaration clz, SimpleName name,
+            Type returnType, MethodDeclaration methodDecl);
 
     When createWhen(String methodSignature, IVar callVar);
 

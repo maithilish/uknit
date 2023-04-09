@@ -1,0 +1,24 @@
+package org.codetab.uknit.itest.generic;
+
+import java.io.PrintWriter;
+import java.util.List;
+class WildcardCaptureTest {
+    @InjectMocks
+    private WildcardCapture wildcardCapture;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testWrite() {
+        PrintWriter out = Mockito.mock(PrintWriter.class);
+        Object value = Mockito.mock(Object.class);
+        wildcardCapture.write(out, value);
+
+        ArgumentCaptor<Consumer<? super Object>> captorA = ArgumentCaptor.forClass(Consumer.class);
+
+        verify(((List<?>) value)).forEach(captorA.capture());
+    }
+}

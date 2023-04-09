@@ -284,11 +284,20 @@ public class Types {
             }
             return type;
         }
-        // in Predicate<? super String> - ? super String is wildcard
+        // Ex: Predicate<? super String> - ? super String is wildcard
         if (typeBinding.isWildcardType()) {
             WildcardType wildcardType = ast.newWildcardType();
             ITypeBinding bound = typeBinding.getBound();
-            if (bound != null) {
+            if (nonNull(bound) && bound.isCapture()) {
+                /*
+                 * For type binding with capture such as <? super capture#1-of
+                 * ?> return wildcard type as <? super Object>. Ref itest:
+                 * generic.WildcardCapture.
+                 */
+                ITypeBinding era = bound.getErasure();
+                wildcardType.setBound(getType(era, ast),
+                        typeBinding.isUpperbound());
+            } else if (nonNull(bound)) {
                 wildcardType.setBound(getType(bound, ast),
                         typeBinding.isUpperbound());
             }

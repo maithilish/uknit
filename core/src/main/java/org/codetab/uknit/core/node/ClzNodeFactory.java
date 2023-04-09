@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.Name;
@@ -37,7 +38,7 @@ public class ClzNodeFactory {
         return decl;
     }
 
-    public TypeDeclaration createTypeDecl(final TypeDeclaration node) {
+    public TypeDeclaration createTypeDecl(final AbstractTypeDeclaration node) {
         TypeDeclaration decl = ast.newTypeDeclaration();
         String testClzName =
                 String.join("", node.getName().getFullyQualifiedName(), "Test");

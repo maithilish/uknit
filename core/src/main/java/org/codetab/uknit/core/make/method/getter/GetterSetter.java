@@ -18,6 +18,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
@@ -104,8 +105,9 @@ public class GetterSetter {
                     String contraMethodName = getterSetters
                             .getContraMethodName(getterHolder.methodDecl);
                     // if setter defined
-                    if (getterSetters.isMethodDefined(contraMethodName,
-                            clz.getTypeDecl())) {
+                    if (clz.getTypeDecl() instanceof TypeDeclaration
+                            && getterSetters.isMethodDefined(contraMethodName,
+                                    (TypeDeclaration) clz.getTypeDecl())) {
                         /*
                          * use visitor to insert setter call next to var
                          * declaration
@@ -135,8 +137,9 @@ public class GetterSetter {
                     String contraMethodName = getterSetters
                             .getContraMethodName(setterHolder.methodDecl);
                     // if getter defined
-                    if (getterSetters.isMethodDefined(contraMethodName,
-                            clz.getTypeDecl())) {
+                    if (clz.getTypeDecl() instanceof TypeDeclaration
+                            && getterSetters.isMethodDefined(contraMethodName,
+                                    (TypeDeclaration) clz.getTypeDecl())) {
                         /*
                          * insert new statements - Object actual =
                          * person.getName(); assertSame(name,actual);

@@ -22,6 +22,7 @@ import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.util.StringUtils;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Block;
@@ -70,7 +71,7 @@ public class MethodMakers {
         return clzDecl.getName().getFullyQualifiedName();
     }
 
-    public String getTestClzName(final TypeDeclaration clzDecl) {
+    public String getTestClzName(final AbstractTypeDeclaration clzDecl) {
         return String.join("", clzDecl.getName().getFullyQualifiedName(),
                 "Test");
     }

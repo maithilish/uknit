@@ -11,6 +11,7 @@ import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
@@ -97,7 +98,7 @@ class GetterSetters {
      * @param typeDecl
      * @return
      */
-    String getObjName(final TypeDeclaration typeDecl) {
+    String getObjName(final AbstractTypeDeclaration typeDecl) {
         String name = nodes.getName(typeDecl.getName());
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
     }

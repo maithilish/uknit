@@ -22,12 +22,12 @@ import org.codetab.uknit.core.make.method.visit.Visitor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
-import org.codetab.uknit.core.node.Classes;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.tree.TreeNode;
 import org.codetab.uknit.core.util.StringUtils;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -58,8 +58,6 @@ public class MethodMaker {
     private NodeFactory nodeFactory;
     @Inject
     private BodyMaker bodyMaker;
-    @Inject
-    private Classes classes;
     @Inject
     private VarNames varNames;
     @Inject
@@ -94,7 +92,7 @@ public class MethodMaker {
         varNames.resetIndexes();
 
         String testClzName = methodMakers
-                .getTestClzName((TypeDeclaration) method.getParent());
+                .getTestClzName((AbstractTypeDeclaration) method.getParent());
         clzDecl = clzMap.getTypeDecl(testClzName);
         clz = clzMap.getClz(testClzName);
 
@@ -284,9 +282,9 @@ public class MethodMaker {
      * @param node
      * @param beforeAnnotation
      */
-    public void addBeforeMethod(final TypeDeclaration node,
+    public void addBeforeMethod(final AbstractTypeDeclaration node,
             final String beforeAnnotation) {
-        TypeDeclaration clzUnderTest = classes.asTypeDecl(node);
+        AbstractTypeDeclaration clzUnderTest = node;
         String clzName = methodMakers.getTestClzName(clzUnderTest);
         TypeDeclaration testClzDecl = clzMap.getTypeDecl(clzName);
 

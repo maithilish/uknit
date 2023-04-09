@@ -54,12 +54,9 @@ public class VerifyCreator {
 
         List<ArgCapture> anonCaptures =
                 anonProcessor.processVerifyArgs(mi, patchedMi, heap);
-        // List<ArgCapture> lambdaCaptures = lambdaProcessor
-        // .patchLambdaArgsWithCaptures(patchedMi, mi, heap);
 
         Verify verify = modelFactory.createVerify(patchedMi, inCtlPath);
         verify.getArgCaptures().addAll(anonCaptures);
-        // verify.getArgCaptures().addAll(lambdaCaptures);
 
         invoke.setVerify(Optional.of(verify));
 

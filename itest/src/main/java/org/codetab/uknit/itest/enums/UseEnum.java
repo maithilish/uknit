@@ -3,7 +3,7 @@ package org.codetab.uknit.itest.enums;
 import org.codetab.uknit.itest.enums.Model.Account;
 import org.codetab.uknit.itest.enums.Model.Account.Type;
 
-class Enums {
+class UseEnum {
 
     public Type qualifiedName(final Account a) {
         return Type.SAVINGS;

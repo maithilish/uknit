@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
@@ -188,7 +189,25 @@ public class SourceVisitor extends ASTVisitor {
         } else {
             testable = true;
         }
-        clzMaker.addClass(node);
+        return stageTestClz(node);
+    }
+
+    @Override
+    public boolean visit(final EnumDeclaration node) {
+        LOG.debug("add enum declaration to test class");
+        testable = true;
+        return stageTestClz(node);
+    }
+
+    /**
+     * Create test class and add it clzMap. Add selfField, fields, super fields
+     * and beforeEach method to the test class.
+     *
+     * @param node
+     * @return
+     */
+    private boolean stageTestClz(final AbstractTypeDeclaration node) {
+        clzMaker.addClass(node); // create test class and add to clzMap
         clzMaker.addSelfField(node);
         clzMaker.addFields(node);
 

@@ -1,0 +1,21 @@
+package org.codetab.uknit.itest.enums;
+class SimpleTest {
+    @InjectMocks
+    private Simple simple;
+
+    @Mock
+    private Lookup lookup;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetLookup() {
+
+        Lookup actual = simple.getLookup();
+
+        assertSame(lookup, actual);
+    }
+}

@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Nodes;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
@@ -58,7 +59,8 @@ public class Invokes {
                  * ThisExpression and TypeLiteral as there is no call var in
                  * method invoke.
                  */
-                if (nodes.is(pCallExp, ClassInstanceCreation.class)) {
+                if (nodes.is(pCallExp, ClassInstanceCreation.class,
+                        ArrayAccess.class)) {
                     nodes.doNothing();
                 } else if (!nodes.is(patchedCallExpO.get(), TypeLiteral.class,
                         ThisExpression.class)) {

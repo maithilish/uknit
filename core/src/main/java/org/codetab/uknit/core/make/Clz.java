@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.codetab.uknit.core.make.model.Field;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -18,7 +19,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class Clz {
 
     private String testClzName;
-    private TypeDeclaration typeDecl; // CUT - class under test
+    private AbstractTypeDeclaration typeDecl; // CUT - class under test
     private TypeDeclaration testTypeDecl; // test class
     private PackageDeclaration packageDecl;
     private List<ImportDeclaration> imports;
@@ -44,11 +45,11 @@ public class Clz {
         this.testClzName = name;
     }
 
-    public TypeDeclaration getTypeDecl() {
+    public AbstractTypeDeclaration getTypeDecl() {
         return typeDecl;
     }
 
-    public void setTypeDecl(final TypeDeclaration typeDecl) {
+    public void setTypeDecl(final AbstractTypeDeclaration typeDecl) {
         this.typeDecl = typeDecl;
     }
 

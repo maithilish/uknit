@@ -65,7 +65,7 @@ public class ClzMaker {
      * Create test class and add it to clzMap.
      * @param typeDecl
      */
-    public void addClass(final TypeDeclaration typeDecl) {
+    public void addClass(final AbstractTypeDeclaration typeDecl) {
         TypeDeclaration testTypeDecl = clzNodeFactory.createTypeDecl(typeDecl);
         clzMakers.addType(cu, testTypeDecl);
 
@@ -94,7 +94,7 @@ public class ClzMaker {
      * Add self field (InjectMocks) - class under test
      * @return
      */
-    public void addSelfField(final TypeDeclaration srcClz) {
+    public void addSelfField(final AbstractTypeDeclaration srcClz) {
         String srcClzName = classes.getClzName(srcClz);
         String testClzName = classes.getTestClzName(srcClz);
         TypeDeclaration testClz = clzMap.getTypeDecl(testClzName);
@@ -105,7 +105,7 @@ public class ClzMaker {
         cutName = fieldName;
     }
 
-    public void addFields(final TypeDeclaration srcClz) {
+    public void addFields(final AbstractTypeDeclaration srcClz) {
         String testClzName = classes.getTestClzName(srcClz);
         TypeDeclaration testClz = clzMap.getTypeDecl(testClzName);
 
@@ -115,7 +115,7 @@ public class ClzMaker {
         fieldMaker.addFieldsToClzMap(testFields, testClzName, clzMap);
     }
 
-    public void addSuperFields(final TypeDeclaration srcClz,
+    public void addSuperFields(final AbstractTypeDeclaration srcClz,
             final List<AbstractTypeDeclaration> superTypes) {
 
         String testClzName = classes.getTestClzName(srcClz);

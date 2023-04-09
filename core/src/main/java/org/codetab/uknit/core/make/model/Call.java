@@ -3,22 +3,22 @@ package org.codetab.uknit.core.make.model;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.google.inject.assistedinject.Assisted;
 
 public class Call {
 
-    private TypeDeclaration clz;
+    private AbstractTypeDeclaration clz;
     private SimpleName name;
     private Type returnType;
     private MethodDeclaration methodDecl;
 
     @Inject
-    public Call(@Assisted final TypeDeclaration clz,
+    public Call(@Assisted final AbstractTypeDeclaration clz,
             @Assisted final SimpleName name,
             @Assisted @Nullable final Type returnType,
             @Assisted final MethodDeclaration methodDecl) {
@@ -28,7 +28,7 @@ public class Call {
         this.methodDecl = methodDecl;
     }
 
-    public TypeDeclaration getClz() {
+    public AbstractTypeDeclaration getClz() {
         return clz;
     }
 

@@ -11,10 +11,13 @@ import org.codetab.uknit.core.make.Clz;
 import org.codetab.uknit.core.make.ClzMap;
 import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.node.ClzNodeFactory;
+import org.codetab.uknit.core.node.Enums;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Variables;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
@@ -35,16 +38,25 @@ public class FieldMaker {
     private ClzNodeFactory clzNodeFactory;
     @Inject
     private Variables variables;
+    @Inject
+    private Enums enums;
 
-    public List<Field> getSrcFields(final TypeDeclaration srcClz) {
-        List<FieldDeclaration> fieldDecls =
-                Lists.newArrayList(srcClz.getFields());
+    public List<Field> getSrcFields(final AbstractTypeDeclaration srcClz) {
+        List<FieldDeclaration> fieldDecls;
+        if (srcClz instanceof TypeDeclaration) {
+            fieldDecls =
+                    Lists.newArrayList(((TypeDeclaration) srcClz).getFields());
+        } else if (srcClz instanceof EnumDeclaration) {
+            fieldDecls = enums.getFields((EnumDeclaration) srcClz);
+        } else {
+            fieldDecls = Lists.newArrayList();
+        }
         fieldMakers.expandFieldFragments(fieldDecls);
         return fieldMakers.createSrcFields(fieldDecls);
     }
 
     public List<Field> addFieldDeclsToTestClz(final List<Field> fieldList,
-            final TypeDeclaration srcClz, final String testClzName,
+            final AbstractTypeDeclaration srcClz, final String testClzName,
             final TypeDeclaration testClz) {
 
         List<Field> testFields = new ArrayList<>();

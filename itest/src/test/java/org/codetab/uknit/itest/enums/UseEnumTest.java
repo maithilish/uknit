@@ -11,9 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-class EnumsTest {
+class UseEnumTest {
     @InjectMocks
-    private Enums enums;
+    private UseEnum useEnum;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -25,7 +25,7 @@ class EnumsTest {
         Account a = Mockito.mock(Account.class);
         Type type = Type.SAVINGS;
 
-        Type actual = enums.qualifiedName(a);
+        Type actual = useEnum.qualifiedName(a);
 
         assertEquals(type, actual);
     }
@@ -35,7 +35,7 @@ class EnumsTest {
         Account a = Mockito.mock(Account.class);
         Type t = Type.OVERDRAFT;
 
-        Type actual = enums.assignment(a);
+        Type actual = useEnum.assignment(a);
 
         assertEquals(t, actual);
     }
@@ -47,7 +47,7 @@ class EnumsTest {
 
         when(a.getType()).thenReturn(type);
 
-        Type actual = enums.mi(a);
+        Type actual = useEnum.mi(a);
 
         assertEquals(type, actual);
     }
@@ -59,7 +59,7 @@ class EnumsTest {
 
         when(a.getType()).thenReturn(t);
 
-        Type actual = enums.assignmentMi(a);
+        Type actual = useEnum.assignmentMi(a);
 
         assertEquals(t, actual);
     }
@@ -68,7 +68,7 @@ class EnumsTest {
     public void testParameter() {
         Type type = Type.OVERDRAFT;
 
-        Type actual = enums.parameter(type);
+        Type actual = useEnum.parameter(type);
 
         assertEquals(type, actual);
     }

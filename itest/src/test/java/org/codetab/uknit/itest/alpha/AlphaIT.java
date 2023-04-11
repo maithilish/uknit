@@ -35,7 +35,8 @@ class AlphaIT extends ITBase {
 
         configure();
 
-        clearConfig("uknit.source.method");
+        clearConfig("uknit.source.filter");
+        clearConfig("uknit.output.filter");
 
         // addTransientConfig("uknit.source.method",
         // "testIfPlusIfFooIfCanSwimElseDone");

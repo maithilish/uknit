@@ -11,11 +11,16 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.patch.Patcher;
+import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
+import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -34,6 +39,11 @@ class InitialzerFinder {
     private Packs packs;
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private Patcher patcher;
+    // PKGBREAKER - cross access
+    @Inject
+    private LinkedPack linkedPack;
 
     public Optional<Pack> findInitializerPack(final Pack pack,
             final Heap heap) {
@@ -91,8 +101,10 @@ class InitialzerFinder {
         }
 
         // by default, the pack's exp is initializer
-        Expression exp = packO.get().getExp();
-        if (isNull(exp)) {
+        Expression exp = null;
+        if (packO.get().hasExp()) {
+            exp = packO.get().getExp();
+        } else {
             return Optional.empty();
         }
         /**
@@ -150,6 +162,43 @@ class InitialzerFinder {
             }
         }
 
+        /**
+         * ArrayAccess is not allowed as initializer, instead get iniPack
+         * returned by array name.<code>
+         *  int[] array = { 10 };
+         *  int foo = array[0];
+         *  </code> for int foo the initializer is 10 i.e. first item in
+         * ArrayInitializer. Ref itest:
+         * initializer.Stepin.accessArrayInitializer()
+         */
+        if (exp.equals(packO.get().getExp())
+                && nodes.is(exp, ArrayAccess.class)) {
+            ArrayAccess aa =
+                    (ArrayAccess) patcher.copyAndPatch(packO.get(), heap);
+            String arrayName = nodes.getName(aa.getArray());
+            Optional<Pack> aPackO =
+                    packs.findByVarName(arrayName, heap.getPacks());
+            if (aPackO.isPresent()) {
+                List<Pack> linkedPacks =
+                        linkedPack.getLinkedVarPacks(aPackO.get(), heap);
+                for (Pack linkPack : linkedPacks) {
+                    if (linkPack.hasExp() && nodes.is(linkPack.getExp(),
+                            ArrayInitializer.class, ArrayCreation.class)) {
+                        aPackO = Optional.of(linkPack);
+                    }
+                }
+
+                /*
+                 * Only elements in the ArrayInitializer can be initializer but
+                 * not ArrayCreation. Ex: Allowed int[] array = { 10 }, not
+                 * allowed int[] array = new int[10]; Ref itest:
+                 * initializer.Stepin.accessArrayCreation()
+                 */
+                if (aPackO.get().hasExp()) {
+                    exp = aPackO.get().getExp();
+                }
+            }
+        }
         return Optional.ofNullable(exp);
     }
 }

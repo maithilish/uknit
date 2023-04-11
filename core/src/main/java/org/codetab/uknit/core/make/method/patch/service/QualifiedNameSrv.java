@@ -46,7 +46,7 @@ public class QualifiedNameSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof QualifiedName);
         checkState(copy instanceof QualifiedName);
 
@@ -58,13 +58,13 @@ public class QualifiedNameSrv implements PatchService {
         int index = 0;
         Expression qualifier = wrappers.unpack(qn.getQualifier());
         Expression qualifierCopy = wrappers.unpack(qnCopy.getQualifier());
-        patchers.patchExpWithName(qualifier, qualifierCopy, patches, index,
-                n -> qnCopy.setQualifier((Name) n));
+        patchers.patchExpWithPackPatches(qualifier, qualifierCopy, patches,
+                index, n -> qnCopy.setQualifier((Name) n));
 
         index = 1;
         Expression name = wrappers.unpack(qn.getName());
         Expression nameCopy = wrappers.unpack(qnCopy.getName());
-        patchers.patchExpWithName(name, nameCopy, patches, index,
+        patchers.patchExpWithPackPatches(name, nameCopy, patches, index,
                 n -> qnCopy.setName((SimpleName) n));
     }
 

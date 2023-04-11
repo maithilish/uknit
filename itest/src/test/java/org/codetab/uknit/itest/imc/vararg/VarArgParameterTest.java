@@ -22,9 +22,9 @@ class VarArgParameterTest {
     @Test
     public void testNoArgForVarArgParam() {
         List<String> names = new ArrayList<>();
-        String grape = "Foo";
+        String orange = "Foo";
         String apple = null;
-        names.add(grape);
+        names.add(orange);
 
         String actual = varArgParameter.noArgForVarArgParam(names);
 
@@ -34,9 +34,9 @@ class VarArgParameterTest {
     @Test
     public void testSingleArgForVarArgParam() {
         List<String> names = new ArrayList<>();
-        String grape = "Foo";
-        String apple = grape;
-        names.add(grape);
+        String orange = "Foo";
+        String apple = orange;
+        names.add(orange);
 
         String actual = varArgParameter.singleArgForVarArgParam(names);
 
@@ -46,9 +46,9 @@ class VarArgParameterTest {
     @Test
     public void testMultiArgForVarArgParam() {
         List<String> names = new ArrayList<>();
-        String grape = "Foo";
-        String apple = grape;
-        names.add(grape);
+        String orange = "Foo";
+        String apple = orange;
+        names.add(orange);
 
         String actual = varArgParameter.multiArgForVarArgParam(names);
 

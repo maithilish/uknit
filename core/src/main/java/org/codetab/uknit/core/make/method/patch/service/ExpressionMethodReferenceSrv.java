@@ -22,7 +22,7 @@ public class ExpressionMethodReferenceSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ExpressionMethodReference);
         checkState(copy instanceof ExpressionMethodReference);
         if (pack.getPatches().size() > 0) {

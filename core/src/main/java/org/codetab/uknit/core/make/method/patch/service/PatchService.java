@@ -43,8 +43,9 @@ public interface PatchService {
      * @param pack
      * @param node
      * @param copy
+     * @param heap
      */
-    void patchName(Pack pack, Expression node, Expression copy);
+    void patchName(Pack pack, Expression node, Expression copy, Heap heap);
 
     /**
      * An expression may contain other expressions. Returns list of such

@@ -41,7 +41,7 @@ public class ThisExpressionSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ThisExpression);
         checkState(copy instanceof ThisExpression);
 
@@ -53,8 +53,8 @@ public class ThisExpressionSrv implements PatchService {
         int index = 0;
         Expression qualifer = wrappers.unpack(te.getQualifier());
         Expression qualifierCopy = wrappers.unpack(teCopy.getQualifier());
-        patchers.patchExpWithName(qualifer, qualifierCopy, patches, index,
-                n -> teCopy.setQualifier((Name) n));
+        patchers.patchExpWithPackPatches(qualifer, qualifierCopy, patches,
+                index, n -> teCopy.setQualifier((Name) n));
     }
 
     @Override

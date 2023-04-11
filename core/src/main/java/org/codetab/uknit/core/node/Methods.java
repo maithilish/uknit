@@ -10,10 +10,10 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.make.model.Heap;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -230,47 +230,6 @@ public class Methods {
         return wrappers.strip(args);
     }
 
-    public boolean isInvokable(final Expression exp) {
-        boolean invokable = false;
-        if (nodes.is(exp, MethodInvocation.class)) {
-            invokable = true;
-        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
-            invokable = true;
-        }
-        return invokable;
-    }
-
-    /**
-     * Get {@link SimpleName} named expression and arguments of
-     * {@link MethodInvocation}
-     * @param mi
-     * @return list
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getNames(final MethodInvocation mi) {
-        List<String> names = new ArrayList<>();
-        Expression exp = wrappers.strip(mi.getExpression());
-        if (nonNull(exp) && nodes.is(exp, SimpleName.class)) {
-            names.add(nodes.getName(exp));
-        }
-        List<Expression> args = wrappers.strip(mi.arguments());
-        for (Expression arg : args) {
-            if (nodes.is(arg, SimpleName.class)) {
-                names.add(nodes.getName(arg));
-            }
-            if (nodes.is(arg, InfixExpression.class)) {
-                InfixExpression infix = nodes.as(arg, InfixExpression.class);
-                List<Expression> exps = new ArrayList<>();
-                exps.add(infix.getLeftOperand());
-                exps.add(infix.getRightOperand());
-                exps.addAll(infix.extendedOperands());
-                exps.stream().filter(e -> nodes.is(e, SimpleName.class))
-                        .forEach(e -> names.add(nodes.getName(e)));
-            }
-        }
-        return names;
-    }
-
     public boolean returnsVoid(final MethodDeclaration methodDecl) {
         Type returnType = methodDecl.getReturnType2();
         if (isNull(returnType)) {
@@ -336,6 +295,20 @@ public class Methods {
             }
         }
         return internalCall;
+    }
+
+    public boolean isInternalCall(final Expression parent, final Heap heap) {
+        boolean isInternal = false;
+        if (nodes.is(parent, MethodInvocation.class,
+                SuperMethodInvocation.class)) {
+            Optional<Expression> callExp = Optional.empty();
+            if (nodes.is(parent, MethodInvocation.class)) {
+                callExp = Optional.ofNullable(
+                        ((MethodInvocation) parent).getExpression());
+            }
+            isInternal = isInternalCall(parent, callExp, heap.getMut());
+        }
+        return isInternal;
     }
 
     /**

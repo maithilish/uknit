@@ -61,4 +61,13 @@ interface Model {
         }
     }
 
+    interface Foo {
+
+        void append(String name);
+
+        String format(String name, String dept);
+
+        void append(String name, String dept);
+    }
+
 }

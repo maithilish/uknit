@@ -41,7 +41,7 @@ public class ClassInstanceCreationSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ClassInstanceCreation);
         checkState(copy instanceof ClassInstanceCreation);
 
@@ -53,7 +53,8 @@ public class ClassInstanceCreationSrv implements PatchService {
         int offset = 0;
         List<Expression> args = arguments.getArgs(cic);
         List<Expression> argsCopy = arguments.getArgs(cicCopy);
-        patchers.patchExpsWithName(args, argsCopy, patches, offset);
+        patchers.patchExpsWithPackPatches(args, argsCopy, patches, offset,
+                heap);
     }
 
     @Override

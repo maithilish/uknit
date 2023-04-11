@@ -11,11 +11,13 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.Name;
 
 /**
  * Methods to get packs are linked in some way.
@@ -86,6 +88,43 @@ public class LinkedPack {
             }
         }
         return linkedPacks;
+    }
+
+    /**
+     * Reverse traverse linked packs and return the first initializer found else
+     * empty. If initializer is var name then find and return initializer of the
+     * var.
+     *
+     * @param pack
+     * @param heap
+     * @return
+     */
+    public Optional<Initializer> getLinkedInitializer(final Pack pack,
+            final Heap heap) {
+        List<Pack> linkedPacks = getLinkedVarPacks(pack, heap);
+        for (int i = linkedPacks.size() - 1; i >= 0; i--) {
+            Pack linkedPack = linkedPacks.get(i);
+            Optional<Initializer> initializer =
+                    linkedPack.getVar().getInitializer();
+            if (initializer.isPresent()) {
+                /*
+                 * if ini is name then get the var and returns its ini. Ex:
+                 * P2[var=apple, exp=array[0], ini=a] P1[var=a, ini="foo"] then
+                 * ini of apple is foo.
+                 */
+                if (initializer.get().getInitializer() instanceof Name) {
+                    String name = nodes.getName(
+                            (Expression) initializer.get().getInitializer());
+                    Optional<Pack> targetVar =
+                            packs.findByVarName(name, heap.getPacks());
+                    if (targetVar.isPresent() && targetVar.get().hasVar()) {
+                        return targetVar.get().getVar().getInitializer();
+                    }
+                }
+                return initializer;
+            }
+        }
+        return Optional.empty();
     }
 
 }

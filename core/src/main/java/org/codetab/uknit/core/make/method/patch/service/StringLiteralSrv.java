@@ -22,7 +22,7 @@ public class StringLiteralSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof StringLiteral);
         checkState(copy instanceof StringLiteral);
         if (pack.getPatches().size() > 0) {

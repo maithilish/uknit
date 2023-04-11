@@ -20,6 +20,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Patch.Kind;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -33,6 +34,8 @@ public class Patcher {
     private Nodes nodes;
     @Inject
     private ModelFactory modelFactory;
+    @Inject
+    private Wrappers wrappers;
 
     private Map<Expression, IVar> patches;
 
@@ -68,9 +71,24 @@ public class Patcher {
         patchService.patch(pack, node, copy, heap);
 
         // apply rename patches
-        if (!pack.getPatches().isEmpty()) {
-            patchService.patchName(pack, node, copy);
-        }
+        // if (!pack.getPatches().isEmpty()) {
+        // patchService.patchName(pack, node, copy, heap);
+        // }
+        patchService.patchName(pack, node, copy, heap);
+
+        return copy;
+    }
+
+    public Expression copyAndPatchNames(final Pack pack, final Heap heap) {
+        checkNotNull(pack.getExp());
+
+        Expression node = pack.getExp();
+        Expression copy = (Expression) ASTNode
+                .copySubtree(pack.getExp().getAST(), pack.getExp());
+
+        // apply invoke patch
+        PatchService patchService = serviceLoader.loadService(pack.getExp());
+        patchService.patchName(pack, node, copy, heap);
 
         return copy;
     }
@@ -173,11 +191,12 @@ public class Patcher {
         if (renamedPack.isInCtlPath() != pack.isInCtlPath()) {
             return;
         }
+
         Expression exp = pack.getExp();
         PatchService patchService = serviceLoader.loadService(exp);
         List<Expression> exps = patchService.getExps(exp);
         for (int i = 0; i < exps.size(); i++) {
-            Expression expression = exps.get(i);
+            Expression expression = wrappers.unpack(exps.get(i));
             String definedName = renamedVar.getDefinedName();
             String oldName = renamedVar.getOldName();
             if (nodes.isName(expression)) {

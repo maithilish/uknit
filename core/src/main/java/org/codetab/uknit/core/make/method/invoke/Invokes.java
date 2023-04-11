@@ -12,13 +12,10 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.node.Expressions;
-import org.codetab.uknit.core.node.Methods;
 import org.eclipse.jdt.core.dom.Expression;
 
 public class Invokes {
 
-    @Inject
-    private Methods methods;
     @Inject
     private Vars vars;
     @Inject
@@ -33,7 +30,7 @@ public class Invokes {
      */
     public void setCallVar(final Invoke invoke, final Heap heap) {
 
-        checkState(methods.isInvokable(invoke.getExp()));
+        checkState(expressions.isInvokable(invoke.getExp()));
 
         /*
          * Find callVar of invoke. It is empty for all types of IMC - with

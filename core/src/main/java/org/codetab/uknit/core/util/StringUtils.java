@@ -30,8 +30,13 @@ public class StringUtils {
         return sb.toString();
     }
 
-    public static String spaceit(final String... parts) {
-        return String.join(" ", parts);
+    // REVIEW - remove redundant toString in references
+    public static String spaceit(final Object... parts) {
+        String[] strings = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            strings[i] = parts[i].toString();
+        }
+        return String.join(" ", strings);
     }
 
     public static String lineit(final String... parts) {

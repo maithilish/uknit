@@ -1,11 +1,14 @@
 package org.codetab.uknit.itest.invoke;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
+import org.codetab.uknit.itest.invoke.Model.Foo;
 import org.codetab.uknit.itest.invoke.Model.Statics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -124,5 +127,37 @@ class CallStaticTest {
         int actual = callStatic.returnStaticInArg(path);
 
         assertEquals(orange, actual);
+    }
+
+    @Test
+    public void testStaticCallArgReassign() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean a = true;
+        boolean a2 = false;
+        callStatic.staticCallArgReassign(foo);
+
+        verify(foo).append(String.valueOf(a));
+        verify(foo).append(String.valueOf(a2));
+    }
+
+    @Test
+    public void testStaticCallArgLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        callStatic.staticCallArgLiteral(foo);
+
+        verify(foo).append(String.valueOf(true));
+        verify(foo).append(String.valueOf(false));
+    }
+
+    @Test
+    public void testStaticCallArgInvoke() {
+        Foo foo = Mockito.mock(Foo.class);
+        File file = Mockito.mock(File.class);
+        boolean apple = true;
+
+        when(file.canExecute()).thenReturn(apple);
+        callStatic.staticCallArgInvoke(foo, file);
+
+        verify(foo).append(String.valueOf(apple));
     }
 }

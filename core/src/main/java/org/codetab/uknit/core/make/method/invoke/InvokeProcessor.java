@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
-import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Expressions;
 
 public class InvokeProcessor {
 
@@ -17,7 +17,7 @@ public class InvokeProcessor {
     @Inject
     private Invokes invokes;
     @Inject
-    private Methods methods;
+    private Expressions expressions;
 
     /**
      * Set invoke call var. The MI expression is the call var and it is known
@@ -31,7 +31,7 @@ public class InvokeProcessor {
     public void process(final Heap heap) {
 
         List<Invoke> invokeList = packs.filterInvokes(heap.getPacks()).stream()
-                .filter(i -> methods.isInvokable(i.getExp()))
+                .filter(i -> expressions.isInvokable(i.getExp()))
                 .collect(Collectors.toList());
 
         for (Invoke invoke : invokeList) {

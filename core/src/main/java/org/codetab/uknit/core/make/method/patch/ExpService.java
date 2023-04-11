@@ -14,7 +14,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
 
 /**
- * Get exps of an exp.
+ * Service to access exps of an exp.
  *
  * REVIEW Z - move this and srv.getExps() to method package as visit package
  * uses this. May be cached for performance.

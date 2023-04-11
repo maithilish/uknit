@@ -37,7 +37,7 @@ class ForEachMapsInternalTest {
         when(collectorHolder.getTimers()).thenReturn(collector2);
         forEachMapsInternal.collect(holder);
 
-        verify(meter).collect(meter2);
-        verify(timer).collect(timer2);
+        verify(meter).collect(map.get(key));
+        verify(timer).collect(map2.get(key2));
     }
 }

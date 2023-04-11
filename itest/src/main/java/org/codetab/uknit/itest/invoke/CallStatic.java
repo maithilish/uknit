@@ -1,8 +1,10 @@
 package org.codetab.uknit.itest.invoke;
 
+import java.io.File;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
+import org.codetab.uknit.itest.invoke.Model.Foo;
 import org.codetab.uknit.itest.invoke.Model.Statics;
 
 class CallStatic {
@@ -54,5 +56,21 @@ class CallStatic {
     public int returnStaticInArg(final Path path) {
         return path.compareTo(
                 Path.of(Statics.getName(Statics.getFile().getAbsolutePath())));
+    }
+
+    public void staticCallArgReassign(final Foo foo) {
+        boolean a = true;
+        foo.append(String.valueOf(a));
+        a = false;
+        foo.append(String.valueOf(a));
+    }
+
+    public void staticCallArgLiteral(final Foo foo) {
+        foo.append(String.valueOf(true));
+        foo.append(String.valueOf(false));
+    }
+
+    public void staticCallArgInvoke(final Foo foo, final File file) {
+        foo.append(String.valueOf(file.canExecute()));
     }
 }

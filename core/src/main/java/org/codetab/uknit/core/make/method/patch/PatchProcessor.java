@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 
 public class PatchProcessor {
 
@@ -90,8 +91,13 @@ public class PatchProcessor {
                  * renamed var for it also.
                  */
                 for (Pack pack : scopeList) {
+                    // REVIEW - why patch is required for array access but not
+                    // for inline varargs array access
+                    if (!(pack.getExp() instanceof ArrayAccess)) {
+                    }
                     patcher.addVarRenamePatch(renamedPack, pack,
                             renamedPack.getVar(), heap);
+
                 }
             }
         }

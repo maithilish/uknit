@@ -40,8 +40,9 @@ public class Invoke extends Pack {
     @Inject
     public Invoke(@Assisted final int id, @Assisted @Nullable final IVar var,
             @Assisted @Nullable final Expression exp,
-            @Assisted final boolean inCtlPath) {
-        super(id, var, exp, inCtlPath);
+            @Assisted("inCtlPath") final boolean inCtlPath,
+            @Assisted("im") final boolean im) {
+        super(id, var, exp, inCtlPath, im);
 
         if (nonNull(exp)) {
             checkExpState(exp);

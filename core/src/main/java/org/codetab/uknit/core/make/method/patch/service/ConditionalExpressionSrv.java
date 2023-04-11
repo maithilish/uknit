@@ -50,7 +50,7 @@ public class ConditionalExpressionSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ConditionalExpression);
         checkState(copy instanceof ConditionalExpression);
 
@@ -63,20 +63,20 @@ public class ConditionalExpressionSrv implements PatchService {
         Expression exp = wrappers.unpack(ce.getExpression());
         Expression expCopy = wrappers.unpack(ceCopy.getExpression());
 
-        patchers.patchExpWithName(exp, expCopy, patches, expIndex,
+        patchers.patchExpWithPackPatches(exp, expCopy, patches, expIndex,
                 ceCopy::setExpression);
 
         final int thenIndex = 1;
         Expression thenExp = wrappers.unpack(ce.getThenExpression());
         Expression thenExpCopy = wrappers.unpack(ceCopy.getThenExpression());
-        patchers.patchExpWithName(thenExp, thenExpCopy, patches, thenIndex,
-                ceCopy::setThenExpression);
+        patchers.patchExpWithPackPatches(thenExp, thenExpCopy, patches,
+                thenIndex, ceCopy::setThenExpression);
 
         final int elseIndex = 3;
         Expression elseExp = wrappers.unpack(ce.getElseExpression());
         Expression elseExpCopy = wrappers.unpack(ceCopy.getElseExpression());
-        patchers.patchExpWithName(elseExp, elseExpCopy, patches, elseIndex,
-                ceCopy::setElseExpression);
+        patchers.patchExpWithPackPatches(elseExp, elseExpCopy, patches,
+                elseIndex, ceCopy::setElseExpression);
 
     }
 

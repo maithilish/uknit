@@ -59,7 +59,7 @@ public class CastExpressionSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof CastExpression);
         checkState(copy instanceof CastExpression);
 
@@ -67,11 +67,13 @@ public class CastExpressionSrv implements PatchService {
 
         final List<Patch> patches = pack.getPatches();
 
-        IVar expVar = patches.get(0).getVar();
+        if (!patches.isEmpty()) {
+            IVar expVar = patches.get(0).getVar();
 
-        if (nonNull(expVar)) {
-            Name name = node.getAST().newName(expVar.getName());
-            ceCopy.setExpression(name);
+            if (nonNull(expVar)) {
+                Name name = node.getAST().newName(expVar.getName());
+                ceCopy.setExpression(name);
+            }
         }
     }
 

@@ -22,7 +22,7 @@ public class BooleanLiteralSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof BooleanLiteral);
         checkState(copy instanceof BooleanLiteral);
         if (pack.getPatches().size() > 0) {

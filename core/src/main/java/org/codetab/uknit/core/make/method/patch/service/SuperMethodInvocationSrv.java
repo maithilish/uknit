@@ -47,7 +47,7 @@ public class SuperMethodInvocationSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof SuperMethodInvocation);
         checkState(copy instanceof SuperMethodInvocation);
 
@@ -59,13 +59,14 @@ public class SuperMethodInvocationSrv implements PatchService {
         int index = 0;
         Expression exp = wrappers.unpack(smi.getName());
         Expression expCopy = wrappers.unpack(smiCopy.getName());
-        patchers.patchExpWithName(exp, expCopy, patches, index,
+        patchers.patchExpWithPackPatches(exp, expCopy, patches, index,
                 (name) -> smiCopy.setName((SimpleName) name));
 
         int offset = 1;
         List<Expression> args = arguments.getArgs(smi);
         List<Expression> argsCopy = arguments.getArgs(smiCopy);
-        patchers.patchExpsWithName(args, argsCopy, patches, offset);
+        patchers.patchExpsWithPackPatches(args, argsCopy, patches, offset,
+                heap);
     }
 
     @Override

@@ -464,6 +464,21 @@ public class Packs {
                         .equals(initializer))
                 .findAny();
     }
+
+    // Optional access method
+
+    public boolean hasVar(final Optional<Pack> pack) {
+        return pack.isPresent() && pack.get().hasVar();
+    }
+
+    public IVar getVar(final Optional<Pack> pack) {
+        if (pack.isPresent()) {
+            return pack.get().getVar();
+        } else {
+            return null;
+        }
+    }
+
 }
 
 @Singleton

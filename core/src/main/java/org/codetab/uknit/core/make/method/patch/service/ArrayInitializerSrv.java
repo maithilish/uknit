@@ -41,7 +41,7 @@ public class ArrayInitializerSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ArrayInitializer);
         checkState(copy instanceof ArrayInitializer);
 
@@ -53,7 +53,8 @@ public class ArrayInitializerSrv implements PatchService {
         List<Expression> exps = arguments.getExps(ai);
         List<Expression> expsCopy = arguments.getExps(aiCopy);
         int offset = 0;
-        patchers.patchExpsWithName(exps, expsCopy, patches, offset);
+        patchers.patchExpsWithPackPatches(exps, expsCopy, patches, offset,
+                heap);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class ArrayCreationSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ArrayCreation);
         checkState(copy instanceof ArrayCreation);
 
@@ -64,7 +64,8 @@ public class ArrayCreationSrv implements PatchService {
         int offset = 0;
         List<Expression> dims = arguments.getDims(ac);
         List<Expression> dimsCopy = arguments.getDims(acCopy);
-        patchers.patchExpsWithName(dims, dimsCopy, patches, offset);
+        patchers.patchExpsWithPackPatches(dims, dimsCopy, patches, offset,
+                heap);
 
         // patch initializer exps
         offset = dims.size();
@@ -72,7 +73,9 @@ public class ArrayCreationSrv implements PatchService {
             List<Expression> inExps = arguments.getExps(ac.getInitializer());
             List<Expression> inExpsCopy =
                     arguments.getExps(acCopy.getInitializer());
-            patchers.patchExpsWithName(inExps, inExpsCopy, patches, offset);
+            patchers.patchExpsWithPackPatches(inExps, inExpsCopy, patches,
+                    offset, heap);
+            ;
         }
     }
 

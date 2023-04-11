@@ -39,7 +39,7 @@ public class ParenthesizedExpressionSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ParenthesizedExpression);
         checkState(copy instanceof ParenthesizedExpression);
 
@@ -51,7 +51,7 @@ public class ParenthesizedExpressionSrv implements PatchService {
         int index = 0;
         Expression exp = wrappers.unpack(ce.getExpression());
         Expression expCopy = wrappers.unpack(ceCopy.getExpression());
-        patchers.patchExpWithName(exp, expCopy, patches, index,
+        patchers.patchExpWithPackPatches(exp, expCopy, patches, index,
                 ceCopy::setExpression);
     }
 

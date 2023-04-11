@@ -14,7 +14,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Nature;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.node.Wrappers;
@@ -33,7 +33,7 @@ public class Offlimits {
     @Inject
     private Packs packs;
     @Inject
-    private Methods methods;
+    private Expressions expressions;
     @Inject
     private Wrappers wrappers;
     @Inject
@@ -108,7 +108,7 @@ public class Offlimits {
                     offlimit = false;
                 }
             }
-        } else if (methods.isInvokable(cleanedExp)) {
+        } else if (expressions.isInvokable(cleanedExp)) {
             /*
              * Ex: FileInputStream bar = ((FileInputStream) ((foo.obj()))); the
              * inner mi is processed by the above block. If the infer var is

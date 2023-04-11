@@ -258,7 +258,7 @@ public class Loaders {
                         loadVars.getTypeArg(collectionVar.getType(), argIndex);
                 IVar loadVar =
                         loadVars.createLoadVarForLiteral(arg1, arg1Type, heap);
-                Pack pack = loadVars.createLoadPack(arg1, loadVar);
+                Pack pack = loadVars.createLoadPack(arg1, loadVar, heap.isIm());
                 heap.addPack(pack);
                 return loadVar;
             }

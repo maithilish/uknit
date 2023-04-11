@@ -55,8 +55,8 @@ public class Loader {
      * @param imc
      */
     public void collectEnhancedFor(final EnhancedForStatement node,
-            final boolean imc) {
-        node.setProperty("codetab.inImc", imc);
+            final Heap heap) {
+        node.setProperty("codetab.inImc", heap.isIm());
         enForNodes.add(node);
     }
 

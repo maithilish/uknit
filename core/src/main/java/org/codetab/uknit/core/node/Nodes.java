@@ -25,6 +25,9 @@ public class Nodes {
      * Ex: if node SimpleName and clz is SimpleName then return true else if clz
      * Name or QualifedName then returns false.
      *
+     * Superclass is not considered. If clz is Name then for SimpleName false is
+     * returned.
+     *
      * @param node
      * @param clz
      * @return

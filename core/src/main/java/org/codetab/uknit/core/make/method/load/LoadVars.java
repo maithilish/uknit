@@ -84,11 +84,13 @@ public class LoadVars {
      * @param var
      * @return
      */
-    public Pack createLoadPack(final Expression exp, final IVar var) {
+    public Pack createLoadPack(final Expression exp, final IVar var,
+            final boolean isIm) {
 
         checkNotNull(exp);
         checkNotNull(var);
-        Pack pack = modelFactory.createPack(packs.getId(), var, exp, false);
+        Pack pack =
+                modelFactory.createPack(packs.getId(), var, exp, false, isIm);
         return pack;
     }
 

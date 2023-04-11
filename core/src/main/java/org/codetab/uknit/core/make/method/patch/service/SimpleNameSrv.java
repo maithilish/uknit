@@ -21,12 +21,13 @@ public class SimpleNameSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof SimpleName);
-        checkState(pack.getPatches().size() > 0);
 
-        Patch patch = pack.getPatches().get(0);
-        ((SimpleName) copy).setIdentifier(patch.getVar().getName());
+        if (!pack.getPatches().isEmpty()) {
+            Patch patch = pack.getPatches().get(0);
+            ((SimpleName) copy).setIdentifier(patch.getVar().getName());
+        }
     }
 
     @Override

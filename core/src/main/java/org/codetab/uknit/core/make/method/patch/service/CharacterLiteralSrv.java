@@ -22,7 +22,7 @@ public class CharacterLiteralSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof CharacterLiteral);
         checkState(copy instanceof CharacterLiteral);
         if (pack.getPatches().size() > 0) {

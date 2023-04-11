@@ -10,13 +10,16 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.method.patch.ServiceLoader;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
 
@@ -30,6 +33,10 @@ public class Patchers {
     private Packs packs;
     @Inject
     private Methods methods;
+    @Inject
+    private Nodes nodes;
+    @Inject
+    private Patcher patcher;
 
     /**
      * Patch invokes in an expression.
@@ -43,16 +50,19 @@ public class Patchers {
     public void patchExpWithName(final Pack pack, final Expression node,
             final Expression copy, final Heap heap,
             final Consumer<Expression> consumer) {
-        // exp such as MI.getExpression() may be null
+
+        // exp returned by MI.getExpression() may be null
         if (isNull(node)) {
             return;
         }
 
         Optional<Pack> patchPackO =
                 packs.findPatchPack(pack, node, heap.getPacks());
+
+        boolean recursivePatch = false;
         if (patchPackO.isPresent()) {
-            IVar var = patchPackO.get().getVar();
-            if (nonNull(var)) {
+            if (packs.hasVar(patchPackO)) {
+                IVar var = packs.getVar(patchPackO);
                 /*
                  * Ex: {foo.name()} the ArrayInitializer has MI exp foo.name()
                  * which is inferred to var apple and patch it as {apple}.
@@ -61,11 +71,16 @@ public class Patchers {
                  * Ex: path.compareTo(Path.of(Statics.getName("foo")));
                  * Statics.getName() is not patched.
                  */
-                if (!methods.isStaticCall(node)) {
+                if (methods.isStaticCall(node)) {
+                    recursivePatch = true;
+                } else {
                     Name name = node.getAST().newName(var.getName());
                     consumer.accept(name);
                 }
             } else {
+                recursivePatch = true;
+            }
+            if (recursivePatch) {
                 /*
                  * Ex: {new Foo(bar.name())}; the ArrayInitializer has
                  * ClassInstanceCreation exp new Foo(...) which is not inferred
@@ -80,7 +95,6 @@ public class Patchers {
                 patchService.patch(pack, node, copy, heap);
             }
         }
-
         /*
          * Get IM patch from patches map and apply. Ex: x = internal().get();
          * patch internal() to its return var name.
@@ -129,11 +143,11 @@ public class Patchers {
      * @param index
      * @param consumer
      */
-    public void patchExpWithName(final Expression node, final Expression copy,
-            final List<Patch> patches, final int index,
+    public void patchExpWithPackPatches(final Expression node,
+            final Expression copy, final List<Patch> patches, final int index,
             final Consumer<Expression> consumer) {
         // exp such as MI.getExpression() may be null
-        if (isNull(node)) {
+        if (isNull(node) || patches.isEmpty()) {
             return;
         }
         Optional<Patch> patchO =
@@ -157,18 +171,35 @@ public class Patchers {
      * @param patches
      * @param offset
      */
-    public void patchExpsWithName(final List<Expression> exps,
+    public void patchExpsWithPackPatches(final List<Expression> exps,
             final List<Expression> expsCopy, final List<Patch> patches,
-            final int offset) {
+            final int offset, final Heap heap) {
         for (int i = 0; i < exps.size(); i++) {
             final int expIndex = i;
             Expression exp = wrappers.unpack(exps.get(expIndex));
             Expression expCopy = wrappers.unpack(expsCopy.get(expIndex));
             final int index = i + offset;
-            patchExpWithName(exp, expCopy, patches, index, (name) -> {
-                expsCopy.remove(expIndex);
-                expsCopy.add(expIndex, name);
-            });
+            if (patches.isEmpty()) {
+                // no patches at pack level, try to patch exp level patches
+                Optional<Pack> expPack = packs.findByExp(exp, heap.getPacks());
+                if (expPack.isPresent()
+                        && !expPack.get().getPatches().isEmpty()) {
+                    // REVIEW - why aa excluded
+                    if (!(exp instanceof ArrayAccess)) {
+                        Expression e =
+                                patcher.copyAndPatchNames(expPack.get(), heap);
+                        expsCopy.remove(expIndex);
+                        expsCopy.add(expIndex, e);
+                    }
+                }
+            } else if (nodes.isName(exp)) {
+                patchExpWithPackPatches(exp, expCopy, patches, index,
+                        (name) -> {
+                            expsCopy.remove(expIndex);
+                            expsCopy.add(expIndex, name);
+                        });
+            }
         }
+
     }
 }

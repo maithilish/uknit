@@ -22,7 +22,7 @@ public class NullLiteralSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof NullLiteral);
         checkState(copy instanceof NullLiteral);
         if (pack.getPatches().size() > 0) {

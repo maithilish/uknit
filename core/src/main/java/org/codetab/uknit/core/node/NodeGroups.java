@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
@@ -81,9 +82,10 @@ public class NodeGroups {
             SuperMethodInvocation.class, ArrayCreation.class, ArrayAccess.class,
             ArrayInitializer.class, InfixExpression.class,
             PostfixExpression.class, PrefixExpression.class,
-            ConditionalExpression.class, QualifiedName.class, FieldAccess.class,
-            BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
-            NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
+            InstanceofExpression.class, ConditionalExpression.class,
+            QualifiedName.class, FieldAccess.class, BooleanLiteral.class,
+            CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
+            StringLiteral.class, TypeLiteral.class);
 
     private List<Class<? extends Expression>> uninferableNodes = List
             .of(SimpleName.class, ThisExpression.class, LambdaExpression.class);

@@ -12,6 +12,7 @@ import org.codetab.uknit.core.make.model.Field;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.eclipse.jdt.core.dom.Expression;
 
@@ -19,6 +20,8 @@ public class InternalCalls {
 
     @Inject
     private Methods methods;
+    @Inject
+    private Expressions expressions;
     @Inject
     private MethodMakers methodMakers;
     @Inject
@@ -28,7 +31,7 @@ public class InternalCalls {
             final Heap heap) {
         List<Invoke> internalInvokes = new ArrayList<>();
         for (Invoke invoke : invokes) {
-            if (methods.isInvokable(invoke.getExp())) {
+            if (expressions.isInvokable(invoke.getExp())) {
                 Expression miOrSmiExp = invoke.getExp();
                 Optional<Expression> patchedCallExpO =
                         heap.getPatcher().copyAndPatchCallExp(invoke, heap);

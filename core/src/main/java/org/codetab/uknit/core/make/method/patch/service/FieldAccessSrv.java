@@ -45,7 +45,7 @@ public class FieldAccessSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof FieldAccess);
         checkState(copy instanceof FieldAccess);
 
@@ -57,13 +57,13 @@ public class FieldAccessSrv implements PatchService {
         int index = 0;
         Expression exp = wrappers.unpack(fa.getExpression());
         Expression expCopy = wrappers.unpack(faCopy.getExpression());
-        patchers.patchExpWithName(exp, expCopy, patches, index,
+        patchers.patchExpWithPackPatches(exp, expCopy, patches, index,
                 faCopy::setExpression);
 
         index = 1;
         Expression name = wrappers.unpack(fa.getName());
         Expression nameCopy = wrappers.unpack(faCopy.getName());
-        patchers.patchExpWithName(name, nameCopy, patches, index,
+        patchers.patchExpWithPackPatches(name, nameCopy, patches, index,
                 n -> faCopy.setName((SimpleName) n));
     }
 

@@ -22,7 +22,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Expressions;
 
 /**
  * Merges IM Heap on return of IM with Invoker Heap.
@@ -43,11 +43,13 @@ public class Merger {
     @Inject
     private Packs packs;
     @Inject
-    private Methods methods;
+    private Expressions expressions;
     @Inject
     private Invokes invokes;
 
     private ArgParams argParams;
+    private Varargs varargs;
+
     private InternalReturns internalReturns;
 
     public void merge(final Invoke invoke, final Heap heap,
@@ -73,11 +75,21 @@ public class Merger {
         // create modifiable list of vars to check name conflict
         List<IVar> callingMethodVars = new ArrayList<>(vars.getVars(heap));
 
+        varargs = di.instance(Varargs.class);
+
         /*
          * create missing inline vars for literals etc., in IMC args and reload
          * the calling method vars list.
          */
-        argParams.createVarsForInlineArgs(callingMethodVars);
+        if (varargs.hasVarargs(argParams.getParams())) {
+            argParams.createVarsForInlineArgs(callingMethodVars, true);
+            argParams.createVarsForInlineVarargs(callingMethodVars);
+        } else {
+            argParams.createVarsForInlineArgs(callingMethodVars, false);
+        }
+
+        varargs.init(argParams.getParams(), argParams.getArgs(),
+                callingMethodVars, internalHeap);
 
         callingMethodVars = new ArrayList<>(vars.getVars(heap));
 
@@ -120,6 +132,13 @@ public class Merger {
                      * by future calls togetIndexedVar()
                      */
                     callingMethodVars.add(internalVar);
+                }
+                /*
+                 * if IM has varargs and pack uses a varargs, then create
+                 * initializer for the used varargs.
+                 */
+                if (varargs.hasVarargs() && varargs.usesVarargs(iPack)) {
+                    varargs.createInitializerForVararg(iPack);
                 }
             } else {
                 /**
@@ -176,7 +195,7 @@ public class Merger {
         // process all invokes where callVar is not yet set
         List<Invoke> invokeList = packs.filterInvokes(heap.getPacks()).stream()
                 .filter(i -> i.getCallVar().isEmpty()
-                        && methods.isInvokable(i.getExp()))
+                        && expressions.isInvokable(i.getExp()))
                 .collect(Collectors.toList());
 
         for (Invoke invoke : invokeList) {

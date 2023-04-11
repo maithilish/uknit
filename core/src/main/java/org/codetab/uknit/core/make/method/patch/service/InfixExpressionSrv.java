@@ -56,7 +56,7 @@ public class InfixExpressionSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof InfixExpression);
         checkState(copy instanceof InfixExpression);
 
@@ -74,19 +74,20 @@ public class InfixExpressionSrv implements PatchService {
         int index = 0;
         Expression leftOper = wrappers.unpack(infix.getLeftOperand());
         Expression leftOperCopy = wrappers.unpack(infixCopy.getLeftOperand());
-        patchers.patchExpWithName(leftOper, leftOperCopy, patches, index,
+        patchers.patchExpWithPackPatches(leftOper, leftOperCopy, patches, index,
                 infixCopy::setLeftOperand);
 
         index = 1;
         Expression rightOper = wrappers.unpack(infix.getRightOperand());
         Expression rightOperCopy = wrappers.unpack(infixCopy.getRightOperand());
-        patchers.patchExpWithName(rightOper, rightOperCopy, patches, index,
-                infixCopy::setRightOperand);
+        patchers.patchExpWithPackPatches(rightOper, rightOperCopy, patches,
+                index, infixCopy::setRightOperand);
 
         int offset = 2;
         List<Expression> exOpers = arguments.getExtendedOperands(infix);
         List<Expression> exOpersCopy = arguments.getExtendedOperands(infixCopy);
-        patchers.patchExpsWithName(exOpers, exOpersCopy, patches, offset);
+        patchers.patchExpsWithPackPatches(exOpers, exOpersCopy, patches, offset,
+                heap);
     }
 
     @Override

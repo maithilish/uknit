@@ -44,7 +44,7 @@ public class ArrayAccessSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof ArrayAccess);
         checkState(copy instanceof ArrayAccess);
 
@@ -56,14 +56,14 @@ public class ArrayAccessSrv implements PatchService {
         int index = 0;
         Expression array = wrappers.unpack(aa.getArray());
         Expression arrayCopy = wrappers.unpack(aaCopy.getArray());
-        patchers.patchExpWithName(array, arrayCopy, patches, index,
+        patchers.patchExpWithPackPatches(array, arrayCopy, patches, index,
                 aaCopy::setArray);
 
         index = 1;
         Expression arrayIndex = wrappers.unpack(aa.getIndex());
         Expression arrayIndexCopy = wrappers.unpack(aaCopy.getIndex());
-        patchers.patchExpWithName(arrayIndex, arrayIndexCopy, patches, index,
-                aaCopy::setIndex);
+        patchers.patchExpWithPackPatches(arrayIndex, arrayIndexCopy, patches,
+                index, aaCopy::setIndex);
     }
 
     @Override

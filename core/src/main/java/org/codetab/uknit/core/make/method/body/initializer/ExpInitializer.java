@@ -17,11 +17,14 @@ import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Initializer.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.Arrays;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 
@@ -46,41 +49,83 @@ class ExpInitializer implements IInitializer {
     @Inject
     private Packs packs;
     @Inject
+    private Arrays arrays;
+    @Inject
     private ModelFactory modelFactory;
 
     @Override
     public Optional<Initializer> getInitializer(final Pack pack,
             final Pack iniPack, final Heap heap) {
-        if (allowedExps.isAllowed(wrappers.unpack(iniPack.getExp()), heap)) {
-            Expression patchedExp;
-            ASTNode parent = wrappers.stripAndGetParent(iniPack.getExp());
-            if (nodes.is(parent, CastExpression.class)) {
-                /*
-                 * Ex: int lid = (int) (person1.lid + person2.lid); here iniPack
-                 * is inner infix exp but initializer needs cast, so use parent
-                 * cast exp instead of infix as initializer exp.
-                 */
-                Optional<Pack> pPackO =
-                        packs.findByExp((Expression) parent, heap.getPacks());
-                if (pPackO.isPresent()) {
-                    patchedExp = patcher.copyAndPatch(pPackO.get(), heap);
-                } else {
-                    patchedExp = (Expression) parent;
-                }
-            } else {
-                patchedExp = patcher.copyAndPatch(iniPack, heap);
-            }
-            Initializer initializer =
-                    modelFactory.createInitializer(Kind.EXP, patchedExp);
 
-            LOG.debug("Var [name={}] {}", pack.getVar().getName(), initializer);
+        Optional<Initializer> initializer = Optional.empty();
 
-            return Optional.of(initializer);
-        } else {
-            return Optional.empty();
+        // iniPack exp is not allowed as initializer
+        if (!allowedExps.isAllowed(wrappers.unpack(iniPack.getExp()), heap)) {
+            return initializer;
         }
-    }
 
+        Expression patchedExp = null;
+        ASTNode parent = wrappers.stripAndGetParent(iniPack.getExp());
+        if (nodes.is(parent, CastExpression.class)) {
+            /*
+             * Ex: int lid = (int) (person1.lid + person2.lid); here iniPack is
+             * inner infix exp but initializer needs cast, so use parent cast
+             * exp instead of infix as initializer exp.
+             */
+            Optional<Pack> pPackO =
+                    packs.findByExp((Expression) parent, heap.getPacks());
+            if (pPackO.isPresent()) {
+                patchedExp = patcher.copyAndPatch(pPackO.get(), heap);
+            } else {
+                patchedExp = (Expression) parent;
+            }
+        } else if (nodes.is(iniPack.getExp(), ArrayInitializer.class)
+                && nodes.is(pack.getExp(), ArrayAccess.class)) {
+            /*
+             * ArrayAccess is not allowed as initializer, instead get value
+             * returned by array access.
+             */
+            ArrayAccess arrayAccess =
+                    (ArrayAccess) patcher.copyAndPatch(pack, heap);
+            ArrayInitializer arrayIni =
+                    (ArrayInitializer) patcher.copyAndPatch(iniPack, heap);
+
+            Optional<Expression> value =
+                    arrays.getValue(arrayAccess, arrayIni, heap);
+
+            if (value.isPresent() && allowedExps.isAllowed(value.get(), heap)) {
+                patchedExp = value.get();
+            }
+        } else if (nodes.is(iniPack.getExp(), ArrayCreation.class)
+                && nodes.is(pack.getExp(), ArrayAccess.class)) {
+            // REVIEW
+            /*
+             * ArrayCreations is not allowed as initializer, instead get value
+             * returned by array access if initializer is defined in creation.
+             */
+            ArrayAccess arrayAccess =
+                    (ArrayAccess) patcher.copyAndPatch(pack, heap);
+            ArrayCreation arrayCre =
+                    (ArrayCreation) patcher.copyAndPatch(iniPack, heap);
+
+            Optional<Expression> value =
+                    arrays.getValue(arrayAccess, arrayCre, heap);
+
+            if (value.isPresent() && allowedExps.isAllowed(value.get(), heap)) {
+                patchedExp = value.get();
+            }
+        } else {
+            patchedExp = patcher.copyAndPatch(iniPack, heap);
+        }
+        if (nonNull(patchedExp)) {
+            Initializer ini =
+                    modelFactory.createInitializer(Kind.EXP, patchedExp);
+            initializer = Optional.of(ini);
+            LOG.debug("Var [name={}] {}", pack.getVar().getName(), ini);
+        }
+
+        return initializer;
+    }
 }
 
 class AllowedExps {

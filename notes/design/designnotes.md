@@ -23,22 +23,38 @@ The visitor adds packs to the list held by the heap in the same order as the stm
 Filtering and search of pack is handled by the Packs, the helper class. 
 
 
-## IMC Flow
+## IMC Arg and Params
 
-Explain this
-
-  private Foo foo;
-
-    public void callMultiTimes() {
-        configure();
-        configure();
+    private void im(final Foo foo, final String city) {
+        foo.append(city);
     }
 
-    private void configure() {
-        foo.opt().check(false);
+No name conflict. In im() for param city the arg a and b are used.
+    
+    public void foo(final Foo foo) { //
+        String a = "foo";
+        String b = "bar";
+        im(foo, a);
+        im(foo, b);
+    }
+
+Name conflict. In im() for param city the arg a and a2 are used.
+
+    public void bar(final Foo foo) {
+        String a = "foo";
+        im(foo, a);
+        a = "bar";
+        im(foo, a);
+    }
+
+For inline args param name is used. The param city becomes city and city2.
+
+    public void baz(final Foo foo) {
+        im(foo, "foo");
+        im(foo, "bar");
     }
     
-IM the arg overrides the parameter. If arg and param name are named same then arg pack is retained and param pack is discarded in merge(). If name differs then again arg pack is retained and param pack var name is set to arg name so that var patch is created. On multicall new arg is created. See ArgParam.java
+IM the arg overrides the parameter. If arg and param are with same name then arg pack is retained and param pack is discarded in merge(). If name differs then again arg pack is retained and param pack var name is set to arg name so that var patch is created. On multicall new arg is created. For inline args such as StringLiteral the param name is used instead of infer names. See ArgParam.java
 
 ## Patch
 
@@ -82,15 +98,21 @@ Details are as below,
           Patch [kind=VAR, rename foo -> foo3]
        P7 [var=--, exp=foo.getOptions().setEnabled(false)]
        
-The IMC configure() is invoked twice and the packs are I0 and I4. When copyAndPatch() is called for P3, all the packs before are reverse traversed to find matching pack for its exp part foo.getOptions(). The matching pack is I2 and its var options is patched and copy of P3 exp becomes options.setEnabled(true).
+The IMC configure() is invoked twice and the packs are I0 and I4. When copyAndPatch() is called for P3, all the packs before are reverse traversed to find matching pack for its exp part foo.getOptions(). The matching pack is I2 and its var options is patched and P3 exp copy becomes options.setEnabled(true).
 
-Similarly, when copyAndPatch() is called for P7, all the packs before are reverse traversed to find first matching pack for its exp part foo.getOptions(). The matching pack is I6 and its var options is patched and copy of P7 exp becomes options2.setEnabled(true). Even though I2 also perfectly matches it is never considered as search terminates on the first match and I6 is used for patch. It is important to note that I2 and I6 are different packs and not equal but the exp of both I2 and I6 are one and the same instance as it comes from same MethodDeclaration node of single compilatation unit. In other words, both exp of I2 and I6 point to same instance of MI exp foo.options().
+Similarly, when copyAndPatch() is called for P7, all the packs before are reverse traversed to find first matching pack for its exp part foo.getOptions(). The matching pack is I6 and its var options is patched and copy of P7 exp becomes options2.setEnabled(true). Even though I2 also perfectly matches it is never considered as search terminates on the first match and I6 is used for patch. It is important to note that I2 and I6 are different packs and not equal but the exp of both I2 and I6 are the same as it comes from same MethodDeclaration node of single compilatation unit. In other words, both exp of I2 and I6 point to same instance of MI exp foo.options().
 
-The logic eliminates complexcities associated with patch maintainace, but it depends on ordering of pack and it is important that packs in the list are in same order as they appear in source.
+The logic eliminates complexities associated with patch maintainace, but it depends on ordering of pack and it is important that packs in the list are in same order as they appear in source.
+
+#### ArrayAccess
+
+Normally the pack denotes that exp returns a var. For example take Pack[var=apple, exp=foo.append(a), ini=Foo], here the MI returns apple which is initialized with literal Foo. For ArrayAccess (aa) it would be similar. Take Pack[var=apple, exp=array[0], ini=Foo], here array[0] returns apple which has initializer Foo. However, aa is not used in when and verify instead it is used to patch any aa exps in other exp by Invoke Patch logic. Ref itest: array.Access.java
 
 ### Var Rename Patch
 
-IM Arg and Parameter name may be same or differ. Pack level var rename patch is required whenever arg and param name differs.
+IM Arg and Parameter name may be same or differ.
+
+Var rename patch at pack level is created whenever arg and param name differs.
 
     public String sameAndDiffName(final Foo foo) {
         int index = 10;
@@ -114,7 +136,7 @@ IM Arg and Parameter name may be same or differ. Pack level var rename patch is 
 
 The arg var in calling method is patched to exps in IM. Above, in the first call imc(foo, index) the arg index is passed to IM but as param name is also index there is no patch for I3. However, in second IM call, P5, arg index2 is passed and all depended exps in IM should be patched to index2 and I6 has patch to replace index to index2 in exp foo.get(index).
 
-Var rename patch is also used whenever there is var name conflict.
+Var rename patch is also created whenever there is var name conflict.
 
     private Factory factory;
 
@@ -135,7 +157,7 @@ Var rename patch is also used whenever there is var name conflict.
           Patch [kind=VAR, rename foo -> foo2]
     I4 [var=otherFoo, exp=foo2]
 
-Above, calling method creates an instance of Foo and assign it var named foo. The IM also creates and assign another instance of Foo to var named foo within it scope. But when statements of IM is merged with calling method there is conflict as there are two vars named foo. To resolve the conflict, on merge the IM foo is renamed as foo2 and a patch is added to I3 whose exp used local var foo. With the patch, I3 exp becomes foo2.bar().
+Above, calling method creates an instance of Foo and assign it var named foo. The IM also creates and assign another instance of Foo to var named foo within its scope. But when statements of IM is merged with calling method there is conflict as there are two vars named foo. To resolve the conflict, on merge the IM foo is renamed as foo2 and a patch is added to I3 whose exp used local var foo. With the patch, I3 exp becomes foo2.bar().
 
 In case of renamed vars it is possible to patch exp with the logic used in case of invoke patches, but same is not true in case of arg-param name mismatch where pack level patch is essential. For uniformity in both cases pack level patch is implemented.
 
@@ -178,6 +200,10 @@ Here IM super.getPayload().getJobInfo().getId() is called twice and it is a chai
 ### Patch Services
 
 The copyAndPatch() delgates to appropriate PatchService in org.codetab.uknit.core.make.method.patch.service package depending on the node type. For example, if node is MI then node is processed by MethodInvocationSrv. This is done so because each node type has differently named methods to get or set its exp parts. While the MI has getExpression() and arguments(), the InfixExpression has getLeftOperand(), getRightOperand() and getExtendedOperands() to get the exps.
+
+### Value Patch
+
+In above all, the exps are patched with corresponding var or names. There is one more type of patcher. The ValuePatcher patches the MI with values returned by the exps. For example, Pack1[var=bar, exp=foo.append(array[0])], Pack[var=apple, exp=array[0], Pack[var=array, exp={"x"}]. Normal copyAndPatch for Pack1 would return foo.append(apple) but ValuePatcher returns foo.append("x") as the value of array[0] and its var apple is literal x. It is used only by make.method.body.VerifyStmt class to groups similar looking verifies with times().
 
 ## Java classes for Test
 

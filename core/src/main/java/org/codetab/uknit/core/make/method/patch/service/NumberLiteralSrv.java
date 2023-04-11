@@ -22,7 +22,7 @@ public class NumberLiteralSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof NumberLiteral);
         checkState(copy instanceof NumberLiteral);
         if (pack.getPatches().size() > 0) {

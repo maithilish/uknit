@@ -38,7 +38,7 @@ public class PrefixExpressionSrv implements PatchService {
 
     @Override
     public void patchName(final Pack pack, final Expression node,
-            final Expression copy) {
+            final Expression copy, final Heap heap) {
         checkState(node instanceof PrefixExpression);
         checkState(copy instanceof PrefixExpression);
 
@@ -50,7 +50,7 @@ public class PrefixExpressionSrv implements PatchService {
         int index = 0;
         Expression oper = wrappers.unpack(pfix.getOperand());
         Expression operCopy = wrappers.unpack(pfixCopy.getOperand());
-        patchers.patchExpWithName(oper, operCopy, patches, index,
+        patchers.patchExpWithPackPatches(oper, operCopy, patches, index,
                 pfixCopy::setOperand);
     }
 

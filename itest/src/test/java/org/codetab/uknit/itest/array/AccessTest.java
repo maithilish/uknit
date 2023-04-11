@@ -1,10 +1,15 @@
 package org.codetab.uknit.itest.array;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import org.codetab.uknit.itest.array.Model.Foo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 class AccessTest {
@@ -32,5 +37,131 @@ class AccessTest {
         int actual = access.returnAccess();
 
         assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testDeclareTwoArray() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "foox";
+        String kiwi = new String("barx");
+        String mango = "foo";
+        access.declareTwoArray(foo);
+
+        verify(foo, times(2)).append(apple);
+        verify(foo).append(grape);
+        verify(foo).append(orange);
+        verify(foo).append(kiwi);
+    }
+
+    @Test
+    public void testArrayParameter() {
+        Foo foo = Mockito.mock(Foo.class);
+        String[] array = {"x", "y"};
+        String apple = "foox";
+        String grape = new String("barx");
+        access.arrayParameter(foo, array);
+
+        verify(foo, times(2)).append(array[0]);
+        verify(foo).append(array[1]);
+        verify(foo).append(apple);
+        verify(foo).append(grape);
+    }
+
+    @Test
+    public void testAccessInfix() {
+        boolean flag = true;
+        int apple = 20;
+        int grape = 10;
+        int foo = flag ? apple : grape;
+
+        int actual = access.accessInfix(flag);
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testReturnAccessInfix() {
+        boolean flag = true;
+        int apple = 20;
+        int grape = 10;
+        int orange = flag ? apple : grape;
+
+        int actual = access.returnAccessInfix(flag);
+
+        assertEquals(orange, actual);
+    }
+
+    @Test
+    public void testAccessPrefix() {
+        int apple = 10;
+        int foo = apple++;
+
+        int actual = access.accessPrefix();
+
+        assertEquals(foo, actual);
+    }
+
+    @Test
+    public void testReturnAccessPrefix() {
+        int apple = 10;
+        int grape = apple++;
+
+        int actual = access.returnAccessPrefix();
+
+        assertEquals(grape, actual);
+    }
+
+    @Test
+    public void testReturnInitializedAccess() {
+        int apple = 10;
+
+        int actual = access.returnInitializedAccess();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
+    public void testSameInitializerAssignedToDifferentArray() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "foo";
+        String orange = "bar";
+        String kiwi = "foo";
+        String mango = "bar";
+        access.sameInitializerAssignedToDifferentArray(foo);
+
+        verify(foo, times(3)).append(apple);
+        verify(foo, times(2)).append(orange);
+    }
+
+    @Test
+    public void testReassignArrayItem() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = new String("bar");
+        String grape = "bar";
+        access.reassignArrayItem(foo);
+
+        verify(foo, times(2)).append(apple);
+        // verify(foo).append(grape);
+    }
+
+    @Test
+    public void testInitializerItemIsVar() {
+        Foo foo = Mockito.mock(Foo.class);
+        String a = "foo";
+        String apple = "Foo";
+        String a2 = "bar";
+        String grape = "Bar";
+        String orange = "foo";
+        String kiwi = "bar";
+
+        when(foo.format(a)).thenReturn(apple);
+        when(foo.format(a2)).thenReturn(grape);
+        access.initializerItemIsVar(foo);
+
+        verify(foo).append(orange);
+        verify(foo).append(kiwi);
     }
 }

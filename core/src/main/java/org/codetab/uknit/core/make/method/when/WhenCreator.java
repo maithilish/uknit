@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.anon.AnonProcessor;
+import org.codetab.uknit.core.make.method.patch.ExpService;
 import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -24,6 +25,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Type;
 
 public class WhenCreator {
@@ -35,7 +37,7 @@ public class WhenCreator {
     @Inject
     private VerifyCreator verifyCreator;
     @Inject
-    private Methods methods;
+    private ExpService expService;
     @Inject
     private Nodes nodes;
     @Inject
@@ -86,8 +88,11 @@ public class WhenCreator {
             When when = invoke.getWhen().get();
             when.getReturnVars().add(whenReturnVar);
 
-            List<String> usedNames = methods.getNames(patchedMi);
-            when.getNames().addAll(usedNames);
+            List<String> names = when.getNames();
+            List<Name> namesInExp = expService.listNames(patchedMi);
+            for (Name name : namesInExp) {
+                names.add(nodes.getName(name));
+            }
 
         } else {
             verifyCreator.createVerify(invoke, heap);

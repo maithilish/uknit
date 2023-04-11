@@ -314,12 +314,11 @@ public class MethodMakers {
             if (nodes.is(exp, MethodInvocation.class,
                     SuperMethodInvocation.class)) {
                 pack = modelFactory.createInvoke(packs.getId(), fieldCopy, exp,
-                        inCtlPath);
-                boolean imc = false;
-                packer.setupInvokes((Invoke) pack, imc, heap);
+                        inCtlPath, heap.isIm());
+                packer.setupInvokes((Invoke) pack, heap);
             } else {
                 pack = modelFactory.createPack(packs.getId(), fieldCopy, exp,
-                        inCtlPath);
+                        inCtlPath, heap.isIm());
             }
             fieldPacks.add(pack);
         }

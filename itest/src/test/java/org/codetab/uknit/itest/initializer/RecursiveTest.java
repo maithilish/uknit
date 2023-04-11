@@ -49,11 +49,11 @@ class RecursiveTest {
 
     @Test
     public void testReturnArrayAccess() {
-        int apple = 30;
+        int orange = 30;
 
         int actual = recursive.returnArrayAccess();
 
-        assertEquals(apple, actual);
+        assertEquals(orange, actual);
     }
 
     @Test

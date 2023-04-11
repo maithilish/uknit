@@ -62,8 +62,8 @@ public class ReturnCreator {
             boolean isMock = false;
             IVar var = modelFactory.createVar(Kind.RETURN, retVarName,
                     methodReturnType, isMock);
-            Pack pack =
-                    modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
+            Pack pack = modelFactory.createPack(packs.getId(), var, exp,
+                    inCtlPath, heap.isIm());
             heap.addPack(pack);
         } else if (nodes.is(exp, SimpleName.class)) {
             /*
@@ -79,7 +79,7 @@ public class ReturnCreator {
                         methodReturnType, isMock);
                 var.setTypeBinding(exp.resolveTypeBinding());
                 Pack pack = modelFactory.createPack(packs.getId(), var, exp,
-                        inCtlPath);
+                        inCtlPath, heap.isIm());
                 heap.addPack(pack);
             } else {
                 throw new IllegalStateException(

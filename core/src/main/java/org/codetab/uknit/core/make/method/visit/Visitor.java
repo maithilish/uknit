@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.ExpressionMethodReference;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -69,11 +70,6 @@ public class Visitor extends ASTVisitor {
     private Variables variables;
 
     private Heap heap;
-
-    /*
-     * whether internal method call
-     */
-    private boolean imc;
 
     /*
      * if true then separate test method is created for each control flow path
@@ -146,15 +142,14 @@ public class Visitor extends ASTVisitor {
     @Override
     public void endVisit(final MethodInvocation node) {
         Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
-        invoke.setIm(imc);
-        packer.setupInvokes(invoke, imc, heap);
+        packer.setupInvokes(invoke, heap);
         heap.addPack(invoke);
     }
 
     @Override
     public void endVisit(final SuperMethodInvocation node) {
         Invoke invoke = packer.createInvoke(node, inCtlPath, heap);
-        packer.setupInvokes(invoke, imc, heap);
+        packer.setupInvokes(invoke, heap);
         heap.addPack(invoke);
     }
 
@@ -170,6 +165,11 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ThisExpression node) {
+        packer.packExp(node, inCtlPath, heap);
+    }
+
+    @Override
+    public void endVisit(final InstanceofExpression node) {
         packer.packExp(node, inCtlPath, heap);
     }
 
@@ -263,7 +263,7 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final EnhancedForStatement node) {
-        heap.getLoader().collectEnhancedFor(node, imc);
+        heap.getLoader().collectEnhancedFor(node, heap);
     }
 
     @Override
@@ -302,7 +302,7 @@ public class Visitor extends ASTVisitor {
     @Override
     public boolean visit(final Block node) {
         // ctl flow for internal method call is not yet implemented
-        if (imc) {
+        if (heap.isIm()) {
             inCtlPath = true;
             return true;
         }
@@ -356,10 +356,6 @@ public class Visitor extends ASTVisitor {
 
     public void setSplitOnControlFlow(final boolean splitOnControlFlow) {
         this.splitOnControlFlow = splitOnControlFlow;
-    }
-
-    public void setImc(final boolean imc) {
-        this.imc = imc;
     }
 
     public void setMethodReturnType(final Type returnType) {

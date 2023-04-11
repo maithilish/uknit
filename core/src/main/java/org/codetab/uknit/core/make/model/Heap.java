@@ -52,6 +52,9 @@ public class Heap implements Listener {
     // is assert stmt created in test method
     private boolean asserted = false;
 
+    // is IM heap
+    private boolean im = false;
+
     public void setup() {
         asserted = false;
         patcher.setup();
@@ -161,5 +164,13 @@ public class Heap implements Listener {
 
     public void setTestMethodName(final String testMethodName) {
         this.testMethodName = testMethodName;
+    }
+
+    public boolean isIm() {
+        return im;
+    }
+
+    public void setIm(final boolean internal) {
+        this.im = internal;
     }
 }

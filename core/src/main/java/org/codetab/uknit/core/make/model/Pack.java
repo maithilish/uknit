@@ -44,7 +44,8 @@ public class Pack {
     @Inject
     public Pack(@Assisted final int id, @Assisted @Nullable final IVar var,
             @Assisted @Nullable final Expression exp,
-            @Assisted final boolean inCtlPath) {
+            @Assisted("inCtlPath") final boolean inCtlPath,
+            @Assisted("im") final boolean im) {
         this.id = id;
         this.var = var;
         this.exp = exp;
@@ -52,6 +53,7 @@ public class Pack {
         leftExp = Optional.empty();
         this.inCtlPath = inCtlPath;
         natures = new ArrayList<>();
+        this.im = im;
     }
 
     public int getId() {
@@ -60,6 +62,10 @@ public class Pack {
 
     public IVar getVar() {
         return var;
+    }
+
+    public boolean hasVar() {
+        return var != null;
     }
 
     public void setVar(final IVar var) {
@@ -73,6 +79,10 @@ public class Pack {
 
     public void setExp(final Expression exp) {
         this.exp = exp;
+    }
+
+    public boolean hasExp() {
+        return exp != null;
     }
 
     public Optional<Expression> getLeftExp() {

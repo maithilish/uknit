@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.exception.VarNotFoundException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
+import org.codetab.uknit.core.make.method.patch.ExpService;
 import org.codetab.uknit.core.make.method.patch.ServiceLoader;
 import org.codetab.uknit.core.make.method.patch.service.PatchService;
 import org.codetab.uknit.core.make.model.Heap;
@@ -23,11 +24,10 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Verify;
 import org.codetab.uknit.core.make.model.When;
-import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Name;
 
 public class VarEnablers {
 
@@ -36,7 +36,7 @@ public class VarEnablers {
     @Inject
     private Nodes nodes;
     @Inject
-    private Methods methods;
+    private ExpService expService;
     @Inject
     private ModelFactory modelFactory;
     @Inject
@@ -67,10 +67,10 @@ public class VarEnablers {
         for (Invoke invoke : invokes) {
             Optional<Verify> verifyO = invoke.getVerify();
             if (verifyO.isPresent()) {
-                Verify verify = verifyO.get();
-                MethodInvocation mi = verify.getMi();
-                for (String name : methods.getNames(mi)) {
-                    names.add(name);
+                List<Name> namesInExp =
+                        expService.listNames(verifyO.get().getMi());
+                for (Name name : namesInExp) {
+                    names.add(nodes.getName(name));
                 }
             }
         }

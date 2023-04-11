@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.CriticalException;
+import org.codetab.uknit.core.exception.ResolveException;
 import org.codetab.uknit.core.make.model.ReturnType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -93,13 +94,20 @@ public class Resolver {
     }
 
     public IMethodBinding resolveMethodBinding(final Expression exp) {
+        IMethodBinding bind;
         if (nodes.is(exp, MethodInvocation.class)) {
-            return nodes.as(exp, MethodInvocation.class).resolveMethodBinding();
+            bind = nodes.as(exp, MethodInvocation.class).resolveMethodBinding();
         } else if (nodes.is(exp, SuperMethodInvocation.class)) {
-            return nodes.as(exp, SuperMethodInvocation.class)
+            bind = nodes.as(exp, SuperMethodInvocation.class)
                     .resolveMethodBinding();
         } else {
             throw new CodeException(nodes.noImplmentationMessage(exp));
+        }
+        if (isNull(bind)) {
+            throw new ResolveException(
+                    nodes.exMessage("unable to resolve", exp));
+        } else {
+            return bind;
         }
     }
 

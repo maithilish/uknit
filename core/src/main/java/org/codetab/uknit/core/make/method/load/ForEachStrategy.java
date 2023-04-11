@@ -83,7 +83,7 @@ public class ForEachStrategy {
                     // create new pack for inferVar and exp.
                     if (inferVarO.isPresent()) {
                         Pack pack = modelFactory.createPack(packs.getId(),
-                                inferVarO.get(), rExp, false);
+                                inferVarO.get(), rExp, false, heap.isIm());
                         heap.addPack(pack);
                     }
                 }

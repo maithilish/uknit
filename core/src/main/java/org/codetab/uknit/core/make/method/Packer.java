@@ -113,7 +113,7 @@ public class Packer {
                 packO.get().setVar(var);
             } else {
                 Pack pack = modelFactory.createPack(packs.getId(), var,
-                        initializer, inCtlPath);
+                        initializer, inCtlPath, heap.isIm());
                 heap.addPack(pack);
             }
         }
@@ -122,14 +122,16 @@ public class Packer {
     public void packExp(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
-        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath,
+                heap.isIm());
         heap.addPack(pack);
     }
 
     public void packAnon(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
-        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath,
+                heap.isIm());
         pack.addNature(Nature.ANONYMOUS);
         heap.addPack(pack);
     }
@@ -137,8 +139,8 @@ public class Packer {
     public Invoke createInvoke(final Expression exp, final boolean inCtlPath,
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
-        Invoke invoke =
-                modelFactory.createInvoke(packs.getId(), var, exp, inCtlPath);
+        Invoke invoke = modelFactory.createInvoke(packs.getId(), var, exp,
+                inCtlPath, heap.isIm());
         return invoke;
     }
 
@@ -152,8 +154,8 @@ public class Packer {
             final Heap heap) {
         IVar var = null; // yet to be assigned so null
         if (literals.ofInterest(exp)) {
-            Pack pack =
-                    modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
+            Pack pack = modelFactory.createPack(packs.getId(), var, exp,
+                    inCtlPath, heap.isIm());
             heap.addPack(pack);
         }
     }
@@ -161,7 +163,8 @@ public class Packer {
     public Pack packStandinVar(final IVar var, final boolean inCtlPath,
             final Heap heap) {
         Expression exp = null; // no exp
-        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath);
+        Pack pack = modelFactory.createPack(packs.getId(), var, exp, inCtlPath,
+                heap.isIm());
         heap.addPack(pack);
         return pack;
     }
@@ -174,8 +177,7 @@ public class Packer {
      * @param imc
      * @param heap
      */
-    public void setupInvokes(final Invoke invoke, final boolean imc,
-            final Heap heap) {
+    public void setupInvokes(final Invoke invoke, final Heap heap) {
 
         final Expression exp = invoke.getExp(); // MI, SMI
 
@@ -191,7 +193,7 @@ public class Packer {
          * param, is decided only after IMC merge and it will be set later in
          * post process by InvokeProcessor.process().
          */
-        if (patchedCallExpO.isPresent() && !imc) {
+        if (patchedCallExpO.isPresent() && !heap.isIm()) {
             try {
                 String name = expressions.getName(patchedCallExpO.get());
                 callVarO = Optional.of(vars.findVarByName(name, heap));
@@ -234,5 +236,14 @@ public class Packer {
         if (isStaticCall && !isInternalCall) {
             invoke.addNature(Nature.STATIC_CALL);
         }
+    }
+
+    public Pack deepCopy(final Pack pack) {
+        Pack copy = modelFactory.createPack(packs.getId(), pack.getVar(),
+                pack.getExp(), pack.isInCtlPath(), pack.isIm());
+        copy.setIm(pack.isIm());
+        copy.setLeftExp(pack.getLeftExp());
+
+        return copy;
     }
 }

@@ -23,6 +23,7 @@ import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Methods;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 
 /**
  * Merges IM Heap on return of IM with Invoker Heap.
@@ -78,6 +79,9 @@ public class Merger {
          * the calling method vars list.
          */
         argParams.createVarsForInlineArgs(callingMethodVars);
+
+        // REVIEW
+        // argParams.normalizeVarArg(internalHeap, callingMethodVars);
 
         callingMethodVars = new ArrayList<>(vars.getVars(heap));
 
@@ -139,6 +143,12 @@ public class Merger {
                         throw new IllegalStateException(
                                 spaceit("var is not set", iPack.toString()));
                     }
+                }
+
+                // REVIEW - may be not required, check after var args fix
+                if (iPack.getLeftExp().isPresent()
+                        && iPack.getLeftExp().get() instanceof ArrayAccess) {
+                    internalPacks.add(iPack);
                 }
             }
         }

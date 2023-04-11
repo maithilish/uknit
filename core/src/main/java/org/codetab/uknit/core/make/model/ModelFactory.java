@@ -25,9 +25,13 @@ public interface ModelFactory {
 
     Var createVar(Kind kind, String name, Type type, boolean mock);
 
-    Pack createPack(int id, IVar var, Expression exp, boolean inCtlPath);
+    Pack createPack(int id, IVar var, Expression exp,
+            @Assisted("inCtlPath") boolean inCtlPath,
+            @Assisted("im") boolean im);
 
-    Invoke createInvoke(int id, IVar var, Expression exp, boolean inCtlPath);
+    Invoke createInvoke(int id, IVar var, Expression exp,
+            @Assisted("inCtlPath") boolean inCtlPath,
+            @Assisted("im") boolean im);
 
     Patch createPatch(org.codetab.uknit.core.make.model.Patch.Kind kind,
             String definedName, IVar var, int index);

@@ -72,7 +72,8 @@ public class BulkGenerator {
         Configs configs = di.instance(Configs.class);
 
         // process all methods
-        configs.clearProperty("uknit.source.method");
+        configs.clearProperty("uknit.source.filter");
+        configs.clearProperty("uknit.output.filter");
         configs.clearProperty("uknit.source.clz");
         configs.setProperty("uknit.source.error.ignore", "true");
 

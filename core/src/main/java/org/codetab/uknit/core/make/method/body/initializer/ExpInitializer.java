@@ -17,11 +17,13 @@ import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Initializer.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.Arrays;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 
@@ -46,13 +48,18 @@ class ExpInitializer implements IInitializer {
     @Inject
     private Packs packs;
     @Inject
+    private Arrays arrays;
+    @Inject
     private ModelFactory modelFactory;
 
     @Override
     public Optional<Initializer> getInitializer(final Pack pack,
             final Pack iniPack, final Heap heap) {
+
+        Optional<Initializer> initializer = Optional.empty();
+
         if (allowedExps.isAllowed(wrappers.unpack(iniPack.getExp()), heap)) {
-            Expression patchedExp;
+            Expression patchedExp = null;
             ASTNode parent = wrappers.stripAndGetParent(iniPack.getExp());
             if (nodes.is(parent, CastExpression.class)) {
                 /*
@@ -67,20 +74,57 @@ class ExpInitializer implements IInitializer {
                 } else {
                     patchedExp = (Expression) parent;
                 }
+            } else if (nodes.is(iniPack.getExp(), ArrayInitializer.class)
+                    && nodes.is(pack.getExp(), ArrayAccess.class)) {
+                /*
+                 * ArrayAccess is not allowed as initializer, instead get value
+                 * returned by array access.
+                 */
+                ArrayAccess arrayAccess =
+                        (ArrayAccess) patcher.copyAndPatch(pack, heap);
+                ArrayInitializer arrayIni = (ArrayInitializer) iniPack.getExp();
+
+                Optional<Expression> value =
+                        arrays.getValue(arrayAccess, arrayIni);
+
+                if (value.isPresent()
+                        && allowedExps.isAllowed(value.get(), heap)) {
+                    patchedExp = value.get();
+                }
+
+                // REVIEW - may be removed later
+                // String arrayName = nodes.getName(aa.getArray());
+                // Expression arrayIndex = aa.getIndex();
+                // if (nodes.is(arrayIndex, NumberLiteral.class)) {
+                // int index = Integer
+                // .parseInt(((NumberLiteral) arrayIndex).getToken());
+                // Optional<Pack> aPackO =
+                // packs.findByVarName(arrayName, heap.getPacks());
+                // if (aPackO.isPresent() && aPackO.get().hasExp()) {
+                // if (allowedExps.isAllowed(
+                // wrappers.unpack(aPackO.get().getExp()), heap)) {
+                // Expression iniExp =
+                // (Expression) ((ArrayInitializer) aPackO
+                // .get().getExp()).expressions()
+                // .get(index);
+                // if (allowedExps.isAllowed(iniExp, heap)) {
+                // patchedExp = iniExp;
+                // }
+                // }
+                // }
+                // }
             } else {
                 patchedExp = patcher.copyAndPatch(iniPack, heap);
             }
-            Initializer initializer =
-                    modelFactory.createInitializer(Kind.EXP, patchedExp);
-
-            LOG.debug("Var [name={}] {}", pack.getVar().getName(), initializer);
-
-            return Optional.of(initializer);
-        } else {
-            return Optional.empty();
+            if (nonNull(patchedExp)) {
+                Initializer ini =
+                        modelFactory.createInitializer(Kind.EXP, patchedExp);
+                initializer = Optional.of(ini);
+                LOG.debug("Var [name={}] {}", pack.getVar().getName(), ini);
+            }
         }
+        return initializer;
     }
-
 }
 
 class AllowedExps {

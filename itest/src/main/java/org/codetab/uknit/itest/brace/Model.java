@@ -6,6 +6,15 @@ import java.util.Objects;
 class Model {
 
     interface Foo {
+
+        String format(String name);
+
+        void append(String name);
+
+        String format(String name, String dept);
+
+        void append(String name, String dept);
+
         String name();
 
         String get(int id);

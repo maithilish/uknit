@@ -366,11 +366,29 @@ public class Types {
         if (nodes.is(node, SingleVariableDeclaration.class)) {
             SingleVariableDeclaration svd =
                     nodes.as(node, SingleVariableDeclaration.class);
+            // REVIEW - handle all types of var args and write tests
             if (svd.isVarargs()) {
-                String clzName = getTypeName(svd.getType());
                 AST ast = svd.getAST();
-                return ast
-                        .newArrayType(ast.newSimpleType(ast.newName(clzName)));
+                if (svd.getType().isPrimitiveType()) {
+                    PrimitiveType pt = (PrimitiveType) svd.getType();
+                    return ast.newArrayType(
+                            ast.newPrimitiveType(pt.getPrimitiveTypeCode()));
+                } else if (svd.getType().isArrayType()) {
+                    ArrayType at = (ArrayType) svd.getType();
+                    Type et = at.getElementType();
+                    Type t = null;
+                    if (et.isPrimitiveType()) {
+                        t = ast.newPrimitiveType(
+                                ((PrimitiveType) et).getPrimitiveTypeCode());
+                    } else {
+                        t = ast.newSimpleType(ast.newName(getTypeName(et)));
+                    }
+                    return ast.newArrayType(t);
+                } else {
+                    String clzName = getTypeName(svd.getType());
+                    return ast.newArrayType(
+                            ast.newSimpleType(ast.newName(clzName)));
+                }
             }
             return svd.getType();
         }

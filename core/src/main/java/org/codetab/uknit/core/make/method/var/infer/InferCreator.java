@@ -12,16 +12,22 @@ import org.codetab.uknit.core.exception.TypeException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.make.model.ReturnType;
+import org.codetab.uknit.core.node.Arrays;
 import org.codetab.uknit.core.node.Expressions;
+import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
+import org.codetab.uknit.core.node.Wrappers;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Name;
@@ -45,6 +51,12 @@ public class InferCreator {
     private NodeFactory nodeFactory;
     @Inject
     private NodeGroups nodeGroups;
+    @Inject
+    private Methods methods;
+    @Inject
+    private Wrappers wrappers;
+    @Inject
+    private Arrays arrays;
 
     /**
      * Create and set infer var for all packs in the list. The packs in the list
@@ -75,20 +87,91 @@ public class InferCreator {
             }
         }
 
-        Optional<ReturnType> returnTypeO = ((Invoke) pack).getReturnType();
-        if (returnTypeO.isPresent()) {
-
-            Type type = returnTypeO.get().getType();
-            ITypeBinding typeBinding = returnTypeO.get().getTypeBinding();
-
-            if (types.capableToReturnValue(type)) {
-                IVar inferVar =
-                        inferFactory.createInfer(type, typeBinding, heap);
-                pack.setVar(inferVar);
+        if (expressions.isInvokable(pack.getExp())) {
+            Optional<ReturnType> returnTypeO = ((Invoke) pack).getReturnType();
+            if (returnTypeO.isPresent()) {
+                Type type = returnTypeO.get().getType();
+                ITypeBinding typeBinding = returnTypeO.get().getTypeBinding();
+                if (types.capableToReturnValue(type)) {
+                    IVar inferVar =
+                            inferFactory.createInfer(type, typeBinding, heap);
+                    pack.setVar(inferVar);
+                }
+            } else {
+                throw new TypeException(
+                        "unable to get exp return type for: " + pack.getExp());
             }
-        } else {
-            throw new TypeException(
-                    "unable to get exp return type for: " + pack.getExp());
+        } else if (nodes.is(pack.getExp(), ArrayAccess.class)) {
+            /*
+             * ArrayAccess is not invokable but returns value, hence create
+             * infer var. Ex: foo.append(array[0]), Pack [var=-, exp=array[0])
+             * then create infer var for the pack.
+             */
+            ArrayAccess exp = (ArrayAccess) pack.getExp();
+            ASTNode parent = wrappers.stripAndGetParent(exp);
+
+            boolean isParameter = false;
+            try {
+                Optional<Pack> arrayPackO = packs.findByVarName(
+                        nodes.getName(exp.getArray()), heap.getPacks());
+                // REVIEW - create optional methods in Packs
+                if (arrayPackO.isPresent()
+                        && arrayPackO.get().getVar().is(Kind.PARAMETER)) {
+                    isParameter = true;
+                }
+            } catch (CodeException e) {
+            }
+
+            boolean createInfer = true;
+            if (isParameter) {
+                boolean isInternal =
+                        methods.isInternalCall((Expression) parent, heap);
+                if (isInternal) {
+                    /*
+                     * if array access is an arg of IM call and array is param,
+                     * then don't create infer as ArgParms links the arg to
+                     * param.
+                     */
+                    createInfer = false;
+                } else if (!pack.isIm()) {
+                    /*
+                     * Pack is in calling method, not an IM call and array
+                     * access refers to a param then don't create infer.
+                     */
+                    createInfer = false;
+                }
+            }
+
+            if (createInfer) {
+                /*
+                 * try get type of the value returned of array access else get
+                 * type of array access. Ex: Object a[] = {"foo"}; a[0]; the
+                 * type of a[0] is object and type of value return by it String.
+                 */
+                Type type = null;
+                ITypeBinding typeBinding = arrays.getTypeBinding(exp, heap);
+                Optional<Type> typeO = arrays.getType(exp, heap);
+                if (typeO.isPresent() && nonNull(typeBinding)) {
+                    // get type from value
+                    type = typeO.get();
+                } else {
+                    // get type from ArrayAccess
+                    typeBinding = exp.resolveTypeBinding();
+                    typeO = types.getType(exp);
+                    if (typeO.isPresent() && nonNull(typeBinding)) {
+                        type = typeO.get();
+                    }
+                }
+                if (isNull(type)) {
+                    throw new TypeException(
+                            "unable to get exp return type for: "
+                                    + pack.getExp());
+                } else if (types.capableToReturnValue(type)) {
+                    IVar inferVar =
+                            inferFactory.createInfer(type, typeBinding, heap);
+                    pack.setVar(inferVar);
+                }
+            }
         }
     }
 
@@ -150,7 +233,8 @@ public class InferCreator {
 
                     // var: returnVar exp: apple, morphed as returnPack
                     inferPack = modelFactory.createPack(packs.getId(),
-                            returnPack.getVar(), varName, inCtlPath);
+                            returnPack.getVar(), varName, inCtlPath,
+                            heap.isIm());
                     // var: apple exp: foo.bar(), morphed as inferPack
                     returnPack.setVar(inferVar);
                 } else {
@@ -160,7 +244,7 @@ public class InferCreator {
                      */
                     // var: apple, exp: new Foo()
                     inferPack = modelFactory.createPack(packs.getId(), inferVar,
-                            exp, inCtlPath);
+                            exp, inCtlPath, heap.isIm());
                     // var: return, exp: apple
                     returnPack.setExp(varName);
                 }

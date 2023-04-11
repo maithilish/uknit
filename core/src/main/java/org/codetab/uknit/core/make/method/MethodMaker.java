@@ -115,6 +115,7 @@ public class MethodMaker {
         heap.setMut(method);
         heap.setTestClzName(testClzName);
         heap.setTestMethodName(testMethodName);
+        heap.setIm(false);
 
         // initialize method call tree and save it in method context
         methodContext.init();
@@ -139,7 +140,6 @@ public class MethodMaker {
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(heap);
-        visitor.setImc(false);
         visitor.setCtlPath(ctlPath);
         visitor.setReturned(false);
         visitor.setMethodReturnType(method.getReturnType2());
@@ -194,18 +194,18 @@ public class MethodMaker {
      * @param method
      * @param paramArgMap
      * @param invoke
-     * @param internalMethod
+     * @param im
      * @param heap
      * @param internalHeap2
      * @return
      */
     public boolean processMethod(final MethodDeclaration method,
-            final Invoke invoke, final boolean internalMethod, final Heap heap,
+            final Invoke invoke, final boolean im, final Heap heap,
             final Heap internalHeap) {
 
         checkNotNull(method);
         checkNotNull(invoke);
-        checkNotNull(internalMethod);
+        checkNotNull(im);
         checkNotNull(heap);
         checkNotNull(internalHeap);
 
@@ -220,10 +220,10 @@ public class MethodMaker {
 
         Visitor visitor = di.instance(Visitor.class);
         visitor.setHeap(internalHeap);
-        visitor.setImc(internalMethod);
         visitor.setMethodReturnType(method.getReturnType2());
 
         internalHeap.setup();
+        internalHeap.setIm(im);
 
         // IM is not cyclic, add it to call hierarchy and continue to process
         cyclic.addCallHierarchyNode(internalHeap.getMut(), heap.getMut(),

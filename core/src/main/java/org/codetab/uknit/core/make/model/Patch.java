@@ -13,7 +13,7 @@ public class Patch {
     }
 
     private Kind kind;
-    // foo.format(id), exp use defined name id
+    // foo.format(id), exp uses defined name id
     private String definedName;
     private IVar var;
     private int index;

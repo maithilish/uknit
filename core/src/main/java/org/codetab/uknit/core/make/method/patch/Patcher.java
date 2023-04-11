@@ -21,6 +21,7 @@ import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.make.model.Patch.Kind;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
@@ -182,6 +183,7 @@ public class Patcher {
             String oldName = renamedVar.getOldName();
             if (nodes.isName(expression)) {
                 String expName = nodes.getName(expression);
+                // REVIEW next block has same code
                 if (expName.equals(definedName)) {
                     Patch patch = modelFactory.createPatch(Kind.VAR,
                             definedName, renamedVar, i);
@@ -190,6 +192,21 @@ public class Patcher {
                     Patch patch = modelFactory.createPatch(Kind.VAR, oldName,
                             renamedVar, i);
                     pack.addPatch(patch);
+                }
+            } else if (nodes.is(expression, ArrayAccess.class)) {
+                // REVIEW - no longer required
+                Expression array = ((ArrayAccess) expression).getArray();
+                if (nodes.isName(array)) {
+                    String expName = nodes.getName(array);
+                    if (expName.equals(definedName)) {
+                        Patch patch = modelFactory.createPatch(Kind.VAR,
+                                definedName, renamedVar, i);
+                        // pack.addPatch(patch);
+                    } else if (expName.equals(oldName)) {
+                        Patch patch = modelFactory.createPatch(Kind.VAR,
+                                oldName, renamedVar, i);
+                        // pack.addPatch(patch);
+                    }
                 }
             }
         }

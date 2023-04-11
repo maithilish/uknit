@@ -40,6 +40,16 @@ public class Expressions {
     @Inject
     private Wrappers wrappers;
 
+    public boolean isInvokable(final Expression exp) {
+        boolean invokable = false;
+        if (nodes.is(exp, MethodInvocation.class)) {
+            invokable = true;
+        } else if (nodes.is(exp, SuperMethodInvocation.class)) {
+            invokable = true;
+        }
+        return invokable;
+    }
+
     public boolean isClassInstanceCreation(final Expression exp) {
         return nodes.is(exp, ClassInstanceCreation.class);
     }

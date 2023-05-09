@@ -8,7 +8,9 @@ import javax.management.ObjectName;
 class Voids extends SuperVoids {
 
     // TODO N - improve the tests
+    // CHECKSTYLE:OFF
     private final MBeanServer SERVER = super.getPlatformMBeanServer();
+    // CHECKSTYLE:On
 
     private final ObjectName objectName = null;
 

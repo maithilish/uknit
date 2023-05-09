@@ -14,29 +14,37 @@ import org.codetab.uknit.itest.linked.Model.Foo;
 class Assign {
 
     public Locale assignCreated() {
-        Locale Locale = new Locale("en");
-        return Locale;
+        Locale locale = new Locale("en");
+        return locale;
     }
 
     public Locale assignTwiceCreated() {
-        Locale Locale = new Locale("en");
-        Locale Locale2 = Locale;
-        return Locale2;
+        Locale locale = new Locale("en");
+        Locale locale2 = locale;
+        return locale2;
     }
 
     public Locale assignThriceCreated() {
-        Locale Locale = new Locale("en");
-        Locale Locale2 = Locale;
-        Locale Locale3 = Locale2;
-        return Locale3;
+        Locale locale = new Locale("en");
+        Locale locale2 = locale;
+        Locale locale3 = locale2;
+        return locale3;
     }
 
+    /**
+     * Capitalised var names are not converted to lower case in generated test.
+     *
+     * @param foo
+     * @return
+     */
+    // CHECKSTYLE:OFF
     public Locale assignInvoke(final Foo foo) {
         Locale Locale = foo.locale();
         Locale Locale2 = Locale;
         Locale Locale3 = Locale2;
         return Locale3;
     }
+    // CHECKSTYLE:ON
 
     public String assignLiteral(final Foo foo) {
         String name = "foo";

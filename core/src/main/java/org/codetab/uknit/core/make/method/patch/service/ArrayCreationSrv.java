@@ -75,7 +75,6 @@ public class ArrayCreationSrv implements PatchService {
                     arguments.getExps(acCopy.getInitializer());
             patchers.patchExpsWithPackPatches(inExps, inExpsCopy, patches,
                     offset, heap);
-            ;
         }
     }
 

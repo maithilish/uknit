@@ -6,7 +6,7 @@ import org.codetab.uknit.itest.linked.Model.Foo;
 
 /**
  * Test var isCreated in linked vars.
- * 
+ *
  * @author Maithilish
  *
  */

@@ -71,14 +71,18 @@ public class Patcher {
         patchService.patch(pack, node, copy, heap);
 
         // apply rename patches
-        // if (!pack.getPatches().isEmpty()) {
-        // patchService.patchName(pack, node, copy, heap);
-        // }
         patchService.patchName(pack, node, copy, heap);
 
         return copy;
     }
 
+    /**
+     * Patch rename patches. Invoke patches are not applied.
+     *
+     * @param pack
+     * @param heap
+     * @return
+     */
     public Expression copyAndPatchNames(final Pack pack, final Heap heap) {
         checkNotNull(pack.getExp());
 
@@ -86,7 +90,7 @@ public class Patcher {
         Expression copy = (Expression) ASTNode
                 .copySubtree(pack.getExp().getAST(), pack.getExp());
 
-        // apply invoke patch
+        // apply rename patches
         PatchService patchService = serviceLoader.loadService(pack.getExp());
         patchService.patchName(pack, node, copy, heap);
 

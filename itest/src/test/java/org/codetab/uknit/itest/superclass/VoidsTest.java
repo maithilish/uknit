@@ -19,8 +19,11 @@ class VoidsTest {
     @InjectMocks
     private Voids voids;
 
+    // CHECKSTYLE:OFF
     @Mock
     private MBeanServer SERVER;
+    // CHECKSTYLE:ON
+
     @Mock
     private ObjectName objectName;
 

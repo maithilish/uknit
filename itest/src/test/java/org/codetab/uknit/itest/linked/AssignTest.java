@@ -25,32 +25,32 @@ class AssignTest {
 
     @Test
     public void testAssignCreated() {
-        Locale Locale = new Locale("en");
+        Locale locale = new Locale("en");
 
         Locale actual = assign.assignCreated();
 
-        assertEquals(Locale, actual);
+        assertEquals(locale, actual);
     }
 
     @Test
     public void testAssignTwiceCreated() {
-        Locale Locale = new Locale("en");
-        Locale Locale2 = Locale;
+        Locale locale = new Locale("en");
+        Locale locale2 = locale;
 
         Locale actual = assign.assignTwiceCreated();
 
-        assertEquals(Locale2, actual);
+        assertEquals(locale2, actual);
     }
 
     @Test
     public void testAssignThriceCreated() {
-        Locale Locale = new Locale("en");
-        Locale Locale2 = Locale;
-        Locale Locale3 = Locale2;
+        Locale locale = new Locale("en");
+        Locale locale2 = locale;
+        Locale locale3 = locale2;
 
         Locale actual = assign.assignThriceCreated();
 
-        assertEquals(Locale3, actual);
+        assertEquals(locale3, actual);
     }
 
     @Test
@@ -92,7 +92,7 @@ class AssignTest {
 
     @Test
     public void testAssignArrayAccess() {
-        String[] names = {"foo"};
+        String[] names = {"x"};
         String name = names[0];
         String name2 = name;
         String name3 = name2;

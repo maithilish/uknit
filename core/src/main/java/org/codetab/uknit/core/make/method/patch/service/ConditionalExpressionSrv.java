@@ -63,19 +63,19 @@ public class ConditionalExpressionSrv implements PatchService {
         Expression exp = wrappers.unpack(ce.getExpression());
         Expression expCopy = wrappers.unpack(ceCopy.getExpression());
 
-        patchers.patchExpWithPackPatches(exp, expCopy, patches, expIndex,
+        patchers.patchExpWithPackPatches(pack, exp, expCopy, patches, expIndex,
                 ceCopy::setExpression);
 
         final int thenIndex = 1;
         Expression thenExp = wrappers.unpack(ce.getThenExpression());
         Expression thenExpCopy = wrappers.unpack(ceCopy.getThenExpression());
-        patchers.patchExpWithPackPatches(thenExp, thenExpCopy, patches,
+        patchers.patchExpWithPackPatches(pack, thenExp, thenExpCopy, patches,
                 thenIndex, ceCopy::setThenExpression);
 
         final int elseIndex = 3;
         Expression elseExp = wrappers.unpack(ce.getElseExpression());
         Expression elseExpCopy = wrappers.unpack(ceCopy.getElseExpression());
-        patchers.patchExpWithPackPatches(elseExp, elseExpCopy, patches,
+        patchers.patchExpWithPackPatches(pack, elseExp, elseExpCopy, patches,
                 elseIndex, ceCopy::setElseExpression);
 
     }
@@ -93,5 +93,29 @@ public class ConditionalExpressionSrv implements PatchService {
         exps.add(wrappers.strip(ce.getElseExpression()));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof ConditionalExpression);
+        checkState(copy instanceof ConditionalExpression);
+
+        ConditionalExpression ce = (ConditionalExpression) node;
+        ConditionalExpression ceCopy = (ConditionalExpression) copy;
+
+        Expression exp = wrappers.unpack(ce.getExpression());
+        Expression expCopy = wrappers.unpack(ceCopy.getExpression());
+        patchers.patchValue(exp, expCopy, heap, ceCopy::setExpression);
+
+        Expression thenExp = wrappers.unpack(ce.getThenExpression());
+        Expression thenExpCopy = wrappers.unpack(ceCopy.getThenExpression());
+        patchers.patchValue(thenExp, thenExpCopy, heap,
+                ceCopy::setThenExpression);
+
+        Expression elseExp = wrappers.unpack(ce.getElseExpression());
+        Expression elseExpCopy = wrappers.unpack(ceCopy.getElseExpression());
+        patchers.patchValue(elseExp, elseExpCopy, heap,
+                ceCopy::setElseExpression);
     }
 }

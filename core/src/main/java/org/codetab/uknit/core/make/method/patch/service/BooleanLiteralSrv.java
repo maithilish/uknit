@@ -36,4 +36,11 @@ public class BooleanLiteralSrv implements PatchService {
         checkState(exp instanceof BooleanLiteral);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof BooleanLiteral);
+        checkState(copy instanceof BooleanLiteral);
+    }
 }

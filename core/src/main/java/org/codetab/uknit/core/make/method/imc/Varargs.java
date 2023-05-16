@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CriticalException;
+import org.codetab.uknit.core.make.exp.Arrays;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -17,7 +18,6 @@ import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Initializer.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arrays;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.ArrayAccess;
@@ -119,9 +119,10 @@ public class Varargs {
      * @param pack
      * @return
      */
-    public boolean usesVarargs(final Pack pack) {
+    public boolean usesVarargs(final Pack pack, final Heap heap) {
         if (vaParam.isPresent() && nodes.is(pack.getExp(), ArrayAccess.class)) {
-            String name = arrays.getArrayName((ArrayAccess) pack.getExp());
+            String name =
+                    arrays.getArrayName((ArrayAccess) pack.getExp(), heap);
             if (packs.hasVar(vaParam)) {
                 return packs.getVar(vaParam).getName().equals(name);
             }
@@ -137,21 +138,23 @@ public class Varargs {
      *
      * @param pack
      */
-    public void createInitializerForVararg(final Pack pack) {
+    public void createInitializerForVararg(final Pack pack, final Heap heap) {
         ArrayAccess aa = (ArrayAccess) pack.getExp();
-        int index = arrays.getIndex(aa);
+        int index = arrays.getIndex(aa, heap);
         if (index >= vaArgs.size()) {
             throw new CriticalException(spaceit("missing varargs arg,",
                     String.valueOf(vaArgs.size()), "args passed to varargs",
                     "but code is trying to access", String.valueOf(index + 1),
                     "items"));
         }
-        Optional<Pack> vaArg = vaArgs.get(index);
-        if (packs.hasVar(vaArg)) {
-            IVar var = packs.getVar(vaArg);
-            Initializer ini = modelFactory.createInitializer(Kind.EXP,
-                    nodeFactory.createName(var.getName(), aa.getAST()));
-            pack.getVar().setInitializer(Optional.ofNullable(ini));
+        if (index >= 0) {
+            Optional<Pack> vaArg = vaArgs.get(index);
+            if (packs.hasVar(vaArg)) {
+                IVar var = packs.getVar(vaArg);
+                Initializer ini = modelFactory.createInitializer(Kind.EXP,
+                        nodeFactory.createName(var.getName(), aa.getAST()));
+                pack.getVar().setInitializer(Optional.ofNullable(ini));
+            }
         }
     }
 }

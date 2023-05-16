@@ -62,8 +62,8 @@ public class InstanceofExpressionSrv implements PatchService {
         int index = 0;
         Expression leftOper = wrappers.unpack(infix.getLeftOperand());
         Expression leftOperCopy = wrappers.unpack(infixCopy.getLeftOperand());
-        patchers.patchExpWithPackPatches(leftOper, leftOperCopy, patches, index,
-                infixCopy::setLeftOperand);
+        patchers.patchExpWithPackPatches(pack, leftOper, leftOperCopy, patches,
+                index, infixCopy::setLeftOperand);
     }
 
     @Override
@@ -77,5 +77,20 @@ public class InstanceofExpressionSrv implements PatchService {
         exps.add(wrappers.strip(infix.getLeftOperand()));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof InstanceofExpression);
+        checkState(copy instanceof InstanceofExpression);
+
+        InstanceofExpression inOf = (InstanceofExpression) node;
+        InstanceofExpression inOfCopy = (InstanceofExpression) copy;
+
+        Expression leftOper = wrappers.unpack(inOf.getLeftOperand());
+        Expression leftOperCopy = wrappers.unpack(inOfCopy.getLeftOperand());
+        patchers.patchValue(leftOper, leftOperCopy, heap,
+                inOfCopy::setLeftOperand);
     }
 }

@@ -51,7 +51,7 @@ public class PostfixExpressionSrv implements PatchService {
         int index = 0;
         Expression oper = wrappers.unpack(pfix.getOperand());
         Expression operCopy = wrappers.unpack(pfixCopy.getOperand());
-        patchers.patchExpWithPackPatches(oper, operCopy, patches, index,
+        patchers.patchExpWithPackPatches(pack, oper, operCopy, patches, index,
                 pfixCopy::setOperand);
     }
 
@@ -68,4 +68,17 @@ public class PostfixExpressionSrv implements PatchService {
         return exps;
     }
 
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof PostfixExpression);
+        checkState(copy instanceof PostfixExpression);
+
+        PostfixExpression pfix = (PostfixExpression) node;
+        PostfixExpression pfixCopy = (PostfixExpression) copy;
+
+        Expression oper = wrappers.unpack(pfix.getOperand());
+        Expression operCopy = wrappers.unpack(pfixCopy.getOperand());
+        patchers.patchValue(oper, operCopy, heap, pfixCopy::setOperand);
+    }
 }

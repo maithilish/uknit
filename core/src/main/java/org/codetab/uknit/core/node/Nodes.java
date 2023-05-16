@@ -11,8 +11,10 @@ import org.codetab.uknit.core.exception.CodeException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
 public class Nodes {
 
@@ -135,6 +137,48 @@ public class Nodes {
         Expression exp = wrappers.strip(expression);
         return exp.getNodeType() == ASTNode.SIMPLE_NAME
                 || exp.getNodeType() == ASTNode.QUALIFIED_NAME;
+    }
+
+    /**
+     * Simple name part from any of id (SimpleName), foo.id (QName), (foo).id
+     * (FieldAccess), this.id (again FieldAccess).
+     *
+     * @param exp
+     * @return
+     */
+    public SimpleName getSimpleName(final Expression exp) {
+        SimpleName name = null;
+        if (exp instanceof SimpleName) {
+            name = (SimpleName) exp;
+        } else if (exp instanceof QualifiedName) {
+            name = ((QualifiedName) exp).getName();
+        } else if (exp instanceof FieldAccess) {
+            name = ((FieldAccess) exp).getName();
+        } else if (exp instanceof SuperMethodInvocation) {
+            // REVIEW write test for this verify times
+            name = ((SuperMethodInvocation) exp).getName();
+        }
+        return name;
+    }
+
+    /**
+     * Qualifier part from any of foo.id (QName), (foo).id (FieldAccess),
+     * this.id (again FieldAccess).
+     *
+     * @param exp
+     * @return
+     */
+    public Expression getQualifer(final Expression exp) {
+        Expression qualifier = null;
+        if (exp instanceof QualifiedName) {
+            qualifier = ((QualifiedName) exp).getQualifier();
+        } else if (exp instanceof FieldAccess) {
+            qualifier = ((FieldAccess) exp).getExpression();
+        } else if (exp instanceof SuperMethodInvocation) {
+            // REVIEW implement and write test for this verify times
+            qualifier = null;
+        }
+        return qualifier;
     }
 
     /**

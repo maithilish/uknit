@@ -36,4 +36,11 @@ public class NumberLiteralSrv implements PatchService {
         checkState(exp instanceof NumberLiteral);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof NumberLiteral);
+        checkState(copy instanceof NumberLiteral);
+    }
 }

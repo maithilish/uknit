@@ -36,4 +36,11 @@ public class CharacterLiteralSrv implements PatchService {
         checkState(exp instanceof CharacterLiteral);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof CharacterLiteral);
+        checkState(copy instanceof CharacterLiteral);
+    }
 }

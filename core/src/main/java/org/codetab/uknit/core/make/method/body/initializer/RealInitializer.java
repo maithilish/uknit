@@ -47,17 +47,23 @@ class RealInitializer {
             return Optional.empty();
         } else {
             Type type = var.getType();
-
-            // initialize to configured type
             String typeName = types.getTypeName(type);
             String key = String.join(".", "uknit.createInstance", typeName);
-            String ini = configs.getConfig(key);
+            Object ini = configs.getConfig(key);
+
+            // for boolean ini is BooleanLiteral
+            if (types.isBoolean(type)) {
+                ini = type.getAST()
+                        .newBooleanLiteral(Boolean.valueOf((String) ini));
+            }
 
             if (isNull(ini) && type.isArrayType()) {
                 ini = configs.getConfig("uknit.createInstance.arrayType", "{}");
             }
 
-            ini = varNames.replaceMetaSyntantics(ini);
+            if (nonNull(ini) && ini instanceof String) {
+                ini = varNames.replaceMetaSyntantics((String) ini);
+            }
 
             /*
              * The ini is null for real but no config createInstance such as

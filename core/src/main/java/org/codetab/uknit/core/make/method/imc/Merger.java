@@ -137,8 +137,9 @@ public class Merger {
                  * if IM has varargs and pack uses a varargs, then create
                  * initializer for the used varargs.
                  */
-                if (varargs.hasVarargs() && varargs.usesVarargs(iPack)) {
-                    varargs.createInitializerForVararg(iPack);
+                if (varargs.hasVarargs()
+                        && varargs.usesVarargs(iPack, internalHeap)) {
+                    varargs.createInitializerForVararg(iPack, internalHeap);
                 }
             } else {
                 /**

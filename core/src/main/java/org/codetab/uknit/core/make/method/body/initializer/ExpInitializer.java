@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.uknit.core.make.exp.Arrays;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
@@ -17,7 +18,6 @@ import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Initializer.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arrays;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
@@ -79,39 +79,23 @@ class ExpInitializer implements IInitializer {
             } else {
                 patchedExp = (Expression) parent;
             }
-        } else if (nodes.is(iniPack.getExp(), ArrayInitializer.class)
-                && nodes.is(pack.getExp(), ArrayAccess.class)) {
+        } else if (nodes.is(pack.getExp(), ArrayAccess.class)
+                && nodes.is(iniPack.getExp(), ArrayInitializer.class,
+                        ArrayCreation.class)) {
             /*
-             * ArrayAccess is not allowed as initializer, instead get value
-             * returned by array access.
+             * ArrayAccess and ArrayCreation is not allowed as initializer,
+             * instead get value returned by array access.
              */
-            ArrayAccess arrayAccess =
-                    (ArrayAccess) patcher.copyAndPatch(pack, heap);
-            ArrayInitializer arrayIni =
-                    (ArrayInitializer) patcher.copyAndPatch(iniPack, heap);
+            // ArrayAccess arrayAccess =
+            // (ArrayAccess) patcher.copyAndPatch(pack, heap);
+            ArrayAccess arrayAccess = (ArrayAccess) pack.getExp();
 
-            Optional<Expression> value =
-                    arrays.getValue(arrayAccess, arrayIni, heap);
+            Optional<Expression> value = arrays.getValue(arrayAccess, heap);
 
             if (value.isPresent() && allowedExps.isAllowed(value.get(), heap)) {
                 patchedExp = value.get();
             }
-        } else if (nodes.is(iniPack.getExp(), ArrayCreation.class)
-                && nodes.is(pack.getExp(), ArrayAccess.class)) {
-            // REVIEW
-            /*
-             * ArrayCreations is not allowed as initializer, instead get value
-             * returned by array access if initializer is defined in creation.
-             */
-            ArrayAccess arrayAccess =
-                    (ArrayAccess) patcher.copyAndPatch(pack, heap);
-            ArrayCreation arrayCre =
-                    (ArrayCreation) patcher.copyAndPatch(iniPack, heap);
-
-            Optional<Expression> value =
-                    arrays.getValue(arrayAccess, arrayCre, heap);
-
-            if (value.isPresent() && allowedExps.isAllowed(value.get(), heap)) {
+            if (value.isPresent() && nodes.isSimpleName(value.get())) {
                 patchedExp = value.get();
             }
         } else {
@@ -136,6 +120,8 @@ class AllowedExps {
     private Nodes nodes;
     @Inject
     private Packs packs;
+    @Inject
+    private Arrays arrays;
 
     public boolean isAllowed(final Expression exp, final Heap heap) {
 
@@ -154,14 +140,11 @@ class AllowedExps {
          * Ref itest: linked.Assign.assignArrayAccess().
          */
         if (nodes.is(exp, ArrayAccess.class)) {
-            Expression array = ((ArrayAccess) exp).getArray();
-            Optional<Pack> arrayPackO;
-            if (nodes.isName(array)) {
-                arrayPackO = packs.findByVarName(nodes.getName(array),
-                        heap.getPacks());
-            } else {
-                arrayPackO = packs.findByExp(array, heap.getPacks());
-            }
+            String arrayName = arrays.getArrayName((ArrayAccess) exp, heap);
+
+            Optional<Pack> arrayPackO =
+                    packs.findByVarName(arrayName, heap.getPacks());
+
             if (arrayPackO.isPresent() && nonNull(arrayPackO.get().getVar())) {
                 return !arrayPackO.get().getVar().is(Nature.OFFLIMIT);
             }

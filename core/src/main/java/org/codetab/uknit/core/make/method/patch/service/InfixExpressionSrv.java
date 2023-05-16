@@ -74,20 +74,20 @@ public class InfixExpressionSrv implements PatchService {
         int index = 0;
         Expression leftOper = wrappers.unpack(infix.getLeftOperand());
         Expression leftOperCopy = wrappers.unpack(infixCopy.getLeftOperand());
-        patchers.patchExpWithPackPatches(leftOper, leftOperCopy, patches, index,
-                infixCopy::setLeftOperand);
+        patchers.patchExpWithPackPatches(pack, leftOper, leftOperCopy, patches,
+                index, infixCopy::setLeftOperand);
 
         index = 1;
         Expression rightOper = wrappers.unpack(infix.getRightOperand());
         Expression rightOperCopy = wrappers.unpack(infixCopy.getRightOperand());
-        patchers.patchExpWithPackPatches(rightOper, rightOperCopy, patches,
-                index, infixCopy::setRightOperand);
+        patchers.patchExpWithPackPatches(pack, rightOper, rightOperCopy,
+                patches, index, infixCopy::setRightOperand);
 
         int offset = 2;
         List<Expression> exOpers = arguments.getExtendedOperands(infix);
         List<Expression> exOpersCopy = arguments.getExtendedOperands(infixCopy);
-        patchers.patchExpsWithPackPatches(exOpers, exOpersCopy, patches, offset,
-                heap);
+        patchers.patchExpsWithPackPatches(pack, exOpers, exOpersCopy, patches,
+                offset, heap);
     }
 
     @Override
@@ -104,5 +104,30 @@ public class InfixExpressionSrv implements PatchService {
         List<Expression> exOpers = arguments.getExtendedOperands(infix);
         exOpers.forEach(eo -> exps.add(wrappers.strip(eo)));
         return exps;
+    }
+
+    // REVIEW - write test
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof InfixExpression);
+        checkState(copy instanceof InfixExpression);
+
+        InfixExpression infix = (InfixExpression) node;
+        InfixExpression infixCopy = (InfixExpression) copy;
+
+        Expression leftOper = wrappers.unpack(infix.getLeftOperand());
+        Expression leftOperCopy = wrappers.unpack(infixCopy.getLeftOperand());
+        patchers.patchValue(leftOper, leftOperCopy, heap,
+                infixCopy::setLeftOperand);
+
+        Expression rightOper = wrappers.unpack(infix.getRightOperand());
+        Expression rightOperCopy = wrappers.unpack(infixCopy.getRightOperand());
+        patchers.patchValue(rightOper, rightOperCopy, heap,
+                infixCopy::setRightOperand);
+
+        List<Expression> exOpers = arguments.getExtendedOperands(infix);
+        List<Expression> exOpersCopy = arguments.getExtendedOperands(infixCopy);
+        patchers.patchValue(exOpers, exOpersCopy, heap);
     }
 }

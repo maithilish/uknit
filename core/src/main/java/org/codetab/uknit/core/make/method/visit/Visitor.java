@@ -218,7 +218,15 @@ public class Visitor extends ASTVisitor {
 
     @Override
     public void endVisit(final ArrayAccess node) {
-        packer.packExp(node, inCtlPath, heap);
+        /*
+         * In case of multi dimensional array each dim is visited separately
+         * with parent as next dim. Ex: names[1][0] is visited twice name[1]
+         * (parent node is name[1][0]) and name[1][0]. Create pack for
+         * name[1][0] and skip name[1].
+         */
+        if (!nodes.is(node.getParent(), ArrayAccess.class)) {
+            packer.packExp(node, inCtlPath, heap);
+        }
     }
 
     @Override

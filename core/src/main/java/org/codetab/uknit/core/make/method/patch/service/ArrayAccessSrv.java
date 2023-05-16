@@ -56,14 +56,14 @@ public class ArrayAccessSrv implements PatchService {
         int index = 0;
         Expression array = wrappers.unpack(aa.getArray());
         Expression arrayCopy = wrappers.unpack(aaCopy.getArray());
-        patchers.patchExpWithPackPatches(array, arrayCopy, patches, index,
+        patchers.patchExpWithPackPatches(pack, array, arrayCopy, patches, index,
                 aaCopy::setArray);
 
         index = 1;
         Expression arrayIndex = wrappers.unpack(aa.getIndex());
         Expression arrayIndexCopy = wrappers.unpack(aaCopy.getIndex());
-        patchers.patchExpWithPackPatches(arrayIndex, arrayIndexCopy, patches,
-                index, aaCopy::setIndex);
+        patchers.patchExpWithPackPatches(pack, arrayIndex, arrayIndexCopy,
+                patches, index, aaCopy::setIndex);
     }
 
     @Override
@@ -77,5 +77,23 @@ public class ArrayAccessSrv implements PatchService {
         exps.add(wrappers.strip(aa.getIndex()));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof ArrayAccess);
+        checkState(copy instanceof ArrayAccess);
+
+        ArrayAccess aa = (ArrayAccess) node;
+        ArrayAccess aaCopy = (ArrayAccess) copy;
+
+        Expression array = wrappers.unpack(aa.getArray());
+        Expression arrayCopy = wrappers.unpack(aaCopy.getArray());
+        patchers.patchValue(array, arrayCopy, heap, aaCopy::setArray);
+
+        Expression arrayIndex = wrappers.unpack(aa.getIndex());
+        Expression arrayIndexCopy = wrappers.unpack(aaCopy.getIndex());
+        patchers.patchValue(arrayIndex, arrayIndexCopy, heap, aaCopy::setIndex);
     }
 }

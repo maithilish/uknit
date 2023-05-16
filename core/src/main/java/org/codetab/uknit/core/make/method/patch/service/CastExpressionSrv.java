@@ -22,6 +22,8 @@ import org.eclipse.jdt.core.dom.Name;
 public class CastExpressionSrv implements PatchService {
 
     @Inject
+    private Patchers patchers;
+    @Inject
     private Wrappers wrappers;
     @Inject
     private Packs packs;
@@ -87,5 +89,20 @@ public class CastExpressionSrv implements PatchService {
 
         exps.add(wrappers.strip(ce.getExpression()));
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof CastExpression);
+        checkState(copy instanceof CastExpression);
+
+        CastExpression ce = (CastExpression) node;
+        CastExpression ceCopy = (CastExpression) copy;
+
+        Expression exp = wrappers.unpack(ce.getExpression());
+        Expression expCopy = wrappers.unpack(ceCopy.getExpression());
+
+        patchers.patchValue(exp, expCopy, heap, ceCopy::setExpression);
     }
 }

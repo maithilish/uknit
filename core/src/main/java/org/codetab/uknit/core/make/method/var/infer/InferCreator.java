@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.exception.TypeException;
+import org.codetab.uknit.core.make.exp.Arrays;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -18,7 +19,6 @@ import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Pack.Nature;
 import org.codetab.uknit.core.make.model.ReturnType;
-import org.codetab.uknit.core.node.Arrays;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
@@ -87,6 +87,14 @@ public class InferCreator {
             }
         }
 
+        // REVIEW - remove later
+        // Expression ex = pack.getExp();
+        // if (nodes.is(ex, MethodInvocation.class)) {
+        // Expression value = expManager
+        // .getValue((Expression) ((MethodInvocation) ex).arguments()
+        // .get(0), heap);
+        // }
+
         if (expressions.isInvokable(pack.getExp())) {
             Optional<ReturnType> returnTypeO = ((Invoke) pack).getReturnType();
             if (returnTypeO.isPresent()) {
@@ -142,6 +150,7 @@ public class InferCreator {
             }
 
             if (createInfer) {
+
                 /*
                  * try get type of the value returned of array access else get
                  * type of array access. Ex: Object a[] = {"foo"}; a[0]; the
@@ -161,6 +170,7 @@ public class InferCreator {
                         type = typeO.get();
                     }
                 }
+
                 if (isNull(type)) {
                     throw new TypeException(
                             "unable to get exp return type for: "

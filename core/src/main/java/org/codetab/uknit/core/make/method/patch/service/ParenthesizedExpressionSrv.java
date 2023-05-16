@@ -51,7 +51,7 @@ public class ParenthesizedExpressionSrv implements PatchService {
         int index = 0;
         Expression exp = wrappers.unpack(ce.getExpression());
         Expression expCopy = wrappers.unpack(ceCopy.getExpression());
-        patchers.patchExpWithPackPatches(exp, expCopy, patches, index,
+        patchers.patchExpWithPackPatches(pack, exp, expCopy, patches, index,
                 ceCopy::setExpression);
     }
 
@@ -66,5 +66,24 @@ public class ParenthesizedExpressionSrv implements PatchService {
         exps.add(wrappers.strip(pe.getExpression()));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof ParenthesizedExpression);
+        checkState(copy instanceof ParenthesizedExpression);
+
+        ParenthesizedExpression ce = (ParenthesizedExpression) node;
+        ParenthesizedExpression ceCopy = (ParenthesizedExpression) copy;
+
+        /*
+         * Value of the unpacked exp is set to parenthesized exp and
+         * parenthesise is not removed. Ex: If foo = "x" then ((foo)) becomes
+         * (("x")).
+         */
+        Expression exp = wrappers.unpack(ce.getExpression());
+        Expression expCopy = wrappers.unpack(ceCopy.getExpression());
+        patchers.patchValue(exp, expCopy, heap, ceCopy::setExpression);
     }
 }

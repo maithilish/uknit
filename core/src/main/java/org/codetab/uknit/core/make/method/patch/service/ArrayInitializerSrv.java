@@ -53,7 +53,7 @@ public class ArrayInitializerSrv implements PatchService {
         List<Expression> exps = arguments.getExps(ai);
         List<Expression> expsCopy = arguments.getExps(aiCopy);
         int offset = 0;
-        patchers.patchExpsWithPackPatches(exps, expsCopy, patches, offset,
+        patchers.patchExpsWithPackPatches(pack, exps, expsCopy, patches, offset,
                 heap);
     }
 
@@ -69,5 +69,19 @@ public class ArrayInitializerSrv implements PatchService {
         aiExps.forEach(e -> exps.add(wrappers.strip(e)));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof ArrayInitializer);
+        checkState(copy instanceof ArrayInitializer);
+
+        ArrayInitializer ai = (ArrayInitializer) node;
+        ArrayInitializer aiCopy = (ArrayInitializer) copy;
+
+        List<Expression> exps = arguments.getExps(ai);
+        List<Expression> expsCopy = arguments.getExps(aiCopy);
+        patchers.patchValue(exps, expsCopy, heap);
     }
 }

@@ -64,7 +64,7 @@ public class ArrayCreationSrv implements PatchService {
         int offset = 0;
         List<Expression> dims = arguments.getDims(ac);
         List<Expression> dimsCopy = arguments.getDims(acCopy);
-        patchers.patchExpsWithPackPatches(dims, dimsCopy, patches, offset,
+        patchers.patchExpsWithPackPatches(pack, dims, dimsCopy, patches, offset,
                 heap);
 
         // patch initializer exps
@@ -73,7 +73,7 @@ public class ArrayCreationSrv implements PatchService {
             List<Expression> inExps = arguments.getExps(ac.getInitializer());
             List<Expression> inExpsCopy =
                     arguments.getExps(acCopy.getInitializer());
-            patchers.patchExpsWithPackPatches(inExps, inExpsCopy, patches,
+            patchers.patchExpsWithPackPatches(pack, inExps, inExpsCopy, patches,
                     offset, heap);
         }
     }
@@ -94,5 +94,28 @@ public class ArrayCreationSrv implements PatchService {
             inExps.forEach(i -> exps.add(wrappers.strip(i)));
         }
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof ArrayCreation);
+        checkState(copy instanceof ArrayCreation);
+
+        ArrayCreation ac = (ArrayCreation) node;
+        ArrayCreation acCopy = (ArrayCreation) copy;
+
+        // patch dims
+        List<Expression> dims = arguments.getDims(ac);
+        List<Expression> dimsCopy = arguments.getDims(acCopy);
+        patchers.patchValue(dims, dimsCopy, heap);
+
+        // patch initializer exps
+        if (nonNull(ac.getInitializer())) {
+            List<Expression> inExps = arguments.getExps(ac.getInitializer());
+            List<Expression> inExpsCopy =
+                    arguments.getExps(acCopy.getInitializer());
+            patchers.patchValue(inExps, inExpsCopy, heap);
+        }
     }
 }

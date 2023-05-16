@@ -53,7 +53,7 @@ public class ClassInstanceCreationSrv implements PatchService {
         int offset = 0;
         List<Expression> args = arguments.getArgs(cic);
         List<Expression> argsCopy = arguments.getArgs(cicCopy);
-        patchers.patchExpsWithPackPatches(args, argsCopy, patches, offset,
+        patchers.patchExpsWithPackPatches(pack, args, argsCopy, patches, offset,
                 heap);
     }
 
@@ -69,5 +69,19 @@ public class ClassInstanceCreationSrv implements PatchService {
         args.forEach(a -> exps.add(wrappers.strip(a)));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof ClassInstanceCreation);
+        checkState(copy instanceof ClassInstanceCreation);
+
+        ClassInstanceCreation cic = (ClassInstanceCreation) node;
+        ClassInstanceCreation cicCopy = (ClassInstanceCreation) copy;
+
+        List<Expression> args = arguments.getArgs(cic);
+        List<Expression> argsCopy = arguments.getArgs(cicCopy);
+        patchers.patchValue(args, argsCopy, heap);
     }
 }

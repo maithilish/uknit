@@ -53,6 +53,26 @@ public class Packs {
         }).findFirst();
     }
 
+    // REVIEW
+    public Optional<Pack> findNearestByExp(final Pack pack,
+            final Expression exp, final List<Pack> packs) {
+        int start = 0;
+        int end = packs.indexOf(pack);
+        List<Pack> headList;
+        if (end >= 0) {
+            headList = packs.subList(start, end);
+        } else {
+            headList = new ArrayList<>();
+        }
+        for (int i = headList.size() - 1; i >= 0; i--) {
+            Pack p = headList.get(i);
+            if (nonNull(p.getExp()) && p.getExp().equals(exp)) {
+                return Optional.of(p);
+            }
+        }
+        return Optional.empty();
+    }
+
     /**
      * Find first pack with matching the expression. If exp is name then find
      * first pack with matching name.
@@ -479,6 +499,31 @@ public class Packs {
         }
     }
 
+    public boolean hasExp(final Optional<Pack> pack) {
+        return pack.isPresent() && pack.get().hasExp();
+    }
+
+    public boolean isExp(final Optional<Pack> pack, final Class<?> clz) {
+        if (pack.isEmpty()) {
+            return false;
+        } else if (!pack.get().hasExp()) {
+            return false;
+        } else {
+            return pack.get().getExp().getClass().isAssignableFrom(clz);
+        }
+    }
+
+    public Expression getExp(final Optional<Pack> pack) {
+        if (pack.isPresent()) {
+            return pack.get().getExp();
+        } else {
+            return null;
+        }
+    }
+
+    public boolean hasPatches(final Optional<Pack> pack) {
+        return pack.isPresent() && pack.get().hasPatches();
+    }
 }
 
 @Singleton

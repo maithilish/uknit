@@ -59,13 +59,13 @@ public class SuperMethodInvocationSrv implements PatchService {
         int index = 0;
         Expression exp = wrappers.unpack(smi.getName());
         Expression expCopy = wrappers.unpack(smiCopy.getName());
-        patchers.patchExpWithPackPatches(exp, expCopy, patches, index,
+        patchers.patchExpWithPackPatches(pack, exp, expCopy, patches, index,
                 (name) -> smiCopy.setName((SimpleName) name));
 
         int offset = 1;
         List<Expression> args = arguments.getArgs(smi);
         List<Expression> argsCopy = arguments.getArgs(smiCopy);
-        patchers.patchExpsWithPackPatches(args, argsCopy, patches, offset,
+        patchers.patchExpsWithPackPatches(pack, args, argsCopy, patches, offset,
                 heap);
     }
 
@@ -82,5 +82,13 @@ public class SuperMethodInvocationSrv implements PatchService {
         List<Expression> args = arguments.getArgs(smi);
         args.forEach(a -> exps.add(wrappers.strip(a)));
         return exps;
+    }
+
+    // REVIEW - write test
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        // TODO Auto-generated method stub
+
     }
 }

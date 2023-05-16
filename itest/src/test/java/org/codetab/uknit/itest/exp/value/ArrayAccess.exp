@@ -1,0 +1,38 @@
+package org.codetab.uknit.itest.exp.value;
+
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+class ArrayAccessTest {
+    @InjectMocks
+    private ArrayAccess arrayAccess;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testArrayItemType() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 10;
+        int grape = 20;
+        String orange = "foo";
+        String kiwi = "barx";
+        arrayAccess.arrayItemType(foo);
+
+        verify(foo).append(apple);
+        verify(foo).append(grape);
+        verify(foo).append(orange);
+        verify(foo).append(kiwi);
+    }
+
+    @Test
+    public void testArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        String orange = "y";
+        String banana = "x";
+        arrayAccess.arrayAccess(foo);
+
+        verify(foo).append(orange);
+        verify(foo).append(banana);
+    }
+}

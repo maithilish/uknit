@@ -36,4 +36,11 @@ public class StringLiteralSrv implements PatchService {
         checkState(exp instanceof StringLiteral);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof StringLiteral);
+        checkState(copy instanceof StringLiteral);
+    }
 }

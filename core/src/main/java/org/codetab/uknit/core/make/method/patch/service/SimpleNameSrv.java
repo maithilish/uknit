@@ -35,4 +35,11 @@ public class SimpleNameSrv implements PatchService {
         checkState(exp instanceof SimpleName);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof SimpleName);
+        checkState(copy instanceof SimpleName);
+    }
 }

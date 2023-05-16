@@ -96,10 +96,10 @@ class AccessCastTest {
     public void testSameInitializerAssignedToDifferentArray() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "foo";
-        Object grape = "foo";
-        Object orange = "bar";
-        Object kiwi = "foo";
-        Object mango = "bar";
+        String grape = "foo";
+        String orange = "bar";
+        String kiwi = "foo";
+        String mango = "bar";
         accessCast.sameInitializerAssignedToDifferentArray(foo);
 
         verify(foo, times(3)).append(apple);

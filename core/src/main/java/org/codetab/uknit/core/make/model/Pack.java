@@ -105,6 +105,10 @@ public class Pack {
         patches.add(0, patch);
     }
 
+    public boolean hasPatches() {
+        return patches.size() > 0;
+    }
+
     public boolean isInCtlPath() {
         return inCtlPath;
     }

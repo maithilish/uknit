@@ -36,4 +36,11 @@ public class LambdaExpressionSrv implements PatchService {
         checkState(exp instanceof LambdaExpression);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof LambdaExpression);
+        checkState(copy instanceof LambdaExpression);
+    }
 }

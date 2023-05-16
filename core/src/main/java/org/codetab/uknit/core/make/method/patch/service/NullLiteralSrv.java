@@ -36,4 +36,11 @@ public class NullLiteralSrv implements PatchService {
         checkState(exp instanceof NullLiteral);
         return List.of(exp);
     }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof NullLiteral);
+        checkState(copy instanceof NullLiteral);
+    }
 }

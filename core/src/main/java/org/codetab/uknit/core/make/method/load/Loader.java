@@ -154,7 +154,7 @@ public class Loader {
                     loadableVars.add(var);
                 }
             } catch (TypeNameException e) {
-                System.out.println();
+
             }
         }
         return loadableVars;

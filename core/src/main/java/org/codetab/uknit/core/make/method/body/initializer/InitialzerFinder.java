@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.Arrays;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
@@ -44,6 +45,8 @@ class InitialzerFinder {
     // PKGBREAKER - cross access
     @Inject
     private LinkedPack linkedPack;
+    @Inject
+    private Arrays arrays;
 
     public Optional<Pack> findInitializerPack(final Pack pack,
             final Heap heap) {
@@ -175,7 +178,7 @@ class InitialzerFinder {
                 && nodes.is(exp, ArrayAccess.class)) {
             ArrayAccess aa =
                     (ArrayAccess) patcher.copyAndPatch(packO.get(), heap);
-            String arrayName = nodes.getName(aa.getArray());
+            String arrayName = arrays.getArrayName(aa, heap);
             Optional<Pack> aPackO =
                     packs.findByVarName(arrayName, heap.getPacks());
             if (aPackO.isPresent()) {

@@ -16,6 +16,12 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 
+/**
+ * In JDT, person.id is QualifiedName exp and (person).id is FieldAccess exp.
+ *
+ * @author Maithilish
+ *
+ */
 public class QualifiedNameSrv implements PatchService {
 
     @Inject
@@ -58,13 +64,13 @@ public class QualifiedNameSrv implements PatchService {
         int index = 0;
         Expression qualifier = wrappers.unpack(qn.getQualifier());
         Expression qualifierCopy = wrappers.unpack(qnCopy.getQualifier());
-        patchers.patchExpWithPackPatches(qualifier, qualifierCopy, patches,
-                index, n -> qnCopy.setQualifier((Name) n));
+        patchers.patchExpWithPackPatches(pack, qualifier, qualifierCopy,
+                patches, index, n -> qnCopy.setQualifier((Name) n));
 
         index = 1;
         Expression name = wrappers.unpack(qn.getName());
         Expression nameCopy = wrappers.unpack(qnCopy.getName());
-        patchers.patchExpWithPackPatches(name, nameCopy, patches, index,
+        patchers.patchExpWithPackPatches(pack, name, nameCopy, patches, index,
                 n -> qnCopy.setName((SimpleName) n));
     }
 
@@ -80,5 +86,25 @@ public class QualifiedNameSrv implements PatchService {
         exps.add(wrappers.strip(qn.getName()));
 
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof QualifiedName);
+        checkState(copy instanceof QualifiedName);
+
+        QualifiedName qn = (QualifiedName) node;
+        QualifiedName qnCopy = (QualifiedName) copy;
+
+        Expression qualifier = wrappers.unpack(qn.getQualifier());
+        Expression qualifierCopy = wrappers.unpack(qnCopy.getQualifier());
+        patchers.patchValue(qualifier, qualifierCopy, heap,
+                n -> qnCopy.setQualifier((Name) n));
+
+        Expression name = wrappers.unpack(qn.getName());
+        Expression nameCopy = wrappers.unpack(qnCopy.getName());
+        patchers.patchValue(name, nameCopy, heap,
+                n -> qnCopy.setName((SimpleName) n));
     }
 }

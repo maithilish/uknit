@@ -59,13 +59,13 @@ public class MethodInvocationSrv implements PatchService {
         final int index = 0;
         Expression exp = wrappers.unpack(mi.getExpression());
         Expression expCopy = wrappers.unpack(miCopy.getExpression());
-        patchers.patchExpWithPackPatches(exp, expCopy, patches, index,
+        patchers.patchExpWithPackPatches(pack, exp, expCopy, patches, index,
                 miCopy::setExpression);
 
         final int offset = 1;
         List<Expression> args = arguments.getArgs(mi);
         List<Expression> argsCopy = arguments.getArgs(miCopy);
-        patchers.patchExpsWithPackPatches(args, argsCopy, patches, offset,
+        patchers.patchExpsWithPackPatches(pack, args, argsCopy, patches, offset,
                 heap);
     }
 
@@ -82,5 +82,23 @@ public class MethodInvocationSrv implements PatchService {
         List<Expression> args = arguments.getArgs(mi);
         args.forEach(a -> exps.add(wrappers.strip(a)));
         return exps;
+    }
+
+    @Override
+    public void patchValue(final Expression node, final Expression copy,
+            final Heap heap) {
+        checkState(node instanceof MethodInvocation);
+        checkState(node instanceof MethodInvocation);
+
+        MethodInvocation mi = (MethodInvocation) node;
+        MethodInvocation miCopy = (MethodInvocation) copy;
+
+        Expression exp = wrappers.unpack(mi.getExpression());
+        Expression expCopy = wrappers.unpack(miCopy.getExpression());
+        patchers.patchValue(exp, expCopy, heap, miCopy::setExpression);
+
+        List<Expression> args = arguments.getArgs(mi);
+        List<Expression> argsCopy = arguments.getArgs(miCopy);
+        patchers.patchValue(args, argsCopy, heap);
     }
 }

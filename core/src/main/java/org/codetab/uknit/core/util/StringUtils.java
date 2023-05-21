@@ -30,11 +30,21 @@ public class StringUtils {
         return sb.toString();
     }
 
-    // REVIEW - remove redundant toString in references
+    /**
+     * Concat strings with space between them.
+     *
+     * @param parts
+     * @return
+     */
     public static String spaceit(final Object... parts) {
         String[] strings = new String[parts.length];
         for (int i = 0; i < parts.length; i++) {
-            strings[i] = parts[i].toString();
+            Object part = parts[i];
+            if (part instanceof String) {
+                strings[i] = (String) part;
+            } else {
+                strings[i] = part.toString();
+            }
         }
         return String.join(" ", strings);
     }

@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.body.initializer;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.uknit.core.exception.ResolveException;
 import org.codetab.uknit.core.make.exp.Arrays;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
@@ -18,6 +20,7 @@ import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Initializer.Kind;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
@@ -60,7 +63,8 @@ class ExpInitializer implements IInitializer {
         Optional<Initializer> initializer = Optional.empty();
 
         // iniPack exp is not allowed as initializer
-        if (!allowedExps.isAllowed(wrappers.unpack(iniPack.getExp()), heap)) {
+        if (!allowedExps.isAllowed(wrappers.unpack(iniPack.getExp()), iniPack,
+                heap)) {
             return initializer;
         }
 
@@ -84,15 +88,18 @@ class ExpInitializer implements IInitializer {
                         ArrayCreation.class)) {
             /*
              * ArrayAccess and ArrayCreation is not allowed as initializer,
-             * instead get value returned by array access.
+             * instead get value returned by array access. Can't get value
+             * directly from iniPack as ArrayInitializer may be multi
+             * dimensional.
              */
             // ArrayAccess arrayAccess =
             // (ArrayAccess) patcher.copyAndPatch(pack, heap);
             ArrayAccess arrayAccess = (ArrayAccess) pack.getExp();
+            Optional<Expression> value =
+                    arrays.getValue(arrayAccess, pack, heap);
 
-            Optional<Expression> value = arrays.getValue(arrayAccess, heap);
-
-            if (value.isPresent() && allowedExps.isAllowed(value.get(), heap)) {
+            if (value.isPresent()
+                    && allowedExps.isAllowed(value.get(), pack, heap)) {
                 patchedExp = value.get();
             }
             if (value.isPresent() && nodes.isSimpleName(value.get())) {
@@ -121,9 +128,12 @@ class AllowedExps {
     @Inject
     private Packs packs;
     @Inject
+    private Methods methods;
+    @Inject
     private Arrays arrays;
 
-    public boolean isAllowed(final Expression exp, final Heap heap) {
+    public boolean isAllowed(final Expression exp, final Pack pack,
+            final Heap heap) {
 
         List<Class<? extends Expression>> clzs =
                 nodeGroups.allowedAsInitializer();
@@ -134,14 +144,31 @@ class AllowedExps {
         }
 
         /*
+         * Ex: boolean[] a = {Boolean.valueOf(true)}, for a[0] initializer is
+         * static call Boolean.valueOf(true).
+         */
+        try {
+            if (methods.isStaticCall(exp)) {
+                return true;
+            }
+        } catch (ResolveException e) {
+            // patched exp will not resolve
+        }
+
+        /*
          * If array is OFFLIMIT then not allowed. Ex: String name = array[0], if
          * array is parameter then it is accessible (not OFFLIMIT) and it is
          * allowed, but if array is defined in the method then it is OFFLIMIT.
          * Ref itest: linked.Assign.assignArrayAccess().
          */
         if (nodes.is(exp, ArrayAccess.class)) {
-            String arrayName = arrays.getArrayName((ArrayAccess) exp, heap);
+            String arrayName =
+                    arrays.getArrayName((ArrayAccess) exp, pack, heap);
 
+            // REVIEW - new String[] {"foo", "bar"}[0], name is null
+            if (isNull(arrayName)) {
+                return true;
+            }
             Optional<Pack> arrayPackO =
                     packs.findByVarName(arrayName, heap.getPacks());
 

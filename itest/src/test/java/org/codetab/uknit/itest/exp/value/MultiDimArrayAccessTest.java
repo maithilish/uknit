@@ -1,5 +1,6 @@
 package org.codetab.uknit.itest.exp.value;
 
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.codetab.uknit.itest.exp.value.Model.Foo;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
 class MultiDimArrayAccessTest {
     @InjectMocks
     private MultiDimArrayAccess multiDimArrayAccess;
@@ -32,6 +34,8 @@ class MultiDimArrayAccessTest {
         String fig = "bar2";
         String plum = "foox";
         String lychee = "barx";
+        String scrappy = "foox";
+        String barracuda = "barx";
         multiDimArrayAccess.literal(foo);
 
         verify(foo).append(apple);
@@ -44,7 +48,19 @@ class MultiDimArrayAccessTest {
         verify(foo).append(apricot);
         verify(foo).append(peach);
         verify(foo).append(fig);
-        verify(foo).append(plum);
-        verify(foo).append(lychee);
+        verify(foo, times(2)).append(plum);
+        verify(foo, times(2)).append(lychee);
+    }
+
+    @Test
+    public void testArgIsMultiDimArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "bar1";
+        String grape = "barx";
+        String mango = "barx";
+        multiDimArrayAccess.argIsMultiDimArrayAccess(foo);
+
+        verify(foo).append(apple);
+        verify(foo, times(2)).append(grape);
     }
 }

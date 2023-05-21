@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.QualifiedName;
@@ -38,7 +39,8 @@ public class QualifiedNameSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Heap heap) {
+    public Expression getValue(final Expression node, final Pack pack,
+            final Heap heap) {
         // TODO Auto-generated method stub
         return null;
     }

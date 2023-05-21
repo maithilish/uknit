@@ -11,9 +11,9 @@ import org.codetab.uknit.core.make.exp.srv.ExpServiceLoader;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Types;
-import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -27,8 +27,6 @@ public class Arrays {
     private Nodes nodes;
     @Inject
     private Types types;
-    @Inject
-    private Wrappers wrappers;
     @Inject
     private ExpManager expManager;
     @Inject
@@ -44,25 +42,30 @@ public class Arrays {
      * @return
      */
     public Optional<Expression> getValue(final ArrayAccess arrayAccess,
-            final Heap heap) {
-        return Optional.ofNullable(expManager.getValue(arrayAccess, heap));
+            final Pack pack, final Heap heap) {
+        return Optional
+                .ofNullable(expManager.getValue(arrayAccess, pack, heap));
     }
 
     /**
-     * Get array name of array access.
+     * Get array name of array access. Array name may be simple name or
+     * expression. Examples: array[0], (arrayOfArrays[0])[0], getArray()[0].
      *
      * @param arrayAccess
      * @param heap
      * @return
      */
-    public String getArrayName(final ArrayAccess arrayAccess, final Heap heap) {
-        Expression arrayName = wrappers.unpack(arrayAccess.getArray());
+    public String getArrayName(final ArrayAccess arrayAccess, final Pack pack,
+            final Heap heap) {
+        ArrayAccessSrv expSrv =
+                (ArrayAccessSrv) expServiceLoader.loadService(arrayAccess);
+        Expression arrayName = expSrv.getArrayName(arrayAccess, pack, heap);
         if (nodes.isSimpleName(arrayName)) {
             return nodes.getName(arrayName);
         } else if (nodes.is(arrayName, ArrayAccess.class)) {
-            return getArrayName((ArrayAccess) arrayName, heap);
+            return getArrayName((ArrayAccess) arrayName, pack, heap);
         } else {
-            Expression nameExp = expManager.getValue(arrayName, heap);
+            Expression nameExp = expManager.getValue(arrayName, pack, heap);
             if (nodes.isName(nameExp)) {
                 return nodes.getName(nameExp);
             } else {
@@ -78,10 +81,11 @@ public class Arrays {
      * @param heap
      * @return
      */
-    public int getIndex(final ArrayAccess arrayAccess, final Heap heap) {
+    public int getIndex(final ArrayAccess arrayAccess, final Pack pack,
+            final Heap heap) {
         ArrayAccessSrv srv =
                 (ArrayAccessSrv) expServiceLoader.loadService(arrayAccess);
-        return srv.getIndex(arrayAccess, heap);
+        return srv.getIndex(arrayAccess, pack, heap);
     }
 
     /**
@@ -95,9 +99,9 @@ public class Arrays {
      * @return
      */
     public Optional<Type> getType(final ArrayAccess arrayAccess,
-            final Heap heap) {
+            final Pack pack, final Heap heap) {
         Optional<Type> type = Optional.empty();
-        Optional<Expression> valueO = getValue(arrayAccess, heap);
+        Optional<Expression> valueO = getValue(arrayAccess, pack, heap);
         if (valueO.isPresent()) {
             Expression value = valueO.get();
             if (nodes.isSimpleName(value)) {
@@ -131,9 +135,9 @@ public class Arrays {
      * @return
      */
     public ITypeBinding getTypeBinding(final ArrayAccess arrayAccess,
-            final Heap heap) {
+            final Pack pack, final Heap heap) {
         ITypeBinding binding = null;
-        Optional<Expression> value = getValue(arrayAccess, heap);
+        Optional<Expression> value = getValue(arrayAccess, pack, heap);
         if (value.isPresent()) {
             binding = value.get().resolveTypeBinding();
         }

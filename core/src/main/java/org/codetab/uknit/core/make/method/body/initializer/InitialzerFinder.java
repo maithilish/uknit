@@ -91,6 +91,7 @@ class InitialzerFinder {
      * @param heap
      * @return
      */
+    // REVIEW - can ExpManager.getValue() replace this.
     private Optional<Expression> findInitializer(final IVar var,
             final Expression initExp, final Heap heap) {
 
@@ -178,7 +179,7 @@ class InitialzerFinder {
                 && nodes.is(exp, ArrayAccess.class)) {
             ArrayAccess aa =
                     (ArrayAccess) patcher.copyAndPatch(packO.get(), heap);
-            String arrayName = arrays.getArrayName(aa, heap);
+            String arrayName = arrays.getArrayName(aa, packO.get(), heap);
             Optional<Pack> aPackO =
                     packs.findByVarName(arrayName, heap.getPacks());
             if (aPackO.isPresent()) {

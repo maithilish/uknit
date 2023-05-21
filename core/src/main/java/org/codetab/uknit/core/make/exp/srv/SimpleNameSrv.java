@@ -28,7 +28,8 @@ public class SimpleNameSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Heap heap) {
+    public Expression getValue(final Expression node, final Pack pack,
+            final Heap heap) {
         checkState(node instanceof SimpleName);
         // find var for the name and return its value
         Optional<Pack> varPackO =

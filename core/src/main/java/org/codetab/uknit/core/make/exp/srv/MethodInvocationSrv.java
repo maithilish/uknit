@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Arguments;
+import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -24,6 +25,8 @@ public class MethodInvocationSrv implements ExpService {
     private Arguments arguments;
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private Methods methods;
     @Inject
     private Packs packs;
 
@@ -43,10 +46,22 @@ public class MethodInvocationSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Heap heap) {
+    public Expression getValue(final Expression node, final Pack pack,
+            final Heap heap) {
         checkState(node instanceof MethodInvocation);
-        Optional<Pack> pack = packs.findByExp(node, heap.getPacks());
-        IVar var = packs.getVar(pack);
+
+        /*
+         * If value is static call then return it. Ex: boolean[] a =
+         * {Boolean.valueOf(true)}; value of a[0] is Boolean.valueOf(true).
+         */
+        if (methods.isStaticCall(node)) {
+            return node;
+        }
+
+        Optional<Pack> miPackO = packs.findByExp(node, heap.getPacks());
+        IVar var = packs.getVar(miPackO);
+
+        // if var has expression initializer return it else return var name exp
         if (nonNull(var) && var.getInitializer().isPresent()) {
             Object ini = var.getInitializer().get().getInitializer();
             if (ini instanceof Expression) {

@@ -280,3 +280,4 @@ va
 postfix
 unmerge
 instanceof
+objs

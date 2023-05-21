@@ -121,8 +121,8 @@ public class Varargs {
      */
     public boolean usesVarargs(final Pack pack, final Heap heap) {
         if (vaParam.isPresent() && nodes.is(pack.getExp(), ArrayAccess.class)) {
-            String name =
-                    arrays.getArrayName((ArrayAccess) pack.getExp(), heap);
+            String name = arrays.getArrayName((ArrayAccess) pack.getExp(), pack,
+                    heap);
             if (packs.hasVar(vaParam)) {
                 return packs.getVar(vaParam).getName().equals(name);
             }
@@ -140,7 +140,7 @@ public class Varargs {
      */
     public void createInitializerForVararg(final Pack pack, final Heap heap) {
         ArrayAccess aa = (ArrayAccess) pack.getExp();
-        int index = arrays.getIndex(aa, heap);
+        int index = arrays.getIndex(aa, pack, heap);
         if (index >= vaArgs.size()) {
             throw new CriticalException(spaceit("missing varargs arg,",
                     String.valueOf(vaArgs.size()), "args passed to varargs",

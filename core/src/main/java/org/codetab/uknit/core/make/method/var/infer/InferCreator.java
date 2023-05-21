@@ -157,8 +157,9 @@ public class InferCreator {
                  * type of a[0] is object and type of value return by it String.
                  */
                 Type type = null;
-                ITypeBinding typeBinding = arrays.getTypeBinding(exp, heap);
-                Optional<Type> typeO = arrays.getType(exp, heap);
+                ITypeBinding typeBinding =
+                        arrays.getTypeBinding(exp, pack, heap);
+                Optional<Type> typeO = arrays.getType(exp, pack, heap);
                 if (typeO.isPresent() && nonNull(typeBinding)) {
                     // get type from value
                     type = typeO.get();

@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
 import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.exception.ResolveException;
 import org.codetab.uknit.core.exception.TypeNameException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -225,7 +226,12 @@ public class Types {
          */
         if (isNull(type)) {
             ITypeBinding typeBinding = exp.resolveTypeBinding();
-            type = getType(typeBinding, exp.getAST());
+            if (nonNull(typeBinding)) {
+                type = getType(typeBinding, exp.getAST());
+            } else {
+                throw new ResolveException(
+                        nodes.exMessage("unable to resolve", exp));
+            }
         }
 
         return Optional.ofNullable(type);

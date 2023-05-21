@@ -47,7 +47,8 @@ public class ConditionalExpressionSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Heap heap) {
+    public Expression getValue(final Expression node, final Pack pack,
+            final Heap heap) {
         checkState(node instanceof ConditionalExpression);
 
         ConditionalExpression ce = (ConditionalExpression) node;
@@ -64,7 +65,7 @@ public class ConditionalExpressionSrv implements ExpService {
         }
 
         ExpService srv = srvLoader.loadService(exp);
-        Expression expValue = srv.getValue(exp, heap);
+        Expression expValue = srv.getValue(exp, pack, heap);
 
         Expression value;
         if (nodes.is(expValue, BooleanLiteral.class)) {

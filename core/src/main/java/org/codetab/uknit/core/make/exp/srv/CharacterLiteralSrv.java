@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.List;
 
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Pack;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.Expression;
 
@@ -17,8 +18,9 @@ public class CharacterLiteralSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Heap heap) {
-        // TODO Auto-generated method stub
-        return null;
+    public Expression getValue(final Expression node, final Pack pack,
+            final Heap heap) {
+        checkState(node instanceof CharacterLiteral);
+        return node;
     }
 }

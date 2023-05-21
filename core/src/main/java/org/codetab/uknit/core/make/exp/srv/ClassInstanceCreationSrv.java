@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
+import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -35,7 +36,8 @@ public class ClassInstanceCreationSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Heap heap) {
+    public Expression getValue(final Expression node, final Pack pack,
+            final Heap heap) {
         /*
          * If exp is new String("foo") then value is new String("foo") as uKnit
          * doesn't evaluate the exp.

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.ResolveException;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
@@ -15,8 +16,11 @@ import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeGroups;
 import org.codetab.uknit.core.node.Nodes;
+import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Type;
 
 public class InitializerProcessor {
 
@@ -42,6 +46,8 @@ public class InitializerProcessor {
     private Factory factory;
     @Inject
     private InitialzerFinder initialzerFinder;
+    @Inject
+    private TypeChange typeChange;
 
     /**
      * Assign initializer for vars that are true for isMock(). Even when a var
@@ -126,6 +132,16 @@ public class InitializerProcessor {
             IVar var = pack.getVar();
             if (initializer.isPresent()) {
                 var.setInitializer(initializer);
+
+                // if var type is changed, set new type
+                Object value = initializer.get().getInitializer();
+                if (nonNull(value) && value instanceof Expression) {
+                    Optional<Type> newType = typeChange
+                            .getValueTypeIfChanged((Expression) value, var);
+                    if (newType.isPresent()) {
+                        var.setType(newType.get());
+                    }
+                }
             }
         }
     }
@@ -156,5 +172,57 @@ public class InitializerProcessor {
                 pack.getVar().setInitializer(initializer);
             }
         }
+    }
+}
+
+/**
+ * In rare cases var type may change, obtain new type.
+ *
+ * @author Maithilish
+ *
+ */
+class TypeChange {
+
+    @Inject
+    private Types types;
+
+    /**
+     * Get new type if new type is not compatible with old type. Ex: old type
+     * ArrayList and new value is HashMap, type is changed. Old type is List
+     * (old value is ArrayList) and new value is LinkedList, type is not
+     * changed.
+     *
+     * @param value
+     * @param var
+     * @return
+     */
+    public Optional<Type> getValueTypeIfChanged(final Expression value,
+            final IVar var) {
+        Optional<Type> newType = Optional.empty();
+        try {
+            /*
+             * If var value type is changed then set new type. Ex: Object[] a =
+             * {new ArrayList<String>()}; a[0] = new Object[]{new
+             * HashMap<String, File>()}; The a[0] type is ArrayList<...> and on
+             * reassign a2[0] is HashMap<...>.
+             *
+             * Ref itest: exp.value.ArrayAccess.accessClassInstanceCreation().
+             */
+
+            Optional<Type> valueType = types.getType(value);
+            ITypeBinding valueBind = value.resolveTypeBinding();
+            ITypeBinding varBind = var.getTypeBinding();
+            boolean compatible = true;
+            if (nonNull(valueBind) && nonNull(varBind)) {
+                compatible = valueBind.isAssignmentCompatible(varBind);
+            }
+
+            if (!compatible) {
+                newType = valueType;
+            }
+
+        } catch (ResolveException e) {
+        }
+        return newType;
     }
 }

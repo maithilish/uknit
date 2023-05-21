@@ -27,6 +27,22 @@ class ArrayAccessTest {
     }
 
     @Test
+    public void testArgParamSame2() {
+        Foo foo = Mockito.mock(Foo.class);
+        String grape = "foo";
+        String orange = "bar";
+        String kiwi = "foox";
+        String mango = new String("barx");
+        String apple = "foo";
+        arrayAccess.argParamSame2(foo);
+
+        verify(foo, times(2)).append(grape);
+        verify(foo).append(orange);
+        verify(foo).append(kiwi);
+        verify(foo).append(mango);
+    }
+
+    @Test
     public void testArgParamDiff() {
         Foo foo = Mockito.mock(Foo.class);
         String grape = "foo";
@@ -47,16 +63,19 @@ class ArrayAccessTest {
         Foo foo = Mockito.mock(Foo.class);
         String apple = new String("foo");
         String grape = "bar";
-        String orange = new String("foo");
-        String kiwi = "bar";
+        String orange = "barx";
+        String kiwi = new String("foo");
+        String mango = "bar";
+        String banana = "barx";
         arrayAccess.arrayDefinedInIM(foo);
 
         verify(foo, times(2)).append(apple);
         verify(foo, times(2)).append(grape);
+        verify(foo, times(2)).append(orange);
     }
 
     @Test
-    public void testSameInitializerAssignedToDifferentArray() {
+    public void testSameInitializerAssignedToDifferentArraySame() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "foo";
         String grape = "bar";
@@ -64,37 +83,92 @@ class ArrayAccessTest {
         String kiwi = "bar";
         String mango = "foo";
         String banana = "bar";
-        arrayAccess.sameInitializerAssignedToDifferentArray(foo);
+        arrayAccess.sameInitializerAssignedToDifferentArraySame(foo);
 
         verify(foo, times(3)).append(apple);
         verify(foo, times(3)).append(grape);
     }
 
     @Test
-    public void testReassignArrayItem() {
+    public void testSameInitializerAssignedToDifferentArrayDiff() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "foo";
+        String kiwi = "bar";
+        String mango = "foo";
+        String banana = "bar";
+        arrayAccess.sameInitializerAssignedToDifferentArrayDiff(foo);
+
+        verify(foo, times(3)).append(apple);
+        verify(foo, times(3)).append(grape);
+    }
+
+    @Test
+    public void testReassignArrayItemSame() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "foo";
         String grape = new String("bar");
         String orange = "foo";
-        String kiwi = new String("bar");
-        arrayAccess.reassignArrayItem(foo);
+        String kiwi = "bar";
+        String mango = "foo";
+        String banana = "barx";
+        arrayAccess.reassignArrayItemSame(foo);
 
-        verify(foo, times(2)).append(apple);
-        verify(foo, times(2)).append(grape);
+        verify(foo, times(3)).append(apple);
+        verify(foo).append(grape);
+        verify(foo).append(kiwi);
+        verify(foo).append(banana);
     }
 
     @Test
-    public void testInitializerItemIsVar() {
+    public void testReassignArrayItemDiff() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = new String("bar");
+        String orange = "foo";
+        String kiwi = "bar";
+        String mango = "foo";
+        String banana = "barx";
+        arrayAccess.reassignArrayItemDiff(foo);
+
+        verify(foo, times(3)).append(apple);
+        verify(foo).append(grape);
+        verify(foo).append(kiwi);
+        verify(foo).append(banana);
+    }
+
+    @Test
+    public void testInitializerItemIsVarSame() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "foo";
         String grape = "bar";
         String orange = "foox";
         String kiwi = "barx";
-        arrayAccess.initializerItemIsVar(foo);
+        String mango = "barx";
+        String banana = "foox";
+        arrayAccess.initializerItemIsVarSame(foo);
 
         verify(foo).append(apple);
         verify(foo).append(grape);
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo, times(2)).append(orange);
+        verify(foo, times(2)).append(kiwi);
+    }
+
+    @Test
+    public void testInitializerItemIsVarDiff() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "foox";
+        String kiwi = "barx";
+        String mango = "barx";
+        String banana = "foox";
+        arrayAccess.initializerItemIsVarDiff(foo);
+
+        verify(foo).append(apple);
+        verify(foo).append(grape);
+        verify(foo, times(2)).append(orange);
+        verify(foo, times(2)).append(kiwi);
     }
 }

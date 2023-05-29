@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.body.initializer.InitializerProcessor;
 import org.codetab.uknit.core.make.method.imc.IMCProcessor;
 import org.codetab.uknit.core.make.method.invoke.InvokeProcessor;
@@ -18,6 +19,7 @@ import org.codetab.uknit.core.make.method.verify.VerifyProcessor;
 import org.codetab.uknit.core.make.method.when.WhenProcessor;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.Pack;
 
 /**
  * Post visit routines to process packs collected by method visitor.
@@ -49,6 +51,8 @@ public class Processor {
     private LoadProcessor loadProcessor;
     @Inject
     private InitializerProcessor initializerProcessor;
+    @Inject
+    private Packs packs;
 
     /**
      * Call after MUT and each IM visit. The ImcProcessor.process() call
@@ -147,11 +151,22 @@ public class Processor {
     }
 
     public void processInitializer(final Heap heap) {
-        initializerProcessor.processExps(heap);
-        initializerProcessor.processReals(heap);
-        initializerProcessor.processMocks(heap);
-        initializerProcessor.processSensibles(heap);
-        initializerProcessor.processStepins(heap);
+        List<Pack> packList =
+                packs.filterNoInitializers(heap.getPacks(), p -> true);
+        for (Pack pack : packList) {
+            /*
+             * ExpInitializer may need initializer for array index to get value
+             * of array access etc. Process real infer before process exp.
+             */
+            initializerProcessor.processRealInfer(pack, heap);
+            initializerProcessor.processMock(pack, heap);
+
+            initializerProcessor.processExp(pack, heap);
+            initializerProcessor.processReal(pack, heap);
+
+            initializerProcessor.processSensible(pack, heap);
+            initializerProcessor.processStepin(pack, heap);
+        }
     }
 
     public void processOfflimits(final Heap heap) {

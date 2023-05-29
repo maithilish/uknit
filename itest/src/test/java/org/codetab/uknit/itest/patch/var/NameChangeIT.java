@@ -24,6 +24,7 @@ class NameChangeIT extends ITBase {
 
             assertThat(actualFile).exists();
             assertThat(expectedFile).exists();
+            writeDiffToFile(expectedFile, actualFile);
 
             assertThat(contentOf(actualFile))
                     .isEqualTo(contentOf(expectedFile));

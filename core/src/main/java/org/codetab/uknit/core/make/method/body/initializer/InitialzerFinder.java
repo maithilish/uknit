@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.exp.Arrays;
+import org.codetab.uknit.core.make.exp.ExpManager;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.method.var.linked.LinkedPack;
@@ -47,6 +48,8 @@ class InitialzerFinder {
     private LinkedPack linkedPack;
     @Inject
     private Arrays arrays;
+    @Inject
+    private ExpManager expManager;
 
     public Optional<Pack> findInitializerPack(final Pack pack,
             final Heap heap) {
@@ -142,10 +145,13 @@ class InitialzerFinder {
          * array.Access.assignAccessPrimitive().
          */
         List<Pack> headList = packs.headList(packO.get(), heap.getPacks());
-        final String expString = exp.toString();
+        final String expString = expManager.unparenthesize(exp).toString();
         Optional<Pack> leftExpPackO = headList.stream().filter(p -> {
-            return p.getLeftExp().isPresent()
-                    && p.getLeftExp().get().toString().equals(expString);
+            if (p.getLeftExp().isPresent()) {
+                Expression e = expManager.unparenthesize(p.getLeftExp().get());
+                return e.toString().equals(expString);
+            }
+            return false;
         }).reduce((f, s) -> s);
 
         if (leftExpPackO.isPresent()) {

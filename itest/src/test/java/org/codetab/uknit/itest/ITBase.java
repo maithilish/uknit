@@ -3,8 +3,11 @@ package org.codetab.uknit.itest;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -245,5 +248,58 @@ public class ITBase {
                 System.exit(0);
             }
         }
+    }
+
+    protected void writeDiffToFile(final File expectedFile,
+            final File actualFile) {
+
+        Path diffFilePath = Path.of("/tmp/uknitdiff.txt");
+
+        String br = System.lineSeparator();
+        StringBuffer diffText = new StringBuffer();
+        Process proc;
+
+        try {
+            // UNIX diff
+            proc = Runtime.getRuntime()
+                    .exec("diff " + expectedFile.getAbsolutePath() + " "
+                            + actualFile.getAbsolutePath());
+            proc.waitFor();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(proc.getInputStream()))) {
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    diffText.append(line);
+                    diffText.append(br);
+                }
+            }
+
+            if (diffText.length() > 0) {
+                try (FileWriter outFile =
+                        new FileWriter(diffFilePath.toFile(), true)) {
+                    String header = getHeader(actualFile.getAbsolutePath());
+                    outFile.write(header.toString());
+                    outFile.write(diffText.toString());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getHeader(final String actualFilePath) {
+        String br = System.lineSeparator();
+        int i = actualFilePath.indexOf("org/codetab/uknit");
+        String compactPath = actualFilePath;
+        if (i >= 0) {
+            compactPath = actualFilePath.substring(i);
+        }
+        StringBuffer header = new StringBuffer();
+        header.append("diff : ");
+        header.append(compactPath);
+        header.append(br);
+        header.append("expected <    > actual");
+        header.append(br);
+        return header.toString();
     }
 }

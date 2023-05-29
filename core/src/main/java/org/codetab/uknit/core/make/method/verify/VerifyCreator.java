@@ -101,7 +101,8 @@ public class VerifyCreator {
             Optional<Pack> callVarPackO = findCallVarPack(invoke, heap);
             if (callVarPackO.isPresent()) {
                 IVar var = callVarPackO.get().getVar();
-                if (var.isCreated() || var.is(Nature.REALISH)) {
+                if (var.isCreated() || var.is(Nature.REALISH)
+                        || var.is(Nature.OFFLIMIT)) {
                     return true;
                 }
             }

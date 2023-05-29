@@ -1,6 +1,5 @@
 package org.codetab.uknit.itest.initializer;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,12 +23,12 @@ class ArrayTest {
     public void testUseArrayAccessInWhen() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "bar";
-        String grape = "Foo";
+        String grape = "Bar";
 
         when(foo.format(apple)).thenReturn(grape);
         array.useArrayAccessInWhen(foo);
 
-        fail("unable to assert, STEPIN");
+        // fail("unable to assert, STEPIN");
     }
 
     @Test

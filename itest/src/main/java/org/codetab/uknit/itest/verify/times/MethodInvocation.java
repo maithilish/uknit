@@ -237,6 +237,9 @@ class MethodInvocation {
         foo.append(Foo.valueOf(person instanceof String));
     }
 
+    /*
+     * STEPIN - for person create mock of Person not Object.
+     */
     public void instanceOfVar(final Foo foo, final Object person) {
         boolean a = person instanceof Person;
         boolean b = person instanceof Person;

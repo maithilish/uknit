@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CreationReference;
@@ -34,6 +35,7 @@ import org.eclipse.jdt.core.dom.ModuleQualifiedName;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NameQualifiedType;
 import org.eclipse.jdt.core.dom.NullLiteral;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
@@ -226,6 +228,13 @@ public class Types {
          */
         if (isNull(type)) {
             ITypeBinding typeBinding = exp.resolveTypeBinding();
+            if (isNull(typeBinding)) {
+                if (nodes.is(exp, NumberLiteral.class)) {
+                    typeBinding = exp.getAST().resolveWellKnownType("int");
+                } else if (nodes.is(exp, BooleanLiteral.class)) {
+                    typeBinding = exp.getAST().resolveWellKnownType("boolean");
+                }
+            }
             if (nonNull(typeBinding)) {
                 type = getType(typeBinding, exp.getAST());
             } else {
@@ -235,6 +244,7 @@ public class Types {
         }
 
         return Optional.ofNullable(type);
+
     }
 
     public Type getType(final ITypeBinding typeBinding, final AST ast) {
@@ -433,5 +443,15 @@ public class Types {
             effectiveType = ce.getType();
         }
         return effectiveType;
+    }
+
+    /**
+     * Is type is java.lang.Object.
+     *
+     * @param type
+     * @return
+     */
+    public boolean isObject(final Type type) {
+        return getTypeName(type).equals("Object");
     }
 }

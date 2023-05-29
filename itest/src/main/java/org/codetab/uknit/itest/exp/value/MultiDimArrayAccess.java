@@ -2,7 +2,7 @@ package org.codetab.uknit.itest.exp.value;
 
 import org.codetab.uknit.itest.exp.value.Model.Foo;
 
-public class MultiDimArrayAccess {
+class MultiDimArrayAccess {
 
     public void literal(final Foo foo) {
         String[] cities = {"foo", "bar"};

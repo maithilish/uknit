@@ -13,9 +13,14 @@ public class ExpManager {
     @Inject
     private ExpServiceLoader serviceLoader;
 
-    public Expression getValue(final Expression exp, final Pack pack,
-            final Heap heap) {
+    public Expression getValue(final Expression exp, final Expression copy,
+            final Pack pack, final boolean createValue, final Heap heap) {
         ExpService expService = serviceLoader.loadService(exp);
-        return expService.getValue(exp, pack, heap);
+        return expService.getValue(exp, copy, pack, createValue, heap);
+    }
+
+    public Expression unparenthesize(final Expression exp) {
+        ExpService expService = serviceLoader.loadService(exp);
+        return expService.unparenthesize(exp);
     }
 }

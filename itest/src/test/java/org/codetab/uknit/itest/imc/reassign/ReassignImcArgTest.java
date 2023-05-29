@@ -72,7 +72,7 @@ class ReassignImcArgTest {
         int index = 1;
         String y2 = "Foo";
         int index2 = 2;
-        String y3 = "Bar";
+        String y3 = "Baz";
         String y = y3;
 
         when(foo.get(index)).thenReturn(y2);

@@ -1,0 +1,69 @@
+package org.codetab.uknit.itest.exp.value;
+
+import java.util.List;
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+class MITest {
+    @InjectMocks
+    private MI mI;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testArrayAccessInExpWithArrayItemCreated() {
+        mI.arrayAccessInExpWithArrayItemCreated();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testArrayAccessInExpWithArrayItemMock() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        Foo foo2 = foo;
+        Foo foo3 = foox;
+        Foo foo4 = foox;
+        mI.arrayAccessInExpWithArrayItemMock(foo, foox);
+
+        verify(foo2).append("a");
+        verify(foo3).append("b");
+        verify(foo4).append("b");
+    }
+
+    @Test
+    public void testArrayAccessInExpReal() {
+        Foo foo = Mockito.mock(Foo.class);
+        List<String> list1 = new ArrayList<>();
+        List<String> list2 = new ArrayList<>();
+        mI.arrayAccessInExpReal(foo, list1, list2);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testArrayAccessInArg() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "baz";
+        String kiwi = "baz";
+        String mango = "foox";
+        Foo foo2 = foo;
+        Foo foo3 = foox;
+        Box box = new Box();
+        Box box3 = new Box();
+        mI.arrayAccessInArg(foo, foox);
+
+        verify(foo).append(apple);
+        verify(foo).append(grape);
+        verify(foo, times(2)).append(orange);
+        verify(foo).append(mango);
+        verify(foo).append(foo2);
+        verify(foo).append(foo3);
+        verify(foo, times(2)).append(box);
+    }
+}

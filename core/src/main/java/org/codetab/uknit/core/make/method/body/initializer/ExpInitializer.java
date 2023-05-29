@@ -92,8 +92,6 @@ class ExpInitializer implements IInitializer {
              * directly from iniPack as ArrayInitializer may be multi
              * dimensional.
              */
-            // ArrayAccess arrayAccess =
-            // (ArrayAccess) patcher.copyAndPatch(pack, heap);
             ArrayAccess arrayAccess = (ArrayAccess) pack.getExp();
             Optional<Expression> value =
                     arrays.getValue(arrayAccess, pack, heap);

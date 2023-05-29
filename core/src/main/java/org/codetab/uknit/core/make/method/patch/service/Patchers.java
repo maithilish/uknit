@@ -102,6 +102,15 @@ public class Patchers {
                 PatchService patchService = serviceLoader.loadService(node);
                 patchService.patch(pack, node, copy, heap);
             }
+        } else {
+            /*
+             * Some exp may not have patchPack but still they need to patched
+             * for ThisExpression. Ex: foo.append(this.cities[this.indexes[0]]);
+             * the this.indexes[0] doesn't have pack but this has to be patched
+             * to CUT name. Ref itest: exp.value.ArrayAccess.arrayIndexHasThis()
+             */
+            PatchService patchService = serviceLoader.loadService(node);
+            patchService.patch(pack, node, copy, heap);
         }
         /*
          * Get IM patch from patches map and apply. Ex: x = internal().get();

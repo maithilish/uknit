@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.exp.srv.ArrayAccessSrv;
 import org.codetab.uknit.core.make.exp.srv.ExpServiceLoader;
 import org.codetab.uknit.core.make.method.Packs;
+import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
@@ -17,6 +18,7 @@ import org.codetab.uknit.core.node.Types;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.Type;
 
 public class Arrays {
@@ -31,6 +33,8 @@ public class Arrays {
     private ExpManager expManager;
     @Inject
     private ExpServiceLoader expServiceLoader;
+    @Inject
+    private Patcher patcher;
 
     /**
      * For an ArrayAccess exp, find the ArrayInitializer exp and return value
@@ -43,8 +47,11 @@ public class Arrays {
      */
     public Optional<Expression> getValue(final ArrayAccess arrayAccess,
             final Pack pack, final Heap heap) {
-        return Optional
-                .ofNullable(expManager.getValue(arrayAccess, pack, heap));
+        ArrayAccess arrayAccessCopy =
+                (ArrayAccess) patcher.getCopy(arrayAccess, true, heap);
+        boolean createValue = false;
+        return Optional.ofNullable(expManager.getValue(arrayAccess,
+                arrayAccessCopy, pack, createValue, heap));
     }
 
     /**
@@ -57,15 +64,26 @@ public class Arrays {
      */
     public String getArrayName(final ArrayAccess arrayAccess, final Pack pack,
             final Heap heap) {
+        ArrayAccess arrayAccessCopy =
+                (ArrayAccess) patcher.getCopy(arrayAccess, true, heap);
         ArrayAccessSrv expSrv =
                 (ArrayAccessSrv) expServiceLoader.loadService(arrayAccess);
-        Expression arrayName = expSrv.getArrayName(arrayAccess, pack, heap);
+        Expression arrayName =
+                expSrv.getArrayName(arrayAccess, arrayAccessCopy, pack, heap);
         if (nodes.isSimpleName(arrayName)) {
             return nodes.getName(arrayName);
         } else if (nodes.is(arrayName, ArrayAccess.class)) {
             return getArrayName((ArrayAccess) arrayName, pack, heap);
         } else {
-            Expression nameExp = expManager.getValue(arrayName, pack, heap);
+            Expression arrayNameCopy = null;
+            Optional<Pack> arrayNamePackO =
+                    packs.findByExp(arrayName, heap.getPacks());
+            if (arrayNamePackO.isPresent()) {
+                arrayNameCopy = patcher.copyAndPatch(pack, heap);
+            }
+            boolean createValue = false;
+            Expression nameExp = expManager.getValue(arrayName, arrayNameCopy,
+                    pack, createValue, heap);
             if (nodes.isName(nameExp)) {
                 return nodes.getName(nameExp);
             } else {
@@ -83,9 +101,11 @@ public class Arrays {
      */
     public int getIndex(final ArrayAccess arrayAccess, final Pack pack,
             final Heap heap) {
+        ArrayAccess arrayAccessCopy =
+                (ArrayAccess) patcher.getCopy(arrayAccess, true, heap);
         ArrayAccessSrv srv =
                 (ArrayAccessSrv) expServiceLoader.loadService(arrayAccess);
-        return srv.getIndex(arrayAccess, pack, heap);
+        return srv.getIndex(arrayAccess, arrayAccessCopy, pack, heap);
     }
 
     /**
@@ -111,7 +131,20 @@ public class Arrays {
                     type = Optional.ofNullable(varO.get().getType());
                 }
             } else {
-                type = types.getType(value);
+                if (nodes.is(value, NumberLiteral.class)) {
+                    /*
+                     * NumberLiteral denotes long, short, int etc., Ex: short[]
+                     * shorts = {11}; the type of 11 is int but array is short,
+                     * so get type from array access. If array type is Object
+                     * then fall back to value type.
+                     */
+                    type = types.getType(arrayAccess);
+                    if (type.isPresent() && types.isObject(type.get())) {
+                        type = types.getType(value);
+                    }
+                } else {
+                    type = types.getType(value);
+                }
             }
         }
 

@@ -256,11 +256,9 @@ class ArgParams {
         for (int i = 0; i < params.size(); i++) {
 
             Pack param = params.get(i);
-            Optional<Pack> argO;
-            if (param.getVar().getNatures().contains(Nature.VARARG)
-                    && i >= args.size()) {
-                argO = Optional.empty();
-            } else {
+            Optional<Pack> argO = Optional.empty();
+            // if not varargs
+            if (!param.getVar().getNatures().contains(Nature.VARARG)) {
                 argO = args.get(i);
             }
 

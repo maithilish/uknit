@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 
+// REVIEW move to SafeExps
 public class Arguments {
 
     public List<Expression> getArgs(final ClassInstanceCreation node) {

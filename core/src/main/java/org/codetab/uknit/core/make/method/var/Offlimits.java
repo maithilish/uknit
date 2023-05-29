@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.Arrays;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.load.Loader;
 import org.codetab.uknit.core.make.model.Heap;
@@ -20,6 +21,7 @@ import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.SimpleName;
 
 /**
  *
@@ -38,6 +40,8 @@ public class Offlimits {
     private Wrappers wrappers;
     @Inject
     private Variables variables;
+    @Inject
+    private Arrays arrays;
 
     /**
      * Test class don't have access to instances produced and consumed inside a
@@ -124,6 +128,19 @@ public class Offlimits {
         }
 
         if (nodes.is(cleanedExp, ArrayAccess.class)) {
+            // is array item off limit
+            Optional<Expression> valueO =
+                    arrays.getValue((ArrayAccess) cleanedExp, pack, heap);
+            if (valueO.isPresent()
+                    && nodes.is(valueO.get(), SimpleName.class)) {
+                IVar itemVar = packs.getVar(packs.findByVarName(
+                        nodes.getName(valueO.get()), heap.getPacks()));
+                if (nonNull(itemVar) && !itemVar.is(Nature.OFFLIMIT)) {
+                    offlimit = false;
+                }
+            }
+
+            // is array off limit
             Expression array = ((ArrayAccess) cleanedExp).getArray();
             Optional<Pack> arrayPackO;
             if (nodes.isName(array)) {

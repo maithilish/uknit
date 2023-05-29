@@ -292,13 +292,14 @@ class MethodInvocationTest {
     @Test
     public void testInstanceOfVar() {
         Foo foo = Mockito.mock(Foo.class);
-        Object person = Mockito.mock(Object.class);
-        boolean a = false;
-        boolean b = true;
-        boolean c = true;
+        Object person = Mockito.mock(Person.class);
+        boolean a = person instanceof Person;
+        boolean b = person instanceof Person;
+        boolean c = person instanceof String;
         methodInvocation.instanceOfVar(foo, person);
 
-        verify(foo, times(3)).append(Foo.valueOf(a));
+        verify(foo, times(2)).append(Foo.valueOf(a));
+        verify(foo).append(Foo.valueOf(c));
     }
 
     @Test

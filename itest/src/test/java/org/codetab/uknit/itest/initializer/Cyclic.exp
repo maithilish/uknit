@@ -11,7 +11,7 @@ class CyclicTest {
     @Test
     public void testCyclicInInitializers() {
         String value2 = (Object) base;
-        String grape = "Bar";
+        String grape = "Baz";
         String base = (String) value2;
 
         when(value2.toString()).thenReturn(grape);

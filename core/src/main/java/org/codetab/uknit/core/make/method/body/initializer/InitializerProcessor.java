@@ -1,17 +1,17 @@
 package org.codetab.uknit.core.make.method.body.initializer;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.ResolveException;
-import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.Patcher;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
+import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeGroups;
@@ -32,8 +32,6 @@ public class InitializerProcessor {
     private StepinInitializer stepinInitializer;
     @Inject
     private SensibleInitializer sensibleInitializer;
-    @Inject
-    private Packs packs;
     @Inject
     private Nodes nodes;
     @Inject
@@ -56,121 +54,141 @@ public class InitializerProcessor {
      *
      * @param heap
      */
-    public void processMocks(final Heap heap) {
+    public void processMock(final Pack pack, final Heap heap) {
+        IVar var = pack.getVar();
+        if (!var.isMock() || var.getInitializer().isPresent()) {
+            return;
+        }
 
-        List<Pack> mockPacks = packs.filterNoInitializers(heap.getPacks(),
-                p -> p.getVar().isMock());
+        Optional<Pack> iniPackO =
+                initialzerFinder.findInitializerPack(pack, heap);
 
-        for (Pack pack : mockPacks) {
+        Optional<Initializer> initializer =
+                mockInitializer.getInitializer(var, iniPackO, heap);
+        if (initializer.isPresent()) {
+            var.setInitializer(initializer);
+        }
+    }
+
+    public void processRealInfer(final Pack pack, final Heap heap) {
+        IVar var = pack.getVar();
+        if (var.isMock() || !var.is(Kind.INFER)
+                || var.getInitializer().isPresent()) {
+            return;
+        }
+
+        Optional<Pack> iniPackO =
+                initialzerFinder.findInitializerPack(pack, heap);
+        Optional<Initializer> initializer =
+                realInitializer.getInitializer(var, iniPackO, heap);
+        if (initializer.isPresent()) {
+            var.setInitializer(initializer);
+        }
+    }
+
+    public void processReal(final Pack pack, final Heap heap) {
+        IVar var = pack.getVar();
+        if (var.isMock() || var.getInitializer().isPresent()) {
+            return;
+        }
+
+        Optional<Pack> iniPackO =
+                initialzerFinder.findInitializerPack(pack, heap);
+        Optional<Initializer> initializer =
+                realInitializer.getInitializer(var, iniPackO, heap);
+        if (initializer.isPresent()) {
+            var.setInitializer(initializer);
+        }
+    }
+
+    public void processExp(final Pack pack, final Heap heap) {
+
+        // List<Pack> packList = packs.filterNoInitializers(heap.getPacks(),
+        // p -> nonNull(p.getExp()));
+
+        IVar var = pack.getVar();
+        if (isNull(pack.getExp())) {
+            return;
+        }
+
+        Optional<Initializer> initializer = Optional.empty();
+        Expression patchedExp =
+                wrappers.unpack(patcher.copyAndPatch(pack, heap));
+        if (nodes.isName(patchedExp)) {
+            /*
+             * the iniPack for name is pack itself, process straightway without
+             * searching for linked iniPack.
+             */
+            IInitializer srv = factory.createNameInitializer();
+            initializer = srv.getInitializer(pack, pack, heap);
+        } else if (nodes.is(patchedExp, nodeGroups.literalNodes())) {
+            /*
+             * Ex: call(foo, (int) 10L); the iniPack for arg literal is pack
+             * itself, process straightway.
+             */
+            IInitializer srv = factory.createExpInitializer();
+            initializer = srv.getInitializer(pack, pack, heap);
+        } else {
+            /*
+             * search for linked iniPack and if present, process using
+             * appropriate IInitializer (either ExpInitializer or
+             * InvokeInitializer.
+             */
             Optional<Pack> iniPackO =
                     initialzerFinder.findInitializerPack(pack, heap);
-            IVar var = pack.getVar();
-            Optional<Initializer> initializer =
-                    mockInitializer.getInitializer(var, iniPackO, heap);
-            if (initializer.isPresent()) {
-                var.setInitializer(initializer);
+            if (iniPackO.isPresent()) {
+                IInitializer srv = factory.createInitializer(
+                        wrappers.unpack(iniPackO.get().getExp()));
+                initializer = srv.getInitializer(pack, iniPackO.get(), heap);
             }
         }
-    }
 
-    public void processReals(final Heap heap) {
+        if (initializer.isPresent()) {
+            var.setInitializer(initializer);
 
-        List<Pack> realPacks = packs.filterNoInitializers(heap.getPacks(),
-                p -> !p.getVar().isMock());
-
-        for (Pack pack : realPacks) {
-            Optional<Pack> iniPackO =
-                    initialzerFinder.findInitializerPack(pack, heap);
-            IVar var = pack.getVar();
-            Optional<Initializer> initializer =
-                    realInitializer.getInitializer(var, iniPackO, heap);
-            if (initializer.isPresent()) {
-                var.setInitializer(initializer);
-            }
-        }
-    }
-
-    public void processExps(final Heap heap) {
-
-        List<Pack> packList = packs.filterNoInitializers(heap.getPacks(),
-                p -> nonNull(p.getExp()));
-
-        for (Pack pack : packList) {
-            Optional<Initializer> initializer = Optional.empty();
-            Expression patchedExp =
-                    wrappers.unpack(patcher.copyAndPatch(pack, heap));
-            if (nodes.isName(patchedExp)) {
-                /*
-                 * the iniPack for name is pack itself, process straightway
-                 * without searching for linked iniPack.
-                 */
-                IInitializer srv = factory.createNameInitializer();
-                initializer = srv.getInitializer(pack, pack, heap);
-            } else if (nodes.is(patchedExp, nodeGroups.literalNodes())) {
-                /*
-                 * Ex: call(foo, (int) 10L); the iniPack for arg literal is pack
-                 * itself, process straightway.
-                 */
-                IInitializer srv = factory.createExpInitializer();
-                initializer = srv.getInitializer(pack, pack, heap);
-            } else {
-                /*
-                 * search for linked iniPack and if present, process using
-                 * appropriate IInitializer (either ExpInitializer or
-                 * InvokeInitializer.
-                 */
-                Optional<Pack> iniPackO =
-                        initialzerFinder.findInitializerPack(pack, heap);
-                if (iniPackO.isPresent()) {
-                    IInitializer srv = factory.createInitializer(
-                            wrappers.unpack(iniPackO.get().getExp()));
-                    initializer =
-                            srv.getInitializer(pack, iniPackO.get(), heap);
-                }
-            }
-
-            IVar var = pack.getVar();
-            if (initializer.isPresent()) {
-                var.setInitializer(initializer);
-
-                // if var type is changed, set new type
-                Object value = initializer.get().getInitializer();
-                if (nonNull(value) && value instanceof Expression) {
-                    Optional<Type> newType = typeChange
-                            .getValueTypeIfChanged((Expression) value, var);
-                    if (newType.isPresent()) {
-                        var.setType(newType.get());
-                    }
+            // if var type is changed, set new type
+            Object value = initializer.get().getInitializer();
+            if (nonNull(value) && value instanceof Expression) {
+                Optional<Type> newType = typeChange
+                        .getValueTypeIfChanged((Expression) value, var);
+                if (newType.isPresent()) {
+                    var.setType(newType.get());
                 }
             }
         }
     }
 
-    public void processSensibles(final Heap heap) {
+    public void processSensible(final Pack pack, final Heap heap) {
 
-        List<Pack> packList =
-                packs.filterNoInitializers(heap.getPacks(), p -> true);
+        // List<Pack> packList =
+        // packs.filterNoInitializers(heap.getPacks(), p -> true);
 
-        for (Pack pack : packList) {
-            Optional<Initializer> initializer =
-                    sensibleInitializer.getInitializer(pack, heap);
-            if (initializer.isPresent()) {
-                pack.getVar().setInitializer(initializer);
-            }
+        IVar var = pack.getVar();
+        if (var.getInitializer().isPresent()) {
+            return;
+        }
+
+        Optional<Initializer> initializer =
+                sensibleInitializer.getInitializer(pack, heap);
+        if (initializer.isPresent()) {
+            pack.getVar().setInitializer(initializer);
         }
     }
 
-    public void processStepins(final Heap heap) {
+    public void processStepin(final Pack pack, final Heap heap) {
 
-        List<Pack> packList =
-                packs.filterNoInitializers(heap.getPacks(), p -> true);
+        // List<Pack> packList =
+        // packs.filterNoInitializers(heap.getPacks(), p -> true);
 
-        for (Pack pack : packList) {
-            Optional<Initializer> initializer =
-                    stepinInitializer.getInitializer(pack);
-            if (initializer.isPresent()) {
-                pack.getVar().setInitializer(initializer);
-            }
+        IVar var = pack.getVar();
+        if (var.getInitializer().isPresent()) {
+            return;
+        }
+
+        Optional<Initializer> initializer =
+                stepinInitializer.getInitializer(pack);
+        if (initializer.isPresent()) {
+            pack.getVar().setInitializer(initializer);
         }
     }
 }

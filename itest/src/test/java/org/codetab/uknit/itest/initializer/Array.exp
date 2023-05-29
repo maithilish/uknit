@@ -14,7 +14,7 @@ class ArrayTest {
     public void testUseArrayAccessInWhen() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "bar";
-        String grape = "Foo";
+        String grape = "Bar";
 
         when(foo.format(apple)).thenReturn(grape);
         array.useArrayAccessInWhen(foo);

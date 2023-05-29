@@ -4,12 +4,18 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.NodeFactory;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.NullLiteral;
 
 public class NullLiteralSrv implements ExpService {
+
+    @Inject
+    private NodeFactory factory;
 
     @Override
     public List<Expression> getExps(final Expression exp) {
@@ -18,9 +24,15 @@ public class NullLiteralSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Pack pack,
-            final Heap heap) {
-        // TODO Auto-generated method stub
-        return null;
+    public Expression unparenthesize(final Expression node) {
+        checkState(node instanceof NullLiteral);
+        return factory.copyNode(node);
+    }
+
+    @Override
+    public Expression getValue(final Expression node, final Expression copy,
+            final Pack pack, final boolean createValue, final Heap heap) {
+        checkState(node instanceof NullLiteral);
+        return node;
     }
 }

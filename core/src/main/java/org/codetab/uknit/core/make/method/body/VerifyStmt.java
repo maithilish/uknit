@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.config.Configs;
+import org.codetab.uknit.core.make.exp.ExpManager;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.ValuePatcher;
 import org.codetab.uknit.core.make.model.Heap;
@@ -77,6 +78,8 @@ class Times {
 
     @Inject
     private ValuePatcher valuePatcher;
+    @Inject
+    private ExpManager expManager;
 
     /**
      * By default Verify.times is -1. For each verify set times to 1 if it still
@@ -104,10 +107,12 @@ class Times {
                      * exists). Ex: apple = "foo"; foo.append(apple); then
                      * patched MI is foo.append("foo").
                      */
-                    MethodInvocation mi =
-                            valuePatcher.patchValues(verify.getMi(), heap);
-                    MethodInvocation otherMi =
-                            valuePatcher.patchValues(other.getMi(), heap);
+                    MethodInvocation mi = (MethodInvocation) expManager
+                            .unparenthesize(valuePatcher
+                                    .patchValues(verify.getMi(), heap));
+                    MethodInvocation otherMi = (MethodInvocation) expManager
+                            .unparenthesize(valuePatcher
+                                    .patchValues(other.getMi(), heap));
 
                     if (mi.toString().equals(otherMi.toString())
                             && verify.isInCtlFlowPath()

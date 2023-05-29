@@ -67,11 +67,11 @@ public class NodeGroups {
     private List<Class<? extends Expression>> allowedAsInitializer = List.of(
             ClassInstanceCreation.class, ArrayCreation.class,
             ArrayInitializer.class, InfixExpression.class,
-            PostfixExpression.class, PrefixExpression.class,
-            ConditionalExpression.class, CastExpression.class,
-            FieldAccess.class, QualifiedName.class, BooleanLiteral.class,
-            CharacterLiteral.class, NullLiteral.class, NumberLiteral.class,
-            StringLiteral.class, TypeLiteral.class);
+            InstanceofExpression.class, PostfixExpression.class,
+            PrefixExpression.class, ConditionalExpression.class,
+            CastExpression.class, FieldAccess.class, QualifiedName.class,
+            BooleanLiteral.class, CharacterLiteral.class, NullLiteral.class,
+            NumberLiteral.class, StringLiteral.class, TypeLiteral.class);
 
     /**
      * Nodes for which infer vars can be created. SMI is also included as it is

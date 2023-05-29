@@ -7,8 +7,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -17,6 +20,12 @@ public class CastExpressionSrv implements ExpService {
 
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private NodeFactory factory;
+    @Inject
+    private ExpServiceLoader serviceLoader;
+    @Inject
+    private Nodes nodes;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -31,9 +40,22 @@ public class CastExpressionSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Pack pack,
-            final Heap heap) {
-        // TODO Auto-generated method stub
-        return null;
+    public Expression unparenthesize(final Expression node) {
+        checkState(node instanceof CastExpression);
+        CastExpression copy = (CastExpression) factory.copyNode(node);
+
+        Expression exp = wrappers.strip(copy.getExpression());
+        exp = serviceLoader.loadService(exp).unparenthesize(exp);
+        copy.setExpression(factory.copyNode(exp));
+
+        return copy;
+    }
+
+    @Override
+    public Expression getValue(final Expression node, final Expression copy,
+            final Pack pack, final boolean createValue, final Heap heap) {
+        checkState(node instanceof CastExpression);
+        throw new CodeException(
+                nodes.exMessage("getValue() not implemented", node));
     }
 }

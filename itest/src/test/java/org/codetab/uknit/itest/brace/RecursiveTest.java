@@ -60,7 +60,7 @@ class RecursiveTest {
     public void testInvokeInit() {
         Locale locale = Mockito.mock(Locale.class);
         String apple = "Foo";
-        String foo = "Foo";
+        String foo = apple;
 
         when((locale).getDisplayName()).thenReturn(apple);
 

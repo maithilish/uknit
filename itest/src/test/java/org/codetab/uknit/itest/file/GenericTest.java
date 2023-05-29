@@ -25,7 +25,7 @@ class GenericTest {
         Foo foo = Mockito.mock(Foo.class);
         String grape = null;
         String config = grape;
-        String apple = "Foo";
+        String apple = "Bar";
 
         when(foo.format(config)).thenReturn(apple);
 

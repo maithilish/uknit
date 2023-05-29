@@ -9,9 +9,13 @@ import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
+import org.codetab.uknit.core.node.NodeFactory;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.ThisExpression;
 
 /**
  * In JDT, (person).id is FieldAccess exp and person.id is QualifiedName exp.
@@ -23,6 +27,14 @@ public class FieldAccessSrv implements ExpService {
 
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private NodeFactory factory;
+    @Inject
+    private ExpServiceLoader serviceLoader;
+    @Inject
+    private Initializers initializers;
+    @Inject
+    private Nodes nodes;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -39,9 +51,31 @@ public class FieldAccessSrv implements ExpService {
     }
 
     @Override
-    public Expression getValue(final Expression node, final Pack pack,
-            final Heap heap) {
-        // TODO Auto-generated method stub
-        return null;
+    public Expression unparenthesize(final Expression node) {
+        checkState(node instanceof FieldAccess);
+        FieldAccess copy = (FieldAccess) factory.copyNode(node);
+
+        Expression exp = wrappers.strip(copy.getExpression());
+        exp = serviceLoader.loadService(exp).unparenthesize(exp);
+        copy.setExpression(factory.copyNode(exp));
+
+        // parenthesise is not allowed for name
+
+        return copy;
+    }
+
+    @Override
+    public Expression getValue(final Expression node, final Expression copy,
+            final Pack pack, final boolean createValue, final Heap heap) {
+        checkState(node instanceof FieldAccess);
+        Expression value = initializers.getInitializerAsExpression(node,
+                createValue, heap);
+        FieldAccess fa = (FieldAccess) node;
+        if (nodes.is(fa.getExpression(), ThisExpression.class)) {
+            SimpleName name = fa.getName();
+            ExpService srv = serviceLoader.loadService(name);
+            value = srv.getValue(name, name, pack, createValue, heap);
+        }
+        return value;
     }
 }

@@ -24,7 +24,7 @@ class InlineArgTest {
     public void testLiteralArg() {
         Foo foo = Mockito.mock(Foo.class);
         String orange = "Foo";
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
         int index = 10;
         int index2 = 20;
@@ -43,7 +43,7 @@ class InlineArgTest {
         int index = 10 + 1;
         String orange = "Foo";
         int index2 = 20 - 1;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);
@@ -61,7 +61,7 @@ class InlineArgTest {
         int index = 10 + offset;
         String orange = "Foo";
         int index2 = 20 - offset;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);
@@ -76,7 +76,7 @@ class InlineArgTest {
     public void testCastArg() {
         Foo foo = Mockito.mock(Foo.class);
         String orange = "Foo";
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
         int index = (int) 10L;
         int index2 = (int) 20D;
@@ -96,7 +96,7 @@ class InlineArgTest {
         int index = person.id;
         String orange = "Foo";
         int index2 = person.id;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);
@@ -114,7 +114,7 @@ class InlineArgTest {
         int index = person.id;
         String orange = "Foo";
         int index2 = person.id;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);
@@ -132,7 +132,7 @@ class InlineArgTest {
         int index = new Integer(10);
         String orange = "Foo";
         int index2 = new Integer(20);
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);
@@ -149,7 +149,7 @@ class InlineArgTest {
         Integer apple = 10;
         String mango = "Foo";
         Integer orange = 20;
-        String banana = "Bar";
+        String banana = "Baz";
         String kiwi = banana;
 
         when(foo.get(apple)).thenReturn(mango);
@@ -167,7 +167,7 @@ class InlineArgTest {
         int index = indexes[0];
         String orange = "Foo";
         int index2 = indexes[1];
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);

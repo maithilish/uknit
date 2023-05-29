@@ -281,3 +281,4 @@ postfix
 unmerge
 instanceof
 objs
+hashcode

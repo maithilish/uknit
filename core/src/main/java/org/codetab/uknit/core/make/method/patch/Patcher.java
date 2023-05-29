@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.patch.service.PatchService;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
@@ -36,6 +37,8 @@ public class Patcher {
     private ModelFactory modelFactory;
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private Packs packs;
 
     private Map<Expression, IVar> patches;
 
@@ -216,6 +219,30 @@ public class Patcher {
                 }
             }
         }
+    }
+
+    /**
+     * Convenient method to get copy of expression. If copyIfPatchExists is true
+     * and pack has patches then return copy. If copyIfPatchExists is false and
+     * pack is present then return copy. Otherwise return original exp.
+     *
+     * @param exp
+     * @param copyIfPatchExists
+     *            - copy if pack has patches
+     * @param heap
+     * @return
+     */
+    public Expression getCopy(final Expression exp,
+            final boolean copyIfPatchExists, final Heap heap) {
+        Optional<Pack> packO = packs.findByExp(exp, heap.getPacks());
+        if (copyIfPatchExists) {
+            if (packs.hasPatches(packO)) {
+                return copyAndPatch(packO.get(), heap);
+            }
+        } else if (packO.isPresent()) {
+            return copyAndPatch(packO.get(), heap);
+        }
+        return exp;
     }
 
     public void setup() {

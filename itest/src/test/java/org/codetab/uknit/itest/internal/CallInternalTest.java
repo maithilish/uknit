@@ -35,7 +35,7 @@ class CallInternalTest {
         int index = 10;
         String orange = "Foo";
         int index2 = 20;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange);
@@ -51,7 +51,7 @@ class CallInternalTest {
         Foo foo = Mockito.mock(Foo.class);
         int index = 10;
         String orange = "Foo";
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
         when(foo.get(index)).thenReturn(orange).thenReturn(kiwi);

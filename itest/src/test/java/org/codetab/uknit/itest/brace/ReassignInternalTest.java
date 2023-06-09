@@ -26,7 +26,7 @@ class ReassignInternalTest {
         String y = "Foo";
         String x = y;
 
-        when((foo).get(((index)))).thenReturn(y);
+        when(foo.get(index)).thenReturn(y);
 
         String actual = reassignInternal.defineAndAssign(foo);
 
@@ -40,7 +40,7 @@ class ReassignInternalTest {
         String y2 = "Foo";
         String y = y2;
 
-        when((foo).get(index2)).thenReturn(y2);
+        when(foo.get(index2)).thenReturn(y2);
 
         String actual = reassignInternal.reassignBeforeVarUse(foo);
 
@@ -58,8 +58,8 @@ class ReassignInternalTest {
         String y = y3;
         String apple = (x) + (y);
 
-        when((foo).get(((index)))).thenReturn(y2);
-        when((foo).get(index2)).thenReturn(y3);
+        when(foo.get(index)).thenReturn(y2);
+        when(foo.get(index2)).thenReturn(y3);
 
         String actual = reassignInternal.reassignAfterVarUse(foo);
 
@@ -72,11 +72,11 @@ class ReassignInternalTest {
         int index = 1;
         String y2 = "Foo";
         int index2 = 2;
-        String y3 = "Bar";
+        String y3 = "Baz";
         String y = y3;
 
-        when((foo).get(((index)))).thenReturn(y2);
-        when((foo).get(index2)).thenReturn(y3);
+        when(foo.get(index)).thenReturn(y2);
+        when(foo.get(index2)).thenReturn(y3);
 
         String actual = reassignInternal.reassignAfterVarUse2(foo);
 
@@ -94,8 +94,8 @@ class ReassignInternalTest {
         String y = y3;
         String apple = (x) + (y);
 
-        when((foo).get(((index)))).thenReturn(y2);
-        when((foo).get(index3)).thenReturn(y3);
+        when(foo.get(index)).thenReturn(y2);
+        when(foo.get(index3)).thenReturn(y3);
 
         String actual = reassignInternal.reassignNameVarConflicts(foo);
 

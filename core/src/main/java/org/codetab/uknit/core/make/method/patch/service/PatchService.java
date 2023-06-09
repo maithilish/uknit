@@ -57,8 +57,9 @@ public interface PatchService {
     List<Expression> getExps(Expression node);
 
     /**
-     * Patch var value from initializer (if exists). Works only on already
-     * patched exp as input.
+     * Patch var value from initializer (if exists).
+     *
+     * N.B Works only on already patched exp as input.
      *
      * @param node
      * @param copy

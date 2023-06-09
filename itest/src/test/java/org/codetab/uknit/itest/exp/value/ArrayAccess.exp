@@ -27,10 +27,10 @@ class ArrayAccessTest {
         String kiwi = "barx";
         arrayAccess.arrayItemType(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(grape);
+        verify(foo).appendObj(orange);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -42,8 +42,8 @@ class ArrayAccessTest {
         String banana = "x";
         arrayAccess.accessWithVar(foo);
 
-        verify(foo, times(2)).append(apple);
-        verify(foo, times(2)).append(grape);
+        verify(foo, times(2)).appendString(apple);
+        verify(foo, times(2)).appendString(grape);
     }
 
     @Test
@@ -54,9 +54,9 @@ class ArrayAccessTest {
         String orange = "bar";
         arrayAccess.reassignArrayItemSameValue(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -67,9 +67,9 @@ class ArrayAccessTest {
         String orange = "baz";
         arrayAccess.reassignIndex(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -80,9 +80,9 @@ class ArrayAccessTest {
         String orange = "barx";
         arrayAccess.reassignArrayItem(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -92,8 +92,8 @@ class ArrayAccessTest {
         String kiwi = "barx";
         arrayAccess.accessArrayCreation(foo);
 
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -103,8 +103,8 @@ class ArrayAccessTest {
         String kiwi = "barx";
         arrayAccess.arrayIndexIsArrayCreation(foo);
 
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -114,8 +114,8 @@ class ArrayAccessTest {
         String grape = new String[]{"foox", "barx"}[1];
         arrayAccess.arrayExpIsArrayCreation(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
     }
 
     @Test
@@ -132,9 +132,9 @@ class ArrayAccessTest {
         when(file.canExecute()).thenReturn(apple);
         arrayAccess.accessBoolean(foo, file);
 
-        verify(foo, times(3)).append(orange);
-        verify(foo).append(kiwi);
-        verify(foo).append(banana);
+        verify(foo, times(3)).appendObj(orange);
+        verify(foo).appendObj(kiwi);
+        verify(foo).appendObj(banana);
     }
 
     @Test
@@ -148,12 +148,12 @@ class ArrayAccessTest {
         String apricot = "qux";
         arrayAccess.accessCast(foo);
 
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
-        verify(foo).append(mango);
-        verify(foo).append(banana);
-        verify(foo).append(cherry);
-        verify(foo).append(apricot);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
+        verify(foo).appendString(mango);
+        verify(foo).appendString(banana);
+        verify(foo).appendString(cherry);
+        verify(foo).appendString(apricot);
     }
 
     @Test
@@ -163,8 +163,8 @@ class ArrayAccessTest {
         String kiwi = new String("bar");
         arrayAccess.arrayIndexIsCast(foo);
 
-        verify(foo).append(grape);
-        verify(foo).append(kiwi);
+        verify(foo).appendObj(grape);
+        verify(foo).appendObj(kiwi);
     }
 
     @Test
@@ -180,12 +180,12 @@ class ArrayAccessTest {
         Character plum = Character.valueOf(('d'));
         arrayAccess.accessChar(foo, ch);
 
-        verify(foo).append(mango);
-        verify(foo, times(2)).append(banana);
-        verify(foo).append(cherry);
-        verify(foo).append(apricot);
-        verify(foo).append(fig);
-        verify(foo).append(plum);
+        verify(foo).appendObj(mango);
+        verify(foo, times(2)).appendObj(banana);
+        verify(foo).appendObj(cherry);
+        verify(foo).appendObj(apricot);
+        verify(foo).appendObj(fig);
+        verify(foo).appendObj(plum);
     }
 
     @Test
@@ -196,9 +196,9 @@ class ArrayAccessTest {
         String kiwi = "foo";
         arrayAccess.arrayIndexIsChar(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(kiwi);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -212,12 +212,12 @@ class ArrayAccessTest {
         HashMap<String, LocalTime> arrayList2 = new HashMap<String, LocalTime>();
         arrayAccess.accessClassInstanceCreation(foo);
 
-        verify(foo).append(file);
-        verify(foo).append(apple);
-        verify(foo).append(arrayList);
-        verify(foo).append(file2);
-        verify(foo).append(grape);
-        verify(foo).append(arrayList2);
+        verify(foo).appendObj(file);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(arrayList);
+        verify(foo).appendObj(file2);
+        verify(foo).appendObj(grape);
+        verify(foo).appendObj(arrayList2);
     }
 
     @Test
@@ -231,12 +231,12 @@ class ArrayAccessTest {
         HashMap<String, LocalTime> arrayList2 = new HashMap<String, LocalTime>();
         arrayAccess.arrayIndexIsClassInstanceCreation(foo);
 
-        verify(foo).append(file);
-        verify(foo).append(apple);
-        verify(foo).append(arrayList);
-        verify(foo).append(file2);
-        verify(foo).append(grape);
-        verify(foo).append(arrayList2);
+        verify(foo).appendObj(file);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(arrayList);
+        verify(foo).appendObj(file2);
+        verify(foo).appendObj(grape);
+        verify(foo).appendObj(arrayList2);
     }
 
     @Test
@@ -248,9 +248,9 @@ class ArrayAccessTest {
                 new ArrayList<LocalDate>()}[2];
         arrayAccess.arrayNameIsClassInstanceCreation(foo);
 
-        verify(foo).append(file);
-        verify(foo).append(apple);
-        verify(foo).append(arrayList);
+        verify(foo).appendObj(file);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(arrayList);
     }
 
     @Test
@@ -262,10 +262,10 @@ class ArrayAccessTest {
         String kiwi = "barx";
         arrayAccess.accessConditional(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -276,8 +276,8 @@ class ArrayAccessTest {
         String apricot = "bar";
         arrayAccess.indexIsconditional(foo);
 
-        verify(foo, times(2)).append(apple);
-        verify(foo).append(apricot);
+        verify(foo, times(2)).appendString(apple);
+        verify(foo).appendString(apricot);
     }
 
     @Test
@@ -290,9 +290,9 @@ class ArrayAccessTest {
         String kiwi = "foo";
         arrayAccess.arrayExpressionIsConditional(foo);
 
-        verify(foo).append(flg ? cities : apple);
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo).appendObj(flg ? cities : apple);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -304,9 +304,9 @@ class ArrayAccessTest {
         String kiwi = "ffoo";
         arrayAccess.arrayIsField(foo);
 
-        verify(foo, times(2)).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo, times(2)).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -318,9 +318,9 @@ class ArrayAccessTest {
         String kiwi = "fbar";
         arrayAccess.arrayIsFieldOfFields(foo);
 
-        verify(foo).append(apple);
-        verify(foo, times(2)).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo, times(2)).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -332,9 +332,9 @@ class ArrayAccessTest {
         String kiwi = "fbar";
         arrayAccess.arrayItemIsField(foo);
 
-        verify(foo).append(apple);
-        verify(foo, times(2)).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo, times(2)).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -346,9 +346,9 @@ class ArrayAccessTest {
         String kiwi = "bar";
         arrayAccess.accessIndexIsField(foo);
 
-        verify(foo).append(apple);
-        verify(foo, times(2)).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo, times(2)).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -360,9 +360,9 @@ class ArrayAccessTest {
         String kiwi = "fbar";
         arrayAccess.arrayItemAndIndexHidesField(foo);
 
-        verify(foo).append(apple);
-        verify(foo, times(2)).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo, times(2)).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -372,7 +372,7 @@ class ArrayAccessTest {
         String apple = (box).items[1];
         arrayAccess.arrayIsFieldAccess(foo, box);
 
-        verify(foo).append(apple);
+        verify(foo).appendString(apple);
     }
 
     @Test
@@ -382,7 +382,7 @@ class ArrayAccessTest {
         String apple = (box).items;
         arrayAccess.localArrayIsFieldAccess(foo, box);
 
-        verify(foo).append(apple);
+        verify(foo).appendString(apple);
     }
 
     @Test
@@ -392,7 +392,7 @@ class ArrayAccessTest {
         String orange = "Baz";
         arrayAccess.arrayItemIsFieldAccess(foo, box);
 
-        verify(foo).append(orange);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -402,7 +402,7 @@ class ArrayAccessTest {
         String apple = (box).items[(box).id];
         arrayAccess.indexIsFieldAccess(foo, box);
 
-        verify(foo).append(apple);
+        verify(foo).appendString(apple);
     }
 
     @Test
@@ -413,8 +413,8 @@ class ArrayAccessTest {
         int grape = i - 1;
         arrayAccess.arrayItemIsInfix(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(grape);
     }
 
     @Test
@@ -426,8 +426,8 @@ class ArrayAccessTest {
         String kiwi = "bar";
         arrayAccess.arrayIndexIsInfix(foo);
 
-        verify(foo, times(3)).append(apple);
-        verify(foo).append(orange);
+        verify(foo, times(3)).appendString(apple);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -438,8 +438,8 @@ class ArrayAccessTest {
         boolean grape = bar instanceof String;
         arrayAccess.arrayItemIsInstanceOf(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(grape);
     }
 
     @Test
@@ -449,8 +449,8 @@ class ArrayAccessTest {
         Function function2 = STEPIN;
         arrayAccess.arrayItemIsLambda(foo);
 
-        verify(foo).append(function);
-        verify(foo).append(function2);
+        verify(foo).appendObj(function);
+        verify(foo).appendObj(function2);
     }
 
     @Test
@@ -467,9 +467,9 @@ class ArrayAccessTest {
         when(box.getItems()).thenReturn(apple).thenReturn(orange).thenReturn(mango);
         arrayAccess.arrayIsInvoke(foo, box);
 
-        verify(foo).append(grape);
-        verify(foo).append(kiwi);
-        verify(foo).append(banana);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(kiwi);
+        verify(foo).appendString(banana);
     }
 
     @Test
@@ -484,9 +484,9 @@ class ArrayAccessTest {
         when(box.getItems()).thenReturn(items);
         arrayAccess.arrayVarIsInvoke(foo, box);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -504,9 +504,9 @@ class ArrayAccessTest {
         when(foo.name()).thenReturn(orange);
         arrayAccess.arrayItemIsInvoke(foo);
 
-        verify(foo).append(kiwi);
-        verify(foo).append(mango);
-        verify(foo).append(banana);
+        verify(foo).appendString(kiwi);
+        verify(foo).appendString(mango);
+        verify(foo).appendString(banana);
     }
 
     @Test
@@ -520,11 +520,25 @@ class ArrayAccessTest {
         int mango = 1;
         String banana = "bar";
 
-        when(box.getId()).thenReturn(apple).thenReturn(orange);
-        when((box).getId()).thenReturn(mango);
+        when(box.getId()).thenReturn(apple).thenReturn(orange).thenReturn(mango);
         arrayAccess.arrayIndexIsInvoke(foo, box);
 
-        verify(foo, times(3)).append(grape);
+        verify(foo, times(3)).appendString(grape);
+    }
+
+    @Test
+    public void testArrayIndexIsInvokeItemReassigned() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String grape = "bar";
+        int orange = 1;
+        String kiwi = "barx";
+
+        when(foo.index()).thenReturn(apple).thenReturn(orange);
+        arrayAccess.arrayIndexIsInvokeItemReassigned(foo);
+
+        verify(foo).appendString(grape);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -536,9 +550,9 @@ class ArrayAccessTest {
         String apricot = (StaticBox.getItems())[(2)];
         arrayAccess.arrayIsStaticInvoke(foo);
 
-        verify(foo).append(grape);
-        verify(foo).append(kiwi);
-        verify(foo, times(2)).append(banana);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(kiwi);
+        verify(foo, times(2)).appendString(banana);
     }
 
     @Test
@@ -551,8 +565,8 @@ class ArrayAccessTest {
         String cherry = String.valueOf("bar");
         arrayAccess.arrayItemIsStaticInvoke(foo, box);
 
-        verify(foo).append(kiwi);
-        verify(foo, times(3)).append(mango);
+        verify(foo).appendString(kiwi);
+        verify(foo, times(3)).appendString(mango);
     }
 
     @Test
@@ -565,10 +579,10 @@ class ArrayAccessTest {
         String apricot = "Qux";
         arrayAccess.arrayIndexIsStaticInvoke(foo, box);
 
-        verify(foo).append(grape);
-        verify(foo).append(kiwi);
-        verify(foo).append(banana);
-        verify(foo).append(apricot);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(kiwi);
+        verify(foo).appendString(banana);
+        verify(foo).appendString(apricot);
     }
 
     @Test
@@ -579,8 +593,8 @@ class ArrayAccessTest {
         String orange = "baz";
         arrayAccess.arrayItemIsNullLiteral(foo);
 
-        verify(foo, times(2)).append(apple);
-        verify(foo).append(orange);
+        verify(foo, times(2)).appendString(apple);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -603,21 +617,21 @@ class ArrayAccessTest {
         double bionic = 43.33;
         arrayAccess.arrayItemIsNumberLiteral(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
-        verify(foo).append(mango);
-        verify(foo).append(banana);
-        verify(foo).append(cherry);
-        verify(foo).append(apricot);
-        verify(foo).append(peach);
-        verify(foo).append(fig);
-        verify(foo).append(plum);
-        verify(foo).append(lychee);
-        verify(foo).append(scrappy);
-        verify(foo).append(barracuda);
-        verify(foo).append(bionic);
+        verify(foo).appendObj(apple);
+        verify(foo).appendObj(grape);
+        verify(foo).appendObj(orange);
+        verify(foo).appendObj(kiwi);
+        verify(foo).appendObj(mango);
+        verify(foo).appendObj(banana);
+        verify(foo).appendObj(cherry);
+        verify(foo).appendObj(apricot);
+        verify(foo).appendObj(peach);
+        verify(foo).appendObj(fig);
+        verify(foo).appendObj(plum);
+        verify(foo).appendObj(lychee);
+        verify(foo).appendObj(scrappy);
+        verify(foo).appendObj(barracuda);
+        verify(foo).appendObj(bionic);
     }
 
     @Test
@@ -628,7 +642,7 @@ class ArrayAccessTest {
         String grape = (box.items)[1];
         arrayAccess.arrayIsQName(foo, box);
 
-        verify(foo, times(2)).append(apple);
+        verify(foo, times(2)).appendString(apple);
     }
 
     @Test
@@ -640,7 +654,7 @@ class ArrayAccessTest {
         String grape = box.items;
         arrayAccess.localArrayIsQName(foo, box);
 
-        verify(foo, times(2)).append(apple);
+        verify(foo, times(2)).appendString(apple);
     }
 
     @Test
@@ -651,8 +665,8 @@ class ArrayAccessTest {
         String kiwi = "Qux";
         arrayAccess.arrayItemIsQName(foo, box);
 
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
     }
 
     @Test
@@ -663,7 +677,7 @@ class ArrayAccessTest {
         String grape = (box.items)[(box.id)];
         arrayAccess.indexIsQName(foo, box);
 
-        verify(foo, times(2)).append(apple);
+        verify(foo, times(2)).appendString(apple);
     }
 
     @Test
@@ -674,9 +688,9 @@ class ArrayAccessTest {
         String orange = arrayAccess.tDevices[2];
         arrayAccess.arrayExpHasThis(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -687,9 +701,9 @@ class ArrayAccessTest {
         String banana = "baz";
         arrayAccess.arrayItemsHasThis(foo);
 
-        verify(foo).append(kiwi);
-        verify(foo).append(mango);
-        verify(foo).append(banana);
+        verify(foo).appendString(kiwi);
+        verify(foo).appendString(mango);
+        verify(foo).appendString(banana);
     }
 
     @Test
@@ -700,9 +714,9 @@ class ArrayAccessTest {
         String orange = arrayAccess.tDevices[arrayAccess.tIndexes[2]];
         arrayAccess.arrayIndexHasThis(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
     }
 
     @Test
@@ -713,9 +727,9 @@ class ArrayAccessTest {
         Method method3 = STEPIN;
         arrayAccess.arrayExpHasTypeLiteral(foo);
 
-        verify(foo).append(method);
-        verify(foo).append(method2);
-        verify(foo).append(method3);
+        verify(foo).appendObj(method);
+        verify(foo).appendObj(method2);
+        verify(foo).appendObj(method3);
     }
 
     @Test
@@ -727,9 +741,9 @@ class ArrayAccessTest {
         Class<File> clz4 = File.class;
         arrayAccess.arrayItemIsTypeLiteral(foo);
 
-        verify(foo).append(clz);
-        verify(foo).append(clz2);
-        verify(foo, times(2)).append(clz3);
+        verify(foo).appendObj(clz);
+        verify(foo).appendObj(clz2);
+        verify(foo, times(2)).appendObj(clz3);
     }
 
     @Test
@@ -740,6 +754,6 @@ class ArrayAccessTest {
         Class<Integer> clz3 = Integer.class;
         arrayAccess.arrayIndexHasTypeLiteral(foo);
 
-        verify(foo, times(3)).append(clz);
+        verify(foo, times(3)).appendObj(clz);
     }
 }

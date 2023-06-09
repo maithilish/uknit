@@ -24,13 +24,13 @@ class InlineArgTest {
     public void testLiteralArg() {
         Foo foo = Mockito.mock(Foo.class);
         String orange = "Foo";
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
         int index = 10;
         int index2 = 20;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.literalArg(foo);
 
@@ -43,11 +43,11 @@ class InlineArgTest {
         int index = (10) + (1);
         String orange = "Foo";
         int index2 = 20 - 1;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.infixArg(foo);
 
@@ -61,11 +61,11 @@ class InlineArgTest {
         int index = (10) + (offset);
         String orange = "Foo";
         int index2 = 20 - offset;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.infixMixArg(foo, offset);
 
@@ -76,13 +76,13 @@ class InlineArgTest {
     public void testCastArg() {
         Foo foo = Mockito.mock(Foo.class);
         String orange = "Foo";
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
-        int index = (int) (10L);
-        int index2 = (int) 20D;
+        int index = ((int) (10L));
+        int index2 = ((int) 20D);
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.castArg(foo);
 
@@ -96,11 +96,11 @@ class InlineArgTest {
         int index = (person).id;
         String orange = "Foo";
         int index2 = person.id;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.fieldAccessArg(foo, person);
 
@@ -114,11 +114,11 @@ class InlineArgTest {
         int index = person.id;
         String orange = "Foo";
         int index2 = (person).id;
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.fieldAccessMixArg(foo, person);
 
@@ -132,11 +132,11 @@ class InlineArgTest {
         int index = new Integer((10));
         String orange = "Foo";
         int index2 = new Integer((20));
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.instanceCreationArg(foo);
 
@@ -152,8 +152,8 @@ class InlineArgTest {
         String banana = null;
         String kiwi = banana;
 
-        when((foo).get(apple)).thenReturn(mango);
-        when((foo).get(orange)).thenReturn(banana);
+        when(foo.get(apple)).thenReturn(mango);
+        when(foo.get(orange)).thenReturn(banana);
 
         String actual = inlineArg.staticCallArg(foo);
 
@@ -167,11 +167,11 @@ class InlineArgTest {
         int index = (indexes)[0];
         String orange = "Foo";
         int index2 = indexes[1];
-        String kiwi = "Bar";
+        String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.arrayAccessArg(foo, indexes);
 

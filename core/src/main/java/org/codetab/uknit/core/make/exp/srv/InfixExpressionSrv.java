@@ -8,9 +8,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 public class InfixExpressionSrv implements ExpService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
     @Inject
@@ -40,7 +40,7 @@ public class InfixExpressionSrv implements ExpService {
         exps.add(wrappers.strip(infix.getLeftOperand()));
         exps.add(wrappers.strip(infix.getRightOperand()));
 
-        List<Expression> exOpers = arguments.getExtendedOperands(infix);
+        List<Expression> exOpers = safeExps.getExtendedOperands(infix);
         exOpers.forEach(eo -> exps.add(wrappers.strip(eo)));
         return exps;
     }
@@ -58,7 +58,7 @@ public class InfixExpressionSrv implements ExpService {
         rightOp = serviceLoader.loadService(rightOp).unparenthesize(rightOp);
         copy.setRightOperand(factory.copyNode(rightOp));
 
-        List<Expression> exOpers = arguments.getExtendedOperands(copy);
+        List<Expression> exOpers = safeExps.getExtendedOperands(copy);
         for (int i = 0; i < exOpers.size(); i++) {
             Expression exOpr = wrappers.strip(exOpers.get(i));
             exOpr = serviceLoader.loadService(exOpr).unparenthesize(exOpr);

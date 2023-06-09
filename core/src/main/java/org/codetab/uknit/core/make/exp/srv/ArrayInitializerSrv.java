@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.Expression;
 public class ArrayInitializerSrv implements ExpService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
     @Inject
@@ -34,7 +34,7 @@ public class ArrayInitializerSrv implements ExpService {
 
         List<Expression> exps = new ArrayList<>();
 
-        List<Expression> aiExps = arguments.getExps(ai);
+        List<Expression> aiExps = safeExps.getExps(ai);
         aiExps.forEach(e -> exps.add(wrappers.strip(e)));
 
         return exps;
@@ -45,7 +45,7 @@ public class ArrayInitializerSrv implements ExpService {
         checkState(node instanceof ArrayInitializer);
         ArrayInitializer copy = (ArrayInitializer) factory.copyNode(node);
 
-        List<Expression> exps = arguments.getExps(copy);
+        List<Expression> exps = safeExps.getExps(copy);
         for (int i = 0; i < exps.size(); i++) {
             Expression exp = wrappers.strip(exps.get(i));
             exp = serviceLoader.loadService(exp).unparenthesize(exp);
@@ -57,7 +57,7 @@ public class ArrayInitializerSrv implements ExpService {
 
     @Override
     public Expression getValue(final Expression node, final Expression copy,
-            final Pack pack, boolean createValue, final Heap heap) {
+            final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof ArrayInitializer);
         return node;
     }

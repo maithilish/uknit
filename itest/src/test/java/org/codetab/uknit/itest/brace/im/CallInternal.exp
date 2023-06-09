@@ -25,7 +25,7 @@ class CallInternalTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when(foo.get((index))).thenReturn(orange);
+        when(foo.get(index)).thenReturn(orange);
         when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = callInternal.sameAndDiffName(foo);
@@ -41,7 +41,7 @@ class CallInternalTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when(foo.get((index))).thenReturn(orange).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange).thenReturn(kiwi);
 
         String actual = callInternal.sameNameMultiCall(foo);
 
@@ -67,8 +67,8 @@ class CallInternalTest {
         Person person = Mockito.mock(Person.class);
         int size = 10;
 
-        when((qFactory).getQ((size))).thenReturn(q2);
-        when((q).take()).thenReturn(person);
+        when(qFactory.getQ(size)).thenReturn(q2);
+        when(q.take()).thenReturn(person);
 
         Person actual = callInternal.processSameName(qFactory);
 
@@ -85,8 +85,8 @@ class CallInternalTest {
         Person person = Mockito.mock(Person.class);
         int size = 10;
 
-        when(qFactory.getQ((size))).thenReturn(q2);
-        when((q).take()).thenReturn(person);
+        when(qFactory.getQ(size)).thenReturn(q2);
+        when(q.take()).thenReturn(person);
 
         Person actual = callInternal.processDiffName(qFactory);
 

@@ -96,4 +96,10 @@ class Cast {
     public FileInputStream returnMultiCast(final Foo foo) {
         return (((FileInputStream) (((InputStream) ((foo.obj()))))));
     }
+
+    public int castParam(final Object foo, final Object count) {
+        int index = (((((Foo) foo))).index());
+        int i = ((((Integer) count)));
+        return index + i;
+    }
 }

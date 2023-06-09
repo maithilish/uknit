@@ -190,7 +190,7 @@ class InfixTest {
         String lang = "Bar";
 
         when(foo.cntry()).thenReturn(apple);
-        when(foo.lang(("en_") + apple)).thenReturn(lang);
+        when(foo.lang("en_" + apple)).thenReturn(lang);
 
         String actual = infix.assignInvokeInfix(foo);
 
@@ -204,7 +204,7 @@ class InfixTest {
         String grape = "Bar";
 
         when(foo.cntry()).thenReturn(apple);
-        when(foo.lang(("en_") + apple)).thenReturn(grape);
+        when(foo.lang("en_" + apple)).thenReturn(grape);
 
         String actual = infix.returnInvokeInfix(foo);
 

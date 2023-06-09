@@ -34,22 +34,22 @@ class MultiDimArrayAccessTest {
         String fig = "bar2";
         String plum = "foox";
         String lychee = "barx";
-        String scrappy = "foox";
-        String barracuda = "barx";
+        // String scrappy = "foox";
+        // String barracuda = "barx";
         multiDimArrayAccess.literal(foo);
 
-        verify(foo).append(apple);
-        verify(foo).append(grape);
-        verify(foo).append(orange);
-        verify(foo).append(kiwi);
-        verify(foo).append(mango);
-        verify(foo).append(banana);
-        verify(foo).append(cherry);
-        verify(foo).append(apricot);
-        verify(foo).append(peach);
-        verify(foo).append(fig);
-        verify(foo, times(2)).append(plum);
-        verify(foo, times(2)).append(lychee);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendObj(orange);
+        verify(foo).appendObj(kiwi);
+        verify(foo).appendObj(mango);
+        verify(foo).appendObj(banana);
+        verify(foo).appendString(cherry);
+        verify(foo).appendString(apricot);
+        verify(foo).appendString(peach);
+        verify(foo).appendString(fig);
+        verify(foo, times(2)).appendString(plum);
+        verify(foo, times(2)).appendString(lychee);
     }
 
     @Test
@@ -57,10 +57,10 @@ class MultiDimArrayAccessTest {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "bar1";
         String grape = "barx";
-        String mango = "barx";
+        // String mango = "barx";
         multiDimArrayAccess.argIsMultiDimArrayAccess(foo);
 
-        verify(foo).append(apple);
-        verify(foo, times(2)).append(grape);
+        verify(foo).appendString(apple);
+        verify(foo, times(2)).appendString(grape);
     }
 }

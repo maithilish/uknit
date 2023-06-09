@@ -1,4 +1,6 @@
 package org.codetab.uknit.itest.initializer;
+
+import org.codetab.uknit.itest.initializer.Model.Foo;
 class CyclicTest {
     @InjectMocks
     private Cyclic cyclic;
@@ -9,14 +11,24 @@ class CyclicTest {
     }
 
     @Test
-    public void testCyclicInInitializers() {
-        String value2 = (Object) base;
-        String grape = "Baz";
-        String base = (String) value2;
-
-        when(value2.toString()).thenReturn(grape);
-        cyclic.cyclicInInitializers();
+    public void testCyclicInInitializersReal() {
+        cyclic.cyclicInInitializersReal();
 
         fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testCyclicInInitializersMock() {
+        Object foo = Mockito.mock(Object.class);
+        Foo value = foo;
+        Object result = value;
+        String orange = "Foo";
+        String apple = "Baz";
+
+        when(result.toString()).thenReturn(orange);
+
+        String actual = cyclic.cyclicInInitializersMock(foo);
+
+        assertEquals(apple, actual);
     }
 }

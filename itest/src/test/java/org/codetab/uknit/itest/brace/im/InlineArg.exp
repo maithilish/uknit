@@ -20,8 +20,8 @@ class InlineArgTest {
         int index = 10;
         int index2 = 20;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.literalArg(foo);
 
@@ -37,8 +37,8 @@ class InlineArgTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.infixArg(foo);
 
@@ -55,8 +55,8 @@ class InlineArgTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.infixMixArg(foo, offset);
 
@@ -69,11 +69,11 @@ class InlineArgTest {
         String orange = "Foo";
         String kiwi = "Baz";
         String grape = kiwi;
-        int index = (int) (10L);
-        int index2 = (int) 20D;
+        int index = ((int) (10L));
+        int index2 = ((int) 20D);
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.castArg(foo);
 
@@ -90,8 +90,8 @@ class InlineArgTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.fieldAccessArg(foo, person);
 
@@ -108,8 +108,8 @@ class InlineArgTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.fieldAccessMixArg(foo, person);
 
@@ -125,8 +125,8 @@ class InlineArgTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.instanceCreationArg(foo);
 
@@ -142,8 +142,8 @@ class InlineArgTest {
         String banana = "Baz";
         String kiwi = banana;
 
-        when((foo).get(apple)).thenReturn(mango);
-        when((foo).get(orange)).thenReturn(banana);
+        when(foo.get(apple)).thenReturn(mango);
+        when(foo.get(orange)).thenReturn(banana);
 
         String actual = inlineArg.staticCallArg(foo);
 
@@ -160,8 +160,8 @@ class InlineArgTest {
         String kiwi = "Baz";
         String grape = kiwi;
 
-        when((foo).get((index))).thenReturn(orange);
-        when((foo).get(index2)).thenReturn(kiwi);
+        when(foo.get(index)).thenReturn(orange);
+        when(foo.get(index2)).thenReturn(kiwi);
 
         String actual = inlineArg.arrayAccessArg(foo, indexes);
 

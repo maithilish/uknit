@@ -48,7 +48,7 @@ class QNameTest {
         Person person = Mockito.mock(Person.class);
         String name = "Foo";
 
-        when(foo.get(((person.id)))).thenReturn(name);
+        when(foo.get(person.id)).thenReturn(name);
 
         String actual = qName.assignQNameInInvokeArg(foo, person);
 
@@ -61,7 +61,7 @@ class QNameTest {
         Person person = Mockito.mock(Person.class);
         String apple = "Foo";
 
-        when(foo.get(((person.id)))).thenReturn(apple);
+        when(foo.get(person.id)).thenReturn(apple);
 
         String actual = qName.returnQNameInInvokeArg(foo, person);
 

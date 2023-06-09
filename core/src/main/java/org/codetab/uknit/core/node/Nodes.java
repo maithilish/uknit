@@ -155,30 +155,9 @@ public class Nodes {
         } else if (exp instanceof FieldAccess) {
             name = ((FieldAccess) exp).getName();
         } else if (exp instanceof SuperMethodInvocation) {
-            // REVIEW write test for this verify times
             name = ((SuperMethodInvocation) exp).getName();
         }
         return name;
-    }
-
-    /**
-     * Qualifier part from any of foo.id (QName), (foo).id (FieldAccess),
-     * this.id (again FieldAccess).
-     *
-     * @param exp
-     * @return
-     */
-    public Expression getQualifer(final Expression exp) {
-        Expression qualifier = null;
-        if (exp instanceof QualifiedName) {
-            qualifier = ((QualifiedName) exp).getQualifier();
-        } else if (exp instanceof FieldAccess) {
-            qualifier = ((FieldAccess) exp).getExpression();
-        } else if (exp instanceof SuperMethodInvocation) {
-            // REVIEW implement and write test for this verify times
-            qualifier = null;
-        }
-        return qualifier;
     }
 
     /**

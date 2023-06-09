@@ -22,8 +22,8 @@ class CastHierarchyInternalTest {
         Dog dog = dog2;
         String grape = "Bar";
 
-        when((pet).sex()).thenReturn(apple);
-        when((dog).breed()).thenReturn(grape);
+        when(pet.sex()).thenReturn(apple);
+        when(dog.breed()).thenReturn(grape);
 
         String actual = castHierarchyInternal.higerLast(obj);
 
@@ -40,8 +40,8 @@ class CastHierarchyInternalTest {
         Pet pet = pet2;
         String grape = "Bar";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
+        when(dog.breed()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
 
         String actual = castHierarchyInternal.lowerLast(obj);
 
@@ -61,9 +61,9 @@ class CastHierarchyInternalTest {
         Pet pet = pet2;
         String orange = "Baz";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pitbull).name()).thenReturn(grape);
-        when((pet).sex()).thenReturn(orange);
+        when(dog.breed()).thenReturn(apple);
+        when(pitbull.name()).thenReturn(grape);
+        when(pet.sex()).thenReturn(orange);
 
         String actual = castHierarchyInternal.higherMiddle(obj);
 
@@ -83,9 +83,9 @@ class CastHierarchyInternalTest {
         Pitbull pitbull = pitbull2;
         String orange = "Baz";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
-        when((pitbull).name()).thenReturn(orange);
+        when(dog.breed()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
+        when(pitbull.name()).thenReturn(orange);
 
         String actual = castHierarchyInternal.higherLast(obj);
 
@@ -105,9 +105,9 @@ class CastHierarchyInternalTest {
         Dog dog = dog2;
         String orange = "Baz";
 
-        when((pitbull).name()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
-        when((dog).breed()).thenReturn(orange);
+        when(pitbull.name()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
+        when(dog.breed()).thenReturn(orange);
 
         String actual = castHierarchyInternal.higherFirst(obj);
 
@@ -123,8 +123,8 @@ class CastHierarchyInternalTest {
         Dog dog = dog2;
         String grape = "Bar";
 
-        when((pet).sex()).thenReturn(apple);
-        when((dog).breed()).thenReturn(grape);
+        when(pet.sex()).thenReturn(apple);
+        when(dog.breed()).thenReturn(grape);
 
         String actual = castHierarchyInternal.higerLastMix(obj);
 
@@ -140,8 +140,8 @@ class CastHierarchyInternalTest {
         Pet pet = pet2;
         String grape = "Bar";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
+        when(dog.breed()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
 
         String actual = castHierarchyInternal.lowerLastMix(obj);
 
@@ -160,9 +160,9 @@ class CastHierarchyInternalTest {
         Pet pet = pet2;
         String orange = "Baz";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pitbull).name()).thenReturn(grape);
-        when((pet).sex()).thenReturn(orange);
+        when(dog.breed()).thenReturn(apple);
+        when(pitbull.name()).thenReturn(grape);
+        when(pet.sex()).thenReturn(orange);
 
         String actual = castHierarchyInternal.higherMiddleMix(obj);
 
@@ -180,9 +180,9 @@ class CastHierarchyInternalTest {
         Pitbull pitbull = pitbull2;
         String orange = "Baz";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
-        when((pitbull).name()).thenReturn(orange);
+        when(dog.breed()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
+        when(pitbull.name()).thenReturn(orange);
 
         String actual = castHierarchyInternal.higherLastMix(obj);
 
@@ -202,7 +202,7 @@ class CastHierarchyInternalTest {
 
         when(pitbull.name()).thenReturn(apple);
         when(pet.sex()).thenReturn(grape);
-        when((dog).breed()).thenReturn(orange);
+        when(dog.breed()).thenReturn(orange);
 
         String actual = castHierarchyInternal.higherFirstMix(obj);
 

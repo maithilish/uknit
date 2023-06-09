@@ -25,7 +25,15 @@ public class Initializers {
     @Inject
     private Configs configs;
 
-    // REVIEW - doc it
+    /**
+     * If node pack has initializer then return it else if createValue is true
+     * and type is known then create and return new value exp.
+     *
+     * @param node
+     * @param createValue
+     * @param heap
+     * @return
+     */
     public Expression getInitializerAsExpression(final Expression node,
             final boolean createValue, final Heap heap) {
 

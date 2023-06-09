@@ -55,6 +55,9 @@ class MockInitializer {
 
 class MockExcludes {
 
+    @Inject
+    private Types types;
+
     public boolean exclude(final IVar var, final Optional<Pack> iniPackO) {
         boolean exclude = false;
 
@@ -79,6 +82,10 @@ class MockExcludes {
         // generic type variables such as T, U, E etc.,
         if (nonNull(var.getTypeBinding())
                 && var.getTypeBinding().isTypeVariable()) {
+            exclude = true;
+        }
+
+        if (types.isUnmodifiable(types.getTypeName(var.getType()))) {
             exclude = true;
         }
 

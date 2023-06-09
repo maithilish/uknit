@@ -60,7 +60,7 @@ class CastTest {
         Locale locale2 = (locale);
         Locale locale3 = locale2;
 
-        when((foo).locale()).thenReturn(locale);
+        when(foo.locale()).thenReturn(locale);
 
         Locale actual = cast.castInvoke(foo);
 
@@ -118,7 +118,7 @@ class CastTest {
         Locale obj = Mockito.mock(Locale.class);
         Locale locale = (obj);
 
-        when((foo).obj()).thenReturn(obj);
+        when(foo.obj()).thenReturn(obj);
 
         Locale actual = cast.invokeAssignCast(foo);
 
@@ -130,7 +130,7 @@ class CastTest {
         Foo foo = Mockito.mock(Foo.class);
         Locale obj = Mockito.mock(Locale.class);
 
-        when((foo).obj()).thenReturn(obj);
+        when(foo.obj()).thenReturn(obj);
 
         Locale actual = cast.invokeReturnCast(foo);
 
@@ -141,7 +141,7 @@ class CastTest {
     public void testAssginMultiCast() {
         Foo foo = Mockito.mock(Foo.class);
         FileInputStream fileInputStream = Mockito.mock(FileInputStream.class);
-        FileInputStream bar = fileInputStream;
+        FileInputStream bar = (fileInputStream);
 
         when(foo.obj()).thenReturn(fileInputStream);
 
@@ -160,5 +160,20 @@ class CastTest {
         FileInputStream actual = cast.returnMultiCast(foo);
 
         assertSame(fileInputStream, actual);
+    }
+
+    @Test
+    public void testCastParam() {
+        Foo foo = Mockito.mock(Foo.class);
+        Integer count = Integer.valueOf(1);
+        int index = 1;
+        Integer i = (count);
+        int apple = index + i;
+
+        when(foo.index()).thenReturn(index);
+
+        int actual = cast.castParam(foo, count);
+
+        assertEquals(apple, actual);
     }
 }

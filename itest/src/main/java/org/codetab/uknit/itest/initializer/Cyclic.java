@@ -1,5 +1,7 @@
 package org.codetab.uknit.itest.initializer;
 
+import org.codetab.uknit.itest.initializer.Model.Foo;
+
 public class Cyclic {
 
     /**
@@ -13,25 +15,52 @@ public class Cyclic {
      * TODO L - output has cyclic var definitions, fix it.
      *
      */
-    public void cyclicInInitializers() {
-        getList();
+    public void cyclicInInitializersReal() {
+        getListReal();
     }
 
-    private void getList() {
+    private void getListReal() {
         final Object value = "foo";
         if (value instanceof String) {
-            interpolate((String) value);
+            interpolateReal((String) value);
         } else {
             value.toString();
         }
     }
 
-    private String interpolate(final String base) {
-        final Object result = interpolate((Object) base);
+    private String interpolateReal(final String base) {
+        final Object result = interpolateReal((Object) base);
         return result.toString();
     }
 
-    private Object interpolate(final Object value) {
+    private Object interpolateReal(final Object value) {
         return value;
     }
+
+    /*
+     * TODO L - The type of Foo should be update from Object to Foo as
+     * interpolateMock((Foo) value) uses it as Foo.
+     */
+    public String cyclicInInitializersMock(final Object foo) {
+        return getListMock(foo);
+    }
+
+    private String getListMock(final Object foo) {
+        final Object value = foo;
+        if (value instanceof Foo) {
+            return interpolateMock((Foo) value);
+        } else {
+            return value.toString();
+        }
+    }
+
+    private String interpolateMock(final Foo base) {
+        final Object result = interpolateMock((Object) base);
+        return result.toString();
+    }
+
+    private Object interpolateMock(final Object value) {
+        return value;
+    }
+
 }

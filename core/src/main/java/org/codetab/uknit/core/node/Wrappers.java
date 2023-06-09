@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class Wrappers {
 
@@ -51,8 +52,30 @@ public class Wrappers {
     public Expression strip(final Expression exp) {
         Expression eExp = exp;
         if (nodes.is(exp, ParenthesizedExpression.class)) {
-            eExp = nodes.as(exp, ParenthesizedExpression.class).getExpression();
+            ParenthesizedExpression pExp =
+                    nodes.as(exp, ParenthesizedExpression.class);
+            /**
+             * If pExp has cast and pExp parent is any type of exp other than
+             * vdf then don't strip. If pExp has no cast or has cast with pExp
+             * parent is vdf then strip. <code>
+             * int index = ((Foo) foo).index(); // parent of pExp is mi, don't strip
+             * Locale locale2 = ((Locale) (locale)); // parent is vdf, strip
+             * </code>
+             */
+            boolean doStrip = true;
+            if (nodes.is(pExp.getExpression(), CastExpression.class) && !nodes
+                    .is(pExp.getParent(), VariableDeclarationFragment.class)) {
+                doStrip = false;
+            }
+            if (doStrip) {
+                // get pExp's exp to strip
+                eExp = pExp.getExpression();
+            } else {
+                // don't strip return pExp
+                return pExp;
+            }
         }
+        // recursively strip inner parenthesises
         if (nodes.is(eExp, ParenthesizedExpression.class)) {
             eExp = strip(eExp);
         }

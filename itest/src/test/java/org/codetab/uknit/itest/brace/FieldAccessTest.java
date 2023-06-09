@@ -48,7 +48,7 @@ class FieldAccessTest {
         Person person = Mockito.mock(Person.class);
         String name = "Foo";
 
-        when(foo.get(((person).id))).thenReturn(name);
+        when(foo.get(person.id)).thenReturn(name);
 
         String actual = fieldAccess.assignFieldAccessInInvokeArg(foo, person);
 
@@ -61,7 +61,7 @@ class FieldAccessTest {
         Person person = Mockito.mock(Person.class);
         String apple = "Foo";
 
-        when(foo.get(((person).id))).thenReturn(apple);
+        when(foo.get(person.id)).thenReturn(apple);
 
         String actual = fieldAccess.returnFieldAccessInInvokeArg(foo, person);
 

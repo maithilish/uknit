@@ -10,11 +10,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.ResolveException;
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Methods;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Wrappers;
@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 public class MethodInvocationSrv implements ExpService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
     @Inject
@@ -46,7 +46,7 @@ public class MethodInvocationSrv implements ExpService {
         List<Expression> exps = new ArrayList<>();
         exps.add(wrappers.strip(mi.getExpression()));
 
-        List<Expression> args = arguments.getArgs(mi);
+        List<Expression> args = safeExps.getArgs(mi);
         args.forEach(a -> exps.add(wrappers.strip(a)));
         return exps;
     }
@@ -62,7 +62,7 @@ public class MethodInvocationSrv implements ExpService {
             copy.setExpression(factory.copyNode(exp));
         }
 
-        List<Expression> args = arguments.getArgs(copy);
+        List<Expression> args = safeExps.getArgs(copy);
         for (int i = 0; i < args.size(); i++) {
             Expression arg = wrappers.strip(args.get(i));
             arg = serviceLoader.loadService(arg).unparenthesize(arg);

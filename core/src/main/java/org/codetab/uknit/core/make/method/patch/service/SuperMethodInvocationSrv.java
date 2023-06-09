@@ -7,10 +7,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.node.Arguments;
+import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -19,11 +21,13 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 public class SuperMethodInvocationSrv implements PatchService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Patchers patchers;
     @Inject
     private Wrappers wrappers;
+    @Inject
+    private Nodes nodes;
 
     @Override
     public void patch(final Pack pack, final Expression node,
@@ -40,8 +44,8 @@ public class SuperMethodInvocationSrv implements PatchService {
         patchers.patchExpWithName(pack, exp, expCopy, heap,
                 (name) -> smiCopy.setName((SimpleName) name));
 
-        List<Expression> args = arguments.getArgs(smi);
-        List<Expression> argsCopy = arguments.getArgs(smiCopy);
+        List<Expression> args = safeExps.getArgs(smi);
+        List<Expression> argsCopy = safeExps.getArgs(smiCopy);
         patchers.patchExpsWithName(pack, args, argsCopy, heap);
     }
 
@@ -63,8 +67,8 @@ public class SuperMethodInvocationSrv implements PatchService {
                 (name) -> smiCopy.setName((SimpleName) name));
 
         int offset = 1;
-        List<Expression> args = arguments.getArgs(smi);
-        List<Expression> argsCopy = arguments.getArgs(smiCopy);
+        List<Expression> args = safeExps.getArgs(smi);
+        List<Expression> argsCopy = safeExps.getArgs(smiCopy);
         patchers.patchExpsWithPackPatches(pack, args, argsCopy, patches, offset,
                 heap);
     }
@@ -79,16 +83,17 @@ public class SuperMethodInvocationSrv implements PatchService {
 
         exps.add(wrappers.strip(smi.getName()));
 
-        List<Expression> args = arguments.getArgs(smi);
+        List<Expression> args = safeExps.getArgs(smi);
         args.forEach(a -> exps.add(wrappers.strip(a)));
         return exps;
     }
 
-    // REVIEW - write test
     @Override
     public void patchValue(final Expression node, final Expression copy,
             final Heap heap) {
-        // TODO Auto-generated method stub
+        checkState(node instanceof SuperMethodInvocation);
+        checkState(copy instanceof SuperMethodInvocation);
 
+        throw new CodeException(nodes.exMessage("not implemented", node));
     }
 }

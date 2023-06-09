@@ -1,10 +1,13 @@
 package org.codetab.uknit.itest.initializer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import org.codetab.uknit.itest.initializer.Model.Foo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 class CyclicTest {
@@ -17,15 +20,25 @@ class CyclicTest {
     }
 
     @Test
-    public void testCyclicInInitializers() {
-
-        String grape = "Bar";
-        Object base = "foo";
-        Object value2 = base;
-
-        when(value2.toString()).thenReturn(grape);
-        cyclic.cyclicInInitializers();
+    public void testCyclicInInitializersReal() {
+        cyclic.cyclicInInitializersReal();
 
         // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testCyclicInInitializersMock() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo value = foo;
+        Object result = value;
+        String orange = "Foo";
+        // String apple = "Baz";
+        String apple = "Foo";
+
+        when(result.toString()).thenReturn(orange);
+
+        String actual = cyclic.cyclicInInitializersMock(foo);
+
+        assertEquals(apple, actual);
     }
 }

@@ -29,7 +29,7 @@ class MockTest {
         Locale locale3 = new Locale(("en"));
         Locale locale2 = locale3;
 
-        when((foo).locale()).thenReturn(locale);
+        when(foo.locale()).thenReturn(locale);
 
         Locale actual = mock.assignCreationToMock(foo);
 
@@ -42,7 +42,7 @@ class MockTest {
         Locale locale3 = Mockito.mock(Locale.class);
         Locale locale2 = locale3;
 
-        when((foo).locale()).thenReturn(locale3);
+        when(foo.locale()).thenReturn(locale3);
 
         Locale actual = mock.assignCreationAndMockToMock(foo);
 

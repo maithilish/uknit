@@ -19,11 +19,13 @@ import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.Expressions;
 import org.codetab.uknit.core.node.Methods;
+import org.codetab.uknit.core.node.Mocks;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.Type;
 
 public class LinkedVarProcessor {
@@ -170,9 +172,16 @@ public class LinkedVarProcessor {
                 PatchService patchService = serviceLoader.loadService(exp);
                 List<Expression> exps = patchService.getExps(exp);
                 for (Expression eexp : exps) {
-                    if (nonNull(var) && nonNull(eexp)
-                            && expressions.isCastedExp(eexp)) {
-
+                    eexp = wrappers.strip(eexp);
+                    /*
+                     * Strip doesn't remove the parenthesise around the cast
+                     * exp, so remove it directly. Ex: int index = ((Foo)
+                     * foo).index();
+                     */
+                    if (nodes.is(eexp, ParenthesizedExpression.class)) {
+                        eexp = ((ParenthesizedExpression) eexp).getExpression();
+                    }
+                    if (nonNull(eexp) && expressions.isCastedExp(eexp)) {
                         Expression stripedExp = wrappers.unpack(eexp);
                         // find pack by exp else by var name
                         Optional<Pack> ePackO =
@@ -212,6 +221,10 @@ class CastPropagator {
     private LinkedPack linkedPack;
     @Inject
     private Types types;
+    @Inject
+    private Mocks mocks;
+    @Inject
+    private Resolver resolver;
 
     /**
      * Selectively propagates the pack var's type to link vars.
@@ -247,9 +260,10 @@ class CastPropagator {
                  * don't change link var type from String to Object;
                  */
                 if (isSubclass(targetType, linkVar.getType())) {
+                    linkPack.getVar().setMock(mocks.isMockable(targetType));
                     linkPack.getVar().setType(targetType);
-                    linkPack.getVar()
-                            .setTypeBinding(pack.getVar().getTypeBinding());
+                    linkPack.getVar().setTypeBinding(
+                            resolver.resolveBinding(targetType));
                 }
             }
         }

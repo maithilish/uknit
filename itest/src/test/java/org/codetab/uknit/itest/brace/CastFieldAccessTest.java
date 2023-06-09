@@ -47,7 +47,7 @@ class CastFieldAccessTest {
         Person person = Mockito.mock(Person.class);
         String name = "Foo";
 
-        when(foo.get((int) ((person).lid))).thenReturn(name);
+        when(foo.get((int) person.lid)).thenReturn(name);
 
         String actual = castFieldAccess.assignQNameInInvokeArg(foo, person);
 
@@ -60,7 +60,7 @@ class CastFieldAccessTest {
         Person person = Mockito.mock(Person.class);
         String apple = "Foo";
 
-        when(foo.get((int) (((person).lid)))).thenReturn(apple);
+        when(foo.get((int) person.lid)).thenReturn(apple);
 
         String actual = castFieldAccess.returnQNameInInvokeArg(foo, person);
 

@@ -25,7 +25,7 @@ class ReassignTest {
         int index = 1;
         String x = "Foo";
 
-        when((foo).get((index))).thenReturn(x);
+        when(foo.get(index)).thenReturn(x);
 
         String actual = reassign.defineAndAssign(foo);
 
@@ -38,7 +38,7 @@ class ReassignTest {
         int index2 = 2;
         String y = "Foo";
 
-        when((foo).get(index2)).thenReturn(y);
+        when(foo.get(index2)).thenReturn(y);
 
         String actual = reassign.reassignBeforeVarUse(foo);
 
@@ -54,8 +54,8 @@ class ReassignTest {
         String y = "Bar";
         String apple = x + y;
 
-        when((foo).get((index))).thenReturn(x);
-        when((foo).get(index2)).thenReturn(y);
+        when(foo.get(index)).thenReturn(x);
+        when(foo.get(index2)).thenReturn(y);
 
         String actual = reassign.reassignAfterVarUse(foo);
 
@@ -71,8 +71,8 @@ class ReassignTest {
         String y = "Bar";
         String apple = (x) + (y);
 
-        when((foo).get((index))).thenReturn(x);
-        when((foo).get(index3)).thenReturn(y);
+        when(foo.get(index)).thenReturn(x);
+        when(foo.get(index3)).thenReturn(y);
 
         String actual = reassign.reassignNameVarConflicts(foo);
 

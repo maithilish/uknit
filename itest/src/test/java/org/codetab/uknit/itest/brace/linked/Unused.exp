@@ -16,7 +16,7 @@ class UnusedTest {
         Foo foo = Mockito.mock(Foo.class);
         Object unObj = Mockito.mock(Object.class);
 
-        when((foo).obj()).thenReturn(unObj);
+        when(foo.obj()).thenReturn(unObj);
         unused.unusedButInovked(foo);
 
         fail("unable to assert, STEPIN");
@@ -27,7 +27,7 @@ class UnusedTest {
         Foo foo = Mockito.mock(Foo.class);
         Object unObj = Mockito.mock(Object.class);
 
-        when((foo).obj()).thenReturn(unObj);
+        when(foo.obj()).thenReturn(unObj);
         unused.unusedButInovkedAndCreated(foo);
 
         fail("unable to assert, STEPIN");

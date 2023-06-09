@@ -53,7 +53,14 @@ public class Packs {
         }).findFirst();
     }
 
-    // REVIEW
+    /**
+     * Find and return pack in head list with matching exp
+     *
+     * @param pack
+     * @param exp
+     * @param packs
+     * @return
+     */
     public Optional<Pack> findNearestByExp(final Pack pack,
             final Expression exp, final List<Pack> packs) {
         int start = 0;

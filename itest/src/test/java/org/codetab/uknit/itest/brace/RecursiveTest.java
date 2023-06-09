@@ -62,7 +62,7 @@ class RecursiveTest {
         String apple = "Foo";
         String foo = apple;
 
-        when((locale).getDisplayName()).thenReturn(apple);
+        when(locale.getDisplayName()).thenReturn(apple);
 
         String actual = recursive.invokeInit(locale);
 

@@ -2,6 +2,7 @@ package org.codetab.uknit.itest.verify.times;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.codetab.uknit.itest.verify.times.Model.Foo;
 import org.codetab.uknit.itest.verify.times.Model.Person;
@@ -24,7 +25,7 @@ class MethodInvocationTest {
     public void testArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = "foo";
-        String orange = "foo";
+        // String orange = "foo";
         String mango = "baz";
         methodInvocation.arrayAccess(foo);
 
@@ -36,12 +37,29 @@ class MethodInvocationTest {
     public void testArrayAccessVar() {
         Foo foo = Mockito.mock(Foo.class);
         String a = "foo";
-        String b = "foo";
+        // String b = "foo";
         String c = "baz";
         methodInvocation.arrayAccessVar(foo);
 
         verify(foo, times(2)).append(Foo.valueOf(a));
         verify(foo).append(Foo.valueOf(c));
+    }
+
+    @Test
+    public void testArrayAccessIndexIsExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String grape = "bar";
+        int orange = 1;
+        // String kiwi = "bar";
+        int mango = 1;
+        // String banana = "bar";
+
+        when(foo.index()).thenReturn(apple).thenReturn(orange)
+                .thenReturn(mango);
+        methodInvocation.arrayAccessIndexIsExp(foo);
+
+        verify(foo, times(3)).append(grape);
     }
 
     @Test
@@ -57,7 +75,7 @@ class MethodInvocationTest {
     public void testArrayCreationVar() {
         Foo foo = Mockito.mock(Foo.class);
         int a = 1;
-        int b = 1;
+        // int b = 1;
         int c = 2;
         methodInvocation.arrayCreationVar(foo);
 
@@ -90,7 +108,7 @@ class MethodInvocationTest {
     public void testArrayInitializer() {
         Foo foo = Mockito.mock(Foo.class);
         String[] cities = {"foo", "bar"};
-        String[] states = {"foo", "bar"};
+        // String[] states = {"foo", "bar"};
         String[] countries = {"bar", "baz"};
         methodInvocation.arrayInitializer(foo);
 
@@ -105,7 +123,7 @@ class MethodInvocationTest {
         String b = "bar";
         String c = "baz";
         String[] cities = {a, b};
-        String[] states = {a, b};
+        // String[] states = {a, b};
         String[] countries = {b, c};
         methodInvocation.arrayInitializerVar(foo);
 
@@ -126,7 +144,7 @@ class MethodInvocationTest {
     public void testBooleanLiteralVar() {
         Foo foo = Mockito.mock(Foo.class);
         boolean a = true;
-        boolean b = true;
+        // boolean b = true;
         boolean c = false;
         methodInvocation.booleanLiteralVar(foo);
 
@@ -147,7 +165,7 @@ class MethodInvocationTest {
     public void testCastVar() {
         Foo foo = Mockito.mock(Foo.class);
         String city = "foo";
-        String state = "foo";
+        // String state = "foo";
         String country = "bar";
         methodInvocation.castVar(foo);
 
@@ -168,7 +186,7 @@ class MethodInvocationTest {
     public void testCharLiteralVar() {
         Foo foo = Mockito.mock(Foo.class);
         char a = 'f';
-        char b = 'f';
+        // char b = 'f';
         char c = 'b';
         methodInvocation.charLiteralVar(foo);
 
@@ -189,7 +207,7 @@ class MethodInvocationTest {
     public void testClassInstanceCreationVar() {
         Foo foo = Mockito.mock(Foo.class);
         String city = "foo";
-        String state = "foo";
+        // String state = "foo";
         String country = "bar";
         methodInvocation.classInstanceCreationVar(foo);
 
@@ -200,8 +218,8 @@ class MethodInvocationTest {
     @Test
     public void testConditional() {
         Foo foo = Mockito.mock(Foo.class);
-        boolean a = true;
-        boolean b = false;
+        // boolean a = true;
+        // boolean b = false;
         methodInvocation.conditional(foo);
 
         // verify(foo, times(2)).append(Foo.valueOf(a ? "foo" : "foo"));
@@ -214,10 +232,10 @@ class MethodInvocationTest {
     @Test
     public void testConditionalVar() {
         Foo foo = Mockito.mock(Foo.class);
-        boolean a = true;
-        boolean b = false;
+        // boolean a = true;
+        // boolean b = false;
         String city = "foo";
-        String state = "foo";
+        // String state = "foo";
         String country = "bar";
         methodInvocation.conditionalVar(foo);
 
@@ -233,8 +251,8 @@ class MethodInvocationTest {
     public void testFieldaccess() {
         Foo foo = Mockito.mock(Foo.class);
         Person person = Mockito.mock(Person.class);
-        int lid = 3;
-        int id = 2;
+        // int lid = 3;
+        // int id = 2;
         methodInvocation.fieldaccess(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf((person).id));
@@ -257,8 +275,8 @@ class MethodInvocationTest {
     public void testInfix() {
         Foo foo = Mockito.mock(Foo.class);
         Person person = Mockito.mock(Person.class);
-        int lid = 3;
-        int id = 2;
+        // int lid = 3;
+        // int id = 2;
         methodInvocation.infix(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf(person.id == person.lid));
@@ -271,7 +289,7 @@ class MethodInvocationTest {
         Person person = Mockito.mock(Person.class);
         boolean a = person.id == person.lid;
         boolean b = person.id > person.lid;
-        boolean c = person.id == person.lid;
+        /// boolean c = person.id == person.lid;
         methodInvocation.infixVar(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf(a));
@@ -294,7 +312,7 @@ class MethodInvocationTest {
         Foo foo = Mockito.mock(Foo.class);
         Object person = Mockito.mock(Person.class);
         boolean a = person instanceof Person;
-        boolean b = person instanceof Person;
+        // boolean b = person instanceof Person;
         boolean c = person instanceof String;
         methodInvocation.instanceOfVar(foo, person);
 
@@ -315,7 +333,7 @@ class MethodInvocationTest {
     public void testInvokeVar() {
         Foo foo = Mockito.mock(Foo.class);
         String city = "foo";
-        String state = "foo";
+        // String state = "foo";
         String country = "baz";
         methodInvocation.invokeVar(foo);
 
@@ -336,7 +354,7 @@ class MethodInvocationTest {
     public void testNullLiteralVar() {
         Foo foo = Mockito.mock(Foo.class);
         String a = null;
-        String b = null;
+        // String b = null;
         String c = "foo";
         methodInvocation.nullLiteralVar(foo);
 
@@ -357,7 +375,7 @@ class MethodInvocationTest {
     public void testNumberLiteralVar() {
         Foo foo = Mockito.mock(Foo.class);
         int a = 1;
-        int b = 1;
+        // int b = 1;
         int c = 2;
         methodInvocation.numberLiteralVar(foo);
 
@@ -377,8 +395,8 @@ class MethodInvocationTest {
     public void testParenthesizedVar() {
         Foo foo = Mockito.mock(Foo.class);
         String a = "foo";
-        String b = "foo";
-        String c = "foo";
+        // String b = "foo";
+        // String c = "foo";
         methodInvocation.parenthesizedVar(foo);
 
         verify(foo, times(3)).append(Foo.valueOf(a));
@@ -404,7 +422,7 @@ class MethodInvocationTest {
         Person person = Mockito.mock(Person.class);
         int a = 1;
         int b = 2;
-        int c = 1;
+        // int c = 1;
         methodInvocation.postfixVar(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf(a++));
@@ -431,7 +449,7 @@ class MethodInvocationTest {
         Person person = Mockito.mock(Person.class);
         int a = 1;
         int b = 2;
-        int c = 1;
+        // int c = 1;
         methodInvocation.prefixVar(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf(--a));
@@ -442,7 +460,7 @@ class MethodInvocationTest {
     public void testVar() {
         Foo foo = Mockito.mock(Foo.class);
         String city = "foo";
-        String state = "foo";
+        // String state = "foo";
         String country = "bar";
         methodInvocation.var(foo);
 
@@ -467,8 +485,8 @@ class MethodInvocationTest {
     public void testThisExp() {
         Foo foo = Mockito.mock(Foo.class);
         Person person = Mockito.mock(Person.class);
-        int lid = 3;
-        int id = 2;
+        // int lid = 3;
+        // int id = 2;
         methodInvocation.thisExp(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf(methodInvocation.id));
@@ -503,7 +521,7 @@ class MethodInvocationTest {
         Person person = Mockito.mock(Person.class);
         Class<?> a = Person.class;
         Class<?> b = String.class;
-        Class<?> c = Person.class;
+        // Class<?> c = Person.class;
         methodInvocation.typeLiteralVar(foo, person);
 
         verify(foo, times(2)).append(Foo.valueOf(a));

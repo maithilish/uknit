@@ -31,7 +31,7 @@ public class NumberLiteralSrv implements ExpService {
 
     @Override
     public Expression getValue(final Expression node, final Expression copy,
-            final Pack pack, boolean createValue, final Heap heap) {
+            final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof NumberLiteral);
         return node;
     }

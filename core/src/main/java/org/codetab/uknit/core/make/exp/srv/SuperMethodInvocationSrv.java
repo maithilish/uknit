@@ -8,9 +8,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 public class SuperMethodInvocationSrv implements ExpService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
     @Inject
@@ -37,7 +37,7 @@ public class SuperMethodInvocationSrv implements ExpService {
         List<Expression> exps = new ArrayList<>();
 
         exps.add(wrappers.strip(smi.getName()));
-        List<Expression> args = arguments.getArgs(smi);
+        List<Expression> args = safeExps.getArgs(smi);
         args.forEach(a -> exps.add(wrappers.strip(a)));
         return exps;
     }
@@ -50,7 +50,7 @@ public class SuperMethodInvocationSrv implements ExpService {
 
         // parenthesise is not allowed for name and class name
 
-        List<Expression> args = arguments.getArgs(copy);
+        List<Expression> args = safeExps.getArgs(copy);
         for (int i = 0; i < args.size(); i++) {
             Expression arg = wrappers.strip(args.get(i));
             arg = serviceLoader.loadService(arg).unparenthesize(arg);
@@ -62,7 +62,7 @@ public class SuperMethodInvocationSrv implements ExpService {
 
     @Override
     public Expression getValue(final Expression node, final Expression copy,
-            final Pack pack, boolean createValue, final Heap heap) {
+            final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof SuperMethodInvocation);
         throw new CodeException(
                 nodes.exMessage("getValue() not implemented", node));

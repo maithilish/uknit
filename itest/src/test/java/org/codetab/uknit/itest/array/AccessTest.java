@@ -46,6 +46,7 @@ class AccessTest {
         String grape = "bar";
         String orange = "foox";
         String kiwi = new String("barx");
+        @SuppressWarnings("unused")
         String mango = "foo";
         access.declareTwoArray(foo);
 
@@ -122,6 +123,7 @@ class AccessTest {
         assertEquals(apple, actual);
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void testSameInitializerAssignedToDifferentArray() {
         Foo foo = Mockito.mock(Foo.class);
@@ -140,6 +142,7 @@ class AccessTest {
     public void testReassignArrayItem() {
         Foo foo = Mockito.mock(Foo.class);
         String apple = new String("bar");
+        @SuppressWarnings("unused")
         String grape = "bar";
         access.reassignArrayItem(foo);
 

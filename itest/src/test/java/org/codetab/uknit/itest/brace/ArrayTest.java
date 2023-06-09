@@ -135,7 +135,7 @@ class ArrayTest {
         StringBuilder s = Mockito.mock(StringBuilder.class);
         StringBuilder stringBuilder = Mockito.mock(StringBuilder.class);
 
-        when(s.append((new String[] {("hello"), ("world")})))
+        when(s.append(new String[] {"hello", "world"}))
                 .thenReturn(stringBuilder);
 
         StringBuilder actual = array.initializeInArg(s);

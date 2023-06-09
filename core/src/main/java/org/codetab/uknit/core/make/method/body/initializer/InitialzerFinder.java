@@ -94,7 +94,7 @@ class InitialzerFinder {
      * @param heap
      * @return
      */
-    // REVIEW - can ExpManager.getValue() replace this.
+    // REVIEW Z - can ExpManager.getValue() replace this.
     private Optional<Expression> findInitializer(final IVar var,
             final Expression initExp, final Heap heap) {
 

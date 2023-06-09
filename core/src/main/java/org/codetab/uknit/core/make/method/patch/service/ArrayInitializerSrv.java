@@ -7,10 +7,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Expression;
@@ -20,7 +20,7 @@ public class ArrayInitializerSrv implements PatchService {
     @Inject
     private Patchers patchers;
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
 
@@ -34,8 +34,8 @@ public class ArrayInitializerSrv implements PatchService {
         ArrayInitializer ai = (ArrayInitializer) node;
         ArrayInitializer aiCopy = (ArrayInitializer) copy;
 
-        List<Expression> exps = arguments.getExps(ai);
-        List<Expression> expsCopy = arguments.getExps(aiCopy);
+        List<Expression> exps = safeExps.getExps(ai);
+        List<Expression> expsCopy = safeExps.getExps(aiCopy);
         patchers.patchExpsWithName(pack, exps, expsCopy, heap);
     }
 
@@ -50,8 +50,8 @@ public class ArrayInitializerSrv implements PatchService {
 
         final List<Patch> patches = pack.getPatches();
 
-        List<Expression> exps = arguments.getExps(ai);
-        List<Expression> expsCopy = arguments.getExps(aiCopy);
+        List<Expression> exps = safeExps.getExps(ai);
+        List<Expression> expsCopy = safeExps.getExps(aiCopy);
         int offset = 0;
         patchers.patchExpsWithPackPatches(pack, exps, expsCopy, patches, offset,
                 heap);
@@ -65,7 +65,7 @@ public class ArrayInitializerSrv implements PatchService {
 
         List<Expression> exps = new ArrayList<>();
 
-        List<Expression> aiExps = arguments.getExps(ai);
+        List<Expression> aiExps = safeExps.getExps(ai);
         aiExps.forEach(e -> exps.add(wrappers.strip(e)));
 
         return exps;
@@ -80,8 +80,8 @@ public class ArrayInitializerSrv implements PatchService {
         ArrayInitializer ai = (ArrayInitializer) node;
         ArrayInitializer aiCopy = (ArrayInitializer) copy;
 
-        List<Expression> exps = arguments.getExps(ai);
-        List<Expression> expsCopy = arguments.getExps(aiCopy);
+        List<Expression> exps = safeExps.getExps(ai);
+        List<Expression> expsCopy = safeExps.getExps(aiCopy);
         patchers.patchValue(exps, expsCopy, heap);
     }
 }

@@ -32,9 +32,11 @@ class MultiCallTest {
         JobInfo jobInfo5 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo6 = Mockito.mock(JobInfo.class);
 
-        when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
+        when(payload.getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
                 .thenReturn(jobInfo6);
         multiCall.call();
+
+        // fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -44,7 +46,7 @@ class MultiCallTest {
         JobInfo jobInfo6 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo3 = jobInfo6;
 
-        when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
+        when(payload.getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
                 .thenReturn(jobInfo6);
 
         JobInfo actual = multiCall.returnCall();
@@ -58,7 +60,7 @@ class MultiCallTest {
         JobInfo jobInfo5 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo6 = Mockito.mock(JobInfo.class);
 
-        when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
+        when(payload.getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
                 .thenReturn(jobInfo6);
         multiCall.callAndUse();
 
@@ -76,7 +78,7 @@ class MultiCallTest {
         JobInfo jobInfo6 = Mockito.mock(JobInfo.class);
         boolean orange = true;
 
-        when((payload).getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
+        when(payload.getJobInfo()).thenReturn(jobInfo4).thenReturn(jobInfo5)
                 .thenReturn(jobInfo6);
         when(jobInfo4.isValid()).thenReturn(apple);
         when(jobInfo5.isValid()).thenReturn(grape);
@@ -96,12 +98,14 @@ class MultiCallTest {
         JobInfo jobInfo11 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo12 = Mockito.mock(JobInfo.class);
 
-        when((payload).getJobInfo()).thenReturn(jobInfo7).thenReturn(jobInfo10);
-        when((payload).getJobInfo(jobInfo7)).thenReturn(jobInfo8);
-        when((payload).getJobInfo(jobInfo8)).thenReturn(jobInfo9);
-        when((payload).getJobInfo(jobInfo10)).thenReturn(jobInfo11);
-        when((payload).getJobInfo(jobInfo11)).thenReturn(jobInfo12);
+        when(payload.getJobInfo()).thenReturn(jobInfo7).thenReturn(jobInfo10);
+        when(payload.getJobInfo(jobInfo7)).thenReturn(jobInfo8);
+        when(payload.getJobInfo(jobInfo8)).thenReturn(jobInfo9);
+        when(payload.getJobInfo(jobInfo10)).thenReturn(jobInfo11);
+        when(payload.getJobInfo(jobInfo11)).thenReturn(jobInfo12);
         multiCall.callNestedArg();
+
+        // fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -114,11 +118,11 @@ class MultiCallTest {
         JobInfo jobInfo12 = Mockito.mock(JobInfo.class);
         JobInfo jobInfo6 = jobInfo12;
 
-        when((payload).getJobInfo()).thenReturn(jobInfo7).thenReturn(jobInfo10);
-        when((payload).getJobInfo(jobInfo7)).thenReturn(jobInfo8);
-        when((payload).getJobInfo(jobInfo8)).thenReturn(jobInfo9);
-        when((payload).getJobInfo(jobInfo10)).thenReturn(jobInfo11);
-        when((payload).getJobInfo(jobInfo11)).thenReturn(jobInfo12);
+        when(payload.getJobInfo()).thenReturn(jobInfo7).thenReturn(jobInfo10);
+        when(payload.getJobInfo(jobInfo7)).thenReturn(jobInfo8);
+        when(payload.getJobInfo(jobInfo8)).thenReturn(jobInfo9);
+        when(payload.getJobInfo(jobInfo10)).thenReturn(jobInfo11);
+        when(payload.getJobInfo(jobInfo11)).thenReturn(jobInfo12);
 
         JobInfo actual = multiCall.returnCallNestedArg();
 

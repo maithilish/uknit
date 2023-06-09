@@ -12,6 +12,8 @@ class Model {
         Date date();
 
         Object obj();
+
+        int index();
     }
 
     interface Pet {

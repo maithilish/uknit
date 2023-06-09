@@ -23,7 +23,7 @@ class UnusedTest {
         Foo foo = Mockito.mock(Foo.class);
         Object unObj = Mockito.mock(Object.class);
 
-        when((foo).obj()).thenReturn(unObj);
+        when(foo.obj()).thenReturn(unObj);
         unused.unusedButInovked(foo);
     }
 
@@ -32,7 +32,7 @@ class UnusedTest {
         Foo foo = Mockito.mock(Foo.class);
         Object unObj = Mockito.mock(Object.class);
 
-        when((foo).obj()).thenReturn(unObj);
+        when(foo.obj()).thenReturn(unObj);
         unused.unusedButInovkedAndCreated(foo);
     }
 }

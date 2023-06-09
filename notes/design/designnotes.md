@@ -252,14 +252,32 @@ In verify stmts, if config uknit.anonymous.class.capture is true (default) then 
                ArgumentCaptor<ActionListener> captorA = ArgumentCaptor.forClass(ActionListener.class);
                verify(button.add(captorA.capture());
 
-User may use captures for further testing. In case capture config is false then in anon args are replaced with any(type name) and other args with matchers.
+In case capture config is false then in anon args are replaced with any(type name) and other args with matchers.
 
         verify(calc.op(6, 3, (a, b) -> a * b)              becomes               
                verify(calc).op(eq(6), eq(3), any(Op.class);
         verify(button.add(new new ActionListener() {...})  becomes
                 verify(button).addActionListener(any(ActionListener.class));
+                
+User may use captures for further testing as explained below.
+                
+## Test Captures
 
-## Standin Fields
+The getValue() method of capture returns the lambda and call functional interface method in assert. 
 
-The mock fields are injected with @Mock annotations. Apart from these, method may use other fields and standin local vars are created for such fields. In debug log pack listing, the packs for standin vars appear in the end after the return pack.
+For
+        foo.append(((Function<String, String>) String::toLowerCase).apply("FOO"));
+
+uKnit generates capture
+
+        ArgumentCaptor<Function<String, String>> captorA = ArgumentCaptor.forClass(Function.class);
+        verify(foo).append(eq("FOO"), captorA.capture());
+
+add following assert to test the MethodReference or lambda
+
+        assertEquals("foo", captorA.getValue().apply("FOO"));
+
+## Stand-in Fields
+
+The mock fields are injected with @Mock annotations. Apart from these, method may use other fields and stand-in local vars are created for such fields. In debug log pack listing, the packs for stand-in vars appear in the end after the return pack.
 

@@ -30,9 +30,11 @@ class TypeChangeTest {
     @Test
     public void testAggregate() {
         TypeChange other = Mockito.mock(TypeChange.class);
-        long count = 1L;
+        long count2 = 1L;
 
-        when(((other)).getCount()).thenReturn(count);
+        when(other.getCount()).thenReturn(count2);
         typeChange.aggregate(other);
+
+        // fail("unable to assert, STEPIN");
     }
 }

@@ -6,11 +6,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionMethodReference;
@@ -24,8 +22,6 @@ public class ExpressionMethodReferenceSrv implements ExpService {
     private NodeFactory factory;
     @Inject
     private ExpServiceLoader serviceLoader;
-    @Inject
-    private Nodes nodes;
 
     @Override
     public List<Expression> getExps(final Expression exp) {
@@ -53,9 +49,8 @@ public class ExpressionMethodReferenceSrv implements ExpService {
 
     @Override
     public Expression getValue(final Expression node, final Expression copy,
-            final Pack pack, boolean createValue, final Heap heap) {
+            final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof ExpressionMethodReference);
-        throw new CodeException(
-                nodes.exMessage("getValue() not implemented", node));
+        return node;
     }
 }

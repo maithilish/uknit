@@ -9,14 +9,11 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.node.Nodes;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 
 public class TypeLiteralSrv implements ExpService {
 
-    @Inject
-    private Nodes nodes;
     @Inject
     private NodeFactory factory;
 

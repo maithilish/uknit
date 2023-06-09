@@ -151,4 +151,19 @@ class CastTest {
 
         assertSame(fileInputStream, actual);
     }
+
+    @Test
+    public void testCastParam() {
+        Foo foo = Mockito.mock(Foo.class);
+        Integer count = Integer.valueOf(1);
+        int index = 1;
+        Integer i = (Integer) count;
+        int apple = index + i;
+
+        when(((Foo) foo).index()).thenReturn(index);
+
+        int actual = cast.castParam(foo, count);
+
+        assertEquals(apple, actual);
+    }
 }

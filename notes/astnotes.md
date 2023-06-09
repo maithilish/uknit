@@ -22,6 +22,58 @@ When an expression in a program is evaluated (executed), the result denotes one 
 
 Annotation, Assignment, CastExpression, ClassInstanceCreation, ConditionalExpression, InstanceofExpression, LambdaExpression,  MethodReference, Name, ParenthesizedExpression, PatternInstanceofExpression, SwitchExpression, TextBlock, ThisExpression, VariableDeclarationExpression
 
+## Expression Type Hierarchy
+
+Sub classes of Expression in JDT version 3.28.0.
+
+        Expression
+            Annotation
+                MarkerAnnotation
+                NormalAnnotation
+                SingleMemberAnnotation
+            ArrayAccess
+            ArrayCreation
+            ArrayInitializer
+            Assignment
+            BooleanLiteral
+            CaseDefaultExpression
+            CastExpression
+            CharacterLiteral
+            ClassInstanceCreation
+            ConditionalExpression
+            FieldAccess
+            InfixExpression
+            InstanceofExpression
+            LambdaExpression
+            MethodInvocation
+            MethodReference
+                CreationReference
+                ExpressionMethodReference
+                SuperMethodReference
+                TypeMethodReference
+            Name
+                ModuleQualifiedName
+                QualifiedName
+                SimpleName
+            NullLiteral
+            NumberLiteral
+            ParenthesizedExpression
+            Pattern
+                GuardedPattern
+                NullPattern
+                TypePattern
+            PatternInstanceofExpression
+            PostfixExpression
+            PrefixExpression
+            StringLiteral
+            SuperFieldAccess
+            SuperMethodInvocation
+            SwitchExpression
+            TextBlock
+            ThisExpression
+            TypeLiteral
+            VariableDeclarationExpression
+        
 ## Primary Expression
 
         Primary:
@@ -41,7 +93,6 @@ Annotation, Assignment, CastExpression, ClassInstanceCreation, ConditionalExpres
             ArrayAccess
 
 Primary expressions include most of the simplest kinds of expressions, from which all others are constructed: literals, class literals, field accesses, method invocations, and array accesses. A parenthesized expression is also treated syntactically as a primary expression. 
-
 
 ## Expression Returns Value or Assignable to Var
 
@@ -128,6 +179,7 @@ ExpressionMethodReference
 foo.id is QName and (foo).id is FieldAccess.
 
 An expression like "foo.bar" can be represented either as a qualified name (QualifiedName) or as a field access expression (FieldAccess) containing simple names. Either is acceptable, and there is no way to choose between them without information about what the names resolve to (ASTParser may return either).
+
 
 
 

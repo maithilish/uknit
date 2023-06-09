@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.Expression;
 public class ClassInstanceCreationSrv implements ExpService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
     @Inject
@@ -34,7 +34,7 @@ public class ClassInstanceCreationSrv implements ExpService {
 
         List<Expression> exps = new ArrayList<>();
 
-        List<Expression> args = arguments.getArgs(cic);
+        List<Expression> args = safeExps.getArgs(cic);
         args.forEach(a -> exps.add(wrappers.strip(a)));
 
         return exps;
@@ -46,7 +46,7 @@ public class ClassInstanceCreationSrv implements ExpService {
         ClassInstanceCreation copy =
                 (ClassInstanceCreation) factory.copyNode(node);
 
-        List<Expression> args = arguments.getArgs(copy);
+        List<Expression> args = safeExps.getArgs(copy);
         for (int i = 0; i < args.size(); i++) {
             Expression arg = wrappers.strip(args.get(i));
             arg = serviceLoader.loadService(arg).unparenthesize(arg);
@@ -58,7 +58,7 @@ public class ClassInstanceCreationSrv implements ExpService {
 
     @Override
     public Expression getValue(final Expression node, final Expression copy,
-            final Pack pack, boolean createValue, final Heap heap) {
+            final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof ClassInstanceCreation);
         /*
          * If exp is new String("foo") then value is new String("foo") as uKnit

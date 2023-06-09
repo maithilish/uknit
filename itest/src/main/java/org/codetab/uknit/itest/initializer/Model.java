@@ -2,9 +2,13 @@ package org.codetab.uknit.itest.initializer;
 
 class Model {
 
-    interface Foo {
-        String format(String name);
+    static class Foo {
+        String format(final String name) {
+            return null;
+        }
 
-        void append(String name);
+        void append(final String name) {
+
+        }
     }
 }

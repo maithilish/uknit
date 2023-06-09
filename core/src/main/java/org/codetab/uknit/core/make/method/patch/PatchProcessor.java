@@ -90,10 +90,6 @@ public class PatchProcessor {
                  * renamed var for it also.
                  */
                 for (Pack pack : scopeList) {
-                    // REVIEW - why patch is required for array access but not
-                    // for inline varargs array access
-                    // if (!(pack.getExp() instanceof ArrayAccess)) {
-                    // }
                     patcher.addVarRenamePatch(renamedPack, pack,
                             renamedPack.getVar(), heap);
 

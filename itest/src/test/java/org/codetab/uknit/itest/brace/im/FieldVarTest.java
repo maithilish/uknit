@@ -28,7 +28,7 @@ class FieldVarTest {
         String grape = "Foo";
         String apple = grape;
 
-        when((locale).getCountry()).thenReturn(grape);
+        when(locale.getCountry()).thenReturn(grape);
 
         String actual = fieldVar.callReturnsFieldInvoke();
 

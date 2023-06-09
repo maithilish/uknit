@@ -153,23 +153,27 @@ class AllowedExps {
             // patched exp will not resolve
         }
 
-        /*
-         * If array is OFFLIMIT then not allowed. Ex: String name = array[0], if
-         * array is parameter then it is accessible (not OFFLIMIT) and it is
-         * allowed, but if array is defined in the method then it is OFFLIMIT.
-         * Ref itest: linked.Assign.assignArrayAccess().
-         */
         if (nodes.is(exp, ArrayAccess.class)) {
+            /*
+             * new String[] {"foo", "bar"}[0], as array name is null the array
+             * access exp can be ini. Ref itest:
+             * exp.value.ArrayAccess.arrayExpIsArrayCreation()
+             */
             String arrayName =
                     arrays.getArrayName((ArrayAccess) exp, pack, heap);
-
-            // REVIEW - new String[] {"foo", "bar"}[0], name is null
             if (isNull(arrayName)) {
                 return true;
             }
+
+            /*
+             * If array is OFFLIMIT then not allowed. Ex: String name =
+             * array[0], if array is parameter then it is accessible (not
+             * OFFLIMIT) and it is allowed, but if array is defined in the
+             * method then it is OFFLIMIT. Ref itest:
+             * linked.Assign.assignArrayAccess()
+             */
             Optional<Pack> arrayPackO =
                     packs.findByVarName(arrayName, heap.getPacks());
-
             if (arrayPackO.isPresent() && nonNull(arrayPackO.get().getVar())) {
                 return !arrayPackO.get().getVar().is(Nature.OFFLIMIT);
             }

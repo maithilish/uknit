@@ -14,11 +14,9 @@ class WildcardCaptureTest {
     @Test
     public void testWrite() {
         PrintWriter out = Mockito.mock(PrintWriter.class);
-        Object value = Mockito.mock(Object.class);
+        List<?> value = new ArrayList<>();
         wildcardCapture.write(out, value);
 
-        ArgumentCaptor<Consumer<? super Object>> captorA = ArgumentCaptor.forClass(Consumer.class);
-
-        verify(((List<?>) value)).forEach(captorA.capture());
+        fail("unable to assert, STEPIN");
     }
 }

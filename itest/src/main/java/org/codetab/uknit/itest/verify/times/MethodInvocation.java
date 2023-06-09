@@ -34,7 +34,12 @@ class MethodInvocation {
         foo.append(Foo.valueOf(c));
     }
 
-    // REVIEW - add arrayAccess with index from exp
+    public void arrayAccessIndexIsExp(final Foo foo) {
+        String[] cities = {"foo", "bar", "baz"};
+        foo.append(cities[foo.index()]);
+        foo.append(cities[foo.index()]);
+        foo.append(cities[foo.index()]);
+    }
 
     // invoke arg is array creation
     public void arrayCreation(final Foo foo) {

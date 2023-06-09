@@ -7,10 +7,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
@@ -20,7 +20,7 @@ public class ClassInstanceCreationSrv implements PatchService {
     @Inject
     private Patchers patchers;
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
 
@@ -34,8 +34,8 @@ public class ClassInstanceCreationSrv implements PatchService {
         ClassInstanceCreation cic = (ClassInstanceCreation) node;
         ClassInstanceCreation cicCopy = (ClassInstanceCreation) copy;
 
-        List<Expression> args = arguments.getArgs(cic);
-        List<Expression> argsCopy = arguments.getArgs(cicCopy);
+        List<Expression> args = safeExps.getArgs(cic);
+        List<Expression> argsCopy = safeExps.getArgs(cicCopy);
         patchers.patchExpsWithName(pack, args, argsCopy, heap);
     }
 
@@ -51,8 +51,8 @@ public class ClassInstanceCreationSrv implements PatchService {
         final List<Patch> patches = pack.getPatches();
 
         int offset = 0;
-        List<Expression> args = arguments.getArgs(cic);
-        List<Expression> argsCopy = arguments.getArgs(cicCopy);
+        List<Expression> args = safeExps.getArgs(cic);
+        List<Expression> argsCopy = safeExps.getArgs(cicCopy);
         patchers.patchExpsWithPackPatches(pack, args, argsCopy, patches, offset,
                 heap);
     }
@@ -65,7 +65,7 @@ public class ClassInstanceCreationSrv implements PatchService {
 
         List<Expression> exps = new ArrayList<>();
 
-        List<Expression> args = arguments.getArgs(cic);
+        List<Expression> args = safeExps.getArgs(cic);
         args.forEach(a -> exps.add(wrappers.strip(a)));
 
         return exps;
@@ -80,8 +80,8 @@ public class ClassInstanceCreationSrv implements PatchService {
         ClassInstanceCreation cic = (ClassInstanceCreation) node;
         ClassInstanceCreation cicCopy = (ClassInstanceCreation) copy;
 
-        List<Expression> args = arguments.getArgs(cic);
-        List<Expression> argsCopy = arguments.getArgs(cicCopy);
+        List<Expression> args = safeExps.getArgs(cic);
+        List<Expression> argsCopy = safeExps.getArgs(cicCopy);
         patchers.patchValue(args, argsCopy, heap);
     }
 }

@@ -32,7 +32,7 @@ class NameChangeTest {
         Foo foo2 = Mockito.mock(Foo.class);
         Foo otherFoo = foo2;
 
-        when((factory).createFoo()).thenReturn(foo).thenReturn(foo2);
+        when(factory.createFoo()).thenReturn(foo).thenReturn(foo2);
 
         Foo actual = nameChange.varNameChangeInReturn();
 
@@ -46,8 +46,7 @@ class NameChangeTest {
         Bar bar = Mockito.mock(Bar.class);
         Foo otherFoo = foo2;
 
-        when(factory.createFoo()).thenReturn(foo);
-        when((factory).createFoo()).thenReturn(foo2);
+        when(factory.createFoo()).thenReturn(foo).thenReturn(foo2);
         when(foo2.bar()).thenReturn(bar);
 
         Foo actual = nameChange.varNameChangeInSimpleNameInvoke();
@@ -62,12 +61,13 @@ class NameChangeTest {
         Bar bar = Mockito.mock(Bar.class);
         Foo otherFoo = foo2;
 
-        when((factory).createFoo()).thenReturn(foo).thenReturn(foo2);
+        when(factory.createFoo()).thenReturn(foo).thenReturn(foo2);
         when(foo2.bar()).thenReturn(bar);
 
         Foo actual = nameChange.varNameChangeInExpInvoke();
 
         assertSame(otherFoo, actual);
+
         verify(bar).baz();
     }
 }

@@ -21,10 +21,10 @@ class ArrayAccess {
         int[] ints = {10, 20};
         Object[] strObjs = {"foo", "bar"};
         String[] strings = {"foox", "barx"};
-        foo.append(objs[0]);
-        foo.append(ints[1]);
-        foo.append(strObjs[0]);
-        foo.append(strings[1]);
+        foo.appendObj(objs[0]);
+        foo.appendObj(ints[1]);
+        foo.appendObj(strObjs[0]);
+        foo.appendString(strings[1]);
     }
 
     public void accessWithVar(final Foo foo) {
@@ -41,12 +41,12 @@ class ArrayAccess {
         int[] indexes = {i, j};
         int[] indexes1 = new int[] {(a), (b)};
 
-        foo.append(cities[indexes[indexes1[m]]]);
-        foo.append(cities[indexes[indexes1[n]]]);
+        foo.appendString(cities[indexes[indexes1[m]]]);
+        foo.appendString(cities[indexes[indexes1[n]]]);
 
         // braces
-        foo.append((cities)[(indexes)[indexes1[(m)]]]);
-        foo.append(((cities)[((indexes)[((indexes1)[(n)])])]));
+        foo.appendString((cities)[(indexes)[indexes1[(m)]]]);
+        foo.appendString(((cities)[((indexes)[((indexes1)[(n)])])]));
     }
 
     /**
@@ -58,36 +58,36 @@ class ArrayAccess {
      */
     public void reassignArrayItemSameValue(final Foo foo) {
         String[] array = {"foo", new String("bar")};
-        foo.append(array[1]);
+        foo.appendString(array[1]);
 
         array[0] = new String("foo");
         array[1] = "bar";
-        foo.append(array[0]);
-        foo.append(array[1]);
+        foo.appendString(array[0]);
+        foo.appendString(array[1]);
     }
 
     public void reassignIndex(final Foo foo) {
         String[] cities = {"foo", "bar", "baz"};
 
         int index = 0;
-        foo.append(cities[index]);
+        foo.appendString(cities[index]);
 
         index = 1;
-        foo.append(cities[index]);
+        foo.appendString(cities[index]);
 
         index = 2;
-        foo.append(cities[index]);
+        foo.appendString(cities[index]);
     }
 
     // access the reassigned array item
     public void reassignArrayItem(final Foo foo) {
         String[] array = {"foo", new String("bar")};
-        foo.append(array[1]);
+        foo.appendString(array[1]);
 
         array[0] = new String("foox");
         array[1] = "barx";
-        foo.append(array[0]);
-        foo.append(array[1]);
+        foo.appendString(array[0]);
+        foo.appendString(array[1]);
     }
 
     // access the array whose item is array creation
@@ -95,22 +95,22 @@ class ArrayAccess {
         // embedded array initializer
         String[] array = {new String[] {"foo", "bar"}[0],
                 new String[] {"foox", "barx"}[1]};
-        foo.append(array[0]);
-        foo.append(array[1]);
+        foo.appendString(array[0]);
+        foo.appendString(array[1]);
     }
 
     // access with index which is array creation
     public void arrayIndexIsArrayCreation(final Foo foo) {
         String[] array = {new String[] {"foo", "bar"}[0],
                 new String[] {"foox", "barx"}[1]};
-        foo.append(array[new int[] {0, 1}[0]]);
-        foo.append(array[new int[] {0, 1}[1]]);
+        foo.appendString(array[new int[] {0, 1}[0]]);
+        foo.appendString(array[new int[] {0, 1}[1]]);
     }
 
     // access the array which is array creation
     public void arrayExpIsArrayCreation(final Foo foo) {
-        foo.append(new String[] {"foo", "bar"}[0]);
-        foo.append(new String[] {"foox", "barx"}[1]);
+        foo.appendString(new String[] {"foo", "bar"}[0]);
+        foo.appendString(new String[] {"foox", "barx"}[1]);
     }
 
     /**
@@ -123,12 +123,12 @@ class ArrayAccess {
     public void accessBoolean(final Foo foo, final File file) {
         boolean[] array =
                 {true, false, file.canExecute(), Boolean.valueOf(true)};
-        foo.append(array[0]);
-        foo.append(array[1]);
-        foo.append((array[(2)]));
-        foo.append((array[(3)]));
+        foo.appendObj(array[0]);
+        foo.appendObj(array[1]);
+        foo.appendObj((array[(2)]));
+        foo.appendObj((array[(3)]));
 
-        (foo).append(array[0]);
+        (foo).appendObj(array[0]);
     }
 
     // access the array whose items are casted
@@ -143,13 +143,13 @@ class ArrayAccess {
                 new Object[] {(String) new Object[] {(String) c, "barx"}[0],
                         (((String) (new Object[] {((String) (d))}[(0)])))};
 
-        foo.append(strings[0]);
-        foo.append(strings[1]);
-        foo.append((String) objs[0]);
-        foo.append(((String) (objs[(1)])));
+        foo.appendString(strings[0]);
+        foo.appendString(strings[1]);
+        foo.appendString((String) objs[0]);
+        foo.appendString(((String) (objs[(1)])));
 
-        foo.append(((String) (creation[(0)])));
-        foo.append(((String) (creation[(1)])));
+        foo.appendString(((String) (creation[(0)])));
+        foo.appendString(((String) (creation[(1)])));
     }
 
     /**
@@ -162,8 +162,8 @@ class ArrayAccess {
         Object[] objs = {"foo", new String("bar")};
         Object[] indexes = {0, 1};
 
-        foo.append(objs[(int) indexes[0]]);
-        foo.append(objs[((int) (indexes)[(1)])]);
+        foo.appendObj(objs[(int) indexes[0]]);
+        foo.appendObj(objs[((int) (indexes)[(1)])]);
     }
 
     // // can't cast array of a type to another
@@ -191,14 +191,14 @@ class ArrayAccess {
         char[] chars = {'a', ch.charValue(), Character.valueOf('c'),
                 (((ch).charValue())), (Character.valueOf(('d')))};
 
-        foo.append(chars[1]);
-        foo.append(chars[2]);
+        foo.appendObj(chars[1]);
+        foo.appendObj(chars[2]);
 
-        foo.append((chars[(0)]));
-        foo.append((chars[(1)]));
-        foo.append((chars[(2)]));
-        foo.append((chars[(3)]));
-        foo.append((chars[(4)]));
+        foo.appendObj((chars[(0)]));
+        foo.appendObj((chars[(1)]));
+        foo.appendObj((chars[(2)]));
+        foo.appendObj((chars[(3)]));
+        foo.appendObj((chars[(4)]));
     }
 
     public void arrayIndexIsChar(final Foo foo) {
@@ -206,9 +206,9 @@ class ArrayAccess {
 
         char[] indexes = {'\1', ('\2'), '\0'};
 
-        foo.append(cities[indexes['\0']]);
-        foo.append(cities[indexes['\1']]);
-        foo.append(cities[(indexes[('\2')])]);
+        foo.appendString(cities[indexes['\0']]);
+        foo.appendString(cities[indexes['\1']]);
+        foo.appendString(cities[(indexes[('\2')])]);
     }
 
     /**
@@ -223,16 +223,16 @@ class ArrayAccess {
         Object[] objs = {new File("foo"), new String("bar"),
                 new ArrayList<LocalDate>()};
 
-        foo.append(objs[0]);
-        foo.append(objs[1]);
-        foo.append(objs[2]);
+        foo.appendObj(objs[0]);
+        foo.appendObj(objs[1]);
+        foo.appendObj(objs[2]);
 
         objs = new Object[] {new String("barx"), (new File("foox")),
                 (new HashMap<String, LocalTime>())};
 
-        foo.append(objs[0]);
-        foo.append(objs[1]);
-        foo.append((objs[(2)]));
+        foo.appendObj(objs[0]);
+        foo.appendObj(objs[1]);
+        foo.appendObj((objs[(2)]));
     }
 
     /**
@@ -245,16 +245,16 @@ class ArrayAccess {
         Object[] objs = {new File("foo"), new String("bar"),
                 new ArrayList<LocalDate>()};
 
-        foo.append(objs[new int[] {0, 1, 2}[0]]);
-        foo.append(objs[new int[] {0, 1, 2}[1]]);
-        foo.append(objs[new int[] {0, 1, 2}[2]]);
+        foo.appendObj(objs[new int[] {0, 1, 2}[0]]);
+        foo.appendObj(objs[new int[] {0, 1, 2}[1]]);
+        foo.appendObj(objs[new int[] {0, 1, 2}[2]]);
 
         objs = new Object[] {new String("barx"), (new File("foox")),
                 (new HashMap<String, LocalTime>())};
 
-        foo.append(objs[new int[] {0, 1, 2}[0]]);
-        foo.append(objs[new int[] {0, ((1)), 2}[1]]);
-        foo.append(objs[((new int[] {(0), (1), (2)})[(2)])]);
+        foo.appendObj(objs[new int[] {0, 1, 2}[0]]);
+        foo.appendObj(objs[new int[] {0, ((1)), 2}[1]]);
+        foo.appendObj(objs[((new int[] {(0), (1), (2)})[(2)])]);
     }
 
     /**
@@ -264,11 +264,11 @@ class ArrayAccess {
      * @param foo
      */
     public void arrayNameIsClassInstanceCreation(final Foo foo) {
-        foo.append(new Object[] {new File("foo"), new String("bar"),
+        foo.appendObj(new Object[] {new File("foo"), new String("bar"),
                 new ArrayList<LocalDate>()}[0]);
-        foo.append(new Object[] {new File("foo"), new String("bar"),
+        foo.appendObj(new Object[] {new File("foo"), new String("bar"),
                 new ArrayList<LocalDate>()}[1]);
-        foo.append(new Object[] {new File("foo"), new String("bar"),
+        foo.appendObj(new Object[] {new File("foo"), new String("bar"),
                 new ArrayList<LocalDate>()}[2]);
     }
 
@@ -277,14 +277,14 @@ class ArrayAccess {
         boolean flg = false;
         String[] cities = {flg ? "foo" : "bar", flg ? "bar" : "foo"};
 
-        foo.append(cities[0]);
-        foo.append(cities[1]);
+        foo.appendString(cities[0]);
+        foo.appendString(cities[1]);
 
         flg = true;
         cities = new String[] {((flg) ? ("foox") : "barx"),
                 flg ? "barx" : "foox"};
-        foo.append(cities[0]);
-        foo.append(cities[1]);
+        foo.appendString(cities[0]);
+        foo.appendString(cities[1]);
     }
 
     public void indexIsconditional(final Foo foo) {
@@ -293,13 +293,13 @@ class ArrayAccess {
         int[] indexes = {1, 0};
 
         boolean flg = false;
-        foo.append(cities[flg ? 1 : 0]);
+        foo.appendString(cities[flg ? 1 : 0]);
 
         flg = true;
-        foo.append(cities[indexes[flg ? indexes[0] : indexes[1]]]);
+        foo.appendString(cities[indexes[flg ? indexes[0] : indexes[1]]]);
 
         flg = false;
-        foo.append(
+        foo.appendString(
                 (cities)[((indexes)[((flg) ? (indexes)[(0)] : indexes[(1)])])]);
     }
 
@@ -310,11 +310,11 @@ class ArrayAccess {
 
         int[] indexes = {1, 0};
 
-        foo.append(flg ? cities : states[indexes[1]]);
-        foo.append((((flg) ? (cities) : (states))[((indexes)[(0)])]));
+        foo.appendObj(flg ? cities : states[indexes[1]]);
+        foo.appendString((((flg) ? (cities) : (states))[((indexes)[(0)])]));
 
         flg = true;
-        foo.append((flg ? cities : states)[flg ? 0 : 1]);
+        foo.appendString((flg ? cities : states)[flg ? 0 : 1]);
     }
 
     int findex = 0;
@@ -326,61 +326,61 @@ class ArrayAccess {
 
     public void arrayIsField(final Foo foo) {
         int index = 0;
-        foo.append(fcities[index]);
+        foo.appendString(fcities[index]);
 
         index = 1;
-        foo.append(fcities[index]);
+        foo.appendString(fcities[index]);
 
         (index) = 2;
-        foo.append(((fcities)[(index)]));
+        foo.appendString(((fcities)[(index)]));
 
         index = 0;
-        foo.append(((fcities)[(index)]));
+        foo.appendString(((fcities)[(index)]));
     }
 
     public void arrayIsFieldOfFields(final Foo foo) {
         int index = 0;
-        foo.append(arrayOfFields[index]);
+        foo.appendString(arrayOfFields[index]);
 
         index = 1;
-        foo.append(arrayOfFields[index]);
+        foo.appendString(arrayOfFields[index]);
 
         (index) = 2;
-        foo.append(((arrayOfFields)[(index)]));
+        foo.appendString(((arrayOfFields)[(index)]));
 
         index = 1;
-        foo.append(((arrayOfFields)[(index)]));
+        foo.appendString(((arrayOfFields)[(index)]));
     }
 
     public void arrayItemIsField(final Foo foo) {
         String[] cities = {fa, fb, fc};
 
         int index = 0;
-        foo.append(cities[index]);
+        foo.appendString(cities[index]);
 
         index = 1;
-        foo.append(cities[index]);
+        foo.appendString(cities[index]);
 
         (index) = 2;
-        foo.append(((cities)[(index)]));
+        foo.appendString(((cities)[(index)]));
 
         index = 1;
-        foo.append(((cities)[(index)]));
+        foo.appendString(((cities)[(index)]));
     }
 
     public void accessIndexIsField(final Foo foo) {
         String[] cities = {"foo", "bar", "baz"};
 
-        foo.append(cities[findex]);
+        foo.appendString(cities[findex]);
 
         findex = 1;
-        foo.append(cities[findex]);
+        foo.appendString(cities[findex]);
 
         (findex) = 2;
-        foo.append(((cities)[(findex)]));
+        foo.appendString(((cities)[(findex)]));
 
         findex = 1;
-        foo.append(((cities)[(findex)]));
+        foo.appendString(((cities)[(findex)]));
     }
 
     /**
@@ -396,16 +396,16 @@ class ArrayAccess {
         String[] fcities = {fa, fb, fc};
 
         int findex = 0;
-        foo.append(fcities[findex]);
+        foo.appendString(fcities[findex]);
 
         findex = 1;
-        foo.append(fcities[findex]);
+        foo.appendString(fcities[findex]);
 
         (findex) = 2;
-        foo.append(((fcities)[(findex)]));
+        foo.appendString(((fcities)[(findex)]));
 
         findex = 1;
-        foo.append(((fcities)[(findex)]));
+        foo.appendString(((fcities)[(findex)]));
     }
 
     /*
@@ -414,7 +414,7 @@ class ArrayAccess {
      * STEPIN - change box from mock to spy
      */
     public void arrayIsFieldAccess(final Foo foo, final Box box) {
-        foo.append((box).items[1]);
+        foo.appendString((box).items[1]);
     }
 
     /**
@@ -427,7 +427,7 @@ class ArrayAccess {
      */
     public void localArrayIsFieldAccess(final Foo foo, final Box box) {
         String[] cities = (box).items;
-        foo.append(cities[0]);
+        foo.appendString(cities[0]);
     }
 
     /*
@@ -437,7 +437,7 @@ class ArrayAccess {
      */
     public void arrayItemIsFieldAccess(final Foo foo, final Box box) {
         String[] cities = {(box).items[0], (box).items[1]};
-        foo.append(cities[0]);
+        foo.appendString(cities[0]);
     }
 
     /*
@@ -448,7 +448,7 @@ class ArrayAccess {
      * TODO N - can a mock used via FieldAccess be a spy
      */
     public void indexIsFieldAccess(final Foo foo, final Box box) {
-        foo.append((box).items[(box).id]);
+        foo.appendString((box).items[(box).id]);
     }
 
     /*
@@ -460,8 +460,8 @@ class ArrayAccess {
         int i = 0;
         int[] codes = {i + 1, (i - 1)};
 
-        foo.append(codes[0]);
-        foo.append(codes[1]);
+        foo.appendObj(codes[0]);
+        foo.appendObj(codes[1]);
     }
 
     /*
@@ -474,11 +474,11 @@ class ArrayAccess {
         int i = 0;
         String[] cities = {"foo", "bar"};
 
-        foo.append(cities[i + 1]);
-        foo.append(cities['\0' + 1]);
-        foo.append(cities[i == 1 ? 0 : 1]);
+        foo.appendString(cities[i + 1]);
+        foo.appendString(cities['\0' + 1]);
+        foo.appendString(cities[i == 1 ? 0 : 1]);
 
-        foo.append(cities[((i) + (1))]);
+        foo.appendString(cities[((i) + (1))]);
     }
 
     /*
@@ -491,8 +491,8 @@ class ArrayAccess {
         Object bar = new File("foo");
         boolean[] codes = {foo instanceof Foo, bar instanceof String};
 
-        foo.append(codes[0]);
-        foo.append(codes[1]);
+        foo.appendObj(codes[0]);
+        foo.appendObj(codes[1]);
     }
 
     /*
@@ -504,8 +504,8 @@ class ArrayAccess {
         @SuppressWarnings("rawtypes")
         Function[] codes = {(a) -> a.toString(), (b) -> b.toString()};
 
-        foo.append(codes[0]);
-        foo.append(codes[1]);
+        foo.appendObj(codes[0]);
+        foo.appendObj(codes[1]);
     }
 
     /*
@@ -514,43 +514,50 @@ class ArrayAccess {
      * STEPIN - each invoke returns separate array instead of single array.
      */
     public void arrayIsInvoke(final Foo foo, final Box box) {
-        foo.append(box.getItems()[0]);
-        foo.append(box.getItems()[1]);
-        foo.append((box.getItems())[(2)]);
+        foo.appendString(box.getItems()[0]);
+        foo.appendString(box.getItems()[1]);
+        foo.appendString((box.getItems())[(2)]);
     }
 
     // array var is invoke
     public void arrayVarIsInvoke(final Foo foo, final Box box) {
         String[] items = box.getItems();
-        foo.append(items[0]);
-        foo.append(items[1]);
-        foo.append((items)[(2)]);
+        foo.appendString(items[0]);
+        foo.appendString(items[1]);
+        foo.appendString((items)[(2)]);
     }
 
     // array item is invoke
     public void arrayItemIsInvoke(final Foo foo) {
         String[] codes = {foo.lang(), foo.cntry(), (foo.name())};
 
-        foo.append(codes[0]);
-        foo.append((codes)[1]);
-        foo.append(codes[2]);
+        foo.appendString(codes[0]);
+        foo.appendString((codes)[1]);
+        foo.appendString(codes[2]);
     }
 
     // array access index is invoke
     public void arrayIndexIsInvoke(final Foo foo, final Box box) {
         String[] cities = {"foo", "bar", "baz"};
 
-        foo.append(cities[box.getId()]);
-        foo.append((cities)[box.getId()]);
-        foo.append(cities[((box).getId())]);
+        foo.appendString(cities[box.getId()]);
+        foo.appendString((cities)[box.getId()]);
+        foo.appendString(cities[((box).getId())]);
+    }
+
+    public void arrayIndexIsInvokeItemReassigned(final Foo foo) {
+        String[] array = {"foo", "bar"};
+        foo.appendString(array[foo.index()]);
+        array[1] = "barx";
+        foo.appendString(array[((foo).index())]);
     }
 
     // array exp is static call
     public void arrayIsStaticInvoke(final Foo foo) {
-        foo.append(StaticBox.getItems()[0]);
-        foo.append(StaticBox.getItems()[1]);
-        foo.append(StaticBox.getItems()[2]);
-        foo.append((StaticBox.getItems())[(2)]);
+        foo.appendString(StaticBox.getItems()[0]);
+        foo.appendString(StaticBox.getItems()[1]);
+        foo.appendString(StaticBox.getItems()[2]);
+        foo.appendString((StaticBox.getItems())[(2)]);
     }
 
     // array item is static call
@@ -558,10 +565,10 @@ class ArrayAccess {
         String[] cities = {String.valueOf("foo"), String.valueOf("bar"),
                 (String.valueOf("bar"))};
 
-        foo.append(cities[0]);
-        foo.append(cities[1]);
-        foo.append(cities[2]);
-        foo.append(cities[(2)]);
+        foo.appendString(cities[0]);
+        foo.appendString(cities[1]);
+        foo.appendString(cities[2]);
+        foo.appendString(cities[(2)]);
     }
 
     /*
@@ -573,10 +580,10 @@ class ArrayAccess {
     public void arrayIndexIsStaticInvoke(final Foo foo, final Box box) {
         String[] cities = {"foo", "bar", "baz"};
 
-        foo.append(cities[Integer.valueOf("0")]);
-        foo.append(cities[Integer.valueOf("1")]);
-        foo.append(cities[Integer.valueOf("2")]);
-        foo.append(cities[(Integer.valueOf(("2")))]);
+        foo.appendString(cities[Integer.valueOf("0")]);
+        foo.appendString(cities[Integer.valueOf("1")]);
+        foo.appendString(cities[Integer.valueOf("2")]);
+        foo.appendString(cities[(Integer.valueOf(("2")))]);
     }
 
     // null array, access not allowed
@@ -590,9 +597,9 @@ class ArrayAccess {
     public void arrayItemIsNullLiteral(final Foo foo) {
         String[] codes = {null, null, "baz"};
 
-        foo.append(codes[0]);
-        foo.append((codes)[1]);
-        foo.append((codes)[(2)]);
+        foo.appendString(codes[0]);
+        foo.appendString((codes)[1]);
+        foo.appendString((codes)[(2)]);
     }
 
     // array item is number literal
@@ -603,25 +610,25 @@ class ArrayAccess {
         float[] floats = {31f, 32f, 33f};
         double[] doubles = {41.11d, 42.22d, 43.33};
 
-        foo.append(ints[0]);
-        foo.append((ints)[1]);
-        foo.append((ints)[(2)]);
+        foo.appendObj(ints[0]);
+        foo.appendObj((ints)[1]);
+        foo.appendObj((ints)[(2)]);
 
-        foo.append(shorts[0]);
-        foo.append((shorts)[1]);
-        foo.append((shorts)[(2)]);
+        foo.appendObj(shorts[0]);
+        foo.appendObj((shorts)[1]);
+        foo.appendObj((shorts)[(2)]);
 
-        foo.append(longs[0]);
-        foo.append((longs)[1]);
-        foo.append((longs)[(2)]);
+        foo.appendObj(longs[0]);
+        foo.appendObj((longs)[1]);
+        foo.appendObj((longs)[(2)]);
 
-        foo.append(floats[0]);
-        foo.append((floats)[1]);
-        foo.append((floats)[(2)]);
+        foo.appendObj(floats[0]);
+        foo.appendObj((floats)[1]);
+        foo.appendObj((floats)[(2)]);
 
-        foo.append(doubles[0]);
-        foo.append((doubles)[1]);
-        foo.append((doubles)[(2)]);
+        foo.appendObj(doubles[0]);
+        foo.appendObj((doubles)[1]);
+        foo.appendObj((doubles)[(2)]);
     }
 
     /*
@@ -635,9 +642,9 @@ class ArrayAccess {
      * STEPIN - change box from mock to spy
      */
     public void arrayIsQName(final Foo foo, final Box box) {
-        foo.append(box.items[1]);
+        foo.appendString(box.items[1]);
 
-        foo.append((box.items)[1]);
+        foo.appendString((box.items)[1]);
     }
 
     /*
@@ -648,8 +655,8 @@ class ArrayAccess {
     public void localArrayIsQName(final Foo foo, final Box box) {
         String[] cities = box.items;
         String[] items = (box.items);
-        foo.append(cities[0]);
-        foo.append(items[0]);
+        foo.appendString(cities[0]);
+        foo.appendString(items[0]);
     }
 
     /*
@@ -660,8 +667,8 @@ class ArrayAccess {
      */
     public void arrayItemIsQName(final Foo foo, final Box box) {
         String[] cities = {box.items[0], ((box.items)[(1)])};
-        foo.append(cities[0]);
-        foo.append(cities[1]);
+        foo.appendString(cities[0]);
+        foo.appendString(cities[1]);
     }
 
     /*
@@ -672,9 +679,9 @@ class ArrayAccess {
      * TODO N - can a mock used via QName be a spy
      */
     public void indexIsQName(final Foo foo, final Box box) {
-        foo.append(box.items[box.id]);
+        foo.appendString(box.items[box.id]);
 
-        foo.append(((box.items)[(box.id)]));
+        foo.appendString(((box.items)[(box.id)]));
     }
 
     String[] tDevices = {"foo", "bar", "baz"};
@@ -682,47 +689,47 @@ class ArrayAccess {
 
     // array exp with this
     public void arrayExpHasThis(final Foo foo) {
-        foo.append(this.tDevices[0]);
-        foo.append(this.tDevices[1]);
-        foo.append(this.tDevices[2]);
+        foo.appendString(this.tDevices[0]);
+        foo.appendString(this.tDevices[1]);
+        foo.appendString(this.tDevices[2]);
     }
 
     // array item with this
     public void arrayItemsHasThis(final Foo foo) {
         String[] names = {this.tDevices[0], this.tDevices[1], this.tDevices[2]};
-        foo.append(names[0]);
-        foo.append(names[1]);
-        foo.append(names[2]);
+        foo.appendString(names[0]);
+        foo.appendString(names[1]);
+        foo.appendString(names[2]);
     }
 
     // array index with this
     public void arrayIndexHasThis(final Foo foo) {
-        foo.append(this.tDevices[this.tIndexes[0]]);
-        foo.append(this.tDevices[this.tIndexes[1]]);
-        foo.append(this.tDevices[this.tIndexes[2]]);
+        foo.appendString(this.tDevices[this.tIndexes[0]]);
+        foo.appendString(this.tDevices[this.tIndexes[1]]);
+        foo.appendString(this.tDevices[this.tIndexes[2]]);
     }
 
     // array exp has type literal
     public void arrayExpHasTypeLiteral(final Foo foo) {
-        foo.append(String.class.getDeclaredMethods()[0]);
-        foo.append(Integer.class.getDeclaredMethods()[0]);
-        foo.append(File.class.getDeclaredMethods()[0]);
+        foo.appendObj(String.class.getDeclaredMethods()[0]);
+        foo.appendObj(Integer.class.getDeclaredMethods()[0]);
+        foo.appendObj(File.class.getDeclaredMethods()[0]);
     }
 
     // array item is type literal
     public void arrayItemIsTypeLiteral(final Foo foo) {
         Class<?>[] clzs = {String.class, Integer.class, File.class};
-        foo.append(clzs[0]);
-        foo.append(clzs[1]);
-        foo.append(clzs[2]);
-        foo.append(((clzs)[(2)]));
+        foo.appendObj(clzs[0]);
+        foo.appendObj(clzs[1]);
+        foo.appendObj(clzs[2]);
+        foo.appendObj(((clzs)[(2)]));
     }
 
     // array index has type literal
     public void arrayIndexHasTypeLiteral(final Foo foo) {
         Class<?>[] clzs = {String.class, Integer.class, File.class};
-        foo.append(clzs[String.class.getModifiers() - 16]);
-        foo.append(clzs[Integer.class.getModifiers() - 16]);
-        foo.append(clzs[File.class.getModifiers()]);
+        foo.appendObj(clzs[String.class.getModifiers() - 16]);
+        foo.appendObj(clzs[Integer.class.getModifiers() - 16]);
+        foo.appendObj(clzs[File.class.getModifiers()]);
     }
 }

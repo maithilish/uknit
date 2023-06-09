@@ -1,5 +1,7 @@
 package org.codetab.uknit.core.make.exp;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.exp.srv.ExpService;
@@ -22,5 +24,10 @@ public class ExpManager {
     public Expression unparenthesize(final Expression exp) {
         ExpService expService = serviceLoader.loadService(exp);
         return expService.unparenthesize(exp);
+    }
+
+    public List<Expression> getExps(final Expression exp) {
+        ExpService expService = serviceLoader.loadService(exp);
+        return expService.getExps(exp);
     }
 }

@@ -42,7 +42,7 @@ class CreatedTest {
         Object obj2 = obj4;
         Object obj3 = obj2;
 
-        when((foo).obj()).thenReturn(obj);
+        when(foo.obj()).thenReturn(obj);
 
         Object actual = created.isCreated2(foo);
 
@@ -56,7 +56,7 @@ class CreatedTest {
         Object obj2 = obj;
         Object obj3 = obj2;
 
-        when((foo).obj()).thenReturn(obj);
+        when(foo.obj()).thenReturn(obj);
 
         Object actual = created.isInferred(foo);
 
@@ -70,7 +70,7 @@ class CreatedTest {
         Object obj2 = obj4;
         Object obj3 = obj2;
 
-        when((foo).obj()).thenReturn(obj4);
+        when(foo.obj()).thenReturn(obj4);
 
         Object actual = created.isInferred2(foo);
 

@@ -18,6 +18,8 @@ class Model {
         static Object valueOf(final Object name) {
             return name;
         }
+
+        int index();
     }
 
     class Person {

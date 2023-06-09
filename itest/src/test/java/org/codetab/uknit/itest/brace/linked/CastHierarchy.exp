@@ -20,8 +20,8 @@ class CastHierarchyTest {
         Dog dog = (Dog) (obj);
         String grape = "Bar";
 
-        when((pet).sex()).thenReturn(apple);
-        when((dog).breed()).thenReturn(grape);
+        when(pet.sex()).thenReturn(apple);
+        when(dog.breed()).thenReturn(grape);
 
         String actual = castHierarchy.higerLast(obj);
 
@@ -36,8 +36,8 @@ class CastHierarchyTest {
         Pet pet = (Pet) (obj);
         String grape = "Bar";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
+        when(dog.breed()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
 
         String actual = castHierarchy.lowerLast(obj);
 
@@ -54,9 +54,9 @@ class CastHierarchyTest {
         Pet pet = (Pet) (obj);
         String orange = "Baz";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pitbull).name()).thenReturn(grape);
-        when((pet).sex()).thenReturn(orange);
+        when(dog.breed()).thenReturn(apple);
+        when(pitbull.name()).thenReturn(grape);
+        when(pet.sex()).thenReturn(orange);
 
         String actual = castHierarchy.higherMiddle(obj);
 
@@ -73,9 +73,9 @@ class CastHierarchyTest {
         Pitbull pitbull = (Pitbull) (obj);
         String orange = "Baz";
 
-        when((dog).breed()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
-        when((pitbull).name()).thenReturn(orange);
+        when(dog.breed()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
+        when(pitbull.name()).thenReturn(orange);
 
         String actual = castHierarchy.higherLast(obj);
 
@@ -92,9 +92,9 @@ class CastHierarchyTest {
         Dog dog = (Dog) (obj);
         String orange = "Baz";
 
-        when((pitbull).name()).thenReturn(apple);
-        when((pet).sex()).thenReturn(grape);
-        when((dog).breed()).thenReturn(orange);
+        when(pitbull.name()).thenReturn(apple);
+        when(pet.sex()).thenReturn(grape);
+        when(dog.breed()).thenReturn(orange);
 
         String actual = castHierarchy.higherFirst(obj);
 

@@ -87,14 +87,6 @@ public class InferCreator {
             }
         }
 
-        // REVIEW - remove later
-        // Expression ex = pack.getExp();
-        // if (nodes.is(ex, MethodInvocation.class)) {
-        // Expression value = expManager
-        // .getValue((Expression) ((MethodInvocation) ex).arguments()
-        // .get(0), heap);
-        // }
-
         if (expressions.isInvokable(pack.getExp())) {
             Optional<ReturnType> returnTypeO = ((Invoke) pack).getReturnType();
             if (returnTypeO.isPresent()) {

@@ -54,7 +54,7 @@ public class PrefixExpressionSrv implements ExpService {
 
     @Override
     public Expression getValue(final Expression node, final Expression copy,
-            final Pack pack, boolean createValue, final Heap heap) {
+            final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof PrefixExpression);
         throw new CodeException(
                 nodes.exMessage("getValue() not implemented", node));

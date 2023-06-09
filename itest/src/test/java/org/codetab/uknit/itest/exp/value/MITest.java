@@ -1,0 +1,506 @@
+package org.codetab.uknit.itest.exp.value;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+class MITest {
+    @InjectMocks
+    private MI mI;
+
+    @Mock
+    private Foo tfoo;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testExpIsArrayAccessWithArrayItemCreated() {
+        mI.expIsArrayAccessWithArrayItemCreated();
+
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testExpIsArrayAccessWithArrayItemMock() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        Foo foo2 = foo;
+        Foo foo3 = foox;
+        // Foo foo4 = foox;
+        mI.expIsArrayAccessWithArrayItemMock(foo, foox);
+
+        verify(foo2).appendString("a");
+        verify(foo3, times(2)).appendString("b");
+        // verify(foo4).appendString("b");
+    }
+
+    @Test
+    public void testExpIsArrayAccessOfRealArray() {
+        Foo foo = Mockito.mock(Foo.class);
+        List<String> list1 = new ArrayList<>();
+        List<String> list2 = new ArrayList<>();
+        mI.expIsArrayAccessOfRealArray(foo, list1, list2);
+
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testArgIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "baz";
+        // String kiwi = "baz";
+        String mango = "foox";
+        Foo foo2 = foo;
+        Foo foo3 = foox;
+        Box box = new Box();
+        // Box box3 = new Box();
+        mI.argIsArrayAccess(foo, foox);
+
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo, times(2)).appendString(orange);
+        verify(foo).appendString(mango);
+        verify(foo).appendObj(foo2);
+        verify(foo).appendObj(foo3);
+        verify(foo, times(2)).appendObj(box);
+    }
+
+    @Test
+    public void testExpIsarrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        Foo foo2 = (new Foo[] {foo, foox})[0];
+        Foo foo3 = (new Foo[] {foo, foox})[1];
+        // Foo foo4 = (new Foo[]{(foo), (foox)})[1];
+        mI.expIsarrayCreation(foo, foox);
+
+        verify(foo2).appendString("a");
+        verify(foo3, times(2)).appendString("b");
+    }
+
+    @Test
+    public void testArgIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        mI.argIsArrayCreation(foo, foox);
+
+        verify(foo, times(2)).appendObj(new String[] {"foo", "bar", "baz"});
+    }
+
+    @Test
+    public void testExpIsBoolean() {
+        mI.expIsBoolean();
+
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testArgIsBoolean() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.argIsBoolean(foo);
+
+        verify(foo).appendObj(true);
+        verify(foo).appendObj(Boolean.valueOf(false));
+    }
+
+    @Test
+    public void testExpHasCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.expHasCast(foo);
+
+        verify((foo)).appendString("a");
+        verify((foo), times(2)).appendString("b");
+    }
+
+    @Test
+    public void testArgHasCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        String name = "foo";
+        String dept = "baz";
+
+        when(foox.cntry()).thenReturn(apple).thenReturn(grape);
+        when(foox.lang()).thenReturn(orange);
+        mI.argHasCast(foo, foox);
+
+        verify(foo).appendObj(foox);
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
+        verify(foo, times(2)).append(name, dept);
+    }
+
+    @Test
+    public void testExpIsCharacter() {
+        mI.expIsCharacter();
+
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testArgIsCharacter() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.argIsCharacter(foo);
+
+        verify(foo, times(2)).appendObj('x');
+        verify(foo).appendObj(Character.valueOf('y'));
+    }
+
+    @Test
+    public void testExpIsClassInstanceCreation() {
+        mI.expIsClassInstanceCreation();
+
+        // fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testArgIsClassInstanceCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        String[] apple = {"foo", "bar", "baz"};
+        // String[] grape = {};
+        mI.argIsClassInstanceCreation(foo);
+
+        verify(foo, times(3)).appendObj(new Box());
+        verify(foo, times(2)).appendObj(apple);
+        // verify(foo).appendObj(grape);
+    }
+
+    @Test
+    public void testExpIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foox = Mockito.mock(Foo.class);
+        boolean code = true;
+        mI.expIsConditional(foo, foox, code);
+
+        verify((code == true ? foo : foox)).appendString("a");
+        verify((code == false ? foo : foox), times(2)).appendString("b");
+    }
+
+    @Test
+    public void testArgIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        Box boxx = Mockito.mock(Box.class);
+        boolean code = true;
+        mI.argIsConditional(foo, box, boxx, code);
+
+        verify(foo).appendObj(code == true ? box : boxx);
+        verify(foo, times(3)).appendObj(code == false ? box : boxx);
+    }
+
+    @Test
+    public void testExpIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "FOO";
+        String grape = "bar";
+        String orange = "foobar";
+        mI.expIsMethodRef(foo);
+
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testArgIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.argIsMethodRef(foo);
+
+        ArgumentCaptor<Function<String, String>> captorA =
+                ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<Function<String, String>> captorB =
+                ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<BiFunction<String, String, String>> captorC =
+                ArgumentCaptor.forClass(BiFunction.class);
+
+        verify(foo).append(eq("foo"), captorA.capture());
+        verify(foo).append(eq("BAR"), captorB.capture());
+        verify(foo).append(eq("foo"), eq("bar"), captorC.capture());
+    }
+
+    // @Test
+    // public void testExpIsFieldAccess() {
+    // Box box = Mockito.spy(Box.class);
+    // mI.expIsFieldAccess(box);
+    //
+    // // fail("unable to assert, STEPIN");
+    // }
+
+    @Test
+    public void testArgIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        mI.argIsFieldAccess(foo, box);
+
+        verify(foo, times(3)).appendObj((box).foo);
+    }
+
+    @Test
+    public void testExpIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "abc";
+        // String grape = "Bar";
+        // String orange = "Baz";
+        mI.expIsInfix(foo);
+
+        verify(foo, times(3)).appendString(apple);
+        // verify(foo).appendString(grape);
+        // verify(foo).appendString(orange);
+    }
+
+    @Test
+    public void testArgIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.argIsInfix(foo);
+
+        verify(foo, times(3)).appendString("a" + "b");
+    }
+
+    @Test
+    public void testArgIsInstanceOf() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object box = Mockito.mock(Object.class);
+        mI.argIsInstanceOf(foo, box);
+
+        verify(foo, times(3)).appendObj(box instanceof Box);
+    }
+
+    @Test
+    public void testExpIsLambda() {
+        String mango = "ab";
+
+        String actual = mI.expIsLambda();
+
+        assertEquals(mango, actual);
+    }
+
+    @Test
+    public void testArgIsLambda() {
+        Foo foo = Mockito.mock(Foo.class);
+        String grape = "ab";
+        // String kiwi = "Qux";
+        // String banana = "Corge";
+        mI.argIsLambda(foo);
+
+        verify(foo, times(3)).appendString(grape);
+        // verify(foo).appendString(kiwi);
+        // verify(foo).appendString(banana);
+    }
+
+    @Test
+    public void testExpIsMi() {
+        Box box = Mockito.mock(Box.class);
+        Foo foo = Mockito.mock(Foo.class);
+        Foo foo2 = Mockito.mock(Foo.class);
+        Foo foo3 = Mockito.mock(Foo.class);
+        Foo foo4 = Mockito.mock(Foo.class);
+        String apple = "Foo";
+
+        when(box.getFoo()).thenReturn(foo).thenReturn(foo2).thenReturn(foo3)
+                .thenReturn(foo4);
+        when(foo4.cntry()).thenReturn(apple);
+
+        String actual = mI.expIsMi(box);
+
+        assertEquals(apple, actual);
+
+        verify(foo).appendString("a");
+        verify(foo2).appendString("a");
+        verify(foo3).appendString(("a"));
+    }
+
+    @Test
+    public void testArgIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        Foo foo2 = Mockito.mock(Foo.class);
+        Foo foo3 = Mockito.mock(Foo.class);
+        Foo foo4 = Mockito.mock(Foo.class);
+        Foo foo5 = Mockito.mock(Foo.class);
+        String apple = "Foo";
+
+        when(box.getFoo()).thenReturn(foo2).thenReturn(foo3).thenReturn(foo4)
+                .thenReturn(foo5);
+        when(foo.format(foo5)).thenReturn(apple);
+
+        String actual = mI.argIsMi(foo, box);
+
+        assertEquals(apple, actual);
+
+        verify(foo).appendObj(foo2);
+        verify(foo).appendObj(foo3);
+        verify(foo).appendObj(foo4);
+    }
+
+    @Test
+    public void testArgIsNull() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "Foo";
+
+        when(foo.format(null)).thenReturn(apple);
+
+        String actual = mI.argIsNull(foo);
+
+        assertEquals(apple, actual);
+
+        verify(foo, times(2)).appendString(null);
+    }
+
+    @Test
+    public void testExpIsNumber() {
+        Foo foo = Mockito.mock(Foo.class);
+        int grape = 1;
+        // int kiwi = 1;
+        long banana = 2L;
+        double apricot = 3.11d;
+        float fig = 4.22f;
+        long lychee = 1L;
+
+        long actual = mI.expIsNumber(foo);
+
+        assertEquals(lychee, actual);
+
+        verify(foo, times(2)).appendObj(grape);
+        // verify(foo).appendObj(kiwi);
+        verify(foo).appendObj(banana);
+        verify(foo).appendObj(apricot);
+        verify(foo).appendObj(fig);
+    }
+
+    @Test
+    public void testArgIsNumber() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.argIsNumber(foo);
+
+        verify(foo, times(2)).appendObj(1);
+        verify(foo, times(2)).appendObj(2L);
+        verify(foo, times(2)).appendObj(3.11d);
+        verify(foo, times(2)).appendObj(4.22f);
+    }
+
+    @Test
+    public void testArgIsPostfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 0;
+        mI.argIsPostfix(foo);
+
+        verify(foo).appendObj(a++);
+        verify(foo).appendObj(a++);
+        verify(foo).appendObj(a++);
+    }
+
+    @Test
+    public void testArgIsPrefix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 0;
+        mI.argIsPrefix(foo);
+
+        verify(foo).appendObj(--a);
+        verify(foo).appendObj(--a);
+        verify(foo).appendObj(--a);
+    }
+
+    // @Test
+    // public void testExpIsQName() {
+    // Box box = Mockito.spy(Box.class);
+    // mI.expIsQName(box);
+    //
+    // // fail("unable to assert, STEPIN");
+    // }
+
+    @Test
+    public void testArgIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        mI.argIsQName(foo, box);
+
+        verify(foo, times(3)).appendObj(box.foo);
+    }
+
+    @Test
+    public void testExpIsStringLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "ab";
+        // String grape = "Bar";
+        // String orange = "Baz";
+        mI.expIsStringLiteral(foo);
+
+        verify(foo, times(3)).appendString(apple);
+        // verify(foo).appendString(grape);
+        // verify(foo).appendString(orange);
+    }
+
+    @Test
+    public void testArgIsStringLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        mI.argIsStringLiteral(foo, box);
+
+        verify(foo, times(3)).appendString("a");
+    }
+
+    @Test
+    public void testExpIsThisExp() {
+        mI.expIsThisExp();
+
+        verify(mI.tfoo, times(3)).appendString("a");
+    }
+
+    @Test
+    public void testArgIsThisExpression() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        mI.argIsThisExpression(foo, box);
+
+        verify(foo, times(3)).appendObj(mI.tfoo);
+    }
+
+    @Test
+    public void testExpIsTypeLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "java.time.LocalDate";
+        // String grape = "Bar";
+        // String orange = "Baz";
+        mI.expIsTypeLiteral(foo);
+
+        verify(foo, times(3)).appendString(apple);
+        // verify(foo).appendString(grape);
+        // verify(foo).appendString(orange);
+    }
+
+    @Test
+    public void testArgIsTypeLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        mI.argIsTypeLiteral(foo);
+
+        verify(foo, times(3)).appendObj(LocalDate.class);
+    }
+}

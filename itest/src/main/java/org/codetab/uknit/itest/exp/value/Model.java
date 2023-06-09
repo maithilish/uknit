@@ -2,17 +2,35 @@ package org.codetab.uknit.itest.exp.value;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 class Model {
 
     interface Foo {
-        String format(String name);
 
-        void append(String name);
+        String format(String name);
 
         String format(Object names);
 
-        void append(Object names);
+        void appendString(String name);
+
+        void appendObj(Object names);
+
+        void appendStringArray(String[] names);
+
+        void appendCharacter(Character ch);
+
+        void appendBoolean(Boolean bool);
+
+        void appendPitbull(Pitbull pitbull);
+
+        void append(String name, String dept);
+
+        void append(String name, Function<String, String> func);
+
+        void append(final String string, final String string2,
+                BiFunction<String, String, String> biFunc);
 
         static String valueOf(final String name) {
             return name;
@@ -27,12 +45,16 @@ class Model {
         String cntry();
 
         String name();
+
+        int index();
     }
 
     static class Box {
         String[] items = {"foo", "bar", "baz"};
         int id;
         long lid;
+        Foo foo;
+        Object obj = "foo";
 
         public String[] getItems() {
             return items;
@@ -69,6 +91,10 @@ class Model {
             return id == other.id && Arrays.equals(items, other.items)
                     && lid == other.lid;
         }
+
+        public Foo getFoo() {
+            return foo;
+        }
     }
 
     static class StaticBox {
@@ -76,6 +102,24 @@ class Model {
 
         static public String[] getItems() {
             return items;
+        }
+    }
+
+    static class Pet {
+        String sex() {
+            return null;
+        }
+    }
+
+    static class Dog extends Pet {
+        String breed() {
+            return null;
+        }
+    }
+
+    static class Pitbull extends Dog {
+        String name() {
+            return null;
         }
     }
 }

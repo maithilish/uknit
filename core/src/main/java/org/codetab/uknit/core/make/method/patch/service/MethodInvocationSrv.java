@@ -7,10 +7,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 public class MethodInvocationSrv implements PatchService {
 
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Patchers patchers;
     @Inject
@@ -39,8 +39,8 @@ public class MethodInvocationSrv implements PatchService {
         patchers.patchExpWithName(pack, exp, expCopy, heap,
                 miCopy::setExpression);
 
-        List<Expression> args = arguments.getArgs(mi);
-        List<Expression> argsCopy = arguments.getArgs(miCopy);
+        List<Expression> args = safeExps.getArgs(mi);
+        List<Expression> argsCopy = safeExps.getArgs(miCopy);
         patchers.patchExpsWithName(pack, args, argsCopy, heap);
     }
 
@@ -63,8 +63,8 @@ public class MethodInvocationSrv implements PatchService {
                 miCopy::setExpression);
 
         final int offset = 1;
-        List<Expression> args = arguments.getArgs(mi);
-        List<Expression> argsCopy = arguments.getArgs(miCopy);
+        List<Expression> args = safeExps.getArgs(mi);
+        List<Expression> argsCopy = safeExps.getArgs(miCopy);
         patchers.patchExpsWithPackPatches(pack, args, argsCopy, patches, offset,
                 heap);
     }
@@ -79,7 +79,7 @@ public class MethodInvocationSrv implements PatchService {
 
         exps.add(wrappers.strip(mi.getExpression()));
 
-        List<Expression> args = arguments.getArgs(mi);
+        List<Expression> args = safeExps.getArgs(mi);
         args.forEach(a -> exps.add(wrappers.strip(a)));
         return exps;
     }
@@ -97,8 +97,8 @@ public class MethodInvocationSrv implements PatchService {
         Expression expCopy = wrappers.unpack(miCopy.getExpression());
         patchers.patchValue(exp, expCopy, heap, miCopy::setExpression);
 
-        List<Expression> args = arguments.getArgs(mi);
-        List<Expression> argsCopy = arguments.getArgs(miCopy);
+        List<Expression> args = safeExps.getArgs(mi);
+        List<Expression> argsCopy = safeExps.getArgs(miCopy);
         patchers.patchValue(args, argsCopy, heap);
     }
 }

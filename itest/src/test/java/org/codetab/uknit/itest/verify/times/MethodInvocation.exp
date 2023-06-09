@@ -36,6 +36,22 @@ class MethodInvocationTest {
     }
 
     @Test
+    public void testArrayAccessIndexIsExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        String grape = "bar";
+        int orange = 1;
+        String kiwi = "bar";
+        int mango = 1;
+        String banana = "bar";
+
+        when(foo.index()).thenReturn(apple).thenReturn(orange).thenReturn(mango);
+        methodInvocation.arrayAccessIndexIsExp(foo);
+
+        verify(foo, times(3)).append(grape);
+    }
+
+    @Test
     public void testArrayCreation() {
         Foo foo = Mockito.mock(Foo.class);
         methodInvocation.arrayCreation(foo);

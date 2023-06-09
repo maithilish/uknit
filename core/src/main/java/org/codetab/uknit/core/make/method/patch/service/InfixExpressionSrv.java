@@ -7,10 +7,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.SafeExps;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.node.Arguments;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -20,7 +20,7 @@ public class InfixExpressionSrv implements PatchService {
     @Inject
     private Patchers patchers;
     @Inject
-    private Arguments arguments;
+    private SafeExps safeExps;
     @Inject
     private Wrappers wrappers;
 
@@ -49,8 +49,8 @@ public class InfixExpressionSrv implements PatchService {
         patchers.patchExpWithName(pack, rightOper, rightOperCopy, heap,
                 infixCopy::setRightOperand);
 
-        List<Expression> exOpers = arguments.getExtendedOperands(infix);
-        List<Expression> exOpersCopy = arguments.getExtendedOperands(infixCopy);
+        List<Expression> exOpers = safeExps.getExtendedOperands(infix);
+        List<Expression> exOpersCopy = safeExps.getExtendedOperands(infixCopy);
         patchers.patchExpsWithName(pack, exOpers, exOpersCopy, heap);
     }
 
@@ -84,8 +84,8 @@ public class InfixExpressionSrv implements PatchService {
                 patches, index, infixCopy::setRightOperand);
 
         int offset = 2;
-        List<Expression> exOpers = arguments.getExtendedOperands(infix);
-        List<Expression> exOpersCopy = arguments.getExtendedOperands(infixCopy);
+        List<Expression> exOpers = safeExps.getExtendedOperands(infix);
+        List<Expression> exOpersCopy = safeExps.getExtendedOperands(infixCopy);
         patchers.patchExpsWithPackPatches(pack, exOpers, exOpersCopy, patches,
                 offset, heap);
     }
@@ -101,12 +101,11 @@ public class InfixExpressionSrv implements PatchService {
         exps.add(wrappers.strip(infix.getLeftOperand()));
         exps.add(wrappers.strip(infix.getRightOperand()));
 
-        List<Expression> exOpers = arguments.getExtendedOperands(infix);
+        List<Expression> exOpers = safeExps.getExtendedOperands(infix);
         exOpers.forEach(eo -> exps.add(wrappers.strip(eo)));
         return exps;
     }
 
-    // REVIEW - write test
     @Override
     public void patchValue(final Expression node, final Expression copy,
             final Heap heap) {
@@ -126,8 +125,8 @@ public class InfixExpressionSrv implements PatchService {
         patchers.patchValue(rightOper, rightOperCopy, heap,
                 infixCopy::setRightOperand);
 
-        List<Expression> exOpers = arguments.getExtendedOperands(infix);
-        List<Expression> exOpersCopy = arguments.getExtendedOperands(infixCopy);
+        List<Expression> exOpers = safeExps.getExtendedOperands(infix);
+        List<Expression> exOpersCopy = safeExps.getExtendedOperands(infixCopy);
         patchers.patchValue(exOpers, exOpersCopy, heap);
     }
 }

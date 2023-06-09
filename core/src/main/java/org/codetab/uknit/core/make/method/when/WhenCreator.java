@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.ExpManager;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.anon.AnonProcessor;
 import org.codetab.uknit.core.make.method.patch.ExpService;
@@ -42,6 +43,8 @@ public class WhenCreator {
     private Nodes nodes;
     @Inject
     private Excludes excludes;
+    @Inject
+    private ExpManager expManager;
 
     public void createWhen(final Invoke invoke, final Heap heap) {
 
@@ -66,6 +69,7 @@ public class WhenCreator {
         MethodInvocation mi = nodes.as(invoke.getExp(), MethodInvocation.class);
         MethodInvocation patchedMi =
                 (MethodInvocation) heap.getPatcher().copyAndPatch(invoke, heap);
+        patchedMi = (MethodInvocation) expManager.unparenthesize(patchedMi);
 
         boolean anonReplaced =
                 anonProcessor.processWhenArgs(mi, patchedMi, heap);

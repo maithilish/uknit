@@ -42,7 +42,7 @@ class CastTest {
         Pets pets = Mockito.mock(Pets.class);
         Dog dog2 = Mockito.mock(Dog.class);
 
-        when(pets.getPet(("foo"))).thenReturn(dog2);
+        when(pets.getPet("foo")).thenReturn(dog2);
         cast.assign(pets);
 
         // fail("unable to assert, STEPIN");
@@ -64,7 +64,7 @@ class CastTest {
         Pets pets = Mockito.mock(Pets.class);
         Dog dog2 = Mockito.mock(Dog.class);
 
-        when(pets.getPet(("foo"))).thenReturn(dog2);
+        when(pets.getPet("foo")).thenReturn(dog2);
         cast.assignToArray(pets);
 
         // fail("unable to assert, STEPIN");
@@ -73,11 +73,10 @@ class CastTest {
     @Test
     public void testAssignToParameterArray() {
         Pets pets = Mockito.mock(Pets.class);
-
         Dog dog = Mockito.mock(Dog.class);
         Dog[] dogs = {dog};
 
-        when(pets.getPet(("foo"))).thenReturn(dog);
+        when(pets.getPet("foo")).thenReturn(dog);
         cast.assignToParameterArray(pets, dogs);
 
         // fail("unable to assert, STEPIN");

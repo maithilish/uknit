@@ -202,7 +202,13 @@ public class Patchers {
                         packs.findNearestByExp(pack, exp, heap.getPacks());
                 if (expPack.isPresent()
                         && !expPack.get().getPatches().isEmpty()) {
-                    // REVIEW - why aa excluded
+                    /**
+                     * Exclude ArrayAccess. Ex: String[] cities = {"foo"};
+                     * foo.append(cities[index]); The arg cities[index] is
+                     * already patched with its infer var and var should not be
+                     * re-patched with cities[index]. Ref itest:
+                     * exp.value.ArrayAccess.reassignIndex().
+                     */
                     if (!(exp instanceof ArrayAccess)) {
                         Expression e =
                                 patcher.copyAndPatchNames(expPack.get(), heap);
@@ -221,83 +227,59 @@ public class Patchers {
 
     }
 
-    // REVIEW - extract inner logic of this and next method to separate class
+    /**
+     * Patch value of an exp.
+     *
+     * @param node
+     * @param nodeCopy
+     * @param heap
+     * @param consumer
+     */
+    public void patchValue(final Expression node, final Expression nodeCopy,
+            final Heap heap, final Consumer<Expression> consumer) {
+        Expression value = getValue(node, nodeCopy, heap);
+        if (nonNull(value)) {
+            consumer.accept(value);
+        }
+    }
+
+    /**
+     * Patch value of list of exps.
+     *
+     * @param args
+     * @param argsCopy
+     * @param heap
+     */
     public void patchValue(final List<Expression> args,
             final List<Expression> argsCopy, final Heap heap) {
         for (int i = 0; i < args.size(); i++) {
-            Expression exp = wrappers.unpack(args.get(i));
-            Expression copy = wrappers.unpack(argsCopy.get(i));
-            /*
-             * simple name part from any of id (SimpleName), foo.id (QName),
-             * (foo).id (FieldAccess), this.id (FieldAccess)
-             */
-            SimpleName name = nodes.getSimpleName(exp);
-            if (nonNull(name)) {
-                if (nodes.is(exp, FieldAccess.class)) {
-                    FieldAccess fa = nodes.as(exp, FieldAccess.class);
-                    if (nodes.is(fa.getExpression(), ThisExpression.class)) {
-                        SimpleName cut =
-                                copy.getAST().newSimpleName(heap.getCutName());
-                        fa.setExpression(cut);
-                    }
-                } else {
-                    Optional<Pack> packO = packs.findByVarName(
-                            nodes.getName(name), heap.getPacks());
-                    if (packO.isPresent()) {
-                        /*
-                         * reverse traverse linked pack and get the first
-                         * available initializer.
-                         */
-                        Optional<Initializer> initializer = linkedPack
-                                .getLinkedInitializer(packO.get(), heap);
-
-                        /*
-                         * if initializer is expression then patch the MI's exp
-                         * and args
-                         */
-                        if (initializer.isPresent() && initializer.get()
-                                .getInitializer() instanceof Expression) {
-                            Expression iniExp = (Expression) initializer.get()
-                                    .getInitializer();
-                            Expression iniExpCopy = (Expression) ASTNode
-                                    .copySubtree(iniExp.getAST(), iniExp);
-                            argsCopy.set(i, iniExpCopy);
-                        }
-                    }
-                }
-            } else if (nodes.isLiteral(exp)) {
-                /*
-                 * If exp is parenthesized then set unpacked exp as arg. EX: To
-                 * patch foo.append(("foo")) as foo.append("foo"). If copy is
-                 * child of parenthesized exp then we can't set it to argsCopy
-                 * list as it can't be child of another node. Create new copy
-                 * and set it.
-                 *
-                 * BooleanLiteral, CharacterLiteral, NullLiteral, NumberLiteral,
-                 * StringLiteral, TypeLiteral (Person.class).
-                 */
-                if (!args.get(i).equals(exp)) {
-                    // if arg != exp then it is parenthesized
-                    Expression newCopy = (Expression) ASTNode
-                            .copySubtree(copy.getAST(), copy);
-                    argsCopy.set(i, newCopy);
-                }
-            } else {
-                PatchService patchService = serviceLoader.loadService(exp);
-                patchService.patchValue(exp, copy, heap);
+            Expression value = getValue(args.get(i), argsCopy.get(i), heap);
+            if (nonNull(value)) {
+                argsCopy.set(i, value);
             }
         }
     }
 
-    // REVIEW
-    public void patchValue(final Expression node, final Expression nodeCopy,
-            final Heap heap, final Consumer<Expression> consumer) {
-        if (isNull(node)) {
-            return;
-        }
+    /**
+     * Get value of an exp.
+     *
+     * @param node
+     * @param nodeCopy
+     * @param heap
+     * @return
+     */
+    private Expression getValue(final Expression node,
+            final Expression nodeCopy, final Heap heap) {
 
         Expression exp = wrappers.unpack(node);
         Expression copy = wrappers.unpack(nodeCopy);
+
+        Expression value = null;
+
+        if (isNull(node)) {
+            return value;
+        }
+
         /*
          * simple name part from any of id (SimpleName), foo.id (QName),
          * (foo).id (FieldAccess), this.id (FieldAccess)
@@ -312,7 +294,7 @@ public class Patchers {
                     fa.setExpression(cut);
                 }
             } else {
-                Optional<Pack> packO = packs.findByVarName(nodes.getName(exp),
+                Optional<Pack> packO = packs.findByVarName(nodes.getName(name),
                         heap.getPacks());
                 if (packO.isPresent()) {
                     /*
@@ -332,29 +314,28 @@ public class Patchers {
                                 (Expression) initializer.get().getInitializer();
                         Expression iniExpCopy = (Expression) ASTNode
                                 .copySubtree(iniExp.getAST(), iniExp);
-                        consumer.accept(iniExpCopy);
+                        value = iniExpCopy;
                     }
                 }
             }
         } else if (nodes.isLiteral(exp)) {
             /*
              * If exp is parenthesized then set unpacked exp as arg. EX: To
-             * patch ("foo").concat("x") as foo.concat("x"). If copy is child of
-             * parenthesized exp then we can't set it to argsCopy list as it
+             * patch foo.append(("foo")) as foo.append("foo"). If copy is child
+             * of parenthesized exp then we can't set it to argsCopy list as it
              * can't be child of another node. Create new copy and set it.
              *
              * BooleanLiteral, CharacterLiteral, NullLiteral, NumberLiteral,
              * StringLiteral, TypeLiteral (Person.class).
              */
             if (!node.equals(exp)) {
-                // if node != exp then it is parenthesized
-                Expression newCopy =
-                        (Expression) ASTNode.copySubtree(copy.getAST(), copy);
-                consumer.accept(newCopy);
+                // if arg != exp then it is parenthesized
+                value = (Expression) ASTNode.copySubtree(copy.getAST(), copy);
             }
         } else {
             PatchService patchService = serviceLoader.loadService(exp);
             patchService.patchValue(exp, copy, heap);
         }
+        return value;
     }
 }

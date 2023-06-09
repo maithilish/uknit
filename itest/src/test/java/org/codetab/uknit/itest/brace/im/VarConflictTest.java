@@ -38,12 +38,14 @@ class VarConflictTest {
         Instant other2 = Mockito.mock(Instant.class);
         int grape = 1;
 
-        when((provider).getHolder()).thenReturn(holder);
-        when((holder).getInstant()).thenReturn(instant).thenReturn(instant2);
-        when((otherHolder).getInstant()).thenReturn(other).thenReturn(other2);
-        when((instant).compareTo((other))).thenReturn(apple);
+        when(provider.getHolder()).thenReturn(holder);
+        when(holder.getInstant()).thenReturn(instant).thenReturn(instant2);
+        when(otherHolder.getInstant()).thenReturn(other).thenReturn(other2);
+        when(instant.compareTo(other)).thenReturn(apple);
         when(instant2.compareTo(other2)).thenReturn(grape);
         varConflict.callSameTwice();
+
+        // fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -56,13 +58,14 @@ class VarConflictTest {
         Instant other2 = Mockito.mock(Instant.class);
         int grape = 1;
 
-        when((provider).getHolder()).thenReturn(holder);
-        when((holder).getInstant()).thenReturn(instant).thenReturn(instant2);
-        when((otherHolder).getInstant()).thenReturn(other);
-        when((instant).compareTo((other))).thenReturn(apple);
-        when(((otherHolder)).getInstant()).thenReturn(other2);
+        when(provider.getHolder()).thenReturn(holder);
+        when(holder.getInstant()).thenReturn(instant).thenReturn(instant2);
+        when(otherHolder.getInstant()).thenReturn(other).thenReturn(other2);
+        when(instant.compareTo(other)).thenReturn(apple);
         when(instant2.compareTo(other2)).thenReturn(grape);
         varConflict.callTwoMethodsOfSameType();
+
+        // fail("unable to assert, STEPIN");
     }
 
     @Test
@@ -75,13 +78,15 @@ class VarConflictTest {
         Locale other2 = Mockito.mock(Locale.class);
         String grape = "Foo";
 
-        when((provider).getHolder()).thenReturn(holder);
-        when((holder).getInstant()).thenReturn(instant);
-        when((otherHolder).getInstant()).thenReturn(other);
-        when((instant).compareTo((other))).thenReturn(apple);
-        when((holder).getLocale()).thenReturn(locale);
-        when((otherHolder).getLocale()).thenReturn(other2);
-        when(((locale)).getDisplayCountry(other2)).thenReturn(grape);
+        when(provider.getHolder()).thenReturn(holder);
+        when(holder.getInstant()).thenReturn(instant);
+        when(otherHolder.getInstant()).thenReturn(other);
+        when(instant.compareTo(other)).thenReturn(apple);
+        when(holder.getLocale()).thenReturn(locale);
+        when(otherHolder.getLocale()).thenReturn(other2);
+        when(locale.getDisplayCountry(other2)).thenReturn(grape);
         varConflict.callTwoMethodsOfDiffTypes();
+
+        // fail("unable to assert, STEPIN");
     }
 }

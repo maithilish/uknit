@@ -10,24 +10,24 @@ class MultiDimArrayAccess {
         String[][][] countries =
                 {{{"foo1", "bar1"}, {"foo2", "bar2"}}, {{"foox", "barx"}}};
 
-        foo.append(cities[0]);
-        foo.append(cities[1]);
+        foo.appendString(cities[0]);
+        foo.appendString(cities[1]);
 
-        foo.append(stateCodes[0][0]);
-        foo.append(stateCodes[0][1]);
-        foo.append(stateCodes[1][0]);
-        foo.append(stateCodes[1][1]);
+        foo.appendObj(stateCodes[0][0]);
+        foo.appendObj(stateCodes[0][1]);
+        foo.appendObj(stateCodes[1][0]);
+        foo.appendObj(stateCodes[1][1]);
 
-        foo.append(countries[0][0][0]);
-        foo.append(countries[0][0][1]);
-        foo.append(countries[0][1][0]);
-        foo.append(countries[0][1][1]);
-        foo.append(countries[1][0][0]);
-        foo.append(countries[1][0][1]);
+        foo.appendString(countries[0][0][0]);
+        foo.appendString(countries[0][0][1]);
+        foo.appendString(countries[0][1][0]);
+        foo.appendString(countries[0][1][1]);
+        foo.appendString(countries[1][0][0]);
+        foo.appendString(countries[1][0][1]);
 
         // braces
-        foo.append(countries[(1)][(0)][(0)]);
-        foo.append((countries[1][0][(1)]));
+        foo.appendString(countries[(1)][(0)][(0)]);
+        foo.appendString((countries[1][0][(1)]));
     }
 
     public void argIsMultiDimArrayAccess(final Foo foo) {
@@ -35,11 +35,12 @@ class MultiDimArrayAccess {
         String[][][] cities =
                 {{{"foo1", "bar1"}, {"foo2", "bar2"}}, {{"foox", "barx"}}};
 
-        foo.append(cities[codes[0][1]][codes[0][1]][codes[0][0]]); // cities[0][0][1]
-        foo.append(cities[codes[0][0]][codes[0][1]][codes[0][0]]); // cities[1][0][1]
+        foo.appendString(cities[codes[0][1]][codes[0][1]][codes[0][0]]); // cities[0][0][1]
+        foo.appendString(cities[codes[0][0]][codes[0][1]][codes[0][0]]); // cities[1][0][1]
 
         // braces
-        foo.append(cities[(codes[(0)][(0)])][codes[(0)][1]][(codes[0][0])]); // cities[1][0][1]
+        foo.appendString(
+                cities[(codes[(0)][(0)])][codes[(0)][1]][(codes[0][0])]); // cities[1][0][1]
     }
 
 }

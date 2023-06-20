@@ -2,6 +2,7 @@ package org.codetab.uknit.core.make.method.when;
 
 import static java.util.Objects.nonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import org.codetab.uknit.core.make.method.verify.VerifyCreator;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Nature;
+import org.codetab.uknit.core.make.model.Initializer;
 import org.codetab.uknit.core.make.model.Invoke;
 import org.codetab.uknit.core.make.model.ModelFactory;
 import org.codetab.uknit.core.make.model.Pack;
@@ -45,17 +47,31 @@ public class WhenCreator {
     private Excludes excludes;
     @Inject
     private ExpManager expManager;
+    @Inject
+    private Similars similars;
 
-    public void createWhen(final Invoke invoke, final Heap heap) {
+    public List<Invoke> filterWhenInvokes(final List<Invoke> invokes,
+            final Heap heap) {
+        List<Invoke> whenInvokes = new ArrayList<>();
+        for (Invoke invoke : invokes) {
+            boolean isWhen = true;
+            // IMC return may replace invoke exp MI with return var name
+            if (!nodes.is(invoke.getExp(), MethodInvocation.class)) {
+                isWhen = false;
+            }
 
-        // IMC return may replace invoke exp MI with return var name
-        if (!nodes.is(invoke.getExp(), MethodInvocation.class)) {
-            return;
+            if (excludes.exclude(invoke, heap)) {
+                isWhen = false;
+            }
+            if (isWhen) {
+                whenInvokes.add(invoke);
+            }
         }
+        return whenInvokes;
+    }
 
-        if (excludes.exclude(invoke, heap)) {
-            return;
-        }
+    public void createWhen(final Invoke invoke, final List<Invoke> whenInvokes,
+            final Heap heap) {
 
         IVar whenReturnVar = invoke.getVar();
         Optional<IVar> callVarO = invoke.getCallVar();
@@ -83,13 +99,37 @@ public class WhenCreator {
          */
         if (invoke.isInCtlPath()) {
             String methodSignature = patchedMi.toString();
-            if (invoke.getWhen().isEmpty()) {
-                When when = modelFactory.createWhen(methodSignature,
-                        callVarO.get());
-                invoke.setWhen(Optional.of(when));
-            }
 
-            When when = invoke.getWhen().get();
+            Optional<Invoke> similarInvokeO = similars
+                    .searchInvokeWithSameInitializer(invoke, whenInvokes);
+
+            When when;
+            if (similarInvokeO.isPresent()) {
+                // if similar when exists then use it
+                when = similarInvokeO.get().getWhen().get();
+
+                if (invoke.getWhen().isEmpty()) {
+                    /*
+                     * for the invoke add a disabled when so that verify is not
+                     * created and no output of when stmt
+                     */
+                    When disabledWhen = modelFactory.createWhen(methodSignature,
+                            callVarO.get());
+                    disabledWhen.setEnable(false);
+                    invoke.setWhen(Optional.of(disabledWhen));
+                } else {
+                    invoke.getWhen().get().setEnable(false);
+                }
+            } else {
+                if (invoke.getWhen().isEmpty()) {
+                    when = modelFactory.createWhen(methodSignature,
+                            callVarO.get());
+                    invoke.setWhen(Optional.of(when));
+                } else {
+                    when = invoke.getWhen().get();
+                }
+            }
+            // When when = invoke.getWhen().get();
             when.getReturnVars().add(whenReturnVar);
 
             List<String> names = when.getNames();
@@ -97,10 +137,54 @@ public class WhenCreator {
             for (Name name : namesInExp) {
                 names.add(nodes.getName(name));
             }
-
         } else {
             verifyCreator.createVerify(invoke, heap);
         }
+    }
+
+    static class Similars {
+
+        /**
+         * Look for invoke with same initializer.
+         *
+         * Ex: File[] files = {f1};
+         * foo.appendString(files[0].getAbsolutePath());
+         * foo.appendString(files[0].getAbsolutePath());
+         *
+         * For two files[0] array access, two invoke with infer vars file and
+         * file1 are created. Both pack's initializer is f1 and two invokes are
+         * similar.
+         *
+         * @param invoke
+         * @param whenInvokes
+         * @return
+         */
+        public Optional<Invoke> searchInvokeWithSameInitializer(
+                final Invoke invoke, final List<Invoke> whenInvokes) {
+            if (invoke.getCallVar().isPresent()) {
+                for (Invoke inv : whenInvokes) {
+                    // exclude the input invoke from search
+                    if (inv.getId() == invoke.getId()
+                            || inv.getWhen().isEmpty()) {
+                        continue;
+                    }
+
+                    Optional<Initializer> invIniO =
+                            inv.getWhen().get().getCallVar().getInitializer();
+                    Optional<Initializer> invokeIniO =
+                            invoke.getCallVar().get().getInitializer();
+                    if (invIniO.isPresent() && invokeIniO.isPresent()
+                            && invIniO.get()
+                                    .getInitializer() instanceof Expression
+                            && invIniO.get().getInitializer().equals(
+                                    invokeIniO.get().getInitializer())) {
+                        return Optional.of(inv);
+                    }
+                }
+            }
+            return Optional.empty();
+        }
+
     }
 
     static class Excludes {
@@ -191,4 +275,5 @@ public class WhenCreator {
             return callVarPackO;
         }
     }
+
 }

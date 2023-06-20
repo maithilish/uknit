@@ -21,6 +21,9 @@ public class When {
     // vars used by when - enabler uses them to enable vars
     private List<String> names;
 
+    // the when stmts are created only for enabled
+    private boolean enable;
+
     @Inject
     public When(@Assisted final String methodSignature,
             @Assisted final IVar callVar) {
@@ -28,6 +31,7 @@ public class When {
         this.callVar = callVar;
         returnVars = new ArrayList<>();
         names = new ArrayList<>();
+        enable = true;
     }
 
     public List<String> getNames() {
@@ -44,6 +48,14 @@ public class When {
 
     public IVar getCallVar() {
         return callVar;
+    }
+
+    public void setEnable(final boolean enable) {
+        this.enable = enable;
+    }
+
+    public boolean isEnable() {
+        return enable;
     }
 
     @Override

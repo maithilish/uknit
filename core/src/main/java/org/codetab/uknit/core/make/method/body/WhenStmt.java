@@ -37,7 +37,8 @@ public class WhenStmt {
          */
         for (Invoke invoke : invokes) {
 
-            if (invoke.getWhen().isPresent()) {
+            if (invoke.getWhen().isPresent()
+                    && invoke.getWhen().get().isEnable()) {
                 When when = invoke.getWhen().get();
                 Optional<When> sameWhenO =
                         whens.stream()

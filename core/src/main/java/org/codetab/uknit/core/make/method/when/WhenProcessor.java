@@ -16,7 +16,10 @@ public class WhenProcessor {
     private Packs packs;
 
     public void createWhens(final Heap heap) {
-        List<Invoke> invokes = packs.filterInvokes(heap.getPacks());
-        invokes.forEach(invoke -> whenCreator.createWhen(invoke, heap));
+        List<Invoke> whenInvokes = whenCreator
+                .filterWhenInvokes(packs.filterInvokes(heap.getPacks()), heap);
+        for (Invoke invoke : whenInvokes) {
+            whenCreator.createWhen(invoke, whenInvokes, heap);
+        }
     }
 }

@@ -8,7 +8,7 @@
 	<artifactId>core</artifactId>
 	<properties>
 		<release-jar-name>uknit</release-jar-name>
-		<shade-plugin.version>3.4.0</shade-plugin.version>
+		<maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
 	</properties>
 
 	<build>
@@ -16,7 +16,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>${shade-plugin.version}</version>
+				<version>${maven-shade-plugin.version}</version>
 				<configuration>
 					<finalName>${release-jar-name}-${project.version}</finalName>
 					<artifactSet>

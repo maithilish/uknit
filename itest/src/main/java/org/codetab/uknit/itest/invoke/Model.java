@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-interface Model {
+class Model {
 
-    class Statics {
+    static class Statics {
 
         public static String getName(final String greet) {
             return greet + "foo";
@@ -35,7 +35,7 @@ interface Model {
         String sex();
     }
 
-    class Dog implements Pet {
+    static class Dog implements Pet {
 
         public Dog(final String name) {
 
@@ -68,6 +68,8 @@ interface Model {
         String format(String name, String dept);
 
         void append(String name, String dept);
+
+        void appendString(String absolutePath);
     }
 
 }

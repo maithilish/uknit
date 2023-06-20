@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -175,30 +176,64 @@ public class ITBase {
         }
         String expFile = String.join("/", ws, srcDir, expectedFile);
 
-        /*
-         * if exp file doesn't exists, copy the output file as exp file (on
-         * first run)
-         */
-        boolean copyExp = configs.getConfig("uknit.itest.copy.expFile", true);
-        Path srcPath = Path.of(actualFilePath());
-        Path destPath = Path.of(expFile);
-        if (copyExp && Files.notExists(destPath)) {
-            Files.copy(srcPath, destPath);
-        }
-
-        /*
-         * if test file doesn't exists, copy the output file as test file (on
-         * first run)
-         */
-        boolean copyTest = configs.getConfig("uknit.itest.copy.testFile", true);
-        String testFile = String.join("/", ws, srcDir,
-                expectedFile.replace(".exp", "Test.java"));
-        destPath = Path.of(testFile);
-        if (copyTest && Files.notExists(destPath)) {
-            Files.copy(srcPath, destPath);
-        }
+        boolean overwrite = false;
+        createExpectedFile(overwrite);
+        createTestFile(overwrite);
 
         return new File(expFile);
+    }
+
+    /**
+     * if exp file doesn't exists, copy the output file as exp file (on first
+     * run)
+     *
+     * @param overwrite
+     * @throws IOException
+     */
+    protected void createExpectedFile(final boolean overwrite)
+            throws IOException {
+        boolean copyExp = configs.getConfig("uknit.itest.copy.expFile", true);
+        Path srcPath = Path.of(actualFilePath());
+        String ws = configs.getConfig("uknit.source.base");
+        String srcDir = configs.getConfig("uknit.testDir");
+
+        String expectedFile = configs.getConfig("uknit.expectedFile");
+        if (isNull(expectedFile)) {
+            expectedFile = "Test.exp";
+        }
+        String expFile = String.join("/", ws, srcDir, expectedFile);
+        Path destPath = Path.of(expFile);
+
+        if (copyExp && Files.notExists(destPath)) {
+            Files.copy(srcPath, destPath);
+        } else if (copyExp && overwrite) {
+            Files.copy(srcPath, destPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * if test file doesn't exists, copy the output file as test file (on first
+     * run)
+     *
+     * @param overwrite
+     * @throws IOException
+     */
+    protected void createTestFile(final boolean overwrite) throws IOException {
+        boolean copyTest = configs.getConfig("uknit.itest.copy.testFile", true);
+        Path srcPath = Path.of(actualFilePath());
+        String ws = configs.getConfig("uknit.source.base");
+        String srcDir = configs.getConfig("uknit.testDir");
+
+        String expectedFile = configs.getConfig("uknit.expectedFile");
+        String testFile = String.join("/", ws, srcDir,
+                expectedFile.replace(".exp", "Test.java"));
+        Path destPath = Path.of(testFile);
+
+        if (copyTest && Files.notExists(destPath)) {
+            Files.copy(srcPath, destPath);
+        } else if (copyTest && overwrite) {
+            Files.copy(srcPath, destPath, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     protected File getActualFile() {

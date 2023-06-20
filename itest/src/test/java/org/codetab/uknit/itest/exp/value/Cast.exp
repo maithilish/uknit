@@ -144,7 +144,7 @@ class CastTest {
     public void testExpIsPrefix() {
         Foo foo = Mockito.mock(Foo.class);
         int a = 5;
-        int b = 6;
+        int b = 8;
         cast.expIsPrefix(foo);
 
         verify(foo).appendString(String.valueOf((Integer) (--a)));

@@ -510,6 +510,28 @@ class ArrayAccessTest {
     }
 
     @Test
+    public void testArrayAccessInvoke() {
+        Foo foo = Mockito.mock(Foo.class);
+        File f1 = Mockito.mock(File.class);
+        File f2 = Mockito.mock(File.class);
+        File file = f1;
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        File file4 = f2;
+        String kiwi = "Qux";
+
+        when(file.getAbsolutePath()).thenReturn(apple).thenReturn(grape).thenReturn(orange);
+        when(file4.getAbsolutePath()).thenReturn(kiwi);
+        arrayAccess.arrayAccessInvoke(foo, f1, f2);
+
+        verify(foo).appendString(apple);
+        verify(foo).appendString(grape);
+        verify(foo).appendString(orange);
+        verify(foo).appendString(kiwi);
+    }
+
+    @Test
     public void testArrayIndexIsInvoke() {
         Foo foo = Mockito.mock(Foo.class);
         Box box = Mockito.mock(Box.class);
@@ -583,6 +605,19 @@ class ArrayAccessTest {
         verify(foo).appendString(kiwi);
         verify(foo).appendString(banana);
         verify(foo).appendString(apricot);
+    }
+
+    @Test
+    public void testArrayAccessInStaticInvoke() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foox";
+        String orange = "foox";
+        String mango = "foox";
+        String cherry = "baz";
+        arrayAccess.arrayAccessInStaticInvoke(foo);
+
+        verify(foo, times(3)).appendString(Foo.valueOf(apple));
+        verify(foo).appendString(Foo.valueOf(cherry));
     }
 
     @Test

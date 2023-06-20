@@ -46,3 +46,25 @@ To generate test for single class file and method set uknit.source.clz and uknit
 Usual routine is to run BulkRunner for a base package of project or for a sub package. Next, run uknit for each problematic class to know method which has error and run uknit for that method. Once method is fixed again run uknit for class to find out any other error in the class.
 
 Multi module project - update this section later.
+
+## Maven
+
+### Tests and ITests
+
+Run tests and itests
+
+	mvn clean -Duknit.itest.copy.expFile=false -Duknit.itest.copy.testFile=false verify
+	
+### ITests
+
+Run only the itests
+
+	mvn clean -Duknit.itest.copy.expFile=false -Duknit.itest.copy.testFile=false -Dtest=zzz.java -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false integration-test
+
+## Updates
+
+To know version updates
+
+	mvn versions:display-dependency-updates
+	mvn versions:display-plugin-updates
+	

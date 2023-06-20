@@ -18,8 +18,9 @@
 		<!-- eclipse jdt requires 11 or newer-->
 		<java-release>11</java-release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
-		<!-- jdt version 3.33.0 (eclipse-platform version 4.27). See devops.md for details -->		
+
+		<!-- jdt version 3.33.0 (eclipse-platform version 4.27). See devops.md
+		for details -->
 		<org-eclipse-jdt-core.verion>3.33.0</org-eclipse-jdt-core.verion>
 		<org-eclipse-core-resources.version>3.18.200</org-eclipse-core-resources.version>
 		<org-eclipse-core-expressions.version>3.8.200</org-eclipse-core-expressions.version>
@@ -38,19 +39,25 @@
 		<org-eclipse-osgi.version>3.18.300</org-eclipse-osgi.version>
 		<org-osgi-service-prefs.version>1.1.2</org-osgi-service-prefs.version>
 		<osgi-annotation.version>8.0.1</osgi-annotation.version>
-		<ecj.version>3.33.0</ecj.version>         
-         <!-- end of jdt -->
+		<ecj.version>3.33.0</ecj.version>
+		<!-- end of jdt -->
 
-		<guice.version>5.1.0</guice.version>
-		<guava.version>30.1.1-jre</guava.version>
+		<guice.version>6.0.0</guice.version>
+		<guice-assistedinject.version>6.0.0</guice-assistedinject.version>
+		<guava.version>32.0.1-jre</guava.version>
 
-		<junit.version>5.9.3</junit.version>
-		<assertj.version>3.17.2</assertj.version>
-		<mockito.version>4.1.0</mockito.version>
-		<log4j2.version>2.13.3</log4j2.version>
+		<junit-jupiter-engine.version>5.10.0-M1</junit-jupiter-engine.version>
+		<assertj-core.version>3.24.2</assertj-core.version>
+		<mockito-core.version>5.4.0</mockito-core.version>
+		<mockito-inline.version>5.2.0</mockito-inline.version>
+		<log4j-core.version>2.20.0</log4j-core.version>
+		<log4j-api.version>2.20.0</log4j-api.version>
 
-		<surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-		<failsafe-plugin.version>3.0.0-M5</failsafe-plugin.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
+		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+		<maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
+		<requireMavenVersion>3.2.5</requireMavenVersion>
 	</properties>
 
 	<dependencies>
@@ -87,7 +94,7 @@
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
 			<artifactId>org.eclipse.core.jobs</artifactId>
-			<version>${org-eclipse-core-jobs.version}</version>			
+			<version>${org-eclipse-core-jobs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
@@ -150,7 +157,7 @@
 			<version>${osgi-annotation.version}</version>
 		</dependency>
 		<!-- end of jdt dependencies -->
-		
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -165,40 +172,40 @@
 		<dependency>
 			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-assistedinject</artifactId>
-			<version>${guice.version}</version>
+			<version>${guice-assistedinject.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>${log4j2.version}</version>
+			<version>${log4j-api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>${log4j2.version}</version>
+			<version>${log4j-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.version}</version>
+			<version>${junit-jupiter-engine.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>${assertj.version}</version>
+			<version>${assertj-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
+			<version>${mockito-core.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-inline</artifactId>
-			<version>${mockito.version}</version>
+			<version>${mockito-inline.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -208,7 +215,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${java-release}</source>
 					<target>${java-release}</target>
@@ -217,13 +224,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${surefire-plugin.version}</version>
+				<version>${maven-surefire-plugin.version}</version>
 			</plugin>
 			<!-- itest -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>${failsafe-plugin.version}</version>
+				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>integration-test</id>
@@ -243,7 +250,26 @@
 						<additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
 					</additionalClasspathElements>
 				</configuration>
-
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>${maven-enforcer-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>${requireMavenVersion}</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

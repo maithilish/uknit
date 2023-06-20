@@ -536,6 +536,14 @@ class ArrayAccess {
         foo.appendString(codes[2]);
     }
 
+    public void arrayAccessInvoke(final Foo foo, final File f1, final File f2) {
+        File[] files = {f1, f2};
+        foo.appendString(files[0].getAbsolutePath());
+        foo.appendString(files[0].getAbsolutePath());
+        foo.appendString(((files[(0)]).getAbsolutePath()));
+        foo.appendString(files[1].getAbsolutePath());
+    }
+
     // array access index is invoke
     public void arrayIndexIsInvoke(final Foo foo, final Box box) {
         String[] cities = {"foo", "bar", "baz"};
@@ -584,6 +592,17 @@ class ArrayAccess {
         foo.appendString(cities[Integer.valueOf("1")]);
         foo.appendString(cities[Integer.valueOf("2")]);
         foo.appendString(cities[(Integer.valueOf(("2")))]);
+    }
+
+    public void arrayAccessInStaticInvoke(final Foo foo) {
+        String[] cities = {"foo", "foox", "baz"};
+        int a = 1;
+        int b = 1;
+        int c = 2;
+        foo.appendString(Foo.valueOf(cities[a]));
+        foo.appendString((Foo.valueOf((cities[(a)]))));
+        foo.appendString((Foo.valueOf((cities[(b)]))));
+        foo.appendString(Foo.valueOf(cities[c]));
     }
 
     // null array, access not allowed

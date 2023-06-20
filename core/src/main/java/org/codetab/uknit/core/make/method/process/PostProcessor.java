@@ -73,9 +73,10 @@ public class PostProcessor {
 
             processor.processOfflimits(heap);
 
+            processor.processInitializer(heap);
+
             processor.processWhenVerify(heap);
 
-            processor.processInitializer(heap);
             processor.processVarState(heap);
         }
     }

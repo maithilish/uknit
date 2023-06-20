@@ -51,6 +51,10 @@ class AlphaIT extends ITBase {
             restoreTransientConfigs();
         }
 
+        // create AlphaTest.java
+        boolean overwrite = true;
+        createTestFile(overwrite);
+
         File actualFile = getActualFile();
 
         display(actualFile, false);

@@ -47,7 +47,7 @@
 		<junit.version>5.9.3</junit.version>
 		<assertj.version>3.17.2</assertj.version>
 		<mockito.version>4.1.0</mockito.version>
-		<log4j2.version>2.13.3</log4j2.version>
+		<log4j2.version>2.17.1</log4j2.version>
 
 		<surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
 		<failsafe-plugin.version>3.0.0-M5</failsafe-plugin.version>

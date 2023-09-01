@@ -1,0 +1,241 @@
+package org.codetab.uknit.itest.exp.value;
+
+import java.io.File;
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+class ClassInstanceCreationTest {
+    @InjectMocks
+    private ClassInstanceCreation classInstanceCreation;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testArgIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "foo";
+        String kiwi = "foo";
+        String mango = "bar";
+        String banana = "foo";
+        classInstanceCreation.argIsArrayAccess(foo);
+
+        verify(foo, times(2)).appendObj(new Box(apple));
+        verify(foo).appendObj(new Box(grape));
+        verify(foo, times(2)).appendObj(new Box(kiwi, foo));
+        verify(foo).appendObj(new Box(mango, foo));
+    }
+
+    @Test
+    public void testArgIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        String[] cities = {"fooxx", "barxx"};
+        classInstanceCreation.argIsArrayCreation(foo);
+
+        verify(foo, times(2)).appendObj(new Box(new String[]{"foo", "bar"}));
+        verify(foo).appendObj(new Box(new String[]{"foox", "barx"}));
+        verify(foo).appendObj(new Box(cities));
+    }
+
+    @Test
+    public void testArgIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        String name = "foo";
+        String city = "bar";
+        classInstanceCreation.argIsCast(foo);
+
+        verify(foo, times(2)).appendBox(new Box((String) name));
+        verify(foo).appendBox(new Box((String) city));
+    }
+
+    @Test
+    public void testArgIsChar() {
+        Foo foo = Mockito.mock(Foo.class);
+        classInstanceCreation.argIsChar(foo);
+
+        verify(foo, times(2)).appendObj(new Character('a'));
+        verify(foo).appendObj(new Character('b'));
+    }
+
+    @Test
+    public void testArgIsClassInstanceCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        classInstanceCreation.argIsClassInstanceCreation(foo);
+
+        verify(foo, times(2)).appendFile(new File(new String("foo")));
+        verify(foo).appendFile(new File(new String("bar")));
+    }
+
+    @Test
+    public void testArgIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = false;
+        classInstanceCreation.argIsConditional(foo);
+
+        verify(foo, times(2)).appendFile(new File(flag ? "foo" : "bar"));
+        verify(foo).appendFile(new File(flag ? "bar" : "foo"));
+    }
+
+    @Test
+    public void testArgIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        classInstanceCreation.argIsMethodRef(foo);
+
+        verify(foo, times(2)).appendBox(new Box("foo", String::toUpperCase));
+        verify(foo).appendBox(new Box("foo", String::toLowerCase));
+    }
+
+    @Test
+    public void testArgIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        classInstanceCreation.argIsFieldAccess(foo, box);
+
+        verify(foo, times(3)).appendObj(new File((box).name));
+    }
+
+    @Test
+    public void testArgIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        int code = 1;
+        classInstanceCreation.argIsInfix(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(code > 0));
+        verify(foo).appendObj(new Box(code > 1));
+    }
+
+    @Test
+    public void testArgIsInstanceof() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        String name = "foo";
+        classInstanceCreation.argIsInstanceof(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(name instanceof String));
+        verify(foo).appendObj(new Box(name instanceof Foo));
+    }
+
+    @Test
+    public void testArgIsLambda() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        String name = "foo";
+        classInstanceCreation.argIsLambda(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(name, s -> s.toUpperCase()));
+        verify(foo).appendObj(new Box(name, s -> s.toLowerCase()));
+    }
+
+    @Test
+    public void testArgIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        String kiwi = "Qux";
+        String mango = "Quux";
+
+        when(foo.cntry()).thenReturn(apple).thenReturn(orange).thenReturn(mango);
+        when(foo.lang()).thenReturn(grape).thenReturn(kiwi);
+        classInstanceCreation.argIsMi(foo, box);
+
+        verify(foo).appendObj(new Box(apple));
+        verify(foo).appendObj(new Box(grape));
+        verify(foo).appendObj(new Box(orange));
+        verify(foo).appendObj(new Box(kiwi, mango));
+    }
+
+    @Test
+    public void testArgIsNullLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        classInstanceCreation.argIsNullLiteral(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(null, null, null));
+        verify(foo).appendObj(new Box("foo", null, "baz"));
+    }
+
+    @Test
+    public void testArgIsNumberLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        classInstanceCreation.argIsNumberLiteral(foo, box);
+
+        verify(foo).appendObj(new Box(1));
+        verify(foo).appendObj(new Box(2L));
+        verify(foo).appendObj(new Box(3.3d));
+        verify(foo).appendObj(new Box(4.4f));
+    }
+
+    @Test
+    public void testArgIsPostfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        int a = 0;
+        int b = 10;
+        classInstanceCreation.argIsPostfix(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(a++));
+        verify(foo).appendObj(new Box(b++));
+    }
+
+    @Test
+    public void testArgIsPrefix() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        int a = 0;
+        int b = 10;
+        classInstanceCreation.argIsPrefix(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(--a));
+        verify(foo).appendObj(new Box(--b));
+    }
+
+    @Test
+    public void testArgIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        classInstanceCreation.argIsQName(foo, box);
+
+        verify(foo, times(3)).appendObj(new File(box.name));
+    }
+
+    @Test
+    public void testArgIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        String a = "foo";
+        String b = "bar";
+        classInstanceCreation.argIsSimpleName(foo, box);
+
+        verify(foo, times(2)).appendObj(new File(a));
+        verify(foo).appendObj(new File(b));
+    }
+
+    @Test
+    public void testArgIsThisExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        String tfoo = "foo";
+        String tbar = "bar";
+        classInstanceCreation.argIsThisExp(foo, box);
+
+        verify(foo, times(2)).appendObj(new File(classInstanceCreation.tfoo));
+        verify(foo).appendObj(new File(classInstanceCreation.tbar));
+    }
+
+    @Test
+    public void testArgIsTypeLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        classInstanceCreation.argIsTypeLiteral(foo, box);
+
+        verify(foo, times(2)).appendObj(new Box(String.class));
+        verify(foo).appendObj(new Box(File.class));
+    }
+}

@@ -1,0 +1,121 @@
+package org.codetab.uknit.itest.exp.value;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+class FieldAccessTest {
+    @InjectMocks
+    private FieldAccess fieldAccess;
+
+    @Mock
+    private Box tbox;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testExpIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = new Box("foo");
+        Box box2 = new Box("bar");
+        // Box box3 = new Box("foo");
+        fieldAccess.expIsArrayAccess(foo);
+
+        verify(foo, times(2)).appendObj(box.name);
+        verify(foo).appendObj(box2.name);
+        // verify(foo).appendObj((box3.name));
+    }
+
+    @Test
+    public void testExpIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = new Box[] {new Box("foo"), new Box("bar")}[0];
+        Box box2 = new Box[] {new Box("foo"), new Box("bar")}[1];
+        // Box box3 = new Box[]{new Box("foo"), new Box("bar")}[(0)];
+        fieldAccess.expIsArrayCreation(foo);
+
+        verify(foo, times(2)).appendObj(box.name);
+        verify(foo).appendObj(box2.name);
+        // verify(foo).appendObj((box3.name));
+    }
+
+    @Test
+    public void testExpIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        fieldAccess.expIsCast(foo, box);
+
+        verify(foo, times(2)).appendObj(box.name);
+    }
+
+    @Test
+    public void testExpIsClassInstanceCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object box = Mockito.mock(Object.class);
+        fieldAccess.expIsClassInstanceCreation(foo, box);
+
+        verify(foo, times(2)).appendObj((new Box()).name);
+    }
+
+    @Test
+    public void testExpIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.spy(Box.class);
+        box.box = new Box("foo");
+        fieldAccess.expIsFieldAccess(foo, box);
+
+        verify(foo, times(2)).appendObj(((box).box).name);
+    }
+
+    @Test
+    public void testExpIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        Box box2 = Mockito.mock(Box.class);
+
+        when(foo.getBox()).thenReturn(box).thenReturn(box2);
+        fieldAccess.expIsMi(foo);
+
+        verify(foo, times(2)).appendObj(box.name);
+        // verify(foo).appendObj((box2.name));
+    }
+
+    @Test
+    public void testExpIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.spy(Box.class);
+        box.box = new Box("foo");
+        fieldAccess.expIsQName(foo, box);
+
+        verify(foo, times(2)).appendObj((box.box).name);
+    }
+
+    @Test
+    public void testExpIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        fieldAccess.expIsSimpleName(foo, box);
+
+        verify(foo, times(2)).appendObj((box).name);
+    }
+
+    @Test
+    public void testExpIsThisExp() {
+        Foo foo = Mockito.mock(Foo.class);
+        fieldAccess.expIsThisExp(foo);
+
+        verify(foo, times(2)).appendObj((tbox).name);
+    }
+}

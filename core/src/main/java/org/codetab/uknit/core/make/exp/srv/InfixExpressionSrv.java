@@ -25,6 +25,8 @@ public class InfixExpressionSrv implements ExpService {
     @Inject
     private NodeFactory factory;
     @Inject
+    private SafeExpSetter safeExpSetter;
+    @Inject
     private ExpServiceLoader serviceLoader;
     @Inject
     private Initializers initializers;
@@ -52,11 +54,13 @@ public class InfixExpressionSrv implements ExpService {
 
         Expression leftOp = wrappers.strip(copy.getLeftOperand());
         leftOp = serviceLoader.loadService(leftOp).unparenthesize(leftOp);
-        copy.setLeftOperand(factory.copyNode(leftOp));
+        safeExpSetter.setExp(copy, copy::getLeftOperand, copy::setLeftOperand,
+                leftOp);
 
         Expression rightOp = wrappers.strip(copy.getRightOperand());
         rightOp = serviceLoader.loadService(rightOp).unparenthesize(rightOp);
-        copy.setRightOperand(factory.copyNode(rightOp));
+        safeExpSetter.setExp(copy, copy::getRightOperand, copy::setRightOperand,
+                rightOp);
 
         List<Expression> exOpers = safeExps.getExtendedOperands(copy);
         for (int i = 0; i < exOpers.size(); i++) {

@@ -14,6 +14,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.ThisExpression;
 
@@ -57,7 +58,18 @@ public class FieldAccessSrv implements ExpService {
 
         Expression exp = wrappers.strip(copy.getExpression());
         exp = serviceLoader.loadService(exp).unparenthesize(exp);
-        copy.setExpression(factory.copyNode(exp));
+        /*
+         * the exp is fully striped, to retain the inner parenthesise set the
+         * exp to parenthesise of field access. Ex: ((box)).name becomes
+         * (box).name.
+         */
+        if (copy.getExpression() instanceof ParenthesizedExpression) {
+            ParenthesizedExpression pExp =
+                    (ParenthesizedExpression) copy.getExpression();
+            pExp.setExpression(factory.copyNode(exp));
+        } else {
+            copy.setExpression(factory.copyNode(exp));
+        }
 
         // parenthesise is not allowed for name
 

@@ -3,6 +3,8 @@ package org.codetab.uknit.core.node;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -12,6 +14,8 @@ import org.eclipse.jdt.core.dom.Statement;
 
 @Singleton
 public class SnippetParser {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     private ASTParser parser;
 
@@ -35,6 +39,7 @@ public class SnippetParser {
                 Statement stmt = (Statement) block.statements().get(0);
                 return stmt;
             } catch (Exception e) {
+                LOG.error("unable to parse: {}", snippet);
                 // for debug breakpoint
                 throw e;
             }

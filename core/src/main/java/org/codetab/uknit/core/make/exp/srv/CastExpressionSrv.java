@@ -13,6 +13,8 @@ import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
 
 public class CastExpressionSrv implements ExpService {
 
@@ -41,10 +43,32 @@ public class CastExpressionSrv implements ExpService {
         CastExpression copy = (CastExpression) factory.copyNode(node);
 
         Expression exp = wrappers.strip(copy.getExpression());
+
         exp = serviceLoader.loadService(exp).unparenthesize(exp);
-        copy.setExpression(factory.copyNode(exp));
+        safelySetExp(copy, exp);
 
         return copy;
+    }
+
+    private void safelySetExp(final CastExpression copy, final Expression exp) {
+        /*
+         * for Postfix in (Integer) a++ parenthesise is not essential but for
+         * prefix it is required. For (Integer) (--a) retain parenthesise by
+         * setting the exp to inner parenthesise.
+         *
+         * If exp of cast exp is parenthesized cast exp then retain
+         * parenthesize. Ex: foo.appendPitbull((Pitbull) ((Pet) dog)); in
+         * exp.value.Cast.expIsCastExp()
+         */
+        if (copy.getExpression() instanceof ParenthesizedExpression
+                && (exp instanceof PrefixExpression
+                        || exp instanceof CastExpression)) {
+            ParenthesizedExpression pExp =
+                    (ParenthesizedExpression) copy.getExpression();
+            pExp.setExpression(factory.copyNode(exp));
+        } else {
+            copy.setExpression(factory.copyNode(exp));
+        }
     }
 
     @Override

@@ -40,6 +40,7 @@ public class PostProcessor {
 
     public void process(final Heap heap) {
 
+        // REVIEW remove this
         boolean show = false;
         if (show) {
             for (Pack pack : heap.getPacks()) {

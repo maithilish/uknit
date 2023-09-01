@@ -27,6 +27,8 @@ public class VerifyStmt {
     private Packs packs;
     @Inject
     private Times times;
+    @Inject
+    private ExpManager expManager;
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
@@ -56,7 +58,10 @@ public class VerifyStmt {
             if (verify.isInCtlFlowPath() && verify.getTimes() > 1) {
                 format = verifyTimesFormat;
             }
-            Statement stmt = nodeFactory.createVerifyStatement(verify.getMi(),
+
+            MethodInvocation mi = (MethodInvocation) expManager
+                    .unparenthesize(verify.getMi());
+            Statement stmt = nodeFactory.createVerifyStatement(mi,
                     verify.getTimes(), format);
             stmts.add(stmt);
 

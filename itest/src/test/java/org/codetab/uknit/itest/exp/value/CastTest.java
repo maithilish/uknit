@@ -63,7 +63,7 @@ class CastTest {
         Pitbull dog = Mockito.mock(Pitbull.class);
         cast.expIsCastExp(foo, dog);
 
-        verify(foo, times(2)).appendPitbull((dog));
+        verify(foo, times(2)).appendPitbull((Pitbull) dog);
     }
 
     @Test

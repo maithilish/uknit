@@ -65,7 +65,8 @@ public class MethodInvocationSrv implements ExpService {
         List<Expression> args = safeExps.getArgs(copy);
         for (int i = 0; i < args.size(); i++) {
             Expression arg = wrappers.strip(args.get(i));
-            arg = serviceLoader.loadService(arg).unparenthesize(arg);
+            ExpService srv = serviceLoader.loadService(arg);
+            arg = srv.unparenthesize(arg);
             args.remove(i);
             args.add(i, factory.copyNode(arg));
         }

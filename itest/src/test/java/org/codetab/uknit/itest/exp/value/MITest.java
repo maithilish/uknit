@@ -199,8 +199,8 @@ class MITest {
         boolean code = true;
         mI.expIsConditional(foo, foox, code);
 
-        verify((code == true ? foo : foox)).appendString("a");
-        verify((code == false ? foo : foox), times(2)).appendString("b");
+        verify(code == true ? foo : foox).appendString("a");
+        verify(code == false ? foo : foox, times(2)).appendString("b");
     }
 
     @Test
@@ -334,7 +334,7 @@ class MITest {
 
         verify(foo).appendString("a");
         verify(foo2).appendString("a");
-        verify(foo3).appendString(("a"));
+        verify(foo3).appendString("a");
     }
 
     @Test

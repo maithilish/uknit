@@ -32,6 +32,8 @@ public class ConditionalExpressionSrv implements ExpService {
     private NodeFactory factory;
     @Inject
     private ExpServiceLoader serviceLoader;
+    @Inject
+    private SafeExpSetter safeExpSetter;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -56,15 +58,18 @@ public class ConditionalExpressionSrv implements ExpService {
 
         Expression exp = wrappers.strip(copy.getExpression());
         exp = serviceLoader.loadService(exp).unparenthesize(exp);
-        copy.setExpression(factory.copyNode(exp));
+        safeExpSetter.setExp(copy, copy::getExpression, copy::setExpression,
+                exp);
 
         Expression thenExp = wrappers.strip(copy.getThenExpression());
         thenExp = serviceLoader.loadService(thenExp).unparenthesize(thenExp);
-        copy.setThenExpression(factory.copyNode(thenExp));
+        safeExpSetter.setExp(copy, copy::getThenExpression,
+                copy::setThenExpression, thenExp);
 
         Expression elseExp = wrappers.strip(copy.getElseExpression());
         elseExp = serviceLoader.loadService(elseExp).unparenthesize(elseExp);
-        copy.setElseExpression(factory.copyNode(elseExp));
+        safeExpSetter.setExp(copy, copy::getElseExpression,
+                copy::setElseExpression, elseExp);
 
         return copy;
     }

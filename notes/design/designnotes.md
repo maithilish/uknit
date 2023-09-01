@@ -281,3 +281,12 @@ add following assert to test the MethodReference or lambda
 
 The mock fields are injected with @Mock annotations. Apart from these, method may use other fields and stand-in local vars are created for such fields. In debug log pack listing, the packs for stand-in vars appear in the end after the return pack.
 
+## Parenthesize
+
+While un-parenthesize an exp retain it in case of
+
+  - casted prefix exp (Integer) (--a) - CastExpressionSrv
+  - casted cast exp (Dog) ((Pet) p) - CastExpressionSrv
+  - ConditionalExp (CE) in any part of CE - ConditionalExpressionSrv
+
+  

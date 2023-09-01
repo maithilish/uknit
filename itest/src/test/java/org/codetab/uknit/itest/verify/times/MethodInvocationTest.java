@@ -511,7 +511,7 @@ class MethodInvocationTest {
         Person person = Mockito.mock(Person.class);
         methodInvocation.typeLiteral(foo, person);
 
-        verify(foo, times(2)).append(Foo.valueOf((Person.class)));
+        verify(foo, times(2)).append(Foo.valueOf(Person.class));
         verify(foo).append(Foo.valueOf(String.class));
     }
 

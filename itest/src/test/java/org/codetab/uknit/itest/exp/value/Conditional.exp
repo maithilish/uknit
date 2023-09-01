@@ -1,0 +1,458 @@
+package org.codetab.uknit.itest.exp.value;
+
+import java.io.File;
+import java.util.function.Function;
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+class ConditionalTest {
+    @InjectMocks
+    private Conditional conditional;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testExpIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean apple = true;
+        boolean grape = false;
+        boolean orange = false;
+        boolean mango = true;
+        boolean cherry = true;
+        boolean peach = true;
+        conditional.expIsArrayAccess(foo);
+
+        verify(foo).appendString(apple ? "foo" : "bar");
+        verify(foo, times(2)).appendString(grape ? "foo" : "bar");
+        verify(foo, times(3)).appendString(mango ? "yes" : "no");
+    }
+
+    @Test
+    public void testChoiceIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean code = true;
+        String[] names = {"foo", "bar"};
+        String apple = "foo";
+        String grape = "bar";
+        String orange = "foo";
+        String kiwi = "bar";
+        boolean code2 = false;
+        conditional.choiceIsArrayAccess(foo);
+
+        verify(foo, times(2)).appendString(code ? apple : grape);
+        verify(foo, times(2)).appendString(code2 ? names[0] : names[1]);
+    }
+
+    @Test
+    public void testExpIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean apple = new boolean[]{true, false}[0];
+        boolean grape = new boolean[]{true, false}[1];
+        boolean orange = new boolean[]{true, false}[(1)];
+        boolean mango = true;
+        boolean cherry = true;
+        boolean peach = true;
+        conditional.expIsArrayCreation(foo);
+
+        verify(foo).appendString(apple ? "foo" : "bar");
+        verify(foo, times(2)).appendString(grape ? "foo" : "bar");
+        verify(foo, times(3)).appendString(mango ? "yes" : "no");
+    }
+
+    @Test
+    public void testChoiceIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean code = true;
+        String apple = new String[]{"foo", "bar"}[0];
+        String grape = new String[]{"foo", "bar"}[1];
+        String orange = new String[]{"foo", "bar"}[0];
+        String kiwi = new String[]{"foo", "bar"}[1];
+        boolean code2 = false;
+        conditional.choiceIsArrayCreation(foo);
+
+        verify(foo, times(2)).appendString(code ? apple : grape);
+        verify(foo, times(2)).appendString(code2 ? new String[]{"foo", "bar"}[0] : new String[]{"foo", "bar"}[1]);
+    }
+
+    @Test
+    public void testExpIsBooleanLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        conditional.expIsBooleanLiteral(foo);
+
+        verify(foo).appendString(true ? "foo" : "bar");
+        verify(foo, times(2)).appendString(false ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsBooleanLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        conditional.choiceIsBooleanLiteral(foo);
+
+        verify(foo, times(2)).appendObj(flag ? false : true);
+    }
+
+    @Test
+    public void testExpIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        conditional.expIsCast(foo);
+
+        verify(foo, times(2)).appendString((boolean) flag ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        String a = "foo";
+        String b = "foo";
+        conditional.choiceIsCast(foo);
+
+        verify(foo, times(2)).appendString(flag ? (String) a : (String) b);
+    }
+
+    @Test
+    public void testExpIsCharLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        char ch = 'a';
+        conditional.expIsCharLiteral(foo);
+
+        verify(foo, times(2)).appendString('a' == ch ? "foo" : "bar");
+        verify(foo).appendString('b' == ch ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsCharLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        conditional.choiceIsCharLiteral(foo);
+
+        verify(foo, times(2)).appendObj(flag ? 'a' : 'b');
+    }
+
+    @Test
+    public void testExpIsInstanceCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        conditional.expIsInstanceCreation(foo);
+
+        verify(foo).appendString(new Boolean(true) ? "foo" : "bar");
+        verify(foo, times(2)).appendString(new Boolean(false) ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsInstanceCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        conditional.choiceIsInstanceCreation(foo);
+
+        verify(foo, times(2)).appendObj(flag ? new String("foo") : new String("bar"));
+    }
+
+    @Test
+    public void testExpIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        conditional.expIsConditional(foo);
+
+        verify(foo, times(2)).appendString((flag ? true : false) ? "foo" : "bar");
+        verify(foo).appendString((flag ? false : true) ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        boolean code = false;
+        conditional.choiceIsConditional(foo);
+
+        verify(foo, times(2)).appendString(flag ? (code ? "foo" : "bar") : "bar");
+    }
+
+    @Test
+    public void testExpIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        Boolean apple = Boolean.valueOf(true);
+        Boolean grape = Boolean.valueOf(true);
+        conditional.expIsMethodRef(foo);
+
+        verify(foo).appendString(apple ? "foo" : "bar");
+        verify(foo).appendString(grape ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        String apple = "Foo";
+        conditional.choiceIsMethodRef(foo);
+
+        verify(foo).appendString(flag ? apple : "bar");
+    }
+
+    @Test
+    public void testExpIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        conditional.expIsFieldAccess(foo, box);
+
+        verify(foo, times(2)).appendString((box).done ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        boolean flag = true;
+        conditional.choiceIsFieldAccess(foo, box);
+
+        verify(foo, times(2)).appendObj(flag ? (box).id : (box).done);
+    }
+
+    @Test
+    public void testExpIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int code = 2;
+        conditional.expIsInfix(foo);
+
+        verify(foo, times(2)).appendString(code > 1 ? "foo" : "bar");
+        verify(foo).appendString(code < 1 ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        int code = 2;
+        conditional.choiceIsInfix(foo);
+
+        verify(foo, times(2)).appendObj(flag ? code > 1 : code > 2);
+    }
+
+    @Test
+    public void testExpIsInstanceof() {
+        Foo foo = Mockito.mock(Foo.class);
+        String o = "foo";
+        conditional.expIsInstanceof(foo);
+
+        verify(foo, times(2)).appendString(o instanceof String ? "foo" : "bar");
+        verify(foo).appendString(o instanceof Integer ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsInstanceof() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        String o = "foo";
+        conditional.choiceIsInstanceof(foo);
+
+        verify(foo, times(2)).appendObj(flag ? o instanceof String : o instanceof Integer);
+    }
+
+    @Test
+    public void testExpIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean apple = true;
+        boolean grape = true;
+        boolean orange = true;
+
+        when(foo.isDone()).thenReturn(apple).thenReturn(grape).thenReturn(orange);
+        conditional.expIsMi(foo);
+
+        verify(foo, times(2)).appendString(apple ? "foo" : "bar");
+        verify(foo).appendString(grape ? "bar" : "foo");
+    }
+
+    @Test
+    public void testChoiceIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        String apple = "Foo";
+        String grape = "Bar";
+        String orange = "Baz";
+        String kiwi = "Qux";
+
+        when(foo.cntry()).thenReturn(apple).thenReturn(orange);
+        when(foo.lang()).thenReturn(grape).thenReturn(kiwi);
+        conditional.choiceIsMi(foo);
+
+        verify(foo).appendObj(flag ? apple : grape);
+        verify(foo).appendObj(flag ? orange : kiwi);
+    }
+
+    @Test
+    public void testChoiceIsNullLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean apple = true;
+        boolean grape = true;
+        boolean orange = true;
+
+        when(foo.isDone()).thenReturn(apple).thenReturn(grape).thenReturn(orange);
+        conditional.choiceIsNullLiteral(foo);
+
+        verify(foo).appendObj(apple ? "foo" : null);
+        verify(foo, times(2)).appendObj(grape ? null : "bar");
+    }
+
+    @Test
+    public void testChoiceIsNumberLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean apple = true;
+        boolean grape = true;
+        boolean orange = true;
+        boolean kiwi = true;
+        boolean mango = true;
+
+        when(foo.isDone()).thenReturn(apple).thenReturn(grape).thenReturn(orange).thenReturn(kiwi).thenReturn(mango);
+        conditional.choiceIsNumberLiteral(foo);
+
+        verify(foo).appendObj(apple ? 1 : 2);
+        verify(foo).appendObj(grape ? 1L : 2L);
+        verify(foo).appendObj(orange ? 11.1f : 11.2f);
+        verify(foo, times(2)).appendObj(kiwi ? 21.1d : 21.2d);
+    }
+
+    @Test
+    public void testChoiceIsPostfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 11;
+        int b = 21;
+        boolean apple = true;
+        boolean grape = true;
+
+        when(foo.isDone()).thenReturn(apple).thenReturn(grape);
+        conditional.choiceIsPostfix(foo);
+
+        verify(foo, times(2)).appendObj(apple ? a++ : b++);
+    }
+
+    @Test
+    public void testChoiceIsPrefix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 11;
+        int b = 21;
+        boolean apple = true;
+        boolean grape = true;
+
+        when(foo.isDone()).thenReturn(apple).thenReturn(grape);
+        conditional.choiceIsPrefix(foo);
+
+        verify(foo, times(2)).appendObj(apple ? --a : --b);
+    }
+
+    @Test
+    public void testExpIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        conditional.expIsQName(foo, box);
+
+        verify(foo, times(2)).appendString(box.done ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        boolean flag = true;
+        conditional.choiceIsQName(foo, box);
+
+        verify(foo, times(2)).appendObj(flag ? box.id : box.done);
+    }
+
+    @Test
+    public void testExpIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = false;
+        conditional.expIsSimpleName(foo);
+
+        verify(foo, times(2)).appendString(flag ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = false;
+        String a = "foo";
+        String b = "bar";
+        conditional.choiceIsSimpleName(foo);
+
+        verify(foo, times(2)).appendString(flag ? a : b);
+    }
+
+    @Test
+    public void testExpIsParamVar() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        boolean flag1 = flag;
+        conditional.expIsParamVar(foo, flag);
+
+        verify(foo, times(2)).appendString(flag1 ? "foo" : "bar");
+    }
+
+    @Test
+    public void testExpIsParam() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = true;
+        conditional.expIsParam(foo, flag);
+
+        verify(foo, times(2)).appendString(flag ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsParamVar() {
+        Foo foo = Mockito.mock(Foo.class);
+        File f1 = Mockito.mock(File.class);
+        File f2 = Mockito.mock(File.class);
+        boolean flag = false;
+        File a = f1;
+        File b = f2;
+        conditional.choiceIsParamVar(foo, f1, f2);
+
+        verify(foo, times(2)).appendObj(flag ? a : b);
+    }
+
+    @Test
+    public void testChoiceIsParam() {
+        Foo foo = Mockito.mock(Foo.class);
+        File f1 = Mockito.mock(File.class);
+        File f2 = Mockito.mock(File.class);
+        boolean flag = false;
+        conditional.choiceIsParam(foo, f1, f2);
+
+        verify(foo, times(2)).appendObj(flag ? f1 : f2);
+    }
+
+    @Test
+    public void testExpIsThis() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean fflag = true;
+        conditional.expIsThis(foo);
+
+        verify(foo, times(2)).appendString(conditional.fflag ? "foo" : "bar");
+    }
+
+    @Test
+    public void testChoiceIsThis() {
+        Foo foo = Mockito.mock(Foo.class);
+        String fbar = "bar";
+        boolean fflag = true;
+        String ffoo = "foo";
+        conditional.choiceIsThis(foo);
+
+        verify(foo, times(2)).appendString(conditional.fflag ? conditional.ffoo : conditional.fbar);
+    }
+
+    @Test
+    public void testChoiceIsTypeLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean apple = true;
+        boolean grape = true;
+
+        when(foo.isDone()).thenReturn(apple).thenReturn(grape);
+        conditional.choiceIsTypeLiteral(foo);
+
+        verify(foo, times(2)).appendObj(apple ? String.class : Integer.class);
+    }
+}

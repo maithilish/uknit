@@ -53,8 +53,8 @@ class AccessCastTest {
         String grape = new String("barx");
         accessCast.arrayParameter(foo, array);
 
-        verify(foo, times(2)).append(((String) (array[(0)])));
-        verify(foo).append(((String) (array[(1)])));
+        verify(foo, times(2)).append((String) array[0]);
+        verify(foo).append((String) array[1]);
         verify(foo).append(apple);
         verify(foo).append(grape);
     }

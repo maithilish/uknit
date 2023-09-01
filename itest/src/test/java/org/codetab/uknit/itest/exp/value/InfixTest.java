@@ -1,0 +1,795 @@
+package org.codetab.uknit.itest.exp.value;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.function.Function;
+
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+class InfixTest {
+    @InjectMocks
+    private Infix infix;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testRightExpIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 10;
+        int grape = 12;
+        // int orange = 10;
+        // int kiwi = 10;
+        infix.rightExpIsArrayAccess(foo);
+
+        verify(foo, times(3)).appendInt(1 - apple);
+        verify(foo).appendInt(1 - grape);
+    }
+
+    @Test
+    public void testLeftExpIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 10;
+        int grape = 12;
+        // int orange = 10;
+        // int kiwi = 10;
+        infix.leftExpIsArrayAccess(foo);
+
+        verify(foo, times(3)).appendInt(apple - 1);
+        verify(foo).appendInt(grape - 1);
+    }
+
+    @Test
+    public void testExtendedExpHasArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 10;
+        int grape = 12;
+        // int orange = 10;
+        // int kiwi = 10;
+        infix.extendedExpHasArrayAccess(foo);
+
+        verify(foo, times(3)).appendInt(1 - 1 - apple);
+        verify(foo).appendInt(1 - 1 - grape);
+    }
+
+    @Test
+    public void testRightExpIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = new int[] {5, 6, 7}[0];
+        int grape = new int[] {5, 6, 7}[1];
+        // int orange = new int[]{(5), (6), (7)}[(0)];
+        // int kiwi = new int[]{((5)), ((6)), ((7))}[((0))];
+        infix.rightExpIsArrayCreation(foo);
+
+        verify(foo, times(3)).appendInt(1 - apple);
+        verify(foo).appendInt(1 - grape);
+    }
+
+    @Test
+    public void testLeftExpIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = new int[] {5, 6, 7}[0];
+        int grape = new int[] {5, 6, 7}[1];
+        // int orange = new int[]{(5), (6), (7)}[(0)];
+        // int kiwi = new int[]{((5)), ((6)), ((7))}[((0))];
+        infix.leftExpIsArrayCreation(foo);
+
+        verify(foo, times(3)).appendInt(apple - 1);
+        verify(foo).appendInt(grape - 1);
+    }
+
+    @Test
+    public void testExtendedExpHasArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = new int[] {5, 6, 7}[0];
+        int grape = new int[] {5, 6, 7}[1];
+        // int orange = new int[]{(5), (6), (7)}[(0)];
+        // int kiwi = new int[]{((5)), ((6)), ((7))}[((0))];
+        infix.extendedExpHasArrayCreation(foo);
+
+        verify(foo, times(3)).appendInt(1 - 1 - apple);
+        verify(foo).appendInt(1 - 1 - grape);
+    }
+
+    @Test
+    public void testRightExpIsBooleanLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = false;
+        infix.rightExpIsBooleanLiteral(foo);
+
+        verify(foo, times(3)).appendBoolean(flag == true);
+        verify(foo).appendBoolean(flag != true);
+    }
+
+    @Test
+    public void testLeftExpIsBooleanLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = false;
+        infix.leftExpIsBooleanLiteral(foo);
+
+        verify(foo, times(4)).appendBoolean(true == flag);
+    }
+
+    @Test
+    public void testExtendedExpHasBooleanLiteral() {
+        Foo foo = Mockito.mock(Foo.class);
+        boolean flag = false;
+        infix.extendedExpHasBooleanLiteral(foo);
+
+        verify(foo, times(3)).appendBoolean(true == flag == true);
+        verify(foo).appendBoolean(true == flag != true);
+        // verify(foo).appendBoolean(true == (flag == true));
+    }
+
+    @Test
+    public void testRightExpIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Integer a = Integer.valueOf(1);
+        Integer b = Integer.valueOf(2);
+        infix.rightExpIsCast(foo);
+
+        verify(foo, times(3)).appendInt(11 - a);
+        verify(foo).appendInt(22 - b);
+    }
+
+    @Test
+    public void testLeftExpIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Integer a = Integer.valueOf(1);
+        Integer b = Integer.valueOf(2);
+        infix.leftExpIsCast(foo);
+
+        verify(foo, times(3)).appendInt(a - 11);
+        verify(foo).appendInt(b - 22);
+    }
+
+    @Test
+    public void testExtendedExpHasCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        Integer a = Integer.valueOf(1);
+        Integer b = Integer.valueOf(2);
+        infix.extendedExpHasCast(foo);
+
+        verify(foo, times(3)).appendInt(11 - a - 1);
+        verify(foo).appendInt(22 - b - 1);
+    }
+
+    @Test
+    public void testRightExpIsChar() {
+        Foo foo = Mockito.mock(Foo.class);
+        infix.rightExpIsChar(foo);
+
+        verify(foo, times(3)).appendInt(1 - 'a');
+        verify(foo).appendInt(1 - 'b');
+    }
+
+    @Test
+    public void testLeftExpIsChar() {
+        Foo foo = Mockito.mock(Foo.class);
+        infix.leftExpIsChar(foo);
+
+        verify(foo, times(3)).appendInt('a' - 1);
+        verify(foo).appendInt('b' - 1);
+    }
+
+    @Test
+    public void testExtendedExpHasChar() {
+        Foo foo = Mockito.mock(Foo.class);
+        infix.extendedExpHasChar(foo);
+
+        verify(foo, times(2)).appendInt(1 - 'a' - 'b');
+        verify(foo).appendInt(1 - 'b' - 'c');
+        verify(foo).appendInt(1 - ('b' - 'b'));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testRightExpIsClassInstance() {
+        Foo foo = Mockito.mock(Foo.class);
+        infix.rightExpIsClassInstance(foo);
+
+        verify(foo, times(3)).appendInt(11 - new Integer(1));
+        verify(foo).appendInt(21 - new Integer(2));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testLeftExpIsClassInstance() {
+        Foo foo = Mockito.mock(Foo.class);
+        infix.leftExpIsClassInstance(foo);
+
+        verify(foo, times(3)).appendInt(new Integer(1) - 11);
+        verify(foo).appendInt(new Integer(2) - 21);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testExtendedExpHasClassInstance() {
+        Foo foo = Mockito.mock(Foo.class);
+        infix.extendedExpHasClassInstance(foo);
+
+        verify(foo, times(3)).appendInt(11 - new Integer(1) - 11);
+        verify(foo).appendInt(21 - new Integer(2) - 21);
+    }
+
+    @Test
+    public void testRightExpIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 0;
+        infix.rightExpIsConditional(foo);
+
+        verify(foo, times(3)).appendInt(1 + (a < 1 ? 1 : 0));
+        verify(foo).appendInt(1 + (a > 1 ? 1 : 0));
+    }
+
+    @Test
+    public void testLeftExpIsConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 0;
+        infix.leftExpIsConditional(foo);
+
+        verify(foo, times(3)).appendInt((a < 1 ? 1 : 0) + 1);
+        verify(foo).appendInt((a > 1 ? 1 : 0) + 1);
+    }
+
+    @Test
+    public void testExtendedExpHasConditional() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 0;
+        infix.extendedExpHasConditional(foo);
+
+        verify(foo, times(3)).appendInt(1 + (a < 1 ? 1 : 0) + 1);
+        verify(foo).appendInt(1 + (a > 1 ? 1 : 0) + 1);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testRightExpIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        int grape = 1;
+        int orange = 1;
+        int kiwi = 1;
+
+        when(foo.valueOf(eq("1"), any(Function.class))).thenReturn(apple)
+                .thenReturn(orange).thenReturn(kiwi);
+        when(foo.valueOf(eq("2"), any(Function.class))).thenReturn(grape);
+        infix.rightExpIsMethodRef(foo);
+
+        ArgumentCaptor<Function<String, Integer>> captorA =
+                ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<Function<String, Integer>> captorB =
+                ArgumentCaptor.forClass(Function.class);
+        // ArgumentCaptor<Function<String, Integer>> captorC =
+        // ArgumentCaptor.forClass(Function.class);
+        // ArgumentCaptor<Function<String, Integer>> captorD =
+        // ArgumentCaptor.forClass(Function.class);
+
+        // verify(foo).valueOf(eq("1"), captorA.capture());
+        verify(foo, times(3)).valueOf(eq("1"), captorA.capture());
+        // verify(foo).appendInt(11 + apple);
+        verify(foo, times(3)).appendInt(11 + apple);
+        verify(foo).valueOf(eq("2"), captorB.capture());
+        verify(foo).appendInt(21 + grape);
+        // verify(foo, times(2)).valueOf("1", Integer::valueOf);
+        // verify(foo).appendInt(11 + orange);
+        // verify(foo).appendInt(11 + kiwi);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testLeftExpIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        int grape = 1;
+        int orange = 1;
+        int kiwi = 1;
+
+        when(foo.valueOf(eq("1"), any(Function.class))).thenReturn(apple)
+                .thenReturn(orange).thenReturn(kiwi);
+        when(foo.valueOf(eq("2"), any(Function.class))).thenReturn(grape);
+        infix.leftExpIsMethodRef(foo);
+
+        ArgumentCaptor<Function<String, Integer>> captorA =
+                ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<Function<String, Integer>> captorB =
+                ArgumentCaptor.forClass(Function.class);
+        // ArgumentCaptor<Function<String, Integer>> captorC =
+        // ArgumentCaptor.forClass(Function.class);
+        // ArgumentCaptor<Function<String, Integer>> captorD =
+        // ArgumentCaptor.forClass(Function.class);
+
+        // verify(foo).valueOf(eq("1"), captorA.capture());
+        verify(foo, times(3)).valueOf(eq("1"), captorA.capture());
+        // verify(foo).appendInt(apple + 11);
+        verify(foo, times(3)).appendInt(apple + 11);
+        verify(foo).valueOf(eq("2"), captorB.capture());
+        verify(foo).appendInt(grape + 21);
+        // verify(foo, times(2)).valueOf("1", Integer::valueOf);
+        // verify(foo).appendInt(orange + 11);
+        // verify(foo).appendInt(kiwi + 11);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testExtendedExpIsMethodRef() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        int grape = 1;
+        int orange = 1;
+        int kiwi = 1;
+
+        when(foo.valueOf(eq("1"), any(Function.class))).thenReturn(apple)
+                .thenReturn(orange).thenReturn(kiwi);
+        when(foo.valueOf(eq("2"), any(Function.class))).thenReturn(grape);
+        infix.extendedExpIsMethodRef(foo);
+
+        ArgumentCaptor<Function<String, Integer>> captorA =
+                ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<Function<String, Integer>> captorB =
+                ArgumentCaptor.forClass(Function.class);
+        // ArgumentCaptor<Function<String, Integer>> captorC =
+        // ArgumentCaptor.forClass(Function.class);
+        // ArgumentCaptor<Function<String, Integer>> captorD =
+        // ArgumentCaptor.forClass(Function.class);
+
+        // verify(foo).valueOf(eq("1"), captorA.capture());
+        verify(foo, times(3)).valueOf(eq("1"), captorA.capture());
+        // verify(foo).appendInt(1 + apple + 11);
+        verify(foo, times(3)).appendInt(1 + apple + 11);
+        verify(foo).valueOf(eq("2"), captorB.capture());
+        verify(foo).appendInt(1 + grape + 21);
+        // verify(foo, times(2)).valueOf("1", Integer::valueOf);
+        // verify(foo).appendInt(1 + orange + 11);
+        // verify(foo).appendInt(1 + kiwi + 11);
+    }
+
+    @Test
+    public void testRightExpIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.rightExpIsFieldAccess(foo, box);
+
+        verify(foo, times(3)).appendInt(1 - (box).id);
+        verify(foo).appendInt(2 - (box).id);
+    }
+
+    @Test
+    public void testLeftExpIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.leftExpIsFieldAccess(foo, box);
+
+        verify(foo, times(3)).appendInt((box).id - 1);
+        verify(foo).appendInt((box).id - 2);
+    }
+
+    @Test
+    public void testExtendedExpHasFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.extendedExpHasFieldAccess(foo, box);
+
+        verify(foo, times(3)).appendInt(1 - 1 - (box).id);
+        verify(foo).appendInt(2 - (1 - (box).id));
+        // verify(foo, times(2)).appendInt(1 - (1 - (box).id));
+    }
+
+    @Test
+    public void testRightExpIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = -10;
+        infix.rightExpIsInfix(foo);
+
+        verify(foo).appendInt(1 - a + 1);
+        verify(foo).appendInt(1 - a + 2);
+        verify(foo, times(2)).appendInt(1 - (a + 1));
+    }
+
+    @Test
+    public void testLeftExpIsInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = -10;
+        infix.leftExpIsInfix(foo);
+
+        // verify(foo).appendInt(a + 1 - 1);
+        verify(foo, times(3)).appendInt(a + 1 - 1);
+        verify(foo).appendInt(a + 1 - 2);
+        // verify(foo, times(2)).appendInt((a + 1) - 1);
+    }
+
+    @Test
+    public void testExtendedExpHasInfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = -10;
+        infix.extendedExpHasInfix(foo);
+
+        verify(foo, times(3)).appendInt(1 - 1 - a + 1);
+        verify(foo).appendInt(1 - 1 - a + 2);
+    }
+
+    @Test
+    public void testRightExpIsInstanceof() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = foo;
+        infix.rightExpIsInstanceof(foo);
+
+        verify(foo, times(3)).appendBoolean(true == obj instanceof String);
+        verify(foo).appendBoolean(true != obj instanceof String);
+    }
+
+    @Test
+    public void testLeftExpIsInstanceof() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = foo;
+        infix.leftExpIsInstanceof(foo);
+
+        verify(foo, times(3)).appendBoolean(obj instanceof String == true);
+        verify(foo).appendBoolean(obj instanceof String != true);
+    }
+
+    @Test
+    public void testExtendedExpHasInstanceof() {
+        Foo foo = Mockito.mock(Foo.class);
+        Object obj = foo;
+        infix.extendedExpHasInstanceof(foo);
+
+        verify(foo, times(3))
+                .appendBoolean(true == (true == obj instanceof String));
+        verify(foo).appendBoolean(true == (true != obj instanceof String));
+    }
+
+    @Test
+    public void testRightExpIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        int apple = 1;
+        int grape = 1;
+        int orange = 1;
+        int kiwi = 1;
+        int mango = 1;
+
+        when(box.getId()).thenReturn(apple).thenReturn(grape).thenReturn(orange)
+                .thenReturn(kiwi).thenReturn(mango);
+        infix.rightExpIsMi(foo, box);
+
+        // verify(foo).appendInt(1 + apple);
+        verify(foo, times(4)).appendInt(2);
+        verify(foo).appendInt(2 + grape);
+        // verify(foo).appendInt(1 + orange);
+        // verify(foo).appendInt(1 + kiwi);
+        // verify(foo).appendInt(1 + mango);
+    }
+
+    @Test
+    public void testLeftExpIsMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        int apple = 1;
+        int grape = 1;
+        int orange = 1;
+        int kiwi = 1;
+        int mango = 1;
+
+        when(box.getId()).thenReturn(apple).thenReturn(grape).thenReturn(orange)
+                .thenReturn(kiwi).thenReturn(mango);
+        infix.leftExpIsMi(foo, box);
+
+        // verify(foo).appendInt(apple + 1);
+        verify(foo, times(4)).appendInt(2);
+        verify(foo).appendInt(grape + 2);
+        // verify(foo).appendInt(orange + 1);
+        // verify(foo).appendInt(kiwi + 1);
+        // verify(foo).appendInt(mango + 1);
+    }
+
+    @Test
+    public void testExdendedExpHasMi() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        int apple = 1;
+        int grape = 1;
+        int orange = 1;
+        int kiwi = 1;
+        int mango = 1;
+
+        when(box.getId()).thenReturn(apple).thenReturn(grape).thenReturn(orange)
+                .thenReturn(kiwi).thenReturn(mango);
+        infix.exdendedExpHasMi(foo, box);
+
+        verify(foo, times(4)).appendInt(3);
+        verify(foo).appendInt(4);
+        // verify(foo).appendInt(1 + orange + 1);
+        // verify(foo).appendInt(1 + kiwi + 1);
+        // verify(foo).appendInt(1 + mango + 1);
+    }
+
+    @Test
+    public void testRightExpIsNull() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.rightExpIsNull(foo, box);
+
+        verify(foo, times(3)).appendBoolean(box == null);
+        verify(foo).appendBoolean(box != null);
+    }
+
+    @Test
+    public void testLeftExpIsNull() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.leftExpIsNull(foo, box);
+
+        verify(foo, times(3)).appendBoolean(null == box);
+        verify(foo).appendBoolean(null != box);
+    }
+
+    @Test
+    public void testExtendedExpHasNull() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.extendedExpHasNull(foo, box);
+
+        verify(foo, times(3)).appendBoolean(true == (null == box));
+        verify(foo).appendBoolean(true == (null != box));
+    }
+
+    @Test
+    public void testRightExpIsPostfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.rightExpIsPostfix(foo);
+
+        // verify(foo, times(3)).appendInt(1 + a++);
+        verify(foo).appendInt(1 + a++);
+        verify(foo).appendInt(1 + a++);
+        verify(foo).appendInt(1 + a++);
+        verify(foo).appendInt(1 + b++);
+    }
+
+    @Test
+    public void testLeftExpIsPostfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.leftExpIsPostfix(foo);
+
+        // verify(foo, times(3)).appendInt(a++ + 1);
+        verify(foo).appendInt(a++ + 1);
+        verify(foo).appendInt(a++ + 1);
+        verify(foo).appendInt(a++ + 1);
+        verify(foo).appendInt(b++ + 1);
+    }
+
+    @Test
+    public void testExtendedExpHasPostfix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.extendedExpHasPostfix(foo);
+
+        verify(foo).appendInt(1 + 1 + a++);
+        verify(foo).appendInt(1 + 1 + b++);
+        // verify(foo, times(3)).appendInt(1 + (1 + a++));
+        verify(foo).appendInt(1 + (1 + a++));
+        verify(foo).appendInt(1 + (1 + a++));
+        verify(foo).appendInt(1 + (1 + a++));
+    }
+
+    @Test
+    public void testRightExpIsPrefix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.rightExpIsPrefix(foo);
+
+        // verify(foo, times(3)).appendInt(1 + --a);
+        verify(foo).appendInt(1 + --a);
+        verify(foo).appendInt(1 + --a);
+        verify(foo).appendInt(1 + --a);
+        verify(foo).appendInt(1 + --b);
+    }
+
+    @Test
+    public void testLeftExpIsPrefix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.leftExpIsPrefix(foo);
+
+        // verify(foo, times(3)).appendInt(--a + 1);
+        verify(foo).appendInt(--a + 1);
+        verify(foo).appendInt(--a + 1);
+        verify(foo).appendInt(--a + 1);
+        verify(foo).appendInt(--b + 1);
+    }
+
+    @Test
+    public void testExtendedExpHasPrefix() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.extendedExpHasPrefix(foo);
+
+        verify(foo).appendInt(1 + 1 + --a);
+        verify(foo).appendInt(1 + 1 + --b);
+        // verify(foo, times(3)).appendInt(1 + (1 + --a));
+        verify(foo).appendInt(1 + (1 + --a));
+        verify(foo).appendInt(1 + (1 + --a));
+        verify(foo).appendInt(1 + (1 + --a));
+    }
+
+    @Test
+    public void testRightExpIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.rightExpIsQName(foo, box);
+
+        verify(foo, times(3)).appendInt(1 - box.id);
+        verify(foo).appendInt(2 - box.id);
+    }
+
+    @Test
+    public void testLeftExpIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.leftExpIsQName(foo, box);
+
+        verify(foo, times(3)).appendInt(box.id - 1);
+        verify(foo).appendInt(box.id - 2);
+    }
+
+    @Test
+    public void testExtendedExpHasQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        infix.extendedExpHasQName(foo, box);
+
+        verify(foo, times(3)).appendInt(1 - 1 - box.id);
+        verify(foo).appendInt(2 - (1 - box.id));
+        // verify(foo, times(2)).appendInt(1 - (1 - box.id));
+    }
+
+    @Test
+    public void testRightExpIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.rightExpIsSimpleName(foo);
+
+        verify(foo, times(3)).appendInt(1 + a);
+        verify(foo).appendInt(1 + b);
+    }
+
+    @Test
+    public void testLeftExpIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.leftExpIsSimpleName(foo);
+
+        verify(foo, times(3)).appendInt(a + 1);
+        verify(foo).appendInt(b + 1);
+    }
+
+    @Test
+    public void testExtendedExpHasSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 10;
+        int b = -10;
+        infix.extendedExpHasSimpleName(foo);
+
+        verify(foo, times(4)).appendInt(1 + 1 + a);
+        verify(foo).appendInt(1 + 1 + b);
+        // verify(foo, times(3)).appendInt(1 + (1 + a));
+    }
+
+    @Test
+    public void testRightExpIsString() {
+        Foo foo = Mockito.mock(Foo.class);
+        String a = "foo";
+        String b = "bar";
+        infix.rightExpIsString(foo);
+
+        verify(foo, times(3)).appendString(a + "foo");
+        verify(foo).appendString(b + "foo");
+    }
+
+    @Test
+    public void testLeftExpIsString() {
+        Foo foo = Mockito.mock(Foo.class);
+        String a = "foo";
+        String b = "bar";
+        infix.leftExpIsString(foo);
+
+        verify(foo, times(3)).appendString("foo" + a);
+        verify(foo).appendString("foo" + b);
+    }
+
+    @Test
+    public void testExtendedExpHasString() {
+        Foo foo = Mockito.mock(Foo.class);
+        String a = "foo";
+        String b = "bar";
+        infix.extendedExpHasString(foo);
+
+        // verify(foo).appendString("baz" + "foo" + a);
+        verify(foo, times(4)).appendString("baz" + "foo" + a);
+        verify(foo).appendString("baz" + "foo" + b);
+        // verify(foo, times(3)).appendString("baz" + ("foo" + a));
+    }
+
+    @Test
+    public void testRightExpIsThis() {
+        Foo foo = Mockito.mock(Foo.class);
+        // String name = "baz";
+        infix.rightExpIsThis(foo);
+
+        verify(foo, times(3)).appendString("foo" + infix.name);
+        verify(foo).appendString("bar" + infix.name);
+    }
+
+    @Test
+    public void testLeftExpIsThis() {
+        Foo foo = Mockito.mock(Foo.class);
+        // String name = "baz";
+        infix.leftExpIsThis(foo);
+
+        verify(foo, times(3)).appendString(infix.name + "foo");
+        verify(foo).appendString(infix.name + "bar");
+    }
+
+    @Test
+    public void testExtendedExpHasThis() {
+        Foo foo = Mockito.mock(Foo.class);
+        // String name = "baz";
+        infix.extendedExpHasThis(foo);
+
+        verify(foo, times(3)).appendString(true + ("foo" + infix.name));
+        verify(foo).appendString(true + ("bar" + infix.name));
+    }
+
+    @Test
+    public void testRightExpIsClz() {
+        Foo foo = Mockito.mock(Foo.class);
+        Class<?> clz = String.class;
+        infix.rightExpIsClz(foo);
+
+        verify(foo, times(3)).appendBoolean(clz == Integer.class);
+        verify(foo).appendBoolean(clz != Integer.class);
+    }
+
+    @Test
+    public void testLeftExpIsClz() {
+        Foo foo = Mockito.mock(Foo.class);
+        Class<?> clz = String.class;
+        infix.leftExpIsClz(foo);
+
+        verify(foo, times(3)).appendBoolean(Integer.class == clz);
+        verify(foo).appendBoolean(Integer.class != clz);
+    }
+
+    @Test
+    public void testExtendedExpHasClz() {
+        Foo foo = Mockito.mock(Foo.class);
+        Class<?> clz = String.class;
+        infix.extendedExpHasClz(foo);
+
+        verify(foo, times(3)).appendBoolean(true == (Integer.class == clz));
+        verify(foo).appendBoolean(true == (Integer.class != clz));
+    }
+}

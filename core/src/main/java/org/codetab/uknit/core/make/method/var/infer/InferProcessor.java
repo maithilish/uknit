@@ -23,7 +23,9 @@ public class InferProcessor {
         List<Pack> miPacks =
                 packs.filterPacks(heap.getPacks(), MethodInvocation.class,
                         SuperMethodInvocation.class, ArrayAccess.class);
-        miPacks.forEach(pack -> inferCreator.createInfer(pack, heap));
+        for (Pack pack : miPacks) {
+            inferCreator.createInfer(pack, heap);
+        }
     }
 
     public void createInferForReturn(final Heap heap) {

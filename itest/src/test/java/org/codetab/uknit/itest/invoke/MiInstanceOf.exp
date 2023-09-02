@@ -1,0 +1,27 @@
+package org.codetab.uknit.itest.invoke;
+
+import com.google.common.base.Preconditions.checkState;
+import org.codetab.uknit.itest.invoke.Model.Pet;
+import org.codetab.uknit.itest.invoke.Model.Pets;
+import org.codetab.uknit.itest.invoke.ModelOld.Names;
+class MiInstanceOfTest {
+    @InjectMocks
+    private MiInstanceOf miInstanceOf;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testProcess() {
+        Pets pets = Mockito.mock(Pets.class);
+        Names names = Mockito.mock(Names.class);
+        Pet pet = Mockito.mock(Pet.class);
+
+        when(pets.getPet("foo")).thenReturn(pet);
+        miInstanceOf.process(pets, names);
+
+        fail("unable to assert, STEPIN");
+    }
+}

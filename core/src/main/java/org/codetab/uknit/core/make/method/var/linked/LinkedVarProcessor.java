@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.exception.CodeException;
+import org.codetab.uknit.core.make.exp.ExpManager;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.method.patch.Patcher;
@@ -52,6 +54,8 @@ public class LinkedVarProcessor {
     private ServiceLoader serviceLoader;
     @Inject
     private Patcher patcher;
+    @Inject
+    private ExpManager expManager;
 
     /**
      * Marks var as created if exp is created.
@@ -61,8 +65,29 @@ public class LinkedVarProcessor {
      */
     public void markCreation(final Pack pack, final Heap heap) {
         Expression exp = pack.getExp();
+        boolean processed = false;
+        try {
+            /*
+             * File a = flag ? f1 : f2; If f1/f2 is created then a is also
+             * created otherwise not.
+             */
+            Expression value = expManager.getValue(exp, exp, pack, false, heap);
+            Optional<Pack> valuePackO;
+            if (nodes.isName(value)) {
+                valuePackO = packs.findByVarName(nodes.getName(value),
+                        heap.getPacks());
+                IVar var = packs.getVar(valuePackO);
+                if (nonNull(var) && var.isCreated()) {
+                    pack.getVar().setCreated(true);
+                }
+                processed = true;
+            }
+        } catch (CodeException e) {
+            // ignore
+        }
 
-        if (expressions.isCreation(exp)) {
+        // if not processed then mark it based on exp type
+        if (!processed && expressions.isCreation(exp)) {
             pack.getVar().setCreated(true);
         }
     }

@@ -14,6 +14,12 @@ class TryCatch {
     private DataDao dataDao;
     private Document document;
 
+    /*
+     * STEPIN - document.getLocatorId() is called once in try block and in the
+     * test for that path change verify from never() to times(1). In Exception
+     * path test throw IllegalStateException.
+     *
+     */
     public void callSameMethodInTryAndCatch() {
         try {
             dataDao.get(document.getLocatorId());

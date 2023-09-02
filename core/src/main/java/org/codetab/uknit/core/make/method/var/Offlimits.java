@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.uknit.core.make.exp.Arrays;
+import org.codetab.uknit.core.make.exp.ExpManager;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.load.Loader;
 import org.codetab.uknit.core.make.model.Heap;
@@ -20,6 +21,7 @@ import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Variables;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
 
@@ -42,6 +44,8 @@ public class Offlimits {
     private Variables variables;
     @Inject
     private Arrays arrays;
+    @Inject
+    private ExpManager expManager;
 
     /**
      * Test class don't have access to instances produced and consumed inside a
@@ -151,6 +155,26 @@ public class Offlimits {
             }
             if (arrayPackO.isPresent() && nonNull(arrayPackO.get().getVar())
                     && !arrayPackO.get().getVar().is(Nature.OFFLIMIT)) {
+                offlimit = false;
+            }
+        }
+
+        /*
+         * File a = flag ? f1 : f2; If f1 or f2 is off limit then then a is also
+         * same otherwise not
+         */
+        if (offlimit && nodes.is(cleanedExp, ConditionalExpression.class)) {
+            Expression value = expManager.getValue(cleanedExp, cleanedExp, pack,
+                    false, heap);
+            Optional<Pack> valuePackO;
+            if (nodes.isName(value)) {
+                valuePackO = packs.findByVarName(nodes.getName(value),
+                        heap.getPacks());
+            } else {
+                valuePackO = packs.findByExp(value, heap.getPacks());
+            }
+            if (valuePackO.isPresent() && nonNull(valuePackO.get().getVar())
+                    && !valuePackO.get().getVar().is(Nature.OFFLIMIT)) {
                 offlimit = false;
             }
         }

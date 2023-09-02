@@ -1,6 +1,8 @@
 package org.codetab.uknit.itest.misc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,11 +25,17 @@ class LostTrackATest {
     @Test
     public void testGetPropertyTry() {
         String key = "Foo";
+        Synchronizer sync = synchronizer;
+        Synchronizer synchronizer3 = sync != null ? sync : sync;
+        Synchronizer synchronizer4 = sync != null ? sync : sync;
         Object apple = "foo";
 
         Object actual = lostTrackA.getProperty(key);
 
         assertEquals(apple, actual);
+
+        verify(synchronizer3).beginRead();
+        verify(synchronizer4).endRead();
     }
 
     @Test
@@ -37,21 +45,25 @@ class LostTrackATest {
 
         Synchronizer actual = lostTrackA.getSynchronizer();
 
-        assertEquals(synchronizer2, actual);
+        assertSame(synchronizer2, actual);
     }
 
     @Test
     public void testBeginRead() {
         boolean optimize = true;
+        Synchronizer sync = synchronizer;
+        Synchronizer synchronizer3 = sync != null ? sync : sync;
         lostTrackA.beginRead(optimize);
 
-        // fail("unable to assert, STEPIN");
+        verify(synchronizer3).beginRead();
     }
 
     @Test
     public void testEndRead() {
+        Synchronizer sync = synchronizer;
+        Synchronizer synchronizer3 = sync != null ? sync : sync;
         lostTrackA.endRead();
 
-        // fail("unable to assert, STEPIN");
+        verify(synchronizer3).endRead();
     }
 }

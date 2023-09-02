@@ -2,6 +2,10 @@ package org.codetab.uknit.itest.variable;
 
 class Model {
 
+    interface Foo {
+        void appendString(String str);
+    }
+
     static class StepInfo {
         private String name;
 

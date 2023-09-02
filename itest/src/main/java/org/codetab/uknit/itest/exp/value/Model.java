@@ -43,7 +43,7 @@ class Model {
             return name;
         }
 
-        int valueOf(String value, Function<String, Integer> func);
+        Integer valueOf(String value, Function<String, Integer> func);
 
         static Object valueOf(final Object name) {
             return name;
@@ -61,13 +61,17 @@ class Model {
 
         Box getBox();
 
+        Object getObj();
+
     }
 
     static class Box {
         int id;
+        int id2;
         long lid;
         double did;
         float fid;
+        Number iid;
 
         String name;
         Foo foo;
@@ -143,6 +147,10 @@ class Model {
 
         public int getId() {
             return id;
+        }
+
+        public Number getFid() {
+            return fid;
         }
 
         public void append(final String string) {

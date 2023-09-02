@@ -259,10 +259,10 @@ class InfixTest {
     @Test
     public void testRightExpIsMethodRef() {
         Foo foo = Mockito.mock(Foo.class);
-        int apple = 1;
-        int grape = 1;
-        int orange = 1;
-        int kiwi = 1;
+        Integer apple = Integer.valueOf(1);
+        Integer grape = Integer.valueOf(1);
+        Integer orange = Integer.valueOf(1);
+        Integer kiwi = Integer.valueOf(1);
 
         when(foo.valueOf(eq("1"), any(Function.class))).thenReturn(apple)
                 .thenReturn(orange).thenReturn(kiwi);
@@ -293,10 +293,10 @@ class InfixTest {
     @Test
     public void testLeftExpIsMethodRef() {
         Foo foo = Mockito.mock(Foo.class);
-        int apple = 1;
-        int grape = 1;
-        int orange = 1;
-        int kiwi = 1;
+        Integer apple = Integer.valueOf(1);
+        Integer grape = Integer.valueOf(1);
+        Integer orange = Integer.valueOf(1);
+        Integer kiwi = Integer.valueOf(1);
 
         when(foo.valueOf(eq("1"), any(Function.class))).thenReturn(apple)
                 .thenReturn(orange).thenReturn(kiwi);
@@ -327,10 +327,10 @@ class InfixTest {
     @Test
     public void testExtendedExpIsMethodRef() {
         Foo foo = Mockito.mock(Foo.class);
-        int apple = 1;
-        int grape = 1;
-        int orange = 1;
-        int kiwi = 1;
+        Integer apple = Integer.valueOf(1);
+        Integer grape = Integer.valueOf(1);
+        Integer orange = Integer.valueOf(1);
+        Integer kiwi = Integer.valueOf(1);
 
         when(foo.valueOf(eq("1"), any(Function.class))).thenReturn(apple)
                 .thenReturn(orange).thenReturn(kiwi);

@@ -16,7 +16,7 @@ The AST nodes, Expression is shortened as exp and Statment as stmt.
 
 ## Pack
 
-Everthing else in uknit revolves around Pack which maps an IVar to an Expression. The var and exp refers LHS and RHS of a statement. In some statements such as names[0] = "foo", the var is null and the LHS names[0] is held by the optional field leftExp. Invoke is subclass of Pack which packs MethodInvocation and SuperMethodInvocation nodes and additionally holds callVar, returnType, When and Verify. 
+Everything in uknit revolves around Pack which maps an IVar to an Expression. The var and exp refers LHS and RHS of a statement. In some statements such as names[0] = "foo", the var is null and the LHS names[0] is held by the optional field leftExp. Invoke is subclass of Pack which packs MethodInvocation and SuperMethodInvocation nodes and additionally holds callVar, returnType, When and Verify. 
 
 The visitor adds packs to the list held by the heap in the same order as the stmt and exp appear in the source. Order is also maintained during IM heap merge as patch logic depends on pack order. Use Heap.addPack() method to insert pack to the list as it add listener to the pack to listen for var changes in the pack so that Heap.getVars() can rebuild the var list on changes.
 
@@ -175,7 +175,7 @@ While applying var patch the value of the arg is not compared instead it is appl
         }
     }
 
-    class SubClass extends SuperClass {    
+    class SubClass extends SuperClass {
         public long getStaticMulti() {
            super.getPayload().getJobInfo().getId();
            return super.getPayload().getJobInfo().getId();
@@ -225,7 +225,7 @@ Test class don't have access to instances produced and consumed inside a method.
         int[] array = new int[2];
         int foo = array[0];
         return foo;
-    }        
+    }
         
 Here array is created and accessed within the method and test method can't access the array. The foo is returned by the method and is accessible. Whether var is accessible is set with Nature.ACCESSIBLE.
 
@@ -289,4 +289,12 @@ While un-parenthesize an exp retain it in case of
   - casted cast exp (Dog) ((Pet) p) - CastExpressionSrv
   - ConditionalExp (CE) in any part of CE - ConditionalExpressionSrv
 
-  
+## Evaluation of Expression
+
+uKnit can't evaluate expression and get its values. In many cases it passes the statements from source to test to overcome this.
+
+        boolean flg = false;
+        File a = flg ? f1 : f2;
+
+Ideally the above code should be tested as File a = f2; but uKnit passes the above code directly to test.
+

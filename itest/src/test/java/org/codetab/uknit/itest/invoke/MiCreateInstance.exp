@@ -1,0 +1,26 @@
+package org.codetab.uknit.itest.invoke;
+
+import org.codetab.uknit.itest.invoke.Model.Dog;
+import org.codetab.uknit.itest.invoke.Model.Pets;
+import org.codetab.uknit.itest.invoke.ModelOld.Names;
+class MiCreateInstanceTest {
+    @InjectMocks
+    private MiCreateInstance miCreateInstance;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testProcess() {
+        Pets pets = Mockito.mock(Pets.class);
+        Names names = Mockito.mock(Names.class);
+        String apple = "Foo";
+
+        when(names.getName()).thenReturn(apple);
+        miCreateInstance.process(pets, names);
+
+        verify(pets).add(new Dog(apple));
+    }
+}

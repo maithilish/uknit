@@ -1,0 +1,93 @@
+package org.codetab.uknit.itest.exp.value;
+
+import org.codetab.uknit.itest.exp.value.Model.Box;
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+class PrefixTest {
+    @InjectMocks
+    private Prefix prefix;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testExpIsArrayAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = 1;
+        int grape = 11;
+        int orange = 1;
+        int kiwi = 1;
+        prefix.expIsArrayAccess(foo);
+
+        verify(foo, times(3)).appendInt(++apple);
+        verify(foo).appendInt(++grape);
+    }
+
+    @Test
+    public void testExpIsArrayCreation() {
+        Foo foo = Mockito.mock(Foo.class);
+        int apple = new int[]{1, 11}[0];
+        int grape = new int[]{1, 11}[1];
+        int orange = new int[]{(1), (11)}[(0)];
+        int kiwi = new int[]{(1), (11)}[(0)];
+        prefix.expIsArrayCreation(foo);
+
+        verify(foo, times(3)).appendInt(++apple);
+        verify(foo).appendInt(++grape);
+    }
+
+    @Test
+    public void testExpIsCast() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 1;
+        int b = 11;
+        prefix.expIsCast(foo);
+
+        verify(foo, times(2)).appendString(String.valueOf((Integer) (++a)));
+        verify(foo).appendString(String.valueOf((Integer) (++b)));
+        verify(foo).appendString(String.valueOf(((Integer) (++a))));
+    }
+
+    @Test
+    public void testExpIsFieldAccess() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        prefix.expIsFieldAccess(foo, box);
+
+        verify(foo, times(3)).appendInt(++(box).id);
+        verify(foo).appendObj(++(box).fid);
+    }
+
+    @Test
+    public void testExpIsQName() {
+        Foo foo = Mockito.mock(Foo.class);
+        Box box = Mockito.mock(Box.class);
+        prefix.expIsQName(foo, box);
+
+        verify(foo, times(3)).appendInt(++box.id);
+        verify(foo).appendObj(++box.fid);
+    }
+
+    @Test
+    public void testExpIsSimpleName() {
+        Foo foo = Mockito.mock(Foo.class);
+        int a = 1;
+        int b = 11;
+        prefix.expIsSimpleName(foo);
+
+        verify(foo, times(3)).appendInt(++a);
+        verify(foo).appendObj(++b);
+    }
+
+    @Test
+    public void testExpIsThis() {
+        Foo foo = Mockito.mock(Foo.class);
+        int fa = 1;
+        int fb = 11;
+        prefix.expIsThis(foo);
+
+        verify(foo, times(3)).appendInt(++prefix.fa);
+        verify(foo).appendObj(++prefix.fb);
+    }
+}

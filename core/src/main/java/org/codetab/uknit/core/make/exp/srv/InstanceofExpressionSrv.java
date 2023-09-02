@@ -25,6 +25,8 @@ public class InstanceofExpressionSrv implements ExpService {
     private ExpServiceLoader serviceLoader;
     @Inject
     private Initializers initializers;
+    @Inject
+    private SafeExpSetter safeExpSetter;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -47,7 +49,8 @@ public class InstanceofExpressionSrv implements ExpService {
 
         Expression leftOp = wrappers.strip(copy.getLeftOperand());
         leftOp = serviceLoader.loadService(leftOp).unparenthesize(leftOp);
-        copy.setLeftOperand(factory.copyNode(leftOp));
+        safeExpSetter.setExp(copy, copy::getLeftOperand, copy::setLeftOperand,
+                leftOp);
 
         return copy;
     }

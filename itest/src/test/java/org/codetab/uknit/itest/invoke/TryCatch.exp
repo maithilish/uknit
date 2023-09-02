@@ -1,0 +1,42 @@
+package org.codetab.uknit.itest.invoke;
+class TryCatchTest {
+    @InjectMocks
+    private TryCatch tryCatch;
+
+    @Mock
+    private DataDao dataDao;
+    @Mock
+    private Document document;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testCallSameMethodInTryAndCatchTry() {
+        long apple = 1L;
+        Object grape = Mockito.mock(Object.class);
+        long orange = 1L;
+
+        when(document.getLocatorId()).thenReturn(apple);
+        when(dataDao.get(apple)).thenReturn(grape);
+        tryCatch.callSameMethodInTryAndCatch();
+
+        verify(document, never()).getLocatorId();
+        verify(dataDao, never()).delete(orange);
+    }
+
+    @Test
+    public void testCallSameMethodInTryAndCatchTryCatchIllegalStateException() {
+        long apple = 1L;
+        Object grape = Mockito.mock(Object.class);
+        long orange = 1L;
+
+        when(document.getLocatorId()).thenReturn(apple).thenReturn(orange);
+        when(dataDao.get(apple)).thenReturn(grape);
+        tryCatch.callSameMethodInTryAndCatch();
+
+        verify(dataDao).delete(orange);
+    }
+}

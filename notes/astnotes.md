@@ -24,19 +24,19 @@ Annotation, Assignment, CastExpression, ClassInstanceCreation, ConditionalExpres
 
 ## Expression Type Hierarchy
 
-Sub classes of Expression in JDT version 3.28.0.
+Sub classes of Expression in JDT version 3.28.0. The items marked with -- are not used by uKnit till now.
 
         Expression
-            Annotation
-                MarkerAnnotation
-                NormalAnnotation
-                SingleMemberAnnotation
+            Annotation 
+                MarkerAnnotation    --
+                NormalAnnotation    --
+                SingleMemberAnnotation    --
             ArrayAccess
             ArrayCreation
             ArrayInitializer
             Assignment
             BooleanLiteral
-            CaseDefaultExpression
+            CaseDefaultExpression    --
             CastExpression
             CharacterLiteral
             ClassInstanceCreation
@@ -47,33 +47,33 @@ Sub classes of Expression in JDT version 3.28.0.
             LambdaExpression
             MethodInvocation
             MethodReference
-                CreationReference
+                CreationReference    --
                 ExpressionMethodReference
-                SuperMethodReference
-                TypeMethodReference
+                SuperMethodReference    --
+                TypeMethodReference    --
             Name
-                ModuleQualifiedName
+                ModuleQualifiedName    --
                 QualifiedName
                 SimpleName
             NullLiteral
             NumberLiteral
             ParenthesizedExpression
             Pattern
-                GuardedPattern
-                NullPattern
-                TypePattern
-            PatternInstanceofExpression
+                GuardedPattern    --
+                NullPattern    --
+                TypePattern    --
+            PatternInstanceofExpression    --
             PostfixExpression
             PrefixExpression
             StringLiteral
-            SuperFieldAccess
+            SuperFieldAccess    --
             SuperMethodInvocation
-            SwitchExpression
-            TextBlock
+            SwitchExpression    --
+            TextBlock    --
             ThisExpression
             TypeLiteral
-            VariableDeclarationExpression
-        
+            VariableDeclarationExpression    --
+
 ## Primary Expression
 
         Primary:
@@ -106,6 +106,8 @@ ConditionalExpression
 ReturnStatement
 ThisExpression
 TypeLiteral (Type.class.cast())
+
+TODO - Cross check org.codetab.uknit.itest.exp.value.InstanceOf with list of expression and arrive final list.
 
 ## Expression No Returns Value nor Assignable to Var
 

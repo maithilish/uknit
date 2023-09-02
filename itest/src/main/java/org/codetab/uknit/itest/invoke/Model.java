@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 class Model {
 
@@ -37,8 +38,10 @@ class Model {
 
     static class Dog implements Pet {
 
-        public Dog(final String name) {
+        private String name;
 
+        public Dog(final String name) {
+            this.name = name;
         }
 
         public String breed() {
@@ -49,6 +52,27 @@ class Model {
         public String sex() {
             return null;
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            Dog other = (Dog) obj;
+            return Objects.equals(name, other.name);
+        }
+
     }
 
     class Pitbull extends Dog {

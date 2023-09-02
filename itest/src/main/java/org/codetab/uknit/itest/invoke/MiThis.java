@@ -11,13 +11,16 @@ package org.codetab.uknit.itest.invoke;
  */
 class MiThis {
 
-    private Helper helper;
+    // REVIEW - this has error
+
+    Helper helper;
 
     public Document thisArg() {
         return helper.getDocument(this, "foo");
     }
 
     public Document thisInvoke() {
+        // return this.helper.getDocument(this, "foo");
         return this.helper.getDocument(this, "foo");
     }
 

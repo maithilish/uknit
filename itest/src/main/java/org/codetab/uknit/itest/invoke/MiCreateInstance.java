@@ -6,8 +6,6 @@ import org.codetab.uknit.itest.invoke.ModelOld.Names;
 
 class MiCreateInstance {
 
-    // REVIEW - enable itest for left outs in this package
-
     // method invocation in instance creation
     public void process(final Pets pets, final Names names) {
         pets.add(new Dog(names.getName()));

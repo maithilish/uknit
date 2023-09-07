@@ -29,4 +29,9 @@ public class LoadProcessor {
         loader.processLoadableVars(vars, heap);
         loader.enableLoads(heap);
     }
+
+    public void processOfflimits(final Heap heap) {
+        Loader loader = heap.getLoader();
+        loader.processOfflimits(heap);
+    }
 }

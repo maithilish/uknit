@@ -150,6 +150,10 @@ public class Processor {
         loadProcessor.processLoadableVars(heap);
     }
 
+    public void processOfflimitLoads(final Heap heap) {
+        loadProcessor.processOfflimits(heap);
+    }
+
     public void processInitializer(final Heap heap) {
         List<Pack> packList =
                 packs.filterNoInitializers(heap.getPacks(), p -> true);

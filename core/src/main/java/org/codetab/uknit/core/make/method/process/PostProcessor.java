@@ -34,6 +34,7 @@ public class PostProcessor {
         processor.processLoads(heap);
 
         processor.processOfflimits(heap);
+        processor.processOfflimitLoads(heap);
 
         processor.processInitializer(heap);
 

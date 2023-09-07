@@ -281,4 +281,29 @@ public class Loader {
         }
         return used;
     }
+
+    /**
+     * Set args as off limit if consumer (collection) is off limit.In
+     * PostProcessor.prcoess() when loads are processed off limit info is
+     * available as off limit is processed after loads are processed. This
+     * method is called after processOfflimits() in process() to fix it.
+     *
+     * Ex: itest.load.SuperGet.getSuperCreatedList(). The list is off limit, so
+     * aFile is also off limit.
+     *
+     * TODO L - in the above case new File() is added to the list which makes
+     * aFile really off limit. However if list holds some object that is not off
+     * limit then aFile should not be off limit.
+     *
+     * @param heap
+     */
+    public void processOfflimits(final Heap heap) {
+        for (Load load : loads) {
+            if (load.getConsumer().getNatures().contains(Nature.OFFLIMIT)) {
+                for (IVar arg : load.getArgs()) {
+                    arg.addNature(Nature.OFFLIMIT);
+                }
+            }
+        }
+    }
 }

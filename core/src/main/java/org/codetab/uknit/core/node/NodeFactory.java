@@ -15,6 +15,7 @@ import org.codetab.uknit.core.make.model.IVar;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
@@ -97,6 +98,11 @@ public class NodeFactory {
 
     @SuppressWarnings("unchecked")
     public <T extends ASTNode> T copyNode(final T node) {
+        return (T) ASTNode.copySubtree(ast, node);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Expression> T copyExp(final T node) {
         return (T) ASTNode.copySubtree(ast, node);
     }
 

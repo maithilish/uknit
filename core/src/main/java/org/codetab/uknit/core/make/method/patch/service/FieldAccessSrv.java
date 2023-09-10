@@ -10,12 +10,10 @@ import javax.inject.Inject;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.make.model.Patch;
-import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.ThisExpression;
 
 /**
  * In JDT, (person).id is FieldAccess exp and person.id is QualifiedName exp.
@@ -29,8 +27,6 @@ public class FieldAccessSrv implements PatchService {
     private Patchers patchers;
     @Inject
     private Wrappers wrappers;
-    @Inject
-    private Nodes nodes;
 
     @Override
     public void patch(final Pack pack, final Expression node,
@@ -44,14 +40,8 @@ public class FieldAccessSrv implements PatchService {
 
         Expression exp = wrappers.unpack(fa.getExpression());
         Expression expCopy = wrappers.unpack(faCopy.getExpression());
-        if (nodes.is(exp, ThisExpression.class)) {
-            // this.id patched to alpha.id if cut is alpha
-            SimpleName cut = copy.getAST().newSimpleName(heap.getCutName());
-            faCopy.setExpression(cut);
-        } else {
-            patchers.patchExpWithName(pack, exp, expCopy, heap,
-                    faCopy::setExpression);
-        }
+        patchers.patchExpWithName(pack, exp, expCopy, heap,
+                faCopy::setExpression);
 
         Expression name = wrappers.unpack(fa.getName());
         Expression nameCopy = wrappers.unpack(faCopy.getName());

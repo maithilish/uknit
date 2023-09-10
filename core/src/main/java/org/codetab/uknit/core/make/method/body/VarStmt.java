@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.uknit.core.make.exp.ExpManager;
 import org.codetab.uknit.core.make.method.Vars;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.IVar;
 import org.codetab.uknit.core.make.model.IVar.Kind;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Types;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.Statement;
@@ -24,6 +26,8 @@ public class VarStmt {
     private Types types;
     @Inject
     private Vars vars;
+    @Inject
+    private ExpManager expManager;
 
     public List<Statement> createStmts(final Heap heap) {
         List<Statement> stmts = new ArrayList<>();
@@ -43,8 +47,12 @@ public class VarStmt {
             if (createStmt) {
                 String initializer = "\"not set\"";
                 if (var.getInitializer().isPresent()) {
-                    initializer = var.getInitializer().get().getInitializer()
-                            .toString();
+                    Object ini = var.getInitializer().get().getInitializer();
+                    if (ini instanceof Expression) {
+                        // replace any this with CUT name in the initializer exp
+                        ini = expManager.rejig((Expression) ini, heap);
+                    }
+                    initializer = ini.toString();
                 }
                 Type type = var.getType();
                 String typeLiteral;

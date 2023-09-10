@@ -20,7 +20,7 @@ public class TypeLiteralSrv implements ExpService {
     @Override
     public List<Expression> getExps(final Expression exp) {
         checkState(exp instanceof TypeLiteral);
-        return List.of(exp);
+        return List.of(); // has no exps
     }
 
     @Override
@@ -34,6 +34,12 @@ public class TypeLiteralSrv implements ExpService {
     @Override
     public Expression getValue(final Expression node, final Expression copy,
             final Pack pack, final boolean createValue, final Heap heap) {
+        checkState(node instanceof TypeLiteral);
+        return node;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
         checkState(node instanceof TypeLiteral);
         return node;
     }

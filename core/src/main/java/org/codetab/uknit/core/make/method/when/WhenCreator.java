@@ -98,7 +98,8 @@ public class WhenCreator {
          * verify with never().
          */
         if (invoke.isInCtlPath()) {
-            String methodSignature = patchedMi.toString();
+            String methodSignature =
+                    expManager.rejig(patchedMi, heap).toString();
 
             Optional<Invoke> similarInvokeO = similars
                     .searchInvokeWithSameInitializer(invoke, whenInvokes);

@@ -55,6 +55,6 @@ public class Verify {
 
     @Override
     public String toString() {
-        return "Verify [mi=" + mi + "]";
+        return "Verify [mi=" + mi + ", times=" + times + "]";
     }
 }

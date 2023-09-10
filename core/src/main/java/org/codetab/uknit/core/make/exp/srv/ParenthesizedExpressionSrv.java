@@ -31,6 +31,8 @@ public class ParenthesizedExpressionSrv implements ExpService {
     private Nodes nodes;
     @Inject
     private SafeExps safeExps;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -108,5 +110,19 @@ public class ParenthesizedExpressionSrv implements ExpService {
 
         ExpService srv = serviceLoader.loadService(exp);
         return srv.getValue(exp, expCopy, pack, createValue, heap);
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof ParenthesizedExpression);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            ParenthesizedExpression wc = (ParenthesizedExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getExpression, wc::setExpression, heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

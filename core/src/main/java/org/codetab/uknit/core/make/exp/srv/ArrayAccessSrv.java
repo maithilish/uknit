@@ -47,6 +47,8 @@ public class ArrayAccessSrv implements ExpService {
     private Packs packs;
     @Inject
     private NodeFactory factory;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -307,5 +309,21 @@ public class ArrayAccessSrv implements ExpService {
                     nodes.exMessage("array is null, not allowed to", node));
         }
         return ini;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof ArrayAccess);
+
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            ArrayAccess wc = (ArrayAccess) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getArray, wc::setArray, heap);
+            rejigs.rejigThisExp(wc::getIndex, wc::setIndex, heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

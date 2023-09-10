@@ -26,6 +26,8 @@ public class PostfixExpressionSrv implements ExpService {
     private ExpServiceLoader serviceLoader;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -58,5 +60,19 @@ public class PostfixExpressionSrv implements ExpService {
         checkState(node instanceof PostfixExpression);
         throw new CodeException(
                 nodes.exMessage("getValue() not implemented", node));
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof PostfixExpression);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            PostfixExpression wc = (PostfixExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getOperand, wc::setOperand, heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

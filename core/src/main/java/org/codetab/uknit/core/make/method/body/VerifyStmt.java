@@ -61,6 +61,8 @@ public class VerifyStmt {
 
             MethodInvocation mi = (MethodInvocation) expManager
                     .unparenthesize(verify.getMi());
+            mi = expManager.rejig(mi, heap);
+
             Statement stmt = nodeFactory.createVerifyStatement(mi,
                     verify.getTimes(), format);
             stmts.add(stmt);

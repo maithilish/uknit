@@ -34,6 +34,8 @@ public class ConditionalExpressionSrv implements ExpService {
     private ExpServiceLoader serviceLoader;
     @Inject
     private SafeExpSetter safeExpSetter;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -110,5 +112,23 @@ public class ConditionalExpressionSrv implements ExpService {
             value = thenExp;
         }
         return value;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof ConditionalExpression);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            ConditionalExpression wc = (ConditionalExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getExpression, wc::setExpression, heap);
+            rejigs.rejigThisExp(wc::getThenExpression, wc::setThenExpression,
+                    heap);
+            rejigs.rejigThisExp(wc::getElseExpression, wc::setElseExpression,
+                    heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

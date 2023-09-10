@@ -11,8 +11,6 @@ package org.codetab.uknit.itest.invoke;
  */
 class MiThis {
 
-    // REVIEW - this has error
-
     Helper helper;
 
     public Document thisArg() {
@@ -20,7 +18,6 @@ class MiThis {
     }
 
     public Document thisInvoke() {
-        // return this.helper.getDocument(this, "foo");
         return this.helper.getDocument(this, "foo");
     }
 

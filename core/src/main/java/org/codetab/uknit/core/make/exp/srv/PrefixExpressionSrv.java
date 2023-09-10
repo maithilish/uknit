@@ -26,6 +26,8 @@ public class PrefixExpressionSrv implements ExpService {
     private ExpServiceLoader serviceLoader;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -58,5 +60,19 @@ public class PrefixExpressionSrv implements ExpService {
         checkState(node instanceof PrefixExpression);
         throw new CodeException(
                 nodes.exMessage("getValue() not implemented", node));
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof PrefixExpression);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            PrefixExpression wc = (PrefixExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getOperand, wc::setOperand, heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

@@ -20,7 +20,7 @@ public class BooleanLiteralSrv implements ExpService {
     @Override
     public List<Expression> getExps(final Expression exp) {
         checkState(exp instanceof BooleanLiteral);
-        return List.of(exp);
+        return List.of(); // has no exps
     }
 
     @Override
@@ -36,4 +36,9 @@ public class BooleanLiteralSrv implements ExpService {
         return node;
     }
 
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof BooleanLiteral);
+        return node;
+    }
 }

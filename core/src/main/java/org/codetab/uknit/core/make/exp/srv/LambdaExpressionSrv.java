@@ -23,7 +23,7 @@ public class LambdaExpressionSrv implements ExpService {
     @Override
     public List<Expression> getExps(final Expression exp) {
         checkState(exp instanceof LambdaExpression);
-        return List.of(exp);
+        return List.of(); // has no exps
     }
 
     @Override
@@ -47,5 +47,11 @@ public class LambdaExpressionSrv implements ExpService {
             value = node;
         }
         return value;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof LambdaExpression);
+        return node;
     }
 }

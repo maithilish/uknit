@@ -24,10 +24,8 @@ import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.ThisExpression;
 
 public class Patchers {
 
@@ -286,36 +284,26 @@ public class Patchers {
          */
         SimpleName name = nodes.getSimpleName(exp);
         if (nonNull(name)) {
-            if (nodes.is(exp, FieldAccess.class)) {
-                FieldAccess fa = nodes.as(exp, FieldAccess.class);
-                if (nodes.is(fa.getExpression(), ThisExpression.class)) {
-                    SimpleName cut =
-                            copy.getAST().newSimpleName(heap.getCutName());
-                    fa.setExpression(cut);
-                }
-            } else {
-                Optional<Pack> packO = packs.findByVarName(nodes.getName(name),
-                        heap.getPacks());
-                if (packO.isPresent()) {
-                    /*
-                     * reverse traverse linked pack and get the first available
-                     * initializer.
-                     */
-                    Optional<Initializer> initializer =
-                            linkedPack.getLinkedInitializer(packO.get(), heap);
+            Optional<Pack> packO =
+                    packs.findByVarName(nodes.getName(name), heap.getPacks());
+            if (packO.isPresent()) {
+                /*
+                 * reverse traverse linked pack and get the first available
+                 * initializer.
+                 */
+                Optional<Initializer> initializer =
+                        linkedPack.getLinkedInitializer(packO.get(), heap);
 
-                    /*
-                     * if initializer is expression then patch the MI's exp and
-                     * args
-                     */
-                    if (initializer.isPresent() && initializer.get()
-                            .getInitializer() instanceof Expression) {
-                        Expression iniExp =
-                                (Expression) initializer.get().getInitializer();
-                        Expression iniExpCopy = (Expression) ASTNode
-                                .copySubtree(iniExp.getAST(), iniExp);
-                        value = iniExpCopy;
-                    }
+                /*
+                 * if initializer is expression then patch the MI's exp and args
+                 */
+                if (initializer.isPresent() && initializer.get()
+                        .getInitializer() instanceof Expression) {
+                    Expression iniExp =
+                            (Expression) initializer.get().getInitializer();
+                    Expression iniExpCopy = (Expression) ASTNode
+                            .copySubtree(iniExp.getAST(), iniExp);
+                    value = iniExpCopy;
                 }
             }
         } else if (nodes.isLiteral(exp)) {

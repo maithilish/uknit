@@ -30,6 +30,8 @@ public class InfixExpressionSrv implements ExpService {
     private ExpServiceLoader serviceLoader;
     @Inject
     private Initializers initializers;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -82,5 +84,21 @@ public class InfixExpressionSrv implements ExpService {
             value = node;
         }
         return value;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof InfixExpression);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            InfixExpression wc = (InfixExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getLeftOperand, wc::setLeftOperand, heap);
+            rejigs.rejigThisExp(wc::getRightOperand, wc::setRightOperand, heap);
+            rejigs.rejigThisExp(safeExps.getExtendedOperands(wc), heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

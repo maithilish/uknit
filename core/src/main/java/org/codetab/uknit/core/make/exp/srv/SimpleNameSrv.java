@@ -28,7 +28,7 @@ public class SimpleNameSrv implements ExpService {
     @Override
     public List<Expression> getExps(final Expression exp) {
         checkState(exp instanceof SimpleName);
-        return List.of(exp);
+        return List.of(); // has no exps
     }
 
     @Override
@@ -56,5 +56,11 @@ public class SimpleNameSrv implements ExpService {
         } else {
             return node;
         }
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof SimpleName);
+        return node;
     }
 }

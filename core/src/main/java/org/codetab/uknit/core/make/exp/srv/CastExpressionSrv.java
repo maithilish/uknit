@@ -24,6 +24,8 @@ public class CastExpressionSrv implements ExpService {
     private NodeFactory factory;
     @Inject
     private ExpServiceLoader serviceLoader;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -82,5 +84,20 @@ public class CastExpressionSrv implements ExpService {
 
         ExpService srv = serviceLoader.loadService(exp);
         return srv.getValue(exp, expCopy, pack, createValue, heap);
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof CastExpression);
+
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            CastExpression wc = (CastExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getExpression, wc::setExpression, heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

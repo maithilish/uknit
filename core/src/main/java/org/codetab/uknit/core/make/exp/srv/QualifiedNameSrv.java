@@ -69,4 +69,10 @@ public class QualifiedNameSrv implements ExpService {
                 createValue, heap);
         return value;
     }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof QualifiedName);
+        return node;
+    }
 }

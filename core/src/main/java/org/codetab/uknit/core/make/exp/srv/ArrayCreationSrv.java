@@ -14,6 +14,7 @@ import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeFactory;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Expression;
 
 public class ArrayCreationSrv implements ExpService {
@@ -26,6 +27,8 @@ public class ArrayCreationSrv implements ExpService {
     private NodeFactory factory;
     @Inject
     private ExpServiceLoader serviceLoader;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -76,5 +79,28 @@ public class ArrayCreationSrv implements ExpService {
         checkState(node instanceof ArrayCreation);
         ArrayCreation ac = (ArrayCreation) node;
         return ac.getInitializer();
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof ArrayCreation);
+
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+
+            // replace any ref to this to CUT name
+            ArrayCreation wc = (ArrayCreation) copy;
+            List<Expression> dims = safeExps.getDims(wc);
+            rejigs.rejigThisExp(dims, heap);
+
+            ArrayInitializer ini = wc.getInitializer();
+            if (nonNull(ini)) {
+                List<Expression> iniExps = safeExps.expressions(ini);
+                rejigs.rejigThisExp(iniExps, heap);
+            }
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

@@ -27,6 +27,8 @@ public class InstanceofExpressionSrv implements ExpService {
     private Initializers initializers;
     @Inject
     private SafeExpSetter safeExpSetter;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -65,5 +67,19 @@ public class InstanceofExpressionSrv implements ExpService {
             value = node;
         }
         return value;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof InstanceofExpression);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            InstanceofExpression wc = (InstanceofExpression) copy;
+            // replace any ref to this to CUT name
+            rejigs.rejigThisExp(wc::getLeftOperand, wc::setLeftOperand, heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

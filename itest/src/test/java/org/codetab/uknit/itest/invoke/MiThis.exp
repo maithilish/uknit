@@ -15,7 +15,7 @@ class MiThisTest {
     public void testThisArg() {
         Document document = Mockito.mock(Document.class);
 
-        when(helper.getDocument(this, "foo")).thenReturn(document);
+        when(helper.getDocument(miThis, "foo")).thenReturn(document);
 
         Document actual = miThis.thisArg();
 
@@ -26,7 +26,7 @@ class MiThisTest {
     public void testThisInvoke() {
         Document document = Mockito.mock(Document.class);
 
-        when(miThis.helper.getDocument(this, "foo")).thenReturn(document);
+        when(miThis.helper.getDocument(miThis, "foo")).thenReturn(document);
 
         Document actual = miThis.thisInvoke();
 

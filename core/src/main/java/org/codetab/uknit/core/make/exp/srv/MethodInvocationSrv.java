@@ -37,6 +37,8 @@ public class MethodInvocationSrv implements ExpService {
     private ExpServiceLoader serviceLoader;
     @Inject
     private Initializers initializers;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -100,5 +102,23 @@ public class MethodInvocationSrv implements ExpService {
             }
         }
         return value;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof MethodInvocation);
+
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            MethodInvocation wc = (MethodInvocation) copy;
+            // replace any ref to this to CUT name
+            if (nonNull(wc.getExpression())) {
+                rejigs.rejigThisExp(wc::getExpression, wc::setExpression, heap);
+            }
+            rejigs.rejigThisExp(safeExps.getArgs(wc), heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

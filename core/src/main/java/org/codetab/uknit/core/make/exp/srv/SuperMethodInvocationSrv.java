@@ -67,4 +67,10 @@ public class SuperMethodInvocationSrv implements ExpService {
         throw new CodeException(
                 nodes.exMessage("getValue() not implemented", node));
     }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof SuperMethodInvocation);
+        return node;
+    }
 }

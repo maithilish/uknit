@@ -36,6 +36,8 @@ public class FieldAccessSrv implements ExpService {
     private Initializers initializers;
     @Inject
     private Nodes nodes;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -54,24 +56,36 @@ public class FieldAccessSrv implements ExpService {
     @Override
     public Expression unparenthesize(final Expression node) {
         checkState(node instanceof FieldAccess);
-        FieldAccess copy = (FieldAccess) factory.copyNode(node);
+        FieldAccess copy = factory.copyExp((FieldAccess) node);
 
         Expression exp = wrappers.strip(copy.getExpression());
         exp = serviceLoader.loadService(exp).unparenthesize(exp);
-        /*
-         * the exp is fully striped, to retain the inner parenthesise set the
-         * exp to parenthesise of field access. Ex: ((box)).name becomes
-         * (box).name.
-         */
+
+        // The exp is fully striped, set it directly or to inner parenthesize
         if (copy.getExpression() instanceof ParenthesizedExpression) {
-            ParenthesizedExpression pExp =
-                    (ParenthesizedExpression) copy.getExpression();
-            pExp.setExpression(factory.copyNode(exp));
+            if (exp instanceof ThisExpression) {
+                /*
+                 * No parenthesize for ThisExpression in FieldAccess. Ex:
+                 * (this).foo; even though it is FieldAccess there is no need of
+                 * parenthesize, so directly set the this.
+                 */
+                copy.setExpression(factory.copyExp(exp));
+            } else {
+                /*
+                 * if not this exp then retain the inner parenthesise set the
+                 * exp to parenthesise of field access. Ex: ((box)).name becomes
+                 * (box).name.
+                 */
+                ParenthesizedExpression pExp =
+                        (ParenthesizedExpression) copy.getExpression();
+                pExp.setExpression(factory.copyExp(exp));
+            }
         } else {
-            copy.setExpression(factory.copyNode(exp));
+            // for non-parenthesized set directly
+            copy.setExpression(factory.copyExp(exp));
         }
 
-        // parenthesise is not allowed for name
+        // parenthesize is not allowed for name
 
         return copy;
     }
@@ -89,5 +103,30 @@ public class FieldAccessSrv implements ExpService {
             value = srv.getValue(name, name, pack, createValue, heap);
         }
         return value;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof FieldAccess);
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            FieldAccess wc = (FieldAccess) copy;
+            /*
+             * FA may be with or without parenthesize, retain parenthesize if
+             * there is one.
+             */
+            if (wc.getExpression() instanceof ParenthesizedExpression) {
+                ParenthesizedExpression pExp =
+                        (ParenthesizedExpression) wc.getExpression();
+                rejigs.rejigThisExp(pExp::getExpression, pExp::setExpression,
+                        heap);
+            } else {
+                // replace any ref to this to CUT name
+                rejigs.rejigThisExp(wc::getExpression, wc::setExpression, heap);
+            }
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

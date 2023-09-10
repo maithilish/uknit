@@ -60,4 +60,6 @@ public interface ExpService {
      */
     Expression getValue(Expression node, Expression copy, Pack pack,
             boolean createValue, Heap heap);
+
+    <T extends Expression> T rejig(T node, Heap heap);
 }

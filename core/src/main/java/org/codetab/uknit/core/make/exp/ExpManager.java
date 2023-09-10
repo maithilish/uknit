@@ -30,4 +30,10 @@ public class ExpManager {
         ExpService expService = serviceLoader.loadService(exp);
         return expService.getExps(exp);
     }
+
+    public <T extends Expression> T rejig(final T exp, final Heap heap) {
+        ExpService expService = serviceLoader.loadService(exp);
+        return expService.rejig(exp, heap);
+    }
+
 }

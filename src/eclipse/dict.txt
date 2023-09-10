@@ -284,3 +284,4 @@ objs
 hashcode
 parenthesize
 unparenthesized
+regig

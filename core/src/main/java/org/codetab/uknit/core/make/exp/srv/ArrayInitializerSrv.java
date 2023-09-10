@@ -25,6 +25,8 @@ public class ArrayInitializerSrv implements ExpService {
     private NodeFactory factory;
     @Inject
     private ExpServiceLoader serviceLoader;
+    @Inject
+    private Rejigs rejigs;
 
     @Override
     public List<Expression> getExps(final Expression node) {
@@ -60,5 +62,20 @@ public class ArrayInitializerSrv implements ExpService {
             final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof ArrayInitializer);
         return node;
+    }
+
+    @Override
+    public <T extends Expression> T rejig(final T node, final Heap heap) {
+        checkState(node instanceof ArrayInitializer);
+
+        if (rejigs.needsRejig(node)) {
+            T copy = factory.copyExp(node);
+            // replace any ref to this to CUT name
+            ArrayInitializer wc = (ArrayInitializer) copy;
+            rejigs.rejigThisExp(safeExps.getExps(wc), heap);
+            return copy;
+        } else {
+            return node;
+        }
     }
 }

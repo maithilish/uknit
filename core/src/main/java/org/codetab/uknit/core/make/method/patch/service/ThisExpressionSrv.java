@@ -13,7 +13,6 @@ import org.codetab.uknit.core.make.model.Patch;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.ThisExpression;
 
 public class ThisExpressionSrv implements PatchService {
@@ -75,11 +74,5 @@ public class ThisExpressionSrv implements PatchService {
             final Heap heap) {
         checkState(node instanceof ThisExpression);
         checkState(copy instanceof ThisExpression);
-
-        ThisExpression teCopy = (ThisExpression) copy;
-
-        // replace qualifier this with CUT name
-        SimpleName name = copy.getAST().newSimpleName(heap.getCutName());
-        teCopy.setQualifier(name);
     }
 }

@@ -116,10 +116,21 @@ The conditional exp in arg appears in test instead of value.
 	int code = 2;
 	foo.appendObj(flag ? code > 1 : code > 2);
 
-uKnit doesn't evaluate value of the exps. For the source code `flag ? code > 1 : code > 2`,	the verify is `verify(foo, times(2)).appendObj(flag ? code > 1 : code > 2);` instead of `verify(foo, times(2)).appendObj(true);`
+uKnit can't evaluate the value of the exps. For the source code `flag ? code > 1 : code > 2`,	the verify is `verify(foo, times(2)).appendObj(flag ? code > 1 : code > 2);` instead of `verify(foo, times(2)).appendObj(true);`
 
+Consider the code
 
+        foo.appendString(str);
+        foo.appendString(String.valueOf(str));
+        
+it results in two verifies even though both evaluates to same value.
 
+        verify(foo).appendString(str);
+        verify(foo).appendString(String.valueOf(str));
+
+The verifies should be modified
+
+        verify(foo, times(2)).appendString(str);
  
 		 
 	

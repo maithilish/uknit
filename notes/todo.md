@@ -97,14 +97,14 @@ Ignore statements after continue and break.
           }
         }
 
-## Cast 
+## Cast
 
 Return cast test is not proper. See: jtest.cast.CastInReturn.java
 
 ## Literal
 
 String eq = "=".repeat(10);
-        
+
 
 ## Reorganise the old entries
 
@@ -112,7 +112,7 @@ Clean and reorganise the below old entries:
 
 ## Inner classes and interfaces
 
-Test classes or interfaces nested in another class. 
+Test classes or interfaces nested in another class.
 For Inner classes and nested static classes see https://www.programiz.com/java-programming/nested-inner-class
 
 ## Lambda Functions
@@ -145,49 +145,47 @@ Test lambda functions. see org.codetab.scoopi.step.webdriver.DriverFactory.
         int foo = array[0];
         return foo;
     }
-    
-    
+
+
 Write Test for - list.stream().toArray(String[]::new)
-    
-## var args ...    
-        
+
 ## matcher
 
 	verify(pets).add(new Dog(apple)); to verify(pets).add(any(Dog.class));
-	
+
 see invoke.MiCreateInstanceIT
-	
+
 ## Real returns real
-	    
+
     public String notOk() {
         String path = "foo";
         return path.toLowerCase();
     }
-    	    
+
 ## StringLiteral passed to private method is initialized to foo
 
 see FileAppender init() method - String filePath = getPluginField("file");
 
-Field creation in constructor - mock should not be injected 
+Field creation in constructor - mock should not be injected
 
     see org.codetab.scoopi.metrics.serialize.GaugeTest, creates mock for value and
     formatter
-    
+
 	public class Gauge implements Metric {
-    
-    private Map<String, Object> value;  
+
+    private Map<String, Object> value;
     private DateTimeFormatter formatter;
 
     public Gauge() {
         formatter = new DateTimeFormatterBuilder()
-                .appendOptional(DateTimeFormatter.ofPattern("H:m:s"))                
+                .appendOptional(DateTimeFormatter.ofPattern("H:m:s"))
                 .toFormatter();
     }
 
-## POJO fields - mock should not be injected for gauges  
- 
+## POJO fields - mock should not be injected for gauges
+
     public class Metrics {
-    
+
     private Map<String, Gauge> gauges;
 
     public Map<String, Gauge> getGauges() {
@@ -197,37 +195,37 @@ Field creation in constructor - mock should not be injected
     public void setGauges(final Map<String, Gauge> gauges) {
         this.gauges = gauges;
     }
-    
+
 ## Public fields POJO
 
 try to improve test for org.codetab.scoopi.metrics.serialize.Meter and Timer
-    
+
 ## discard previous assignment
 
 don't generate test for abstract classes
 
 ## junit 4 and 5 profiles
 
-Fix errors by comparing with corrected tests in scoopi 
+Fix errors by comparing with corrected tests in scoopi
 
 	plugin/converter/DateFormatter
 	plugin/converter/DateRoller
-	metrics/SystemStat	
-	
+	metrics/SystemStat
+
 ## Try to Improve
-		
+
 	metrics/serialize/Serializer - Builder pattern
 	metrics/server/MetricsServlet - Nested class test
 	metrics/server/MetricsServlet - used static fields
-	
+
 ## Fix error generating test
 
 	metrics/server/MetricsServletListener - refers nested class in another class
 
 ## Qualified Names Var
 
-Var accessed through qualified name should be spy instead of mock and when 
-on such method invocation should be name part of qName. However, at present this is 
+Var accessed through qualified name should be spy instead of mock and when
+on such method invocation should be name part of qName. However, at present this is
 not supported. See QNames qNameAsCallMockObj() test as an example.
 
 ## Initialized Mocks
@@ -238,8 +236,8 @@ not supported. See QNames qNameAsCallMockObj() test as an example.
         return cache.get(key);
     }
 
-If map is user configured as mock, whether to treat initialized the mock as 
-mock or real. Now, it is treated as mock. If treated as real then make it 
+If map is user configured as mock, whether to treat initialized the mock as
+mock or real. Now, it is treated as mock. If treated as real then make it
 configurable.
 
 ## Multiple Tests for Branches
@@ -249,44 +247,44 @@ See notes in tech-doc folder. For test cases refer cluster.hz.JobStore, step.med
 ## Abstract Class
 
 	Don't generate test class
-	
+
 ## QNames
 
 Create infer var, return and assert. See QNameIT.
 
 	public String qNameInCast(final Point point) {
         return (String) point.attchment;
-    }	
+    }
 
 ## Field and Parameter Same Name
 
 Rename parameter name with index if field exists with same name. See superclass.MultiGetMock.getMulti(final Payload payload) method.
-   
-    
+
+
 On the other hand for the following validation in step.parse.PrefixProcessor the coverage goes through without separate test. Analyze the reasons.
 
 	notNull(value, "value must not be null");
 
 ## Improve Generated Tests
 
-/step/src/test/java/org/codetab/scoopi/step/parse/QueryVarSubstitutorTest.java	
+/step/src/test/java/org/codetab/scoopi/step/parse/QueryVarSubstitutorTest.java
 
 ## Exceptions Thrown by MI
 
 When exceptions are thrown by MI such as by when statement, add throws Exception to test method declaration.
 
     @Test
-    public void testPostInitialize() {   
+    public void testPostInitialize() {
         when(htmlUnitFactory.createUrl(cherry)).thenReturn(url);
 
-The MI createUrl throws MalformedException so change test method declaration to 
-	
+The MI createUrl throws MalformedException so change test method declaration to
+
     @Test
-    public void testPostInitialize() throws Exception {   
+    public void testPostInitialize() throws Exception {
 
-## Mock added to List	
+## Mock added to List
 
-When real list stream contains mocks try to create when for that. See org.codetab.scoopi.step.parse.htmlunit.QueryAnalyzer.getQueryElements() 
+When real list stream contains mocks try to create when for that. See org.codetab.scoopi.step.parse.htmlunit.QueryAnalyzer.getQueryElements()
 
 ## Inserts
 
@@ -297,4 +295,22 @@ ForEach in two IMC with two loop vars with same name (key) wrongly renames secon
 ## Treatment of super private fields.
 
 Analyze whether to add super private field as @Mock in test class. See: itest insert.SuperGetIT for example.
+
+## Varargs
+
+The inline var type and initialization is not proper for varargs.
+
+    public void varargsOneDim(final Foo foo) {
+        vaOneDim(foo, new int[] {1});
+        vaOneDim(foo, new int[][] {{3, 4}, {4, 5}});
+    }
+
+    private void vaOneDim(final Foo foo, final int[]... vaOneDim) {
+        foo.appendObj(vaOneDim[0]);
+        foo.appendObj(vaOneDim[0][0]);
+    }
+
+In ArgParams.createVarsForInlineVarargs() the type of inline arg is from type.getElementType() which returns int for int[]. Also check for zero, two and three dims. Examples are in org.codetab.uknit.itest.imc.vararg.InlineArgs, enable itests.
+
+
 

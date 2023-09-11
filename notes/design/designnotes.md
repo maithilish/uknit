@@ -298,3 +298,26 @@ uKnit can't evaluate expression and get its values. In many cases it passes the 
 
 Ideally the above code should be tested as File a = f2; but uKnit passes the above code directly to test.
 
+        foo.appendString(str);
+        foo.appendString(String.valueOf(str));
+        
+results in two verifies even though both evaluates to same value.
+
+        verify(foo).appendString(str);
+        verify(foo).appendString(String.valueOf(str));
+        
+## Points for Better Design
+
+  1. Create pack for all expressions including literals.
+  1. Seamless IM arg to param mapping.
+  3. IM Parameter's exp should be argument.
+  4. Stage IM method in temp area and parse it (may not be resolvable)
+  2. Pack exp should be resolvable and should not copy.
+  1. In Pack exp should be bean with exp and id.
+  5. Each call to IM exp should have unique id.
+  1. IM vararg normalization - create an array with args
+  1. Better initializer and get value
+  1. Reassign
+  1. IMC Ctlflow 
+  1. Use Optional or not
+

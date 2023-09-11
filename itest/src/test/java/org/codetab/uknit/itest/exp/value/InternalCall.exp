@@ -1,0 +1,44 @@
+package org.codetab.uknit.itest.exp.value;
+
+import org.codetab.uknit.itest.exp.value.Model.Foo;
+class InternalCallTest {
+    @InjectMocks
+    private InternalCall internalCall;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testInvokeInIM() {
+        Foo foo = Mockito.mock(Foo.class);
+        String city = "foo";
+        String state = "bar";
+        String str = "baz";
+        String str2 = "zoo";
+        internalCall.invokeInIM(foo);
+
+        verify(foo).appendString(city);
+        verify(foo).appendString(String.valueOf(city));
+        verify(foo).appendString(str);
+        verify(foo).appendString(String.valueOf(str));
+        verify(foo).appendString(state);
+        verify(foo).appendString(String.valueOf(state));
+        verify(foo).appendString(str2);
+        verify(foo).appendString(String.valueOf(str2));
+    }
+
+    @Test
+    public void testArrayAccessByVar() {
+        Foo foo = Mockito.mock(Foo.class);
+        String apple = "x";
+        String grape = "x";
+        String kiwi = "x";
+        String mango = "x";
+        internalCall.arrayAccessByVar(foo);
+
+        verify(foo, times(2)).appendString(apple);
+        verify(foo, times(2)).appendString(String.valueOf(grape));
+    }
+}

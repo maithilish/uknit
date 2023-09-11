@@ -142,9 +142,14 @@ public class ArrayAccessSrv implements ExpService {
             while (nonNull(indexExp) && !nodes.is(indexExp, NumberLiteral.class,
                     CharacterLiteral.class)) {
                 ExpService expSrv = serviceLoader.loadService(indexExp);
-                indexExp = expSrv.getValue(indexExp,
+                Expression iExp = expSrv.getValue(indexExp,
                         patcher.getCopy(indexExp, true, heap), pack,
                         createValue, heap);
+                // break cyclic SimpleName etc.,
+                if (indexExp.equals(iExp)) {
+                    break;
+                }
+                indexExp = iExp;
             }
         }
 

@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codetab.uknit.core.di.DInjector;
 import org.codetab.uknit.core.make.method.Heaps;
 import org.codetab.uknit.core.make.method.Packs;
 import org.codetab.uknit.core.make.method.Vars;
@@ -37,8 +36,6 @@ public class Merger {
     @Inject
     private Vars vars;
     @Inject
-    private DInjector di;
-    @Inject
     private Heaps heaps;
     @Inject
     private Packs packs;
@@ -46,10 +43,11 @@ public class Merger {
     private Expressions expressions;
     @Inject
     private Invokes invokes;
-
-    private ArgParams argParams;
+    @Inject
     private Varargs varargs;
-
+    @Inject
+    private ArgParams argParams;
+    @Inject
     private InternalReturns internalReturns;
 
     public void merge(final Invoke invoke, final Heap heap,
@@ -60,11 +58,8 @@ public class Merger {
         heaps.debugPacks("Heap", heap);
         heaps.debugPacks("IM Heap", internalHeap);
 
-        // save states
-        internalReturns = di.instance(InternalReturns.class);
+        // save states before the merge
         internalReturns.init(internalHeap);
-
-        argParams = di.instance(ArgParams.class);
         argParams.init(invoke, heap, internalHeap);
 
         int invokeIndex = heap.getPacks().indexOf(invoke);
@@ -75,21 +70,17 @@ public class Merger {
         // create modifiable list of vars to check name conflict
         List<IVar> callingMethodVars = new ArrayList<>(vars.getVars(heap));
 
-        varargs = di.instance(Varargs.class);
+        boolean hasVarargs = varargs.hasVarargs(argParams.getParams());
 
-        /*
-         * create missing inline vars for literals etc., in IMC args and reload
-         * the calling method vars list.
-         */
-        if (varargs.hasVarargs(argParams.getParams())) {
-            argParams.createVarsForInlineArgs(callingMethodVars, true);
+        // create inline vars for literals etc., in IMC args.
+        argParams.createVarsForInlineArgs(callingMethodVars, hasVarargs);
+
+        // create inline vars for literals etc., in IMC varargs
+        if (hasVarargs) {
             argParams.createVarsForInlineVarargs(callingMethodVars);
-        } else {
-            argParams.createVarsForInlineArgs(callingMethodVars, false);
+            varargs.init(argParams.getParams(), argParams.getArgs(),
+                    callingMethodVars, internalHeap);
         }
-
-        varargs.init(argParams.getParams(), argParams.getArgs(),
-                callingMethodVars, internalHeap);
 
         callingMethodVars = new ArrayList<>(vars.getVars(heap));
 
@@ -137,8 +128,7 @@ public class Merger {
                  * if IM has varargs and pack uses a varargs, then create
                  * initializer for the used varargs.
                  */
-                if (varargs.hasVarargs()
-                        && varargs.usesVarargs(iPack, internalHeap)) {
+                if (hasVarargs && varargs.usesVarargs(iPack, internalHeap)) {
                     varargs.createInitializerForVararg(iPack, internalHeap);
                 }
             } else {
@@ -163,6 +153,8 @@ public class Merger {
 
             }
         }
+
+        varargs.checkIndexes(internalHeap, argParams.getParams());
 
         // update param packs whose name differs from arg name
         argParams.updateParamsOfDifferentName(callingMethodVars);

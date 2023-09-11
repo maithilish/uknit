@@ -20,18 +20,6 @@ class VarArgParameterTest {
     }
 
     @Test
-    public void testNoArgForVarArgParam() {
-        List<String> names = new ArrayList<>();
-        String orange = "Foo";
-        String apple = null;
-        names.add(orange);
-
-        String actual = varArgParameter.noArgForVarArgParam(names);
-
-        assertEquals(apple, actual);
-    }
-
-    @Test
     public void testSingleArgForVarArgParam() {
         List<String> names = new ArrayList<>();
         String orange = "Foo";

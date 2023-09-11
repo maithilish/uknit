@@ -392,6 +392,7 @@ public class Types {
                 } else if (svd.getType().isArrayType()) {
                     ArrayType at = (ArrayType) svd.getType();
                     Type et = at.getElementType();
+                    int dims = at.getDimensions();
                     Type t = null;
                     if (et.isPrimitiveType()) {
                         t = ast.newPrimitiveType(
@@ -399,7 +400,8 @@ public class Types {
                     } else {
                         t = ast.newSimpleType(ast.newName(getTypeName(et)));
                     }
-                    return ast.newArrayType(t);
+                    ArrayType type = ast.newArrayType(t, dims);
+                    return type;
                 } else {
                     String clzName = getTypeName(svd.getType());
                     return ast.newArrayType(

@@ -157,4 +157,28 @@ public class Varargs {
             }
         }
     }
+
+    /**
+     * Check any array access exp uses non exist va arg and throw error if true.
+     *
+     * @param heap
+     * @param params
+     */
+    public void checkIndexes(final Heap heap, final List<Pack> params) {
+        if (hasVarargs(params)) {
+            List<Pack> aaPacks = packs.filterPacks(heap,
+                    p -> p.hasExp() && p.getExp() instanceof ArrayAccess);
+            for (Pack aaPack : aaPacks) {
+                ArrayAccess aa = (ArrayAccess) aaPack.getExp();
+                int index = arrays.getIndex(aa, aaPack, heap);
+                if (index >= vaArgs.size()) {
+                    throw new CriticalException(spaceit("missing varargs arg,",
+                            String.valueOf(vaArgs.size()),
+                            "args passed to varargs",
+                            "but code is trying to access",
+                            String.valueOf(index + 1), "items"));
+                }
+            }
+        }
+    }
 }

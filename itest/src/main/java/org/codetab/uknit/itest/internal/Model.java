@@ -40,6 +40,18 @@ class Model {
         String key(String cntry);
     }
 
+    static class Pet {
+        String sex() {
+            return null;
+        }
+    }
+
+    static class Dog extends Pet {
+        String breed() {
+            return null;
+        }
+    }
+
     interface Factory {
         WebClient getWebClient();
     }

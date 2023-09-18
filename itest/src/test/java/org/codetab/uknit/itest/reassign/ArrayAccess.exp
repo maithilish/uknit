@@ -1,0 +1,33 @@
+package org.codetab.uknit.itest.reassign;
+class ArrayAccessTest {
+    @InjectMocks
+    private ArrayAccess arrayAccess;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignTwice() {
+        arrayAccess.assignTwice();
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testAssignTwiceInIfBlockIfCode() {
+        int code = 1;
+        arrayAccess.assignTwiceInIfBlock(code);
+
+        fail("unable to assert, STEPIN");
+    }
+
+    @Test
+    public void testAssignTwiceInIfBlockElseCode() {
+        int code = 1;
+        arrayAccess.assignTwiceInIfBlock(code);
+
+        fail("unable to assert, STEPIN");
+    }
+}

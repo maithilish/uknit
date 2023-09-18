@@ -126,41 +126,50 @@ public class Types {
         }
     }
 
+    /**
+     * Recursively process type and returns is bare name.
+     *
+     * @param type
+     * @return
+     */
     public String getTypeNameAsIdentifier(final Type type) {
-        Type cleanType = type;
-        Name name = null;
 
         if (type.isArrayType()) {
-            cleanType = ((ArrayType) type).getElementType();
-        }
-        // ignored for now
-        // if (type.isWildcardType()) {
-        // }
-        if (type.isParameterizedType()) {
-            cleanType = ((ParameterizedType) type).getType();
+            return getTypeNameAsIdentifier(((ArrayType) type).getElementType());
         }
 
-        /*
-         * union appears in catch clause and intersection in generic type
-         * variables, use only the first element
-         */
-        if (type.isUnionType()) {
-            // consider only the first element
-            cleanType = (Type) ((UnionType) type).types().get(0);
-        }
         if (type.isIntersectionType()) {
-            cleanType = (Type) ((IntersectionType) type).types().get(0);
+            return getTypeNameAsIdentifier(
+                    (Type) ((IntersectionType) type).types().get(0));
+        }
+
+        if (type.isUnionType()) {
+            /*
+             * union appears in catch clause and intersection in generic type
+             * variables, use only the first element
+             */
+            return getTypeNameAsIdentifier(
+                    (Type) ((UnionType) type).types().get(0));
+        }
+
+        if (type.isWildcardType()) {
+            return getTypeNameAsIdentifier(((WildcardType) type).getBound());
+        }
+
+        if (type.isParameterizedType()) {
+            return getTypeNameAsIdentifier(
+                    ((ParameterizedType) type).getType());
         }
 
         // finally, process clean type
-        if (cleanType.isPrimitiveType()) {
-            return ((PrimitiveType) cleanType).getPrimitiveTypeCode()
-                    .toString();
+        if (type.isPrimitiveType()) {
+            return ((PrimitiveType) type).getPrimitiveTypeCode().toString();
         }
 
         // get name from clean type
-        if (cleanType.isSimpleType()) {
-            name = ((SimpleType) cleanType).getName();
+        Name name = null;
+        if (type.isSimpleType()) {
+            name = ((SimpleType) type).getName();
             if (name instanceof ModuleQualifiedName) {
                 name = ((ModuleQualifiedName) name).getName();
             }
@@ -169,6 +178,7 @@ public class Types {
         if (type.isQualifiedType()) {
             name = ((QualifiedType) type).getName();
         }
+
         if (type.isNameQualifiedType()) {
             name = ((NameQualifiedType) type).getName();
         }

@@ -7,11 +7,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.uknit.core.exception.CodeException;
 import org.codetab.uknit.core.make.model.Heap;
 import org.codetab.uknit.core.make.model.Pack;
 import org.codetab.uknit.core.node.NodeFactory;
-import org.codetab.uknit.core.node.Nodes;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
@@ -24,8 +22,6 @@ public class PostfixExpressionSrv implements ExpService {
     private NodeFactory factory;
     @Inject
     private ExpServiceLoader serviceLoader;
-    @Inject
-    private Nodes nodes;
     @Inject
     private Rejigs rejigs;
 
@@ -58,8 +54,7 @@ public class PostfixExpressionSrv implements ExpService {
     public Expression getValue(final Expression node, final Expression copy,
             final Pack pack, final boolean createValue, final Heap heap) {
         checkState(node instanceof PostfixExpression);
-        throw new CodeException(
-                nodes.exMessage("getValue() not implemented", node));
+        return node;
     }
 
     @Override

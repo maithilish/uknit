@@ -46,8 +46,8 @@ class CastTest {
     @Test
     public void testExpIsBooleanLiteral() {
         Foo foo = Mockito.mock(Foo.class);
-        Boolean t = true;
-        Boolean f = false;
+        boolean t = true;
+        boolean f = false;
         cast.expIsBooleanLiteral(foo);
 
         verify(foo).appendBoolean((Boolean) t);
@@ -66,8 +66,8 @@ class CastTest {
     @Test
     public void testExpIsCharacter() {
         Foo foo = Mockito.mock(Foo.class);
-        Character a = 'a';
-        Character b = 'b';
+        char a = 'a';
+        char b = 'b';
         cast.expIsCharacter(foo);
 
         verify(foo).appendCharacter((Character) a);

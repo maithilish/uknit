@@ -1,5 +1,6 @@
 package org.codetab.uknit.itest.exp.value;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -18,6 +19,26 @@ class PostfixTest {
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignIsPostfix() {
+        int i = 0;
+        int i2 = i++;
+
+        int actual = postfix.assignIsPostfix();
+
+        assertEquals(i2, actual);
+    }
+
+    @Test
+    public void testReturnExpIsPostfix() {
+        int i = 0;
+        int apple = i++;
+
+        int actual = postfix.returnExpIsPostfix();
+
+        assertEquals(apple, actual);
     }
 
     @Test

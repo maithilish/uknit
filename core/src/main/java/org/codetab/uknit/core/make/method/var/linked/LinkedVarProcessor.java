@@ -1,5 +1,6 @@
 package org.codetab.uknit.core.make.method.var.linked;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import org.codetab.uknit.core.node.Resolver;
 import org.codetab.uknit.core.node.Types;
 import org.codetab.uknit.core.node.Wrappers;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -189,7 +191,8 @@ public class LinkedVarProcessor {
                  * propagate exp cast type to linked vars.
                  */
                 Type type = var.getType();
-                castPropagator.propogate(pack, pack, type, heap);
+                castPropagator.propogate(pack, pack, type, var.getTypeBinding(),
+                        heap);
             } else if (nonNull(exp)) {
                 /*
                  * propagate cast of exp's exps to linked vars.
@@ -214,16 +217,20 @@ public class LinkedVarProcessor {
                         if (ePackO.isPresent()) {
                             if (nonNull(ePackO.get().getVar())) {
                                 Type type = ePackO.get().getVar().getType();
+                                ITypeBinding typeBinding =
+                                        ePackO.get().getVar().getTypeBinding();
                                 castPropagator.propogate(pack, ePackO.get(),
-                                        type, heap);
+                                        type, typeBinding, heap);
                             }
                         } else if (nodes.isName(stripedExp)) {
                             ePackO = packs.findByVarName(
                                     nodes.getName(stripedExp), packList);
                             if (ePackO.isPresent()) {
                                 Type type = resolver.getReturnType(eexp);
+                                ITypeBinding typeBinding =
+                                        eexp.resolveTypeBinding();
                                 castPropagator.propogate(pack, ePackO.get(),
-                                        type, heap);
+                                        type, typeBinding, heap);
                             }
                         }
                     }
@@ -248,8 +255,6 @@ class CastPropagator {
     private Types types;
     @Inject
     private Mocks mocks;
-    @Inject
-    private Resolver resolver;
 
     /**
      * Selectively propagates the pack var's type to link vars.
@@ -270,12 +275,14 @@ class CastPropagator {
      * @param packList
      * @param ePack
      * @param targetType
+     * @param targetTypeBinding
      */
     public void propogate(final Pack pack, final Pack ePack,
-            final Type targetType, final Heap heap) {
+            final Type targetType, final ITypeBinding targetTypeBinding,
+            final Heap heap) {
         List<Pack> linkedPacks = linkedPack.getLinkedVarPacks(ePack, heap);
         for (Pack linkPack : linkedPacks) {
-            if (nonNull(linkPack.getVar())) {
+            if (linkPack.hasVar()) {
                 IVar linkVar = linkPack.getVar();
                 /*
                  * String (targetType) is subclass of Object (linkType), change
@@ -284,11 +291,11 @@ class CastPropagator {
                  * Object (targetType) is not subclass of String (linkType),
                  * don't change link var type from String to Object;
                  */
-                if (isSubclass(targetType, linkVar.getType())) {
+                if (isSubclass(targetType, targetTypeBinding,
+                        linkVar.getType())) {
                     linkPack.getVar().setMock(mocks.isMockable(targetType));
                     linkPack.getVar().setType(targetType);
-                    linkPack.getVar().setTypeBinding(
-                            resolver.resolveBinding(targetType));
+                    linkPack.getVar().setTypeBinding(targetTypeBinding);
                 }
             }
         }
@@ -311,14 +318,19 @@ class CastPropagator {
      * Note: it is a best effort method and when it is not possible to ascertain
      * the assignability, true is returned so that calling operation goes
      * through.
+     * @param targetTypeBinding
      *
      * @param pack
      * @param linkPack
      * @return
      */
-    private boolean isSubclass(final Type targetType, final Type type) {
+    private boolean isSubclass(final Type targetType,
+            final ITypeBinding targetTypeBinding, final Type type) {
         try {
             String targetClzName = types.getClzName(targetType);
+            if (isNull(targetClzName)) {
+                targetClzName = targetTypeBinding.getBinaryName();
+            }
             String typeClzName = types.getClzName(type);
 
             Class<?> targetClz = Class.forName(targetClzName);
@@ -329,7 +341,8 @@ class CastPropagator {
 
             return isSubClass;
         } catch (ClassNotFoundException | NullPointerException e) {
+            // if class not found then not subclass, best effort.
+            return false;
         }
-        return true;
     }
 }

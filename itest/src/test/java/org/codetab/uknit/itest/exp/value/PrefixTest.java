@@ -1,5 +1,6 @@
 package org.codetab.uknit.itest.exp.value;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -18,6 +19,26 @@ class PrefixTest {
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testAssignIsPrefix() {
+        int i = 0;
+        int x = --i;
+
+        int actual = prefix.assignIsPrefix();
+
+        assertEquals(x, actual);
+    }
+
+    @Test
+    public void testReturnExpIsPrefix() {
+        int i = 0;
+        int apple = --i;
+
+        int actual = prefix.returnExpIsPrefix();
+
+        assertEquals(apple, actual);
     }
 
     @Test

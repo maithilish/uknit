@@ -1,7 +1,5 @@
 package org.codetab.uknit.itest.flow.ifelse.ret;
 
-// has coverage issues
-
 import org.codetab.uknit.itest.flow.ifelse.ret.Model.Duck;
 class IfElseTest {
     @InjectMocks

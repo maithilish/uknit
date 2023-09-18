@@ -214,7 +214,16 @@ public class ArrayAccessSrv implements ExpService {
                             heap);
                     if (index == leftIndex && nodes.getName(arrayName)
                             .equals(nodes.getName(leftArrayName))) {
-                        return scopeList.get(i).getExp();
+                        Expression reassignedExp = scopeList.get(i).getExp();
+                        if (reassignedExp.equals(node)) {
+                            /*
+                             * if reassigned exp is node then ignore it. Ref:
+                             * itest.reassign.ArrayAccess.
+                             */
+                            return null;
+                        } else {
+                            return reassignedExp;
+                        }
                     }
                 }
             }

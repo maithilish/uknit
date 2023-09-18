@@ -302,7 +302,7 @@ public class Patchers {
                     Expression iniExp =
                             (Expression) initializer.get().getInitializer();
                     Expression iniExpCopy = (Expression) ASTNode
-                            .copySubtree(iniExp.getAST(), iniExp);
+                            .copySubtree(copy.getAST(), iniExp);
                     value = iniExpCopy;
                 }
             }

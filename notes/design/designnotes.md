@@ -314,10 +314,12 @@ results in two verifies even though both evaluates to same value.
   4. Stage IM method in temp area and parse it (may not be resolvable)
   2. Pack exp should be resolvable and should not copy.
   1. In Pack exp should be bean with exp and id.
+  1. In Var type should be bean with type and typebinding.
   5. Each call to IM exp should have unique id.
   1. IM vararg normalization - create an array with args
   1. Better initializer and get value
   1. Reassign
   1. IMC Ctlflow 
   1. Use Optional or not
+  1. IM similar parameters with different types because of cast in IM
 

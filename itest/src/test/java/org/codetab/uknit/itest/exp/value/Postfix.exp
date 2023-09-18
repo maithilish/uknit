@@ -12,6 +12,26 @@ class PostfixTest {
     }
 
     @Test
+    public void testAssignIsPostfix() {
+        int i = 0;
+        int i2 = i++;
+
+        int actual = postfix.assignIsPostfix();
+
+        assertEquals(i2, actual);
+    }
+
+    @Test
+    public void testReturnExpIsPostfix() {
+        int i = 0;
+        int apple = i++;
+
+        int actual = postfix.returnExpIsPostfix();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
     public void testExpIsArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
         int apple = 1;

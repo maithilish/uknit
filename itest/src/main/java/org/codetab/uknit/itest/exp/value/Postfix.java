@@ -5,6 +5,17 @@ import org.codetab.uknit.itest.exp.value.Model.Foo;
 
 public class Postfix {
 
+    public int assignIsPostfix() {
+        int i = 0;
+        i = i++;
+        return i;
+    }
+
+    public int returnExpIsPostfix() {
+        int i = 0;
+        return i++;
+    }
+
     // STEPIN - uKnit can't evaluate postfix exp, fix verifies
     public void expIsArrayAccess(final Foo foo) {
         int[] ints = {1, 11};

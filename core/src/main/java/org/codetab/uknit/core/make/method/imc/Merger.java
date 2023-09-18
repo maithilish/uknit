@@ -92,12 +92,12 @@ public class Merger {
             if (nonNull(internalVar)) {
                 /*
                  * When IM var (Local or Infer) name conflicts with calling
-                 * method vars change the IM var name. In case of Infer vars if
-                 * name is obtained from VarNames.getInferVarName() then name
-                 * (apple, grape etc.,) is unique across calling and IM calls
-                 * but if name is based on type then name may conflict. Ex:
-                 * client.options().enabled(..); here for client.options() the
-                 * infer var name is options and it will conflict if IM is
+                 * method vars, then change the IM var name. In case of Infer
+                 * vars if name is obtained from VarNames.getInferVarName() then
+                 * name (apple, grape etc.,) is unique across calling and IM
+                 * calls but if name is based on type then name may conflict.
+                 * Ex: client.options().enabled(..); here for client.options()
+                 * the infer var name is options and it will conflict if IM is
                  * called multiple times.
                  */
                 if (internalVar.is(Kind.LOCAL) || internalVar.is(Kind.INFER)) {

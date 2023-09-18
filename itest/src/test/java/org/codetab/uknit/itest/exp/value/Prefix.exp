@@ -12,6 +12,26 @@ class PrefixTest {
     }
 
     @Test
+    public void testAssignIsPrefix() {
+        int i = 0;
+        int x = --i;
+
+        int actual = prefix.assignIsPrefix();
+
+        assertEquals(x, actual);
+    }
+
+    @Test
+    public void testReturnExpIsPrefix() {
+        int i = 0;
+        int apple = --i;
+
+        int actual = prefix.returnExpIsPrefix();
+
+        assertEquals(apple, actual);
+    }
+
+    @Test
     public void testExpIsArrayAccess() {
         Foo foo = Mockito.mock(Foo.class);
         int apple = 1;

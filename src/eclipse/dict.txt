@@ -285,3 +285,5 @@ hashcode
 parenthesize
 unparenthesized
 regig
+quickstart
+uber

@@ -1,0 +1,89 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+	<id>release</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>${file.separator}</outputDirectory>
+			<includes>
+				<include>README*</include>
+				<include>LICENSE*</include>
+				<include>NOTICE*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/assembly/quickstart</directory>
+			<outputDirectory>quickstart</outputDirectory>
+			<!-- pom for quickstart -->
+			<includes>
+				<include>pom.xml</include>
+				<include>
+					src/main/java/org/codetab/uknit/quickstart/Quickstart.java</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/assembly/uknit</directory>
+			<outputDirectory>uknit</outputDirectory>
+			<!-- pom for uknit release -->
+			<includes>
+				<include>pom.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/target</directory>
+			<outputDirectory>uknit/modules</outputDirectory>
+			<!-- release shade jar -->
+			<includes>
+				<include>uknit-release-${project.version}.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/assembly/uknit/resources</directory>
+			<outputDirectory>uknit/resources</outputDirectory>
+			<includes>
+				<!-- release file configured for quickstart -->
+				<include>uknit.properties</include>
+				<!-- release file with log level - warn -->
+				<include>log4j2.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<outputDirectory>../uknit/resources</outputDirectory>
+			<!-- add resources excluded from shade jar -->
+			<includes>
+				<include>uknit-names.properties</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+
+	<moduleSets>
+		<moduleSet>
+
+			<!-- use all modules -->
+			<useAllReactorProjects>true</useAllReactorProjects>
+
+			<excludes>
+				<exclude>org.codetab.uknit:itest</exclude>
+			</excludes>
+
+			<!-- don't include release jar instead include release shade jar -->
+			<!-- see notes/release.md for details -->
+			<!-- <binaries>-->
+			<!-- <outputDirectory>uknit/modules</outputDirectory>-->
+			<!-- <unpack>false</unpack>-->
+			<!-- include release jar -->
+			<!-- <attachmentClassifier>uknit-release</attachmentClassifier>-->
+			<!-- </binaries>-->
+
+		</moduleSet>
+	</moduleSets>
+
+</assembly>

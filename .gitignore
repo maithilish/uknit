@@ -4,10 +4,10 @@
 .settings/
 .checkstyle
 src/main/resources/*.java
-itest/src/main/java/org/codetab/uknit/itest/alpha/*.java
-itest/src/test/java/org/codetab/uknit/itest/alpha/Alpha.java
-itest/src/test/java/org/codetab/uknit/itest/alpha/AlphaTest.java
-itest/src/main/java/org/codetab/uknit/itest/alpha/SuperAlpha.java
-itest/src/test/java/org/codetab/uknit/itest/alpha/SuperAlphaTest.java
-core/dependency-reduced-pom.xml
+uknit-itest/src/main/java/org/codetab/uknit/itest/alpha/*.java
+uknit-itest/src/test/java/org/codetab/uknit/itest/alpha/Alpha.java
+uknit-itest/src/test/java/org/codetab/uknit/itest/alpha/AlphaTest.java
+uknit-itest/src/main/java/org/codetab/uknit/itest/alpha/SuperAlpha.java
+uknit-itest/src/test/java/org/codetab/uknit/itest/alpha/SuperAlphaTest.java
+uknit-core/dependency-reduced-pom.xml
 logs

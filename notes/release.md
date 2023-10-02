@@ -50,3 +50,13 @@ export and backup
 ### Sonatype Repository
 
 https://s01.oss.sonatype.org/
+
+assembly/uknit-quickstart.zip
+
+upload a module - uknit-core uploaded but not uknit how it was handled
+
+delete failed from staging (add staging plugin to itest else missing nexusUrl error)
+
+	mvn nexus-staging:rc-list
+	mvn nexus-staging:rc-drop -DstagingRepositoryId=orgcodetabuknit-1025
+	

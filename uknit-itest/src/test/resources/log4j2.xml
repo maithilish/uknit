@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
-
-<!-- log configuration for release, level warn -->
-
 <Configuration>
+	<!-- log configuration for itest -->
 	<Properties>
 		<!-- uknit.log.dir defaults to logs, may be set through sys property -->
 		<Property name="logDir">${sys:uknit.log.dir:-logs}</Property>
@@ -16,7 +14,7 @@
 			<PatternLayout
 				pattern="%-20c{1} %-8level %m%n%ex{10}" />
 		</Console>
-		<File name="LOG_FILE" fileName="${logDir}/uknit.log"
+		<File name="LOG_FILE" fileName="${logDir}/itest.log"
 			append="false">
 			<PatternLayout
 				pattern="%-20c{1} %-8level %m%n%ex" />
@@ -30,7 +28,7 @@
 	</Appenders>
 
 	<Loggers>
-		<Root level="warn">
+		<Root level="debug">
 			<AppenderRef ref="ASYNC" />
 		</Root>
 	</Loggers>

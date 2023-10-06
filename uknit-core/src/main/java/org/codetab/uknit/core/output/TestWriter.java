@@ -25,6 +25,8 @@ public class TestWriter {
     private Writer writer;
     @Inject
     private Classes classes;
+    @Inject
+    private Console console;
 
     public void write(final Controller ctl) {
 
@@ -34,6 +36,8 @@ public class TestWriter {
                 configs.getConfig("uknit.output.pretty.insertLineBreaks", true);
 
         String outputMode = configs.getConfig("uknit.output.mode", "file");
+        boolean outputConsole =
+                configs.getConfig("uknit.output.console", false);
         boolean outputFileOverwrite =
                 configs.getConfig("uknit.output.file.overwrite", false);
         String outputDir =
@@ -64,6 +68,9 @@ public class TestWriter {
                             code = writer.insertLineBreaks(code);
                         }
                         writer.write(outputFilePath, code, outputFileOverwrite);
+                        if (outputConsole) {
+                            console.print(code, false);
+                        }
                     } catch (IOException e) {
                         throw new CriticalException(e);
                     }

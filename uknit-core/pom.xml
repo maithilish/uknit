@@ -51,8 +51,9 @@
 					<excludes>
 						<exclude>uknit.properties</exclude>
 						<exclude>log4j2.xml</exclude>
+						<exclude>log4j2-dev.xml</exclude>
 					</excludes>
-				</configuration>				
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
@@ -64,7 +65,7 @@
 					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</build>
 
@@ -104,6 +105,7 @@
 										<exclude>uknit.properties</exclude>
 										<exclude>names.properties</exclude>
 										<exclude>log4j2.xml</exclude>
+										<exclude>log4j2-dev.xml</exclude>
 									</excludes>
 								</filter>
 							</filters>

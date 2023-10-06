@@ -1,1 +1,8 @@
 /target/
+/logs/
+/src/test/java/org/codetab/uknit/itest/alpha/Alpha.java
+/src/test/java/org/codetab/uknit/itest/alpha/SuperAlpha.java
+/src/main/java/org/codetab/uknit/itest/alpha/AlphaTest.java
+/src/test/java/org/codetab/uknit/itest/alpha/SuperAlphaTest.java
+/dependency-reduced-pom.xml
+

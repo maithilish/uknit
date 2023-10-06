@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 
-<!-- log configuration for release, level warn -->
+<!-- dev log configuration -->
+<!-- set with VM Arg -Duknit.log.config.file=log4j2-dev.xml -->
 
 <Configuration>
 	<Properties>
@@ -30,7 +31,7 @@
 	</Appenders>
 
 	<Loggers>
-		<Root level="warn">
+		<Root level="debug">
 			<AppenderRef ref="ASYNC" />
 		</Root>
 	</Loggers>

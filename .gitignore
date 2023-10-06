@@ -3,11 +3,5 @@
 .project
 .settings/
 .checkstyle
-src/main/resources/*.java
-uknit-itest/src/main/java/org/codetab/uknit/itest/alpha/*.java
-uknit-itest/src/test/java/org/codetab/uknit/itest/alpha/Alpha.java
-uknit-itest/src/test/java/org/codetab/uknit/itest/alpha/AlphaTest.java
-uknit-itest/src/main/java/org/codetab/uknit/itest/alpha/SuperAlpha.java
-uknit-itest/src/test/java/org/codetab/uknit/itest/alpha/SuperAlphaTest.java
-uknit-core/dependency-reduced-pom.xml
-logs
+/logs/
+/dependency-reduced-pom.xml
